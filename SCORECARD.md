@@ -253,6 +253,7 @@ written and are superseded here:
 | receipt-existence sweep | sweep a named document's cited evidence paths on committed bytes: backtick-cited `.ufo/`+`tools/` paths extracted at a pinned rev, each resolved by `git cat-file -e REV:path` (blob or tree), fleet-root-surface cites resolved via a named `--extra-root` filesystem check | `python -I tools/receipt-exists.py --selftest` → `RECEIPT_EXISTS_SELFTEST: 4/4 pass`; `python -I tools/receipt-exists.py --repo . --rev 1763db52… --doc corpus/lessons/round-63.md --doc corpus/lessons/round-63-verifier-spotcheck.md --extra-root <fleet-root>` → `paths=16 missing=0 extra=2` (`.ufo/evidence/round-64/win-host/live-demo-sweep.txt`) | round 64 |
 | commit-message receipt binding sweep | sweep a commit range on committed objects: every evidence file ADDED under `.ufo/evidence/` whose basename is named in a commit's message must exist in that commit's tree; violations named (`BIND_DEFECT`) with exit 1; ranges adding no evidence file refused exit 2 (no vacuous pass) | `python -I tools/receipt-commit-bind.py --selftest` → `RECEIPT_COMMIT_BIND_SELFTEST: 4/4 pass`; the r64 range `d0baf616..c7d28b19` → `findings=1` exit 1 naming `6876d746`; `7d7f9ca8..6db7e2fc` → `findings=0` exit 0 (`.ufo/evidence/round-65/win-host/live-bind-r64-range.txt`, `live-bind-r65-range.txt`) | round 65 |
 | quoted-line receipt backability | check a record's quoted counter lines byte-for-byte against committed receipt bytes at a pinned rev: verdict-shaped backtick spans must be byte substrings of receipts the record itself cites (directory-cite expansion, unique-basename resolution, named `--extra-root` filesystem check for fleet-root surfaces); unbacked quotes named with exit 1; empty documents refused exit 2 | `python -I tools/quoted-line-exists.py --selftest` → `QUOTED_LINE_EXISTS_SELFTEST: 4/4 pass`; the r64-records demo at the tip → `quotes=16 backed=12 missing=4` exit 1 with all four named (`.ufo/evidence/round-65/win-host/live-quoted-demo.txt`, `live-quoted-explicit.txt`) | round 65 |
+| counter-arm liveness check | verify that every declared red arm of a frozen counter carries one committed input that MOVES its tally: a manifest row pins the instrument bytes at a revision, the committed input, the tally field, its do-nothing baseline and the expected move; the checker extracts the instrument from git objects (never a worktree), runs it `python -I` against the input, and marks the row `ARM_LIVE` only when the exit matches and the parsed tally ≥ expect_min and > baseline, else `ARM_DEAD`; an empty manifest is refused exit 2 | `python -I tools/arm-liveness.py --selftest` → `ARM_LIVENESS_SELFTEST: 4/4 pass`; the standing manifest → `rows=3 live=3 dead=0` exit 0; the dead-arm demo — a scratch manifest row pinning the FROZEN bind tool over `7d7f9ca8..87e95597` reads `ARM_DEAD … findings=0` exit 1, the same row re-pinned to the r66 tool reads `ARM_LIVE … findings=4` exit 0 (`.ufo/evidence/round-66/win-host/live-selftest-liveness.txt`, `live-liveness-standings.txt`, `live-demo-dead.txt`, `live-demo-live.txt`, the two `live-demo-manifest-*.json`) | round 66 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -3438,3 +3439,75 @@ monitor inputs).
 |---|---|---|---|---|---|---|---|
 | R66-C1 | the bind sweep's candidates scope stops being range-added-only: `tools/receipt-commit-bind.py` gains two arms over every commit in the range — arm 2, every full `.ufo/evidence/…`/`tools/…` span in a commit message must resolve at that commit (`git cat-file -e <commit>:<path>`); arm 3, every file-like token (basename with a disclosed receipt/tool extension) in a commit message must resolve to a path anywhere in that commit's tree, so naming content the tree does not carry is the flagged defect whether or not the range adds it; arm 1 (the frozen range-added rule, per-path first-hit counting) unchanged; selftest 4/4 → 6/6 (new red arms: the nowhere-named `87e95597` shape, the span-absent shape); fail-closed empty-range guard now demands no evidence adds AND no spans AND no tokens; sourced on new row S297 (git-diff-tree docs — the page that defines what `--diff-filter=A` can see, i.e. the frozen scope itself), opened this round | axis move (closes the r65 closure's routed defect 1; the checker blob changes only this round, per the routing) | calibration (numeric score 8 unchanged, at the lane-attainable cap; the move is record-attribution honesty: the vacuous-pass class becomes a flagged defect instead of an inspection finding) | at head `469cde0f`: the frozen sweep over `7d7f9ca8..87e95597` reads `named=0 findings=0` exit 0 on the genuinely defective range (rehearsal receipt `rehearsal/reh-bind-frozen-vacuous.txt`; the r65 receipt `live-bind-erratum-sweep.txt` is the landed record); `git show 469cde0f:tools/receipt-commit-bind.py | grep -c "SPAN_RE\|TOKEN_RE"` → 0 (no message-span or token arm exists) | selftest `RECEIPT_COMMIT_BIND_SELFTEST: 6/6 pass` exit 0; sweep `7d7f9ca8..87e95597` → `findings=4` exit 1, exactly the four `names-unknown` defects at `87e95597` (the r65 empty-commit case caught); sweep `d0baf616..c7d28b19` → still exactly 1 BIND_DEFECT (`6876d746`) exit 1 — the frozen discriminator does not regress; sweep `7d7f9ca8..6db7e2fc` → `findings=0` exit 0; sweep `7d7f9ca8..ced05ce1` → `findings=8` exit 1 (arm 1's four + arm 3's four, all at `87e95597`); this round's own range → `findings=0` exit 0 (green-after); S297 grep 0 → 1; registry rows 156 → 157; the guard RED at the work commit (`lost=13`, miss=0 vs forecast) and `lost=0 ok` exit 0 at both floors at the rekey commit and the tip | `python -I tools/receipt-commit-bind.py --selftest`; `python -I tools/receipt-commit-bind.py --repo . --base 7d7f9ca8… --tip 87e95597…`; `python -I tools/receipt-commit-bind.py --repo . --base d0baf616… --tip c7d28b19…`; `python -I tools/receipt-commit-bind.py --repo . --base 469cde0f… --tip <round tip>`; `git show <rev>:corpus/SOURCES.md \| grep -cE '^\| S297 '`; the `COLDREAD_PRECHECK` lines | the C1 work commit (declared work); receipts land in the following commit(s) |
 | R66-C2 | `tools/arm-liveness.py` + `tools/arm-liveness.json` (new; schema `tameshi-arm-liveness-v1`): every declared red arm of the receipt-family counters carries one committed input that must MOVE its tally — the checker extracts the instrument from git objects at the row's pinned revision (never a worktree), runs it `python -I` against the committed input, `ARM_LIVE` only when exit matches AND parsed tally ≥ expect_min AND > baseline, else `ARM_DEAD`; standing rows: bind r64-range red (findings≥1), quoted-line r64-records red (missing≥4), receipt-exists declaration-commit red (missing≥5), instruments pinned at `469cde0f` (C1-independent, causally separable); selftest 4/4 hermetic (live row, dead row, vacuous manifest, usage); capability row `counter-arm liveness check` enters the table | axis move + capability (operability, verdict-only; adopts considerthese 2026-10-28 proposal 2 — the ONE assimilation this round) | operability (verdict-only axis: the capability exists, runs on this host, its selftest passes, and its standing manifest verifies on committed bytes at pinned revisions) | at head `469cde0f`: `git ls-tree 469cde0f tools/ \| grep -c arm-liveness` → 0 — no liveness instrument exists, and the r65 blind spot (mistake 5) was found by inspection, not by any standing check | selftest `ARM_LIVENESS_SELFTEST: 4/4 pass` exit 0; the standing manifest sweep → `rows=3 live=3 dead=0` exit 0; the dead-arm demo — a scratch manifest row pinning the FROZEN bind tool over `7d7f9ca8..87e95597` (expect findings≥1) reads `ARM_DEAD … findings=0` exit 1 (the r65 blind spot caught mechanically), and the same row re-pinned to the r66 tool reads `ARM_LIVE … findings=4` exit 0 (rehearsal receipts `reh-demo-dead.txt` / `reh-demo-live.txt`; live re-run at the round tip) | `python -I tools/arm-liveness.py --selftest`; `python -I tools/arm-liveness.py --repo . --manifest tools/arm-liveness.json`; the demo pair with the scratch manifests at the receipts commit | the C2 work commit (tool + manifest); sweep and demo receipts at the receipts commit |
+
+## Round 66 — measured claims (2026-11-01; L1 `TameshiR66`)
+
+Declaration `b459653c49f262cc9a144d798410bfcb928e8758` (planned block +
+criterion-110 measured forecast + lesson + rehearsal receipts); correction
+commits `b60ecab3e5ae24d162bb7c0e366cb35fc6d9448d` (intended to land the 21
+rehearsal receipt bytes its predecessor's pathspec list missed — but used
+workspace-relative paths, so the helper's remove-on-missing semantics
+dropped the lesson and LOG instead; lesson mistakes 3–4) and
+`d5ab10ff88c0015e526a2cbcfb687fa2f121f8fd` (restores both files and lands
+the 21 named receipts; both slips self-caught by the diff-tree-before-
+next-stage practice and disclosed in the lesson); work commits C1
+`ff251f386dcf368f4c7912f0a4feab2b5ff7c756` (bind checker candidates-scope
+arms + SOURCES S297 + the round-66 note) and C2
+`e8e0f0e9a06aa3b56d478dfd797fe2d108c902ec` (arm-liveness + manifest);
+rekey `5d969f4edbb6611014ec30e133c4b243e4dbf47e` (the live RED paid: 13
+fresh input-keyed entries as `r66-batch-1`, monitor restored at both
+floors). Receipts commit: this one. A plumbing-only scratch repo rehearsed
+every stage before the live run (rehearsal work `1a3b00b5…`, rekey
+`42488eb7…`; receipts `.ufo/evidence/round-66/win-host/rehearsal/`, landed
+at `d5ab10ff`); the scratch is deleted with the round.
+
+| Claim | Verdict | After (measured) | Counting commands (live outputs in the receipts commit) | Measured commit |
+|---|---|---|---|---|
+| R66-C1 | verifies (measured), with the own-range erratum below | selftest `RECEIPT_COMMIT_BIND_SELFTEST: 6/6 pass` exit 0 (the two new red arms: nowhere-named `87e95597` shape, span-absent shape); the r65 pre-correction range `7d7f9ca8..87e95597`: FROZEN tool `named=0 carried=0 findings=0` exit 0 (`live-bind-vacuous.txt` — the vacuous pass, the before) vs the r66 tool `findings=4` exit 1 with exactly the four `names-unknown` defects at `87e95597` (`live-bind-erratum-range.txt` — the carry-in catch, the after); the r64 range `d0baf616..c7d28b19` → `findings=1` exit 1 naming `6876d746` only (`live-bind-r64-range.txt` — the frozen discriminator does not regress); the r65 clean range `7d7f9ca8..6db7e2fc` → `findings=0` exit 0 (`live-bind-r65-range.txt`); the full r65 range `7d7f9ca8..ced05ce1` → `named=9 carried=5 findings=8` exit 1, arm 1's four + arm 3's four all at `87e95597` (`live-bind-full-range66.txt`); S297 grep 0 → 1; registry rows 156 → 157 (census-clean, no new warning; the same 17 W04 + 1 W01 set); the guard RED at the work commit `lost=13` matching the criterion-110 forecast (heading sets byte-equal IN ORDER, miss = 0) → `lost=0 ok` exit 0 at the rekey commit at BOTH floors (round `469cde0f` 64 → 64, historic `8b0042bd` 46 → 64) + rev mode `credited=64/64` probe 20/20 | `python -I tools/receipt-commit-bind.py --selftest`; `python -I <frozen bytes> --repo . --base 7d7f9ca8… --tip 87e95597…`; `python -I tools/receipt-commit-bind.py --repo . --base 7d7f9ca8… --tip 87e95597…`; `python -I tools/receipt-commit-bind.py --repo . --base d0baf616… --tip c7d28b19…`; `python -I tools/receipt-commit-bind.py --repo . --base 7d7f9ca8… --tip 6db7e2fc…`; `python -I tools/receipt-commit-bind.py --repo . --base 7d7f9ca8… --tip ced05ce1…`; `git show <rev>:corpus/SOURCES.md \| grep -cE '^\| S297 '`; the `COLDREAD_PRECHECK` lines (receipts `live-red.out`, `live-green.out`, `live-green-hist.out`, `live-revmode.out`) | C1 commit `ff251f38…`; sweep and guard receipts at the receipts commit |
+| R66-C2 | verifies (measured) | `tools/arm-liveness.py` + `tools/arm-liveness.json` 0 → 1; selftest `ARM_LIVENESS_SELFTEST: 4/4 pass` exit 0 (live row, dead row, vacuous manifest, usage); the standing manifest sweep → `rows=3 live=3 dead=0` exit 0 (`bind-r64-red findings=1`, `quoted-demo-red missing=4`, `rexists-declare-red missing=5` — every receipt-family red arm now has a committed input that moves it, instruments pinned at `469cde0f` so the rows are C1-independent); the dead-arm demo pair: the FROZEN bind tool pinned over `7d7f9ca8..87e95597` reads `ARM_DEAD bind-candidates-red tally=findings=0 exit=0` exit 1 — the r65 blind spot caught mechanically — and the same row re-pinned to the r66 tool at C2 reads `ARM_LIVE bind-candidates-red tally=findings=4 exit=1` exit 0; the shared no-harm story as C1 (RED `lost=13` miss=0 → `lost=0 ok` both floors + rev 64/64) | `python -I tools/arm-liveness.py --selftest`; `python -I tools/arm-liveness.py --repo . --manifest tools/arm-liveness.json`; the demo pair with the scratch manifests at the receipts commit (`live-demo-dead.txt`, `live-demo-live.txt`, `live-demo-manifest-frozen.json`, `live-demo-manifest-r66.json`) | C2 commit `e8e0f0e9…`; sweep and demo receipts at the receipts commit |
+
+**Own-range erratum (self-caught, corrected in-round, disclosed).** The
+declared green-after ("this round's own range → findings=0 exit 0") held at
+the declaration state: the sweep over `469cde0f..b459653c` (K1) reads
+`findings=0` (K1's message names no file tokens — receipt `live-bind-own-range-k1.txt`).
+The correction chain then produced the exact routed defect class ON THIS
+ROUND'S OWN HISTORY: K1b `b60ecab3` names 21 rehearsal receipt basenames
+its tree does not carry (its pathspec list no-op'd; and its own two
+workspace-relative paths dropped the lesson and LOG from the tree), and the
+instrument's own sweep over `469cde0f..e8e0f0e9` reads `findings=42` exit 1
+— 21 arm-1 defects + 21 arm-3 defects, ALL at `b60ecab3` — with the
+correction commit `d5ab10ff` reading `BIND_OK` ×21 and `resolves` ×21
+(receipt `live-bind-own-range.txt`). This is the routed r64/r65 class
+caught BY THE INSTRUMENT on the round's own records in-round: the round
+reports it honestly (the declared findings=0 does not hold on the full
+range), the bytes landed at `d5ab10ff`, the slips are lesson mistakes 3–4,
+and the standing value is real: any successor sweep of this range now
+names `b60ecab3` mechanically instead of by inspection.
+
+Capability row entered (see `## Capabilities`): **counter-arm liveness
+check** — first working round 66 (the capabilities-table mid-file insertion
+is disclosed; additivity `raw_old_only=0` on the file holds).
+
+Axis verdicts: **calibration: improved** (8 → 8 at the lane-attainable cap;
+the move closes the r65 closure's routed defect 1 — the vacuous-pass class
+becomes a flagged defect, red arms on the landed historical defects
+`6876d746` and `87e95597` and, in-round, on the round's own `b60ecab3`).
+**Operability: improved** (verdict-only axis; considerthese proposal 2
+adopted and demonstrated: the liveness checker exists, runs on this host,
+its selftest passes, its standing manifest verifies on committed bytes at
+pinned revisions, and its dead-arm demo catches the r65 blind spot on the
+frozen bytes). No owned axis harmed: depth 10, freshness 9 unchanged (no
+depth or freshness surface touched — PROVINCE.md, SKILL.md, README.md,
+corpus/QUALITY.md, tools/registry.json, the guarded probe
+`tools/coldread-precheck-portable.py` (worktree sha256 `892a045d…`),
+SHONEN.md and the leg ledger blob-identical `469cde0f` → `5d969f4e`;
+`git diff-tree -r --name-status 469cde0f 5d969f4e -- PROVINCE.md SKILL.md
+README.md corpus/QUALITY.md tools/registry.json SHONEN.md
+tools/mutate-and-run.sh tools/coldread-precheck-portable.py` is empty and
+`corpus/SOURCES.md` is the only monitored file in the round's diffs); the
+no-harm guard reads `lost=0 ok` at the rekey tip at both floors with the
+probe gate green; SOURCES 156 → 157 (S297 mined, census-clean); additivity
+`raw_old_only=0` on every landed pair (LOG/SCORECARD pure appends
+`verbatim_prefix=true` at base→K4; SOURCES mid-file insertion
+`verbatim_prefix=false` disclosed; ledger `verbatim_prefix=false`
+disclosed).
