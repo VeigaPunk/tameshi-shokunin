@@ -3149,3 +3149,31 @@ Round 66 measured (appended at the receipts commit). C1 verifies — the bind ch
 Assimilation: considerthese 2026-10-28 proposal 2 (counter-arm liveness check) ADOPTED and demonstrated this round (proposals 3–5 unadopted); shokuknow unreachable. L1-only round (the L2 floor has no surface on this host; the r60 L0 question stands). Gate: no fresh rejection this round — the one source opened (S297) was adopted; the S091 price-out (gitrevisions, held) and the standing S293 W04 marker are stated in the lesson.
 
 Round-final shas: declaration `b459653c49f262cc9a144d798410bfcb928e8758`; corrections `b60ecab3e5ae24d162bb7c0e366cb35fc6d9448d`, `d5ab10ff88c0015e526a2cbcfb687fa2f121f8fd`; C1 `ff251f386dcf368f4c7912f0a4feab2b5ff7c756`; C2 `e8e0f0e9a06aa3b56d478dfd797fe2d108c902ec`; rekey `5d969f4edbb6611014ec30e133c4b243e4dbf47e` (all pushed). Final receipts (`.ufo/evidence/round-66/win-host/`): `RECEIPT_COMMIT_BIND_SELFTEST: 6/6 pass` exit 0; `ARM_LIVENESS_SELFTEST: 4/4 pass` exit 0; `live-bind-vacuous.txt` (frozen tool, findings=0 exit 0 — the before); `live-bind-erratum-range.txt` findings=4 exit 1 (the carry-in catch); `live-bind-r64-range.txt` findings=1 exit 1; `live-bind-r65-range.txt` findings=0 exit 0; `live-bind-full-range66.txt` findings=8 exit 1; `live-liveness-standings.txt` rows=3 live=3 dead=0 exit 0; `live-demo-dead.txt` / `live-demo-live.txt` (ARM_DEAD findings=0 / ARM_LIVE findings=4); guard RED `lost=13` miss=0 at `ff251f38` (`live-red.out`) → `lost=0 ok` exit 0 at `5d969f4e` at both floors + rev mode 64/64 (`live-green.out`, `live-green-hist.out`, `live-revmode.out`); additivity `raw_old_only=0` on SOURCES (`469cde0f→ff251f38`), LOG and SCORECARD (`469cde0f→5d969f4e`), ledger (`e8e0f0e9→5d969f4e`). Census exit 0 at round start (156 rows) and at the fleet-root working tree at round end (the same pre-existing 17 W04 + 1 W01 set).
+
+Round 67 corrections (appended at the round-67 corrections commit, before
+this round's declared work; status-neutral — the r66 non-author closure's
+four routed record defects, append-only: the stale lines above are preserved
+and stay flagged by the standing quoted-line sweep; this entry is the
+correction of record). (1) Stale selftest figure: the R66-C1 planned and
+measured rows, this file's round-final receipts line, and the round-66
+lesson's pre-data Verdicts pin cite the bind checker's selftest as
+six-of-seven arms; the final corrected bytes (5541abaf) read seven-of-seven
+— receipt `.ufo/evidence/round-66/win-host/live-selftest-bind.txt`, summary
+`RECEIPT_COMMIT_BIND_SELFTEST: 7/7 pass`. (2) Own-range receipt pointer: the
+SCORECARD own-range erratum cites the sweep as `469cde0f..e8e0f0e9`; the
+named receipt pins `469cde0f..5d969f4e` — its summary reproduces
+byte-identically over that range at the pinned checker bytes this round
+(receipts `bind-own-range-r67.txt`, `bind-erratum-range-r67.txt`); counts
+identical either way (all findings at `b60ecab3`). (3) The erratum's
+"dropped from the tree" phrase overstates: the committed tree never lost the
+lesson or the LOG — `b60ecab3` is an empty commit, tree byte-identical to
+its parent's (`git diff-tree -r --name-status` prints nothing for it); the
+`d5ab10ff` message carries the same phrasing and is never rewritten. (4) The
+capabilities-table bind-sweep row cites the r65-era selftest four-of-four;
+the final bytes read seven-of-seven (the registry home is append-only — the
+SCORECARD correction block is the sync of record). Lesson mistake row 4 (the
+K1b wrong-base pathspec slip, class + evidence + captured-by + fix) is
+appended to `corpus/lessons/round-66.md` by the same commit as routed; it
+was missing while three artifacts cited it. Before-state counting receipt:
+`corrections-before-greps.txt`; the round-66 lesson sweep that names its own
+stale pre-data figure: `qline-red-round-66.txt`.

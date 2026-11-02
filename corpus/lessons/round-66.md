@@ -329,3 +329,32 @@ the pre-round tip). Each lands as its own commit with its own demonstration.
    suffix-sibling; delimited matching is the rule the r65 lesson's
    "delimited-token match" phrase already implied, and the round's own
    history exercised it.
+
+
+## Mistake 4 (appended at the round-67 corrections commit, 2026-11-02 — the
+## round-66 non-author closure routed the missing row; the substance was
+## already disclosed in the round-66 report erratum bullet, the d5ab10ff
+## message, the LOG correction and measured entries, and the SCORECARD
+## erratum; the numbered lesson row is what was missing and is added here as
+## a new appended row, never a rewrite)
+
+4. **The K1b correction attempt passed workspace-relative paths where the
+   treecommit helper expects repo-relative ones, and its landing set came
+   out empty (class: wrong-base-pathspec-empty-landing-set; captured-by:
+   `git diff-tree -r --name-status 469cde0f b60ecab3` — no output, the
+   commit's tree byte-identical to its parent's — run before the next
+   stage, the mistake-3 practice applied to the correction itself).**
+   Evidence: `b60ecab3` claims 21 rehearsal receipts plus correction notes;
+   its tree carries none of them (the two workspace-relative,
+   workspace-prefixed paths matched nothing on disk and the helper's
+   missing-on-disk-removes semantics turned them into removals that removed
+   nothing). The commit is EMPTY, not destructive: the lesson and LOG were
+   never absent from any committed tree — the "dropped from the tree"
+   phrasing in the d5ab10ff message and the SCORECARD erratum overstates
+   the tree-level effect (corrected in the round-67 SCORECARD correction
+   block, R67 correction 3). Fix: K1c `d5ab10ff` re-lists the 21 receipts
+   as literal repo-relative paths and lands every one of them; the
+   run-book rule is the mistake-3 rule (literal pathspecs, diff-tree
+   verification of every landing) applied to the base spelling as well —
+   and a landing whose diff-tree is empty while its message names content
+   is exactly the class the round-66 bind arms flag.

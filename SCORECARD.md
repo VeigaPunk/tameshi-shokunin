@@ -3511,3 +3511,48 @@ probe gate green; SOURCES 156 → 157 (S297 mined, census-clean); additivity
 `verbatim_prefix=true` at base→K4; SOURCES mid-file insertion
 `verbatim_prefix=false` disclosed; ledger `verbatim_prefix=false`
 disclosed).
+
+## Round-67 corrections — the r66 closure's four routed record defects (appended 2026-11-02, status-neutral, append-only: the stale cells above are preserved and stay flagged by the standing quoted-line sweep; these paragraphs are the corrections of record)
+
+R67 correction 1 — stale selftest figure. The R66-C1 planned row and the
+R66-C1 measured row above carry the bind checker's selftest figure as
+six-of-seven arms; the final corrected checker bytes (the name-rule v2 blob
+landed at `5541abaff6ed2057c97e6c1243135b1da7f9ed6d`) read seven-of-seven —
+receipt `.ufo/evidence/round-66/win-host/live-selftest-bind.txt`, whose
+summary line is `RECEIPT_COMMIT_BIND_SELFTEST: 7/7 pass` (the seventh arm is
+the suffix-collision green arm added with name rule v2). The same stale
+figure also sits in the LOG round-final receipts line and in the round-66
+lesson's pre-data Verdicts pin (that pin was declared before the rule
+correction, and the lesson's mistake-5 section documents the change to
+seven-of-seven); the correction of record for all three sites is this
+paragraph and the LOG entry appended by the corrections commit.
+
+R67 correction 2 — own-range receipt pointer. The own-range erratum above
+cites the sweep as `469cde0f..e8e0f0e9`; the receipt it names
+(`live-bind-own-range.txt`, unique in the tree) pins `469cde0f..5d969f4e` —
+its summary `commits=6 evidence=42 named=43 carried=22 spans=3 bare=47
+findings=42` reproduces byte-identically over that range at the pinned
+checker bytes (re-run receipted this round), and the counts over the
+formerly cited range are identical either way (all findings at `b60ecab3`).
+Correction of record: the range is `469cde0f..5d969f4e`.
+
+R67 correction 3 — "dropped from the tree" wording. The own-range erratum
+above (and the correction commit `d5ab10ff`'s message, which is never
+rewritten) say the `b60ecab3` slip dropped the lesson and LOG from the
+tree. The committed tree never lost them: `b60ecab3` is an empty commit —
+its tree is byte-identical to its parent's (`git diff-tree -r --name-status
+469cde0f b60ecab3` prints nothing; both files present as the same blobs at
+both revisions) — and the drop happened only inside the correction
+attempt's landing-set construction, not in any committed tree. The record
+states the tree-level fact here.
+
+R67 correction 4 — registry-home sync (the r66 closure's routed defect 3).
+The capabilities-table row "commit-message receipt binding sweep" (round
+65) cites the selftest as four-of-four — the r65-era figure. The final
+checker bytes read seven-of-seven (receipt cited in correction 1); the
+row's two range citations remain accurate at the final bytes (the r64 range
+still reads one defect, the r65 clean range zero — re-run receipted this
+round as manifest-row demonstrations). Under the additivity discipline the
+registry home is append-only, so this note is the sync of record; the
+standing manifest rows that pin the checker's red arms on real history land
+this round as claim R67-C2.
