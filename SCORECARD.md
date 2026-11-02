@@ -254,6 +254,7 @@ written and are superseded here:
 | commit-message receipt binding sweep | sweep a commit range on committed objects: every evidence file ADDED under `.ufo/evidence/` whose basename is named in a commit's message must exist in that commit's tree; violations named (`BIND_DEFECT`) with exit 1; ranges adding no evidence file refused exit 2 (no vacuous pass) | `python -I tools/receipt-commit-bind.py --selftest` → `RECEIPT_COMMIT_BIND_SELFTEST: 4/4 pass`; the r64 range `d0baf616..c7d28b19` → `findings=1` exit 1 naming `6876d746`; `7d7f9ca8..6db7e2fc` → `findings=0` exit 0 (`.ufo/evidence/round-65/win-host/live-bind-r64-range.txt`, `live-bind-r65-range.txt`) | round 65 |
 | quoted-line receipt backability | check a record's quoted counter lines byte-for-byte against committed receipt bytes at a pinned rev: verdict-shaped backtick spans must be byte substrings of receipts the record itself cites (directory-cite expansion, unique-basename resolution, named `--extra-root` filesystem check for fleet-root surfaces); unbacked quotes named with exit 1; empty documents refused exit 2 | `python -I tools/quoted-line-exists.py --selftest` → `QUOTED_LINE_EXISTS_SELFTEST: 4/4 pass`; the r64-records demo at the tip → `quotes=16 backed=12 missing=4` exit 1 with all four named (`.ufo/evidence/round-65/win-host/live-quoted-demo.txt`, `live-quoted-explicit.txt`) | round 65 |
 | counter-arm liveness check | verify that every declared red arm of a frozen counter carries one committed input that MOVES its tally: a manifest row pins the instrument bytes at a revision, the committed input, the tally field, its do-nothing baseline and the expected move; the checker extracts the instrument from git objects (never a worktree), runs it `python -I` against the input, and marks the row `ARM_LIVE` only when the exit matches and the parsed tally ≥ expect_min and > baseline, else `ARM_DEAD`; an empty manifest is refused exit 2 | `python -I tools/arm-liveness.py --selftest` → `ARM_LIVENESS_SELFTEST: 4/4 pass`; the standing manifest → `rows=3 live=3 dead=0` exit 0; the dead-arm demo — a scratch manifest row pinning the FROZEN bind tool over `7d7f9ca8..87e95597` reads `ARM_DEAD … findings=0` exit 1, the same row re-pinned to the r66 tool reads `ARM_LIVE … findings=4` exit 0 (`.ufo/evidence/round-66/win-host/live-selftest-liveness.txt`, `live-liveness-standings.txt`, `live-demo-dead.txt`, `live-demo-live.txt`, the two `live-demo-manifest-*.json`) | round 66 |
+| figure-attribution check | verify that a record figure pinned to ONE named receipt lives in THAT receipt's committed bytes: a manifest row pins the doc bytes at a revision, the exact figure line and ONE receipt path at a revision, both read from git objects (never a worktree); rows carry an expectation (attributed or misattributed) so the standing red arm MEASURES misattributed on every sweep; unresolvable inputs are setup exit 2 before any effect, a zero-row manifest is refused exit 2; the anywhere-in-cited-set relaxation is the cheat family refused by construction — the committed control shows a set-matcher passing the exact pair the instrument flags | `python -I -X utf8 tools/figure-attribution.py --selftest` → `FIGURE_ATTRIBUTION_SELFTEST: 7/7 pass`; the standing manifest → `FIGURE_ATTRIBUTION: rows=3 met=3 unexpected=0` exit 0 with `FIGURE_ROW r66-stale-selftest-figure-red expect=misattributed measured=misattributed ok` (`.ufo/evidence/round-68/win-host/figattn-selftest-r68.txt`, `figattn-standings-r68.txt`, `controls/cheat-anywhere-passes-red.txt`, `controls/cheat-anywhere.py`) | round 68 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -3754,3 +3755,78 @@ receipt-after-subject ordering; every commit message names only file
 tokens its tree carries; the round ends with a self-sweep of the round
 range (forecast: `findings=0` exit 0) and a carries-what-it-names
 diff-tree check of the tip before push.
+
+
+## Round 68 — measured claims (appended at the receipts commit, 2026-11-02)
+
+Declaration `c60d862277e4bf68d7fdbcd81d410c62e511ed5a` (planned block +
+lesson + LOG declared entry + S299 extract + census receipt + rehearsal
+receipts); work commits C1 `1a063d5f8e2f2b8fa6131bd1a28167c3a81a6871`
+(the figure-attribution tool + manifest) and C2
+`dcd10cc5f09cf0857ff8deab523992df37b0a284` (arm-liveness work slot +
+manifest row + SOURCES S299 + tail note); rekey
+`f694df16d74b03b3556cc4fcadc7107523781f42` (the live RED paid: 13 fresh
+input-keyed entries as `r68-batch-1`, ledger 745 → 758, monitor restored
+at both floors). Receipts commit: this one.
+
+| Claim | Verdict | After (measured) | Counting commands (live outputs in the receipts) | Measured commit |
+|---|---|---|---|---|
+| R68-C1 | verifies (measured) | selftest `FIGURE_ATTRIBUTION_SELFTEST: 7/7 pass` exit 0 (`figattn-selftest-r68.txt`; rehearsed pre-data at `reh-figattn-selftest.txt`); the standing sweep `FIGURE_ATTRIBUTION: rows=3 met=3 unexpected=0` exit 0 (`figattn-standings-r68.txt`) with the red arm measured, not assumed: `FIGURE_ROW r66-stale-selftest-figure-red expect=misattributed measured=misattributed ok` (the r66 stale cells are a standing measured red arm from this round on); the cheat control `CHEAT_ANYWHERE: found=1 cited=2 (set-matcher: pass=true)` beside the instrument's named-receipt verdict on the same pair (`controls/cheat-anywhere-passes-red.txt`, the set-matcher script landed as `controls/cheat-anywhere.py`) — the anywhere-in-cited-set relaxation demonstrably cannot replace the named-receipt binding; capability-row grep 0 → 1 | `python -I -X utf8 tools/figure-attribution.py --selftest`; `python -I -X utf8 tools/figure-attribution.py --repo . --manifest tools/figure-attribution.json`; `git show <rev>:SCORECARD.md \| grep -c 'figure-attribution check'` | C1 commit `1a063d5f…`; receipts at the receipts commit |
+| R68-C2 | verifies (measured) | selftest `ARM_LIVENESS_SELFTEST: 5/5 pass` exit 0 (`arm-liveness-selftest-r68.txt`; arm 5 is the work slot: the toy-work tally moves only when the slot supplied the directory); manifest id-grep 5 → 6; the standing sweep `ARM_LIVENESS: rows=6 live=6 dead=0` exit 0 (`arm-live-standings-r68.txt`) with `ARM_LIVE precheck-sources-red tally=lost=13 exit=1` — the no-harm guard's RED arm re-executed on every sweep at the guarded probe bytes (sha256 `892a045d…` pinned at `859a736d`) over the committed r67 pair floor `7362e15c` / cand `ab67ddd6`; the base 5-row sweep at the frozen r67 checker bytes reads live (`arm-live-standings-base-r68.txt`); unchanged checkers receipted: bind `RECEIPT_COMMIT_BIND_SELFTEST: 7/7 pass` (`bind-selftest-r68.txt`), quoted-line `QUOTED_LINE_EXISTS_SELFTEST: 4/4 pass` (`qline-selftest-r68.txt`); S299 grep 0 → 1; registry rows 158 → 159 | `python -I tools/arm-liveness.py --selftest`; `python -I tools/arm-liveness.py --repo . --manifest tools/arm-liveness.json`; `grep -c '"id"' tools/arm-liveness.json`; `git show <rev>:corpus/SOURCES.md \| grep -cE '^\| S299 '`; the `COLDREAD_PRECHECK` lines | C2 commit `dcd10cc5…`; receipts at the receipts commit |
+
+Capability row entered (see `## Capabilities`): **figure-attribution
+check** — first working round 68 (the mid-file insertion is disclosed;
+additivity `raw_old_only=0` on the file holds).
+
+**Arm-liveness capability-row sync (append-only; the r67 correction-4
+precedent).** The `counter-arm liveness check` row (round 66) carries
+the r66-era figures — selftest 4/4, standing manifest `rows=3 live=3
+dead=0` — true at the r66 bytes and unchanged there; at the round-68
+checker bytes the same instruments read selftest 5/5 and the manifest
+`rows=6 live=6 dead=0` with the precheck RED arm live
+(`arm-liveness-selftest-r68.txt`, `arm-live-standings-r68.txt`). Old →
+new logged in the round-68 lesson; the row above is not edited in place
+under the additivity discipline.
+
+Shared no-harm story (measured): the RED at the C2 work commit
+`dcd10cc5` reads `COLDREAD_PRECHECK floor=859a736deb1e floor_credited=64
+cand=dcd10cc5f09c cand_credited=51 lost=13 RED` exit 1 (receipt
+`live-red-r68.out` with the JSON receipt `red-receipt-r68.json`; the 13
+LOST heading lines decode byte-equal in order to the r67 measured set
+and to this round's rehearsal — miss = 0; receipts `red-decode-r68.txt`
+and `reh-red-decode-r68.txt`, each side decoded by its own encoding) —
+paid by the `r68-batch-1` rekey: `REBIND OK sections=13 entries_added=13
+ledger_before=745` (`rebind-stdout-r68.txt`; ledger 745 → 758; machinery
+constants-only diff `make-rebind-r68.diff`, 6 changed pairs, every
+changed line constants-only: round number, batch id, trace path,
+carried_from) → `lost=0 ok` exit 0 at BOTH floors at the rekey commit
+`f694df16` (receipt `live-green-r68.out`: round floor `859a736d` 64 →
+64; receipt `live-green-hist-r68.out`: historic `8b0042bd` 46 → 64) plus
+rev mode credited=64/64 probe 20/20 (receipt `live-revmode-r68.out`);
+additivity `raw_old_only=0` on SOURCES (`859a736d` → `dcd10cc5`,
+`verbatim_prefix=false` disclosed — the mid-file row insertion + tail
+note; receipt `additivity-sources-r68.txt`) and on the ledger
+(`dcd10cc5` → `f694df16`, `verbatim_prefix=false` disclosed — the
+mid-file entries-array insertion; receipt `additivity-ledger-r68.txt`),
+the LOG/SCORECARD pairs at the tip receipts commit
+(`additivity-logscorecard-r68.txt`); no owned axis harmed: depth 10,
+freshness 9, calibration 8 unchanged (no depth or freshness surface
+touched — PROVINCE.md, SKILL.md, README.md, corpus/QUALITY.md,
+tools/registry.json, SHONEN.md, tools/mutate-and-run.sh and the guarded
+probe `tools/coldread-precheck-portable.py` (blob sha256 `892a045d…`)
+blob-identical base → tip; `git diff-tree -r --name-status 859a736d
+<tip> -- PROVINCE.md SKILL.md README.md corpus/QUALITY.md
+tools/registry.json SHONEN.md tools/mutate-and-run.sh
+tools/coldread-precheck-portable.py` is empty and corpus/SOURCES.md is
+the only monitored file in the round's diffs, rekeyed).
+
+Tip receipts pinned here pre-data (they land at the tip receipts
+commit): the tip guards at both floors + rev (`live-tip-guard-r68.out`,
+`live-tip-guard-hist-r68.out`, `live-tip-revmode-r68.out`), the tip
+invariant sweeps (`qline-tip-log.txt`, `qline-tip-scorecard.txt`,
+`qline-green-round-68.txt`), the LOG/SCORECARD additivity pair
+(`additivity-logscorecard-r68.txt`), the round-range self-sweep
+(`tip-self-sweep-r68.txt` — forecast `findings=0` exit 0), and the
+census end receipts (`census-end-r68.txt` at the fleet root, exit 0;
+`census-end-lanetip-r68.txt` at the lane-tip-shaped fleet root, 159
+rows).

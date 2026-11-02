@@ -3355,3 +3355,40 @@ rev mode. Census start exit 0 (receipt `census-start-r68.txt`; the
 pre-existing 17 W04 + 1 W01 set). Receipts:
 `.ufo/evidence/round-68/win-host/`. Round-final shas: declaration this
 commit, work commits next (receipts follow).
+
+
+Round 68 receipts: C1 verifies (selftest `FIGURE_ATTRIBUTION_SELFTEST:
+7/7 pass` exit 0, `figattn-selftest-r68.txt`; standing sweep
+`FIGURE_ATTRIBUTION: rows=3 met=3 unexpected=0` exit 0,
+`figattn-standings-r68.txt`, with the red arm measured misattributed;
+the cheat control `CHEAT_ANYWHERE: found=1 cited=2 (set-matcher:
+pass=true)` beside the instrument verdict on the same pair,
+`controls/cheat-anywhere-passes-red.txt` + the set-matcher script
+`controls/cheat-anywhere.py`), C2 verifies (selftest
+`ARM_LIVENESS_SELFTEST: 5/5 pass` exit 0 — arm 5 the work slot,
+`arm-liveness-selftest-r68.txt`; manifest id-grep 6; the standing sweep
+`ARM_LIVENESS: rows=6 live=6 dead=0` exit 0, `arm-live-standings-r68.txt`,
+with `ARM_LIVE precheck-sources-red tally=lost=13 exit=1`; the base
+5-row sweep at the frozen r67 checker bytes reads live,
+`arm-live-standings-base-r68.txt`; bind 7/7 `bind-selftest-r68.txt` and
+quoted-line 4/4 `qline-selftest-r68.txt` unchanged); shared no-harm:
+the RED at the C2 work commit reads lost=13 cand_credited=51 exit 1
+(`live-red-r68.out` + `red-receipt-r68.json`; decoded byte-equal in
+order to the r67 set and the rehearsal, miss = 0,
+`red-decode-r68.txt` + `reh-red-decode-r68.txt`) → the `r68-batch-1`
+rekey `REBIND OK sections=13 entries_added=13 ledger_before=745`
+(`rebind-stdout-r68.txt`; ledger 745 → 758; machinery constants-only
+diff `make-rebind-r68.diff`, 6 changed pairs) → `lost=0 ok` exit 0 at
+BOTH floors at the rekey commit (`live-green-r68.out`: `859a736d` 64 →
+64; `live-green-hist-r68.out`: `8b0042bd` 46 → 64) + rev mode
+credited=64/64 probe 20/20 (`live-revmode-r68.out`); additivity
+`raw_old_only=0` on SOURCES (`additivity-sources-r68.txt`) and the
+ledger (`additivity-ledger-r68.txt`), mid-file insertions disclosed;
+S299 mined (registry 158 → 159, census-clean). Capability row
+`figure-attribution check` entered; the arm-liveness capability row
+synced append-only (r66 figures stand at the r66 bytes; old → new in
+the lesson). Round-final shas: declaration `c60d8622`, C1 `1a063d5f`,
+C2 `dcd10cc5`, rekey `f694df16`, receipts this commit, tip receipts the
+next (all pushed). Assimilation: considerthese 2026-10-28 proposal 1's
+semantic half adopted (the figure-attribution instrument, C1; its
+byte-backing half landed r65) — shokuknow unreachable.
