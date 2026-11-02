@@ -38,7 +38,19 @@ Extraction rules (deterministic, disclosed):
   checked. Spans containing any of …<>|$ (ellipsis/abbreviation/placeholder
   shapes) are not byte-checkable — counted as skipped-shape.
 * backing — quote bytes must appear as a substring of some cited receipt's
-  committed bytes at REV (first backing receipt reported, paths sorted).
+  committed bytes at REV (first backing receipt reported, paths sorted),
+  where each cited receipt is scanned with its MISS-RECORD LINES REMOVED
+  (round 69 — the self-referential-backing exclusion, `corpus/lessons/
+  round-67.md` mistake 4's named successor): a line beginning
+  `QUOTE MISSING receipt=` is this checker's own record of a missing quote
+  (it prints the missing span bytes), so a receipt that quotes a verdict
+  line there records a miss — it does not back the figure. Without the
+  exclusion the backing relation is monotone in cited bytes: landing a
+  base-sweep receipt made 35 previously-missing LOG quotes "backed" by the
+  record of their own missingness (the r67 tip-count erratum). The
+  exclusion removes exactly those lines from the backing scan; every other
+  byte of the receipt still backs. The same rule applies to the explicit
+  --receipt/--quote mode.
 
 Output:
   RECEIPT  <resolved-blob|resolved-tree|ABSENT|ambiguous> <path>
@@ -55,13 +67,18 @@ cheat-family discriminators (criterion 111 shape): an always-back cheat
 fails arm 2/arm 3; an exit-0-always cheat fails arm 4.
 
 Selftest: `--selftest` builds a throwaway fixture repository under TMPDIR
-with git plumbing only and checks four arms:
+with git plumbing only and checks five arms:
   1. explicit green — quote present in receipt bytes, exit 0;
   2. explicit red — quote absent, exit 1;
   3. doc sweep — backed and unbacked quotes in one record: exactly one
      MISSING (named), exit 1;
   4. doc sweep on a record with nothing checkable exits 2 (vacuous guard),
-     and missing flags exit 2 (usage).
+     and missing flags exit 2 (usage);
+  5. self-referential red — a record whose quote appears in the cited
+     receipt ONLY inside a `QUOTE MISSING receipt=` line reads MISSING,
+     exit 1, while a second quote the same record backs through a genuine
+     receipt line still reads backed (round 69: the exclusion is the thing
+     under test — the r67 mistake becomes its red arm).
 """
 
 import argparse
@@ -84,6 +101,17 @@ DENY_LEAD = {
 }
 BAD_IN_QUOTE = ("…", "<", ">", "|", "$")
 MIN_QUOTE = 12
+
+# Round 69 — the self-referential-backing exclusion (r67 lesson mistake 4):
+# a receipt line beginning `QUOTE MISSING receipt=` is this checker's own
+# record of a missing quote and prints the missing span bytes; it must not
+# back the very quote it reports missing. The whole line (through its
+# newline) is removed from a receipt's bytes before any backing scan.
+MISS_RECORD_LINE = re.compile(rb"^QUOTE MISSING receipt=.*\n?", re.M)
+
+
+def strip_miss_records(raw):
+    return MISS_RECORD_LINE.sub(b"", raw)
 
 
 def run(repo, *args, binary=False, inp=None, check=True):
@@ -254,14 +282,15 @@ def sweep_doc(repo, rev, docpath, extra_root=None, out=sys.stdout):
     backed = 0
     missing = 0
     seen = set()
+    backing = {p: strip_miss_records(b) for p, b in receipts.items()}
     for q in quotes:
         if q in seen:
             continue
         seen.add(q)
         qb = q.encode("utf-8")
         hit = None
-        for p in sorted(receipts):
-            if qb in receipts[p]:
+        for p in sorted(backing):
+            if qb in backing[p]:
                 hit = p
                 break
         if hit:
@@ -343,7 +372,7 @@ def main(argv=None):
                 sys.stdout.write("QUOTE MISSING receipt=%s (unreadable)\n"
                                  % path)
                 return 1
-            if a.quote[0].encode("utf-8") in raw:
+            if a.quote[0].encode("utf-8") in strip_miss_records(raw):
                 sys.stdout.write('QUOTE backed receipt=%s "%s"\n'
                                  % (path, a.quote[0][:72]))
                 return 0
@@ -406,7 +435,7 @@ def _fixture(d):
 
 def selftest(out=sys.stdout):
     ok = 0
-    total = 4
+    total = 5
     d = tempfile.mkdtemp(prefix="qle-selftest-")
     try:
         fx, rev = _fixture(d)
@@ -484,6 +513,52 @@ def selftest(out=sys.stdout):
         else:
             out.write("SELFTEST_ARM4 vacuous-usage: FAIL arm4a=%r rc=%r %r arm4b_rc=%r\n"
                       % (arm4a, r.returncode, r.stdout[:200], r2.returncode))
+        # arm 5: self-referential red (round 69) — the record's quote C is
+        # byte-present in the cited receipt ONLY inside the checker's own
+        # QUOTE MISSING line; the exclusion must keep it MISSING, while the
+        # record's quote D backed through a genuine receipt line stays
+        # backed (the exclusion is the thing under test).
+        miss_rec = run(fx, "hash-object", "-w", "--stdin",
+                       inp='QUOTE MISSING receipt=- "RECEIPT_LINE_C value=9 no"\n').strip()
+        genu_rec = run(fx, "hash-object", "-w", "--stdin",
+                       inp="RECEIPT_LINE_D value=7 ok\n").strip()
+        miss_doc = run(fx, "hash-object", "-w", "--stdin", inp=(
+            "Arm5 record: the sweep missed `RECEIPT_LINE_C value=9 no` per "
+            "`selftest-missreceipt.txt`; and backed `RECEIPT_LINE_D value=7 "
+            "ok` per `selftest-genuine.txt`.\n")).strip()
+        miss_leaf = run(fx, "mktree",
+                        inp="100644 blob %s\tselftest-missreceipt.txt\n"
+                            "100644 blob %s\tselftest-genuine.txt\n"
+                            "100644 blob %s\tselftest-missdoc.md\n"
+                            % (miss_rec, genu_rec, miss_doc)).strip()
+        ev5 = run(fx, "mktree", inp="040000 tree %s\tfix\n" % miss_leaf).strip()
+        ufo5 = run(fx, "mktree",
+                   inp="040000 tree %s\tevidence\n" % ev5).strip()
+        top5 = run(fx, "mktree",
+                   inp="040000 tree %s\t.ufo\n100644 blob %s\tREADME.md\n"
+                       % (ufo5, run(fx, "hash-object", "-w", "--stdin",
+                                    inp="seed\n").strip())).strip()
+        env5 = dict(os.environ)
+        env5["GIT_AUTHOR_NAME"] = env5["GIT_COMMITTER_NAME"] = "fx"
+        env5["GIT_AUTHOR_EMAIL"] = env5["GIT_COMMITTER_EMAIL"] = "fx@fx"
+        r5c = subprocess.run(["git", "-C", fx, "commit-tree", top5, "-p", rev,
+                              "-m", "miss-record fixture"],
+                             capture_output=True, env=env5, input=b"x")
+        rev5 = r5c.stdout.decode().strip()
+        r = subprocess.run([sys.executable, os.path.join(here, "quoted-line-exists.py"),
+                            "--repo", fx, "--doc",
+                            "%s:.ufo/evidence/fix/selftest-missdoc.md" % rev5],
+                           capture_output=True)
+        txt5 = r.stdout.decode(errors="replace")
+        arm5 = (r.returncode == 1 and txt5.count("QUOTE MISSING") == 1
+                and "RECEIPT_LINE_C" in txt5 and "backed=1" in txt5
+                and "missing=1" in txt5)
+        if arm5:
+            ok += 1
+            out.write("SELFTEST_ARM5 selfref-red: PASS\n")
+        else:
+            out.write("SELFTEST_ARM5 selfref-red: FAIL rc=%r\n%s\n"
+                      % (r.returncode, txt5))
     finally:
         import shutil
         shutil.rmtree(d, ignore_errors=True)
