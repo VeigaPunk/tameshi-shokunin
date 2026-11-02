@@ -3231,3 +3231,76 @@ receipt-after-subject ordering; every commit message names only file
 tokens its tree carries. L1-only round: the L2 floor (one batched
 AgentSwarm call) has no dispatch surface on this host — the r60 L0
 question (option (b)) stands unanswered, disclosed.
+
+Round 67 measured (appended at the receipts commit). C1 verifies — the
+four carry-in corrections landed append-only at the corrections commit
+`436b60c5` (after-greps receipt `corrections-after-greps.txt`: lesson
+mistake-row-4 grep 1, SCORECARD correction markers 4, LOG corrections
+entry 1; before 0/0/0 — receipt `corrections-before-greps.txt`); the
+byte-backing invariant: base sweeps (receipts `qline-red-log-base.txt` —
+LOG missing=40 skipped=40 with 8 absent path cites;
+`qline-red-scorecard-base.txt` — SCORECARD missing=10 skipped=178 with 6
+absent; `qline-red-round-66.txt` — the round-66 lesson missing=2
+skipped=7 with none absent; its two missing quotes are the r66 pre-data
+forecast shapes, named in the round-67 lesson and left as written,
+append-only) vs the tip sweeps at the tip receipts commit
+(`qline-tip-log.txt`, `qline-tip-scorecard.txt`: the same missing and
+skipped counts with the same absent 8 and 6 — the round's own appends
+introduced zero unbacked quotes and zero absent path cites); the
+round-67 lesson sweeps exit 0 with zero missing and zero absent
+(`qline-green-round-67.txt`, tip commit). The instrument boundary is
+measured and disclosed pre-data: the stale six-of-seven cells read
+backed via the r66 rehearsal receipt's preserved pre-correction bytes
+(`.ufo/evidence/round-66/win-host/rehearsal/reh-selftest-bind.txt`) —
+figure-misattribution is beyond byte-backing; named successor
+instrument work (r59's no-cheat-passable-arms ruling). C2 verifies —
+manifest id-grep 3 → 5; the standing sweep reads `rows=5 live=5 dead=0`
+exit 0 (receipt `arm-live-standings-r67.txt`: the three r66 rows live,
+plus `ARM_LIVE bind-erratum-range-red tally=findings=4 exit=1` and
+`ARM_LIVE bind-own-range-red tally=findings=42 exit=1`), instruments
+pinned at `5541abaf`; the row receipts (`bind-erratum-range-r67.txt`,
+`bind-own-range-r67.txt` at `436b60c5`) carry the pinned summaries
+`commits=7 evidence=47 named=0 carried=0 spans=2 bare=8 findings=4`
+exit 1 and `commits=6 evidence=42 named=43 carried=22 spans=3 bare=47
+findings=42` exit 1 — the own-range summary byte-identical to the r66
+receipt `live-bind-own-range.txt` (the correction of record for the
+carry-in pointer item, now standing); checker selftest unchanged 4/4
+(receipt `arm-liveness-selftest-r67.txt`); base standings rows=3 live=3
+(receipt `arm-live-standings-base-r67.txt`); sourced on S298 (registry
+157 → 158, census-clean). No harm: the RED at the C2 work commit
+`ab67ddd6` reads lost=13 with cand_credited=51, the 13 LOST heading
+lines equal in order (decoded; the r66 receipt is cp1252-encoded, this
+round's UTF-8 — the lesson's mistake-2 fix) to the r66 set, miss = 0
+(receipt `live-red-r67.out`, probes EQUIVALENCE 20/0 both sides); the
+r67-batch-1 rekey (receipt `rebind-stdout-r67.txt`: REBIND OK
+sections=13 entries_added=13 ledger_before=732; ledger 732 → 745;
+machinery constants-only diff `make-rebind-r67.diff`, 7 changed lines;
+traces section-01..13) restored lost=0 ok exit 0 at BOTH floors at the
+rekey commit `5f86b8e6` (`live-green-r67.out`: round floor `7362e15c`
+64 → 64; `live-green-hist-r67.out`: historic `8b0042bd` 46 → 64) plus
+rev mode credited=64/64 probe 20/20 (`live-revmode-r67.out`); additivity
+raw_old_only=0 on SOURCES (`7362e15c` → `ab67ddd6`, verbatim_prefix=false
+disclosed — the mid-file row insertion; `additivity-sources-r67.txt`) and
+on the ledger (`ab67ddd6` → `5f86b8e6`, verbatim_prefix=false disclosed —
+the mid-file entries-array insertion; `additivity-ledger-r67.txt`), the
+LOG and SCORECARD pairs at the tip receipts commit
+(`additivity-logscorecard-r67.txt`); selftests bind 7/7
+(`bind-selftest-r67.txt`) and quoted-line 4/4 (`qline-selftest-r67.txt`);
+the corrections-commit range sweep `commits=1 evidence=4 named=4
+carried=4` findings zero exit 0 (`self-sweep-k1-r67.txt`). Tip receipts
+pinned here pre-data (they land at the tip receipts commit per the
+receipt-after-subject ordering): the tip guards at both floors + rev
+(`live-tip-guard-r67.txt`, `live-tip-guard-hist-r67.txt`,
+`live-tip-revmode-r67.txt` — lost=0 ok / 46 → 64 / credited=64/64), the
+tip invariant sweeps (`qline-tip-log.txt`, `qline-tip-scorecard.txt`,
+`qline-green-round-67.txt`), the LOG/SCORECARD additivity pair
+(`additivity-logscorecard-r67.txt`), the round-range self-sweep
+(`tip-self-sweep-r67.txt` — forecast findings zero exit 0), the census
+end receipts (`census-end-r67.txt` at the fleet root exit 0;
+`census-end-lanetip-r67.txt` at the lane-tip-shaped fleet root, 158
+rows, the same pre-existing 17 W04 + 1 W01 set). Round-final shas:
+corrections `436b60c5`, declaration `b82fb120`, C2 work `ab67ddd6`,
+rekey `5f86b8e6`, receipts this commit, tip receipts the next (all
+pushed). Assimilation: none this round (considerthese 2026-10-28
+proposals 3–5 remain unadopted, at most one per round and none fits the
+routed work) — shokuknow unreachable.

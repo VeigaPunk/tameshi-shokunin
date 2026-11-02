@@ -3613,3 +3613,53 @@ the other (causally separable). Receipts land per the receipt-after-subject
 ordering; every commit message names only file tokens its tree carries; the
 round ends with a self-sweep of the round range (forecast: `findings=0`
 exit 0) and a carries-what-it-names diff-tree check of the tip before push.
+
+## Round 67 — measured claims (appended at the receipts commit, 2026-11-02)
+
+| Claim | Verdict | After (measured) | Counting commands (live outputs in the receipts) | Measured commit |
+|---|---|---|---|---|
+| R67-C1 | verifies (measured), the C1 tip-invariant sweeps land at the tip receipts commit as pinned | the four carry-in corrections landed append-only at `436b60c5` (after-greps receipt `corrections-after-greps.txt`: mistake-row-4 grep 1, SCORECARD correction markers 4, LOG corrections entry 1 — before 0/0/0 at the base, receipt `corrections-before-greps.txt`); the byte-backing invariant: base sweeps (`qline-red-log-base.txt` LOG totals `missing=40 skipped=40` with 8 absent; `qline-red-scorecard-base.txt` SCORECARD totals `missing=10 skipped=178` with 6 absent; `qline-red-round-66.txt` the round-66 lesson `missing=2 skipped=7` — its two missing quotes are the r66 pre-data forecast shapes, named in the lesson and left as written, append-only) vs the tip sweeps (receipts `qline-tip-log.txt`, `qline-tip-scorecard.txt` at the tip commit: the same missing and skipped counts with the same absent 8 and 6 — the round's own appends introduced zero unbacked quotes and zero absent path cites) and the round-67 lesson sweep reads zero missing, zero absent, exit 0 (`qline-green-round-67.txt`, tip commit); the instrument boundary measured and disclosed pre-data: the stale six-of-seven cells read backed via the r66 rehearsal receipt's preserved pre-correction bytes (`.ufo/evidence/round-66/win-host/rehearsal/reh-selftest-bind.txt`) — figure-misattribution is beyond byte-backing, named successor instrument work | `git show 436b60c5:corpus/lessons/round-66.md \| grep -cE '^4\. \*\*'`; `git show <rev>:SCORECARD.md \| grep -c 'R67 correction '`; `git show <rev>:LOG.md \| grep -c 'Round 67 corrections'`; `python -I -X utf8 tools/quoted-line-exists.py --repo . --doc <rev>:LOG.md` (+ SCORECARD.md, round-66.md, round-67.md) | corrections `436b60c5`; base receipts at the same commit; tip sweeps at the tip receipts commit |
+| R67-C2 | verifies (measured) | manifest id-grep 3 → 5; the standing sweep reads `rows=5 live=5 dead=0` exit 0 (`arm-live-standings-r67.txt`: the three r66 rows live + `ARM_LIVE bind-erratum-range-red tally=findings=4 exit=1` and `ARM_LIVE bind-own-range-red tally=findings=42 exit=1`), instruments pinned at `5541abaf` (the corrected r66 checker bytes); the row receipts (`bind-erratum-range-r67.txt`, `bind-own-range-r67.txt`, landed at the corrections commit) carry the pinned summaries `commits=7 evidence=47 named=0 carried=0 spans=2 bare=8 findings=4` exit 1 and `commits=6 evidence=42 named=43 carried=22 spans=3 bare=47 findings=42` exit 1 — the own-range summary byte-identical to the r66 receipt `live-bind-own-range.txt`; the checker blob is unchanged (selftest `ARM_LIVENESS_SELFTEST: 4/4 pass` exit 0, receipt `arm-liveness-selftest-r67.txt`); sourced on S298 (registry 157 → 158) | `python -I tools/arm-liveness.py --repo . --manifest tools/arm-liveness.json`; `grep -c '"id"' tools/arm-liveness.json`; `python -I tools/arm-liveness.py --selftest`; `python -I <blob at 5541abaf> --repo . --base 7d7f9ca8… --tip 87e95597…`; `python -I <blob at 5541abaf> --repo . --base 469cde0f… --tip 5d969f4e…` | C2 work commit `ab67ddd6`; sweep and selftest receipts at the receipts commit |
+
+Shared no-harm story (measured): the RED at the C2 work commit `ab67ddd6`
+reads `COLDREAD_PRECHECK … lost=13 RED` exit 1 with cand_credited=51 — the
+13 LOST heading lines equal in order to the r66 set (decoded comparison;
+the r66 receipt is cp1252-encoded, this round's UTF-8 — the lesson's
+mistake-2 fix; miss = 0; receipt `live-red-r67.out` with the probes reading
+EQUIVALENCE 20/0 on both sides) — paid by the `r67-batch-1` rekey: REBIND
+OK sections=13 entries_added=13 ledger_before=732 (receipt
+`rebind-stdout-r67.txt`; ledger 732 → 745; machinery constants-only diff
+`make-rebind-r67.diff`, 7 changed lines; traces section-01..13) →
+`lost=0 ok` exit 0 at BOTH floors at the rekey commit `5f86b8e6` (receipt
+`live-green-r67.out`: round floor `7362e15c` 64 → 64; receipt
+`live-green-hist-r67.out`: historic `8b0042bd` 46 → 64) plus rev mode
+credited=64/64 probe 20/20 (receipt `live-revmode-r67.out`); additivity
+raw_old_only=0 on SOURCES (`7362e15c` → `ab67ddd6`,
+`verbatim_prefix=false` disclosed — the mid-file row insertion; receipt
+`additivity-sources-r67.txt`) and on the ledger (`ab67ddd6` → `5f86b8e6`,
+`verbatim_prefix=false` disclosed — the mid-file entries-array insertion;
+receipt `additivity-ledger-r67.txt`), the LOG and SCORECARD pairs at the
+tip receipts commit (`additivity-logscorecard-r67.txt`); selftests bind
+7/7 (receipt `bind-selftest-r67.txt`) and quoted-line 4/4 (receipt
+`qline-selftest-r67.txt`); the corrections-commit range sweep reads
+`commits=1 evidence=4 named=4 carried=4` findings zero exit 0 (receipt
+`self-sweep-k1-r67.txt`). Tip receipts pinned here pre-data (they land at
+the tip receipts commit): the tip guards at both floors + rev
+(`live-tip-guard-r67.txt`, `live-tip-guard-hist-r67.txt`,
+`live-tip-revmode-r67.txt` — lost=0 ok / 46 → 64 / credited=64/64), the
+tip invariant sweeps (`qline-tip-log.txt`, `qline-tip-scorecard.txt`,
+`qline-green-round-67.txt`), the LOG/SCORECARD additivity pair
+(`additivity-logscorecard-r67.txt`), the round-range self-sweep
+(`tip-self-sweep-r67.txt` — forecast findings zero exit 0), and the census
+end receipts (`census-end-r67.txt` at the fleet root, exit 0;
+`census-end-lanetip-r67.txt` at the lane-tip-shaped fleet root, 158 rows).
+No owned axis harmed: depth 10, freshness 9, calibration 8 unchanged (no
+depth or freshness surface touched — PROVINCE.md, SKILL.md, README.md,
+corpus/QUALITY.md, tools/registry.json, SHONEN.md,
+tools/mutate-and-run.sh and the guarded probe
+`tools/coldread-precheck-portable.py` (worktree sha256 `892a045d…`)
+blob-identical base → tip; `git diff-tree -r --name-status 7362e15c
+<tip> -- PROVINCE.md SKILL.md README.md corpus/QUALITY.md
+tools/registry.json SHONEN.md tools/mutate-and-run.sh
+tools/coldread-precheck-portable.py` is empty and corpus/SOURCES.md is the
+only monitored file in the round's diffs, rekeyed).
