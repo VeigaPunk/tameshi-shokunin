@@ -2066,3 +2066,38 @@ prints `ADDRANGE: rows=6 met=6 unexpected=0` while the two rewrite rows read
 `measured=violated` with `raw_old_only=3484` / `1593` and `norm_cr_old_only=0`
 / `5`; flipping `r73-log-eol-rewrite` to `expect: hold` prints
 `unexpected=1` and exit 1 (`.ufo/evidence/round-74/controls-r74.txt`).
+
+### Criterion 125 — a live capability figure is the instrument's current token or is labelled historical and pinned to the receipt that carries it
+
+A capability table's printed figure is a measurement of an instrument, not a
+quotation of the record. A live row therefore carries either the instrument's
+**current** token — re-derived at the revision the table is read at, from the
+instrument's own stdout — or it is explicitly labelled historical and pinned to
+the receipt that carries it. A figure no instrument prints is a **stale
+premise**, not a conservative estimate: it asserts a capability at a strength
+nothing measures, and a reader cannot tell a regression from a forgotten edit.
+The two states are distinguishable only by re-running the instrument, so a
+capability table is never "updated by hand"; it is re-derived or demoted.
+"Live" is a declared population, never the whole table: the rows a counter names
+are exactly the rows the claim speaks for.
+
+Lesson: `corpus/lessons/round-75.md` `## Claims — R75-C2` and `## Mistakes` rows
+1 and 3, produced by round-74 closure defect 3
+(`corpus/lessons/round-74-verifier-spotcheck.md` §6 item 3) and measured over
+the declared population by `.ufo/evidence/round-75/base-measure-c2.txt`
+(`rows=17 match=9 stale=8 unexpected=7`) and `.ufo/evidence/round-75/c2-after-r75.txt`
+(`rows=17 match=16 stale=1 unexpected=0`). The instrument is
+`tools/selfstate-freshness.py` + `tools/selfstate-freshness.json`: 16 live
+figures on 10 capability rows (the tuple table frozen in
+`.ufo/evidence/round-75/selfstate-control-scan.py`) plus one frozen historical
+statement; an absent capability row, an absent figure, a figure matching twice,
+or an instrument whose stdout lacks the figure is a setup refusal (exit 2),
+never a pass.
+
+Falsifier that must fail: at `21ef81e9` the live `anchor-drift sweep` row quotes
+`ANCHOR_DRIFT: rows=4 met=4 unexpected=0` while the instrument at its pinned rev
+prints `ANCHOR_DRIFT: rows=16 met=16 unexpected=0`, so the sweep reads
+`SELFSTATE: rows=17 match=9 stale=8 unexpected=7` exit 1; at `4e610748` the same
+command reads `SELFSTATE: rows=17 match=16 stale=1 unexpected=0` exit 0 with
+every live row `match` and the frozen row `r74-frozen-addr-six`
+(`expect: stale`) measuring `stale`.

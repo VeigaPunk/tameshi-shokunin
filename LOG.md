@@ -3995,3 +3995,53 @@ with zero repairs, `.ufo/evidence/round-75/controls-c75b.txt`); the C1 kill-rule
 `.ufo/evidence/round-75/` (`c1-arms1-15-diff.txt`, `base-measure-c1.txt`); the
 population wording is "the 16 declared live figures on 10 capability rows"; the
 out-of-population repairs and the round-76 routed defect are named in the plan.
+
+## Round 75 — measured (appended at the records commit, 2026-11-04)
+
+Two claims, frozen pre-data in `plans/round-75.plan.md` (declaration
+`640d3fcc`; corrections `7745d0e0`, `82f7a809`), both verify measured; no axis
+harmed.
+
+- **R75-C1 (operability, sourced on the re-opened S006)** — `tools/wave-reconcile.py`
+  gains arms 16/17/18 and `tools/wave-reconcile-mutants.spec` gains
+  `mc-record-bound`, `roles-bypass`, `attack-bypass`; the landed tool reads
+  `WAVE_RECONCILE_SELFTEST: 18/18 pass` and the battery reads `MUTATE: DONE
+  (target=wave-reconcile-arms-r75 defects=6 killed=6 survived=0 inconclusive=0
+  kill-rate=100%)` with `CONTROL: GREEN` and a byte-identical restore
+  (`.ufo/evidence/round-75/c1-landed-battery.txt`, measured commit
+  `4e610748`). The three R75 mutants each fail only their named arm; the
+   legacy collateral kills are the Correction-2 matrix (m2 → arm13+arm16;
+  span-rule → arm14+arm17+arm18). Rule (iii)'s baseline diff is
+  `c1-arms1-15-diff.txt` (no output).
+- **R75-C2 (calibration, lowest scored axis 8)** — `tools/selfstate-freshness.py`
+  + `tools/selfstate-freshness.json` re-derive the 16 declared live figures on
+  10 capability rows plus one frozen historical row. Before
+  `rows=17 match=9 stale=8 unexpected=7` at `21ef81e9`; after
+  `rows=17 match=16 stale=1 unexpected=0` at `4e610748`
+  (`.ufo/evidence/round-75/c2-before.txt`, `c2-after-r75.txt`); selftest
+  `10/10`. The nine capability-cell repairs (seven in-population plus
+  `mutation sweep runner` and `wave-record reconciliation`) land in the same
+  commit.
+
+Wave: one v1 wave, 12 seats (4 executor · 1 scribe · 1 scout · 2 reviewer ·
+1 critic · 1 mutation-tester · 1 connector · 1 sentinel; attack seats 4 =
+33.3 %); seat reports and the settlement land in `.ufo/waves/round-75/`.
+Seat findings adopted as work: the critic's population freeze and loose-token
+control (Correction 2), the reviewer's unique-figure refusal, the mutation
+seat's instrument mutants, the sentinel's registry-write finding, the scout's
+carry census and the source seat's fresh S006 open. Assimilation: none — the
+claim set carried no `shokuknow/merge/tameshi/` theme slot.
+
+### Round 75 — appended: round-74 closure defect 1 erratum (disclosure)
+
+The round-74 closure (`.ufo/reports/round-74/tameshi.md`, §6 item 1) routed an
+undisclosed `SCORECARD.md` EOL rewrite: the file was CRLF at `3d6ea1ee` (4,406
+CR in 4,490 lines) and LF from commit `1c3a428e` (0 CR in 4,606 lines), with a
+CR-blind content diff of `116 0`. This entry discloses it: the conversion was a
+record-tooling side effect, the content is additive, and the historical bytes
+remain in git; the range-additivity manifest (`tools/additivity-range.json`)
+does not declare `SCORECARD.md` because SCORECARD is not append-only, so the fix
+is disclosure, not a claim change. The round-74 cold-read pointer (defect 2)
+is corrected in the round-75 report and by the tip receipt
+`.ufo/evidence/round-75/coldread-tip-r75.out` (rev measured, not the report
+tip).

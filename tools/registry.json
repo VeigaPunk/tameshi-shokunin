@@ -1404,14 +1404,15 @@
    "expect": {
     "exit": 0,
     "stdout_contains": [
-     "WAVE_RECONCILE_SELFTEST: 15/15 pass"
+     "WAVE_RECONCILE_SELFTEST: 18/18 pass"
     ]
    },
    "timeout_s": 120,
-   "source": "tools/wave-reconcile.py@2bbf97965791f55c58e405887f038741ab705164:1-40",
+   "source": "tools/wave-reconcile.py@4e610748c3e5a0706767eb5569a08d426abc73b2:1-40",
    "status": "active",
    "tags": [
-    "round-74"
+    "round-74",
+    "round-75"
    ]
   },
   {
@@ -1432,14 +1433,15 @@
    "expect": {
     "exit": 0,
     "stdout_contains": [
-     "MUTATE: DONE (target=wave-reconcile-arms defects=3 killed=3"
+     "MUTATE: DONE (target=wave-reconcile-arms defects=6 killed=6"
     ]
    },
    "timeout_s": 300,
-   "source": "tools/wave-reconcile-mutants.spec@2bbf97965791f55c58e405887f038741ab705164:1-20",
+   "source": "tools/wave-reconcile-mutants.spec@4e610748c3e5a0706767eb5569a08d426abc73b2:1-30",
    "status": "active",
    "tags": [
-    "round-74"
+    "round-74",
+    "round-75"
    ],
    "scratch_root": "Allocates under TMPDIR via the runner's mktemp; a set-but-unusable TMPDIR is the runner's setup refusal (round 53 scratch-root contract)."
   },
@@ -1490,6 +1492,59 @@
    "tags": [
     "round-74"
    ]
+  },
+  {
+   "name": "selfstate-freshness-selftest",
+   "kind": "selftest",
+   "argv": [
+    "python3",
+    "-I",
+    "-X",
+    "utf8",
+    "tools/selfstate-freshness.py",
+    "--selftest"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "SELFSTATE_SELFTEST: 10/10 pass"
+    ]
+   },
+   "timeout_s": 120,
+   "source": "tools/selfstate-freshness.py@4e610748c3e5a0706767eb5569a08d426abc73b2:1-40",
+   "status": "active",
+   "tags": [
+    "round-75"
+   ],
+   "scratch_root": "The instrument allocates only under TMPDIR via tempfile.mkdtemp; a set-but-unusable TMPDIR is the platform allocator's failure, never a /tmp fallback (round-53 scratch-root contract)."
+  },
+  {
+   "name": "selfstate-freshness-sweep",
+   "kind": "probe",
+   "argv": [
+    "python3",
+    "-I",
+    "-X",
+    "utf8",
+    "tools/selfstate-freshness.py",
+    "--repo",
+    ".",
+    "--manifest",
+    "tools/selfstate-freshness.json"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "SELFSTATE: rows=17 match=16 stale=1 unexpected=0"
+    ]
+   },
+   "timeout_s": 600,
+   "source": "tools/selfstate-freshness.py@4e610748c3e5a0706767eb5569a08d426abc73b2:1-40",
+   "status": "active",
+   "tags": [
+    "round-75"
+   ],
+   "scratch_root": "Runs 10 lane instruments with TMPDIR honoured; no /tmp fallback in the instrument."
   }
  ]
 }
