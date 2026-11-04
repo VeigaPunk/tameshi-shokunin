@@ -1,0 +1,42 @@
+# Round 73 seat T73W1S10 — mutants as unified diffs (pristine -> mutant).
+# Reconstruct: apply to a copy of the pinned pristine bytes; the sha256 of the result is in kill-matrix.md section 0.
+
+=== M3: tools/rekey-cost.py (IGNORED filter emptied) ===
+--- a/tools/rekey-cost.py (pristine 85ca2b69)
++++ b/tools/rekey-cost.py (M3 7e0fdf62)
+@@ -68,8 +68,7 @@
+ FROZEN = '.ufo/evidence/round-18/measure.py'
+ # Self-referential keys the frozen credit rule already removes from a view:
+ # the section is keyed by its own bytes and the ledger is the output.
+-IGNORED = frozenset((SKILL, '.ufo/evidence/round-17/coldread/ledger.json',
+-                     LEDGER))
++IGNORED = frozenset()
+ SELFTEST_ARMS = 8
+ 
+ 
+
+=== W1: tools/wave-reconcile.py (expect comparison dropped) ===
+--- a/tools/wave-reconcile.py (pristine e68947bd)
++++ b/tools/wave-reconcile.py (W1 81eb4ed6)
+@@ -281,7 +281,7 @@
+     unexpected = 0
+     for row in rows:
+         measured, detail = measure(row, readers)
+-        ok = measured == row['expect']
++        ok = True  # MUTANT W1: expect comparison dropped
+         if not ok:
+             unexpected += 1
+         out.append({'id': row['id'], 'kind': row.get('kind'),
+
+=== W2: tools/wave-reconcile.py (seat_reports counts at any depth) ===
+--- a/tools/wave-reconcile.py (pristine e68947bd)
++++ b/tools/wave-reconcile.py (W2 37703d42)
+@@ -203,7 +203,7 @@
+             raise SetupError('printed-not-in-span:%s' % row['id'])
+         prefix = path.rstrip('/') + '/'
+         files = [p for p in reader.listing(rev, path)
+-                 if p.startswith(prefix) and '/' not in p[len(prefix):]
++                 if p.startswith(prefix)  # MUTANT W2: any depth
+                  and p.endswith('.md')]
+         ok = printed == len(files)
+         return ('meet' if ok else 'drift',
