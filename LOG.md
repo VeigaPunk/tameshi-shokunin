@@ -4516,3 +4516,28 @@ git-ls-files candidate REFUSED (index listing, not tree objects). Registry
 rows 170 → 170; census exit 0, verdict `tameshi ok`.
 Census: `sources-census.sh validate --root … tameshi` → exit 0, verdict
 `tameshi	ok	…/corpus/SOURCES.md`.
+
+**Final state after the wave (appended at the close).** The wave attacked the
+declaration and found five real holes; each was repaired in its own commit and
+every after-state re-measured: `72832c94` pins the mutation-tester's two
+survivors (non-commit `--manifest-rev`, empty-flag guard) by extending A13/A8
+without changing the arm count; `ea618593` moves the type/mode gate into
+`blob_bytes` so all five row kinds refuse a directory or symlink (reviewer D1);
+`43fb2446` reads the manifest once for both the binding and the parse (sentinel
+S1, critic C1); `97f0186f` sets `GIT_NO_REPLACE_OBJECTS=1` (executor E1's
+`git replace` cheat); `b37860b7` refuses a symlinked or otherwise non-regular
+manifest and stops resolving the manifest path through `realpath` (critic C1).
+Final readings at `b37860b7`, re-derived at `9403eadf`:
+`DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0 manifest=bound` exit 0;
+`DEFECT_BIND_SELFTEST: 14/14 pass`; the round register `rows=4 closed=4 open=0
+unexpected=0 manifest=bound`; `SELFSTATE: rows=26 match=24 stale=2
+unexpected=0` and `SELFSTATE_PINS: rows=26 settled=26 stale=0` exit 0;
+batteries `defects=5 killed=5` and `defects=2 killed=2`, both `CONTROL: GREEN`,
+byte-identical restore; every standing sweep exit 0 (`REGISTRY_BIND: rows=7
+match=7`, `WAVE_RECONCILE: rows=6 met=6`, `RECEIPT_BIND: receipts=29
+unbound=0`, `ADDRANGE: rows=11 met=11`, `ARM_LIVENESS: rows=9 live=9`,
+`COUNT_RECHECK: rows=7 met=7`, `POINTER_RECHECK: rows=12 met=12`,
+`FIGURE_ATTRIBUTION: rows=3 met=3`, `ANCHOR_DRIFT: rows=16 met=16`,
+`MUTATE_SELFTEST: 107/107`). The two declared limits stand and are named in the
+SCORECARD: the binding proves bytes at a caller-named revision, not authorship;
+and a deleted self-state row is not caught by the two C2 commands (round 83).
