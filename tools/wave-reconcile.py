@@ -22,12 +22,13 @@ Four row kinds. Each binds a RECORD claim to an ARTIFACT re-derivation:
   attack_share   the share of seats whose agent is in the row's named attack
                  set, measured against the row's floor percentage.
 
-Binding rules (arms: seats-meet/mismatch, seat_reports-drift, roles-spec/
-text-drift, attack-below-floor/at-floor, and the five setup refusals; the
-delimited-token rule and the span-substring rule are enforced on every row but
-carried by NO arm of this suite - round-73 seat T73W1S02 measured that
-`delimited := True` survives all twelve arms, so the arm for it is a named
-next-round carry, not a claim):
+Binding rules (fifteen arms: seats-meet/mismatch, seat_reports-drift,
+roles-spec/text-drift, attack-below-floor/at-floor, five setup refusals, and -
+from round 74 - arm13 delimited-token, arm14 record-span-substring and arm15
+seat_reports-top-level-only, the three rules round 73 carried as arm gaps and
+measured as survivors: `delimited := True` 12/12, the span-rule removal 12/12,
+`seat_reports` any-depth 12/12 plus the standing sweep. Each new arm names its
+mutant in `tools/wave-reconcile-mutants.spec`):
 
   * the record span must be a byte substring of the record at the record rev;
   * the printed integer must occur in the span as a delimited token;
@@ -66,7 +67,7 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 12
+SELFTEST_ARMS = 15
 BOM = b'\xef\xbb\xbf'
 ATTACK_NOTE = ('named attack roles are the row\'s own declaration; the policy '
                'floor is the row\'s floor_pct')
@@ -360,7 +361,11 @@ RESULTS = {
 REPORT = (b'- **The wave**: 12 seats, 11 reports; three seats found defects.\n')
 PLAN = (b'- Wave `w1`: 12 seats - 3 executor, 2 scribe, 1 scout, 1 connector,\n'
         b'  1 reviewer, 1 critic, 1 mutation-tester, 1 sentinel, 1 labrat.\n')
-SEAT_FILES = ['%s/T1W1S%02d.md' % ('x', i) for i in range(12)] + ['x/swarm-registry.json']
+SEAT_FILES = (['%s/T1W1S%02d.md' % ('wave', i) for i in range(12)]
+              + ['wave/swarm-registry.json',
+                 # round 74 arm15: a nested .md is NOT a seat report; the
+                 # any-depth mutant counts it (13) and the arm measures that.
+                 'wave/nested/deep.md'])
 
 
 def fixture_rows():
@@ -462,6 +467,22 @@ def selftest():
                 'form': 'text-tokens', 'path': 'plan.md', 'rev': REV,
                 'span': '12 seats - 3 executor, 2 scribe',
                 'roles': {'executor': 3, 'scribe': 2, 'wizard': 7}}))
+        # round 74: the three rules the round-73 wave measured as unguarded.
+        # Each arm is moved by exactly one mutant in
+        # tools/wave-reconcile-mutants.spec; the arm names that mutant.
+        arm('arm13-printed-undelimited-refused', 'setup',
+            lambda: measure_row(kind='seats',
+                                record={'path': 'report.md', 'rev': REV,
+                                        'span': '11 reports', 'printed': 1}))
+        arm('arm14-span-not-in-record-refused', 'setup',
+            lambda: measure_row(kind='seats',
+                                record={'path': 'report.md', 'rev': REV,
+                                        'span': '13 seats', 'printed': 13}))
+        arm('arm15-seatreports-top-level-only', 'meet',
+            lambda: measure_row(kind='seat_reports',
+                                record={'path': 'report.md', 'rev': REV,
+                                        'span': '12 seats, 11 reports',
+                                        'printed': 12}))
     finally:
         shutil.rmtree(work, ignore_errors=True)
 
