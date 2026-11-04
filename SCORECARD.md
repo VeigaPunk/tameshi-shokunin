@@ -4591,3 +4591,16 @@ its frozen predicate is re-run, not replaced.
   and traces were restored byte-exactly from `607b96d8` and the corrected
   round-74 script re-ran (`9d9ab7d3`). `141dead0` stays in history as the
   superseded merge; no record cites it as the rekey.
+
+Floor sequence correction (round 74, appended at the tip): the paragraph above
+names `r74-batch-2` as the last rekey; the round paid **three** batches.
+`r74-batch-2` (2 sections at `47cd112f`) restored `credited=64/64` at
+`906303c7`; the round then re-pinned `additivity-range-sweep`'s registry needle
+to the extended manifest line (`tools/registry.json` at `5f2f88aa`), which
+re-staled 11 sections, and `r74-batch-3` (11 sections at `5f2f88aa`, ledger
+870 → 881) restored `credited=64/64` at `9c27267b`
+(`.ufo/evidence/round-74/live-green3-r74.out`). Ledger 852 → 881 across the
+round; every merge is EOL-preserving (CRLF before/after printed by the tool).
+The dependency the sequence exposes is named for the next round: a registry
+needle and a LOG/SCORECARD append are cold-read inputs, so a round that does
+both pays a batch after each — price them before the last rekey.
