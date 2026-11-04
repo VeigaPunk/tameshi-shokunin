@@ -1404,7 +1404,7 @@
    "expect": {
     "exit": 0,
     "stdout_contains": [
-     "WAVE_RECONCILE_SELFTEST: 19/19 pass"
+     "WAVE_RECONCILE_SELFTEST: 24/24 pass"
     ]
    },
    "timeout_s": 120,
@@ -1437,12 +1437,12 @@
     "--suite",
     "python3 -I -X utf8 \"$MUTANT\" --selftest",
     "--label",
-    "wave-reconcile-arms-r76"
+    "wave-reconcile-arms-r80"
    ],
    "expect": {
     "exit": 0,
     "stdout_contains": [
-     "MUTATE: DONE (target=wave-reconcile-arms-r76 defects=7 killed=7"
+     "MUTATE: DONE (target=wave-reconcile-arms-r80 defects=13 killed=13"
     ]
    },
    "timeout_s": 300,
@@ -1525,7 +1525,7 @@
    "expect": {
     "exit": 0,
     "stdout_contains": [
-     "SELFSTATE_SELFTEST: 11/11 pass"
+     "SELFSTATE_SELFTEST: 17/17 pass"
     ]
    },
    "timeout_s": 120,
@@ -1562,7 +1562,7 @@
    "expect": {
     "exit": 0,
     "stdout_contains": [
-     "SELFSTATE: rows=20 match=18 stale=2 unexpected=0"
+     "SELFSTATE: rows=23 match=21 stale=2 unexpected=0"
     ]
    },
    "timeout_s": 600,
@@ -1937,6 +1937,132 @@
    "write_scope": "read-only on the lane (git objects only); --selftest writes one throwaway fixture repo plus one extra-root fixture dir under $TMPDIR (receipt-exists-selftest-*, *-extra), both removed on exit post-fix; --extra-root checks are filesystem reads of caller-named roots",
    "owner": "tameshi",
    "pinned_value": "tools/receipt-exists.py (in-source selftest fixture literals, 4 arms: green/red/usage/extra-root)"
+  },
+  {
+   "name": "registry-figure-bind-selftest",
+   "kind": "selftest",
+   "argv": [
+    "python3",
+    "-I",
+    "-X",
+    "utf8",
+    "tools/registry-figure-bind.py",
+    "--selftest"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "REGISTRY_BIND_SELFTEST: 11/11 pass"
+    ]
+   },
+   "timeout_s": 120,
+   "source": "tools/registry-figure-bind.py@ae591d5a2cf5d08cafad68a4c6ffaa62e0d3f608:1-40",
+   "status": "active",
+   "tags": [
+    "round-80"
+   ],
+   "owner": "tameshi",
+   "verdict_map": {
+    "0": "clean",
+    "1": "failed",
+    "2": "could-not-evaluate"
+   },
+   "write_scope": "TMPDIR scratch only; reads the lane read-only"
+  },
+  {
+   "name": "registry-figure-bind-sweep",
+   "kind": "gate",
+   "argv": [
+    "python3",
+    "-I",
+    "-X",
+    "utf8",
+    "tools/registry-figure-bind.py",
+    "--repo",
+    "."
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "REGISTRY_BIND: rows=7 match=7 stale=0 absent=0 error=0 unexpected=0"
+    ]
+   },
+   "timeout_s": 900,
+   "source": "tools/registry-figure-bind.py@ae591d5a2cf5d08cafad68a4c6ffaa62e0d3f608:1-40",
+   "status": "active",
+   "tags": [
+    "round-80"
+   ],
+   "owner": "tameshi",
+   "verdict_map": {
+    "0": "clean",
+    "1": "failed",
+    "2": "could-not-evaluate"
+   },
+   "write_scope": "TMPDIR scratch only; reads the lane read-only"
+  },
+  {
+   "name": "receipt-bytes-selftest",
+   "kind": "selftest",
+   "argv": [
+    "python3",
+    "-I",
+    "-X",
+    "utf8",
+    "tools/receipt-bytes-bind.py",
+    "--selftest"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "RECEIPT_BIND_SELFTEST: 13/13 pass"
+    ]
+   },
+   "timeout_s": 120,
+   "source": "tools/receipt-bytes-bind.py@ae591d5a2cf5d08cafad68a4c6ffaa62e0d3f608:1-60",
+   "status": "active",
+   "tags": [
+    "round-79",
+    "round-80"
+   ],
+   "owner": "tameshi",
+   "verdict_map": {
+    "0": "clean",
+    "1": "failed",
+    "2": "could-not-evaluate"
+   },
+   "write_scope": "TMPDIR scratch only; reads the lane read-only"
+  },
+  {
+   "name": "receipt-bytes-tree",
+   "kind": "gate",
+   "argv": [
+    "python3",
+    "-I",
+    "-X",
+    "utf8",
+    "tools/receipt-bytes-bind.py",
+    "--repo",
+    ".",
+    "--root",
+    ".ufo/evidence"
+   ],
+   "expect": {
+    "exit": 0
+   },
+   "timeout_s": 300,
+   "source": "tools/receipt-bytes-bind.py@ae591d5a2cf5d08cafad68a4c6ffaa62e0d3f608:1-60",
+   "status": "active",
+   "tags": [
+    "round-80"
+   ],
+   "owner": "tameshi",
+   "verdict_map": {
+    "0": "every receipt bound, corrected or declared design",
+    "1": "at least one unbound",
+    "2": "could-not-evaluate (setup)"
+   },
+   "write_scope": "read-only: git objects only; no lane write, no scratch"
   }
  ]
 }

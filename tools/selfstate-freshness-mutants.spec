@@ -1,8 +1,8 @@
 # mutant battery for tools/selfstate-freshness.py.
 # Defect 1 (round 79): the round-78 wave's `s3-python-isolation-dropped`
-# survivor (T78W1M1) — the python tuple loses `-I` (killed by arm14; arm17
-# also sees it, because a tuple without `-I` cannot reach UTF-8 mode under a
-# UTF-8 locale either — disclosed round 80).
+# survivor (T78W1M1) — the python tuple loses `-I`, measured FAIL on arm14
+# only (round-80 executor T80W1E2 re-derived the singleton set; the tuple
+# keeps `-X utf8`, so arm17's utf8_mode stays 1).
 # Defects 2-4 (round 80, R80-C2): the three survivors the round-79 wave named
 # for this tool — `ss-bom-strip` (T79W1SC2 S1), `ss-cache-key-drops-argv`
 # (T79W1SC2 S4) and `python-utf8-dropped` (T79W1M1) — each killed by exactly

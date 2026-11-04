@@ -24,8 +24,9 @@ names every row. Two surfaces, one verdict rule:
                  the declared figure is the entry's `expect.stdout_contains`
                  text.
 
-The live figure is the one `figure` matches in the instrument's stdout, run
-from the repo root with the manifest argv. A row measures:
+The live figure is the ONE `figure` match in the instrument's stdout, run
+from the repo root with the manifest argv; a stdout carrying two matches is a
+setup error, never the last one silently. A row measures:
 
   match    the live figure token is a byte substring of the declared surface
   stale    the surface names a figure and the live token is absent from it
@@ -41,9 +42,11 @@ Verdict lines:
 
 Exit: 0 every row measured its declared expectation (a stale row with
 `expect=stale` is the standing red arm and passes); 1 an unexpected row;
-2 setup refusal before any row effect (zero rows, unreadable manifest,
-duplicate registry row name, unparsable registry, an instrument that does not
-exit 0, a live stdout without the figure, an ambiguous doc row).
+2 at least one `error` row, or a manifest-level setup refusal (zero rows,
+unreadable manifest, duplicate registry row name, unparsable registry, a
+manifest path that is not repo-relative). A per-row error (instrument exit,
+live figure absent or not unique, ambiguous doc row) is emitted as an `error`
+row and the summary is still printed before exit 2 — never a silent pass.
 
 Read-only over the lane: runs the manifest instruments as subprocesses, writes
 nothing. Stdlib only.
@@ -90,6 +93,25 @@ def read_text(path):
     return raw.decode('utf-8', 'replace')
 
 
+def _manifest_path_ok(rel):
+    """A repo-relative POSIX path: no absolute form, no parent segment, no
+    backslash, no drive qualifier (round-80 sentinel F4: a manifest could
+    select an external registry home and still measure green)."""
+    if not isinstance(rel, str) or not rel:
+        return False
+    if rel.startswith('/') or '\\' in rel or re.match(r'^[A-Za-z]:', rel):
+        return False
+    return '..' not in rel.split('/')
+
+
+def _resolve_inside(repo, rel, row_id):
+    base = os.path.realpath(repo)
+    target = os.path.realpath(os.path.join(repo, rel))
+    if target != base and not target.startswith(base + os.sep):
+        raise SetupError('path-outside-repo:%s' % row_id)
+    return target
+
+
 def parse_manifest(path):
     text = read_text(path)
     try:
@@ -133,11 +155,13 @@ def parse_manifest(path):
         if not isinstance(timeout, int) or timeout <= 0:
             raise SetupError('manifest-row-timeout:%s' % rid)
         if surface == 'doc':
-            if not isinstance(row.get('doc'), str) or not row['doc']:
-                raise SetupError('manifest-row-doc:%s' % rid)
+            if not _manifest_path_ok(row.get('doc')):
+                raise SetupError('manifest-path-not-repo-relative:%s:doc'
+                                 % rid)
         else:
-            if not isinstance(row.get('registry'), str) or not row['registry']:
-                raise SetupError('manifest-row-registry:%s' % rid)
+            if not _manifest_path_ok(row.get('registry')):
+                raise SetupError('manifest-path-not-repo-relative:%s:registry'
+                                 % rid)
         out.append({'id': rid, 'surface': surface, 'row_name': name,
                     'figure': figure, 'expect': expect, 'argv': argv,
                     'timeout_s': timeout,
@@ -149,7 +173,7 @@ def parse_manifest(path):
 
 
 def _declared_doc(repo, row):
-    path = os.path.join(repo, row['doc'])
+    path = _resolve_inside(repo, row['doc'], row['id'])
     text = read_text(path)
     want = row['row_name']
     found = None
@@ -171,7 +195,7 @@ def _declared_doc(repo, row):
 
 
 def _declared_registry(repo, row):
-    path = os.path.join(repo, row['registry'])
+    path = _resolve_inside(repo, row['registry'], row['id'])
     text = read_text(path)
     try:
         data = json.loads(text)
@@ -193,7 +217,11 @@ def _declared_registry(repo, row):
     if not isinstance(contains, list) or \
             not all(isinstance(c, str) for c in contains):
         raise SetupError('registry-row-contains:%s' % row['id'])
-    return '\n'.join(contains)
+    text = '\n'.join(contains)
+    # a row that declares no text at all names no figure: absent, never a
+    # stale-shaped pass (round-80 executor E1: an empty surface passed an
+    # `expect=stale` row without naming anything)
+    return text if text.strip() else None
 
 
 def _live(repo, row):
@@ -210,7 +238,11 @@ def _live(repo, row):
     matches = re.findall(row['figure'], text)
     if not matches:
         raise SetupError('figure-absent-in-live:%s' % row['id'])
-    return matches[-1]
+    if len(matches) > 1:
+        # a stale token printed before the current one must never be silently
+        # out-voted: exactly one live figure, or the row is unmeasurable
+        raise SetupError('figure-not-unique-live:%s' % row['id'])
+    return matches[0]
 
 
 def measure(repo, row):
@@ -221,7 +253,15 @@ def measure(repo, row):
     live = _live(repo, row)
     if declared is None:
         return 'absent', None, live
-    if declared and live in declared:
+    if row['surface'] == 'doc':
+        ok = declared == live
+    else:
+        # exactly one figure-shaped token in the declaration, and it must BE
+        # the live one: a row naming both a stale and the live token (or a
+        # longer figure that merely contains the live one) measures stale
+        tokens = re.findall(row['figure'], declared)
+        ok = len(tokens) == 1 and tokens[0] == live
+    if declared and ok:
         return 'match', declared, live
     return 'stale', declared, live
 
@@ -355,7 +395,10 @@ def selftest(out=sys.stdout):
                 'unexpected=0' in txt,
             'rc=%r %r %r' % (rc, txt, err))
 
-        # arm 3: a stale doc figure is measured, and is unexpected by default
+        # arm 3: a stale doc figure is measured, and is unexpected by default.
+        # Round 80 folds in the registry-shape cheats: a declaration naming
+        # BOTH a stale and the live token, and a longer figure that merely
+        # contains the live one (`11/1` vs `1/1`) must both measure stale.
         fx3 = fixture('a3')
         with open(os.path.join(fx3, 'SKILL.md'), 'w', newline='\n') as fh:
             fh.write('# toy\n\n| Name | Kind | Self-test command |\n'
@@ -363,11 +406,46 @@ def selftest(out=sys.stdout):
                      '| toy gate | gate | `TOY: 2/2 pass` |\n')
         rc, txt, err = cli(fx3, manifest_for(
             fx3, [_row('toy-stale', 'doc', 'toy gate')], 'm3'))
+        fx3b = fixture('a3b')
+        with open(os.path.join(fx3b, 'tools/registry.json'), 'w',
+                  newline='\n') as fh:
+            json.dump({'schema': 'toy', 'rows': [
+                {'name': 'toy-selftest',
+                 'expect': {'exit': 0,
+                            'stdout_contains': ['TOY: 2/2 pass',
+                                                'TOY: 1/1 pass']}}]}, fh)
+        rc3b, txt3b, err3b = cli(fx3b, manifest_for(
+            fx3b, [_row('toy-both', 'registry-json', 'toy-selftest')], 'm3b'))
+        fx3c = fixture('a3c')
+        with open(os.path.join(fx3c, 'tools/registry.json'), 'w',
+                  newline='\n') as fh:
+            json.dump({'schema': 'toy', 'rows': [
+                {'name': 'toy-selftest',
+                 'expect': {'exit': 0,
+                            'stdout_contains': ['TOY: 11/1 pass']}}]}, fh)
+        rc3c, txt3c, err3c = cli(fx3c, manifest_for(
+            fx3c, [_row('toy-longer', 'registry-json', 'toy-selftest')],
+            'm3c'))
+        # round 80 mutation-tester: an EMPTY declaration is stale, never a
+        # vacuous match (the falsy guard alone was unguarded)
+        fx3d = fixture('a3d')
+        with open(os.path.join(fx3d, 'tools/registry.json'), 'w',
+                  newline='\n') as fh:
+            json.dump({'schema': 'toy', 'rows': [
+                {'name': 'toy-selftest',
+                 'expect': {'exit': 0, 'stdout_contains': []}}]}, fh)
+        rc3d, txt3d, err3d = cli(fx3d, manifest_for(
+            fx3d, [_row('toy-empty', 'registry-json', 'toy-selftest')],
+            'm3d'))
         arm('ARM3_stale_measured', rc == 1
             and 'measured=stale' in txt
             and 'REGISTRY_BIND: rows=1 match=0 stale=1 absent=0 error=0 '
-                'unexpected=1' in txt,
-            'rc=%r %r %r' % (rc, txt, err))
+                'unexpected=1' in txt
+            and rc3b == 1 and 'measured=stale' in txt3b
+            and rc3c == 1 and 'measured=stale' in txt3c
+            and rc3d == 1 and 'measured=absent' in txt3d,
+            'rc=%r %r %r | both rc=%r | longer rc=%r | empty rc=%r'
+            % (rc, txt, err, rc3b, rc3c, rc3d))
 
         # arm 4: a named row missing from the surface is absent, not stale
         rc, txt, err = cli(fx1, manifest_for(
@@ -388,11 +466,20 @@ def selftest(out=sys.stdout):
                 fh)
         rc, txt, err = cli(fx5, manifest_for(
             fx5, [_row('toy-dup', 'registry-json', 'toy-selftest')], 'm5'))
+        esc = _row('toy-esc', 'doc', 'toy gate')
+        esc['doc'] = '../outside.md'
+        rc5b, txt5b, err5b = cli(fx1, manifest_for(fx1, [esc], 'm5b'))
+        absrow = _row('toy-abs', 'registry-json', 'toy-selftest')
+        absrow['registry'] = '/etc/registry.json'
+        rc5c, txt5c, err5c = cli(fx1, manifest_for(fx1, [absrow], 'm5c'))
         arm('ARM5_registry_duplicate_refused', rc == 2
             and 'measured=error detail=registry-row-duplicate:toy-dup' in txt
             and 'REGISTRY_BIND: rows=1 match=0 stale=0 absent=0 error=1 '
-                'unexpected=1' in txt,
-            'rc=%r %r %r' % (rc, txt, err))
+                'unexpected=1' in txt
+            and rc5b == 2 and 'manifest-path-not-repo-relative' in err5b
+            and rc5c == 2 and 'manifest-path-not-repo-relative' in err5c,
+            'rc=%r %r %r | parent rc=%r %r | abs rc=%r %r'
+            % (rc, txt, err, rc5b, err5b, rc5c, err5c))
 
         # arm 6: an unparsable registry is a setup refusal, never a pass
         fx6 = fixture('a6')
@@ -417,16 +504,26 @@ def selftest(out=sys.stdout):
             and 'error=1' in txt,
             'rc=%r %r %r' % (rc, txt, err))
 
-        # arm 8: an instrument whose stdout lacks the figure is unmeasurable
+        # arm 8: an instrument whose stdout lacks the figure is unmeasurable;
+        # round 80 folds in the duplicate-live-token case — a stale token
+        # printed before the live one must never be silently out-voted.
         fx8 = fixture('a8')
         with open(os.path.join(fx8, 'tools/fig.py'), 'w', newline='\n') as fh:
             fh.write("print('nothing useful')\n")
         rc, txt, err = cli(fx8, manifest_for(
             fx8, [_row('toy-nofig', 'doc', 'toy gate')], 'm8'))
+        fx8b = fixture('a8b')
+        with open(os.path.join(fx8b, 'tools/fig.py'), 'w', newline='\n') as fh:
+            fh.write("print('TOY: 2/2 pass')\nprint('TOY: 1/1 pass')\n")
+        rc8b, txt8b, err8b = cli(fx8b, manifest_for(
+            fx8b, [_row('toy-twice', 'doc', 'toy gate')], 'm8b'))
         arm('ARM8_live_figure_absent_refused', rc == 2
             and 'measured=error detail=figure-absent-in-live:toy-nofig' in txt
-            and 'error=1' in txt,
-            'rc=%r %r %r' % (rc, txt, err))
+            and 'error=1' in txt
+            and rc8b == 2
+            and 'measured=error detail=figure-not-unique-live:toy-twice' in txt8b,
+            'rc=%r %r %r | twice rc=%r %r'
+            % (rc, txt, err, rc8b, txt8b))
 
         # arm 9: the LAST row of a repeated name is the live one (a later
         # section supersedes an earlier one)
@@ -459,6 +556,7 @@ def selftest(out=sys.stdout):
                 'measured=stale' in txt
             and 'unexpected=0' in txt,
             'rc=%r %r %r' % (rc, txt, err))
+
     finally:
         shutil.rmtree(work, ignore_errors=True)
 

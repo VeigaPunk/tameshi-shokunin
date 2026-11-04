@@ -84,6 +84,12 @@ DESIGN_SHA_RE = re.compile(r'^# design_tool_sha256:[ \t]*([0-9a-f]{64})[ \t]*$',
 DESIGN_MARKER_RE = re.compile(
     r'^# measured_bytes:[ \t]*worktree \(uncommitted at design_base\)'
     r'[ \t]*$', re.M)
+# Any column-0 header prefix, valid value or not: a file that names a receipt
+# header but carries no complete block is refused, never silently skipped
+# (round-80 executor probe T80W1E3: an all-malformed design block vanished).
+PREFIX_RE = re.compile(
+    r'^# (?:measured_rev|measured_bytes_rev|measured_bytes|tool|tool_sha256|'
+    r'design_base|design_tool|design_tool_sha256):', re.M)
 MAX_RECEIPT_BYTES = 8 * 1024 * 1024
 HEAD_BYTES = 64 * 1024
 
@@ -122,6 +128,27 @@ def _one(pattern, text):
     return pattern.findall(text)
 
 
+def _repo_relative(tool):
+    """A repo-relative POSIX path: no absolute form, no parent segment, no
+    backslash, no drive qualifier (round-80 sentinel F5: Windows-style and
+    drive-qualified design paths were accepted as design provenance)."""
+    if not isinstance(tool, str) or not tool:
+        return False
+    if tool.startswith('/') or '\\' in tool or re.match(r'^[A-Za-z]:', tool):
+        return False
+    return '..' not in tool.split('/')
+
+
+def _refuse_malformed(path, text, parsed):
+    """Every column-0 header prefix must have parsed; `raw` counts include the
+    malformed forms the regexes reject."""
+    for name, values in parsed.items():
+        raw = len(re.findall(r'^# %s:' % name, text, re.M))
+        if raw != len(values):
+            raise SetupError('receipt-header-malformed:%s:%s'
+                             % (path, name))
+
+
 def parse_receipt(path):
     """Return the receipt's header block, or None when the file is not a
     receipt (carries no complete header triple). Raises SetupError on a
@@ -138,17 +165,17 @@ def parse_receipt(path):
         with open(path, 'rb') as fh:
             head = fh.read(HEAD_BYTES)
             head_text = head.decode('utf-8', 'replace')
-            patterns = (REV_RE, TOOL_RE, SHA_RE, BYTES_REV_RE,
-                        DESIGN_BASE_RE, DESIGN_TOOL_RE, DESIGN_SHA_RE,
-                        DESIGN_MARKER_RE)
-            if not any(p.search(head_text) for p in patterns):
+            if not PREFIX_RE.search(head_text):
                 return None
             rest = fh.read(MAX_RECEIPT_BYTES + 1 - len(head))
     except OSError as exc:
         raise SetupError('receipt-unreadable:%s:%s' % (path, exc))
     if len(head) + len(rest) > MAX_RECEIPT_BYTES:
         raise SetupError('receipt-too-large:%s' % path)
-    text = head_text + rest.decode('utf-8', 'replace')
+    # CRLF: a Windows-authored receipt is the same declaration, not an
+    # invisible file (round-80 sentinel F1: a CRLF file vanished from an
+    # otherwise green population). Normalise before any matching.
+    text = (head_text + rest.decode('utf-8', 'replace')).replace('\r\n', '\n')
     revs, tools, shas, brevs = (_one(REV_RE, text), _one(TOOL_RE, text),
                                 _one(SHA_RE, text), _one(BYTES_REV_RE, text))
     drevs, dtools, dshas, dmarks = (_one(DESIGN_BASE_RE, text),
@@ -158,26 +185,33 @@ def parse_receipt(path):
     normal = bool(revs or tools or shas or brevs)
     design = bool(drevs or dtools or dshas or dmarks)
     if not normal and not design:
-        return None
+        raise SetupError('receipt-header-incomplete:%s' % path)
     if normal and design:
         raise SetupError('receipt-header-mixed:%s' % path)
     if design:
         if not (drevs and dtools and dshas):
             raise SetupError('design-header-incomplete:%s' % path)
-        if len(dmarks) != 1:
+        raw_markers = len(re.findall(r'^# measured_bytes:', text, re.M))
+        if raw_markers == 0:
             raise SetupError('design-marker-absent:%s' % path)
+        if raw_markers > 1:
+            raise SetupError('receipt-header-duplicate:%s:measured_bytes'
+                             % path)
         for name, values in (('design_base', drevs),
                              ('design_tool', dtools),
                              ('design_tool_sha256', dshas)):
             if len(values) > 1:
                 raise SetupError('receipt-header-duplicate:%s:%s'
                                  % (path, name))
-            raw = len(re.findall(r'^# %s:' % name, text, re.M))
-            if raw != len(values):
-                raise SetupError('receipt-header-malformed:%s:%s'
-                                 % (path, name))
+        _refuse_malformed(path, text, {'measured_rev': [], 'tool': [],
+                                       'tool_sha256': [],
+                                       'measured_bytes_rev': [],
+                                       'design_base': drevs,
+                                       'design_tool': dtools,
+                                       'design_tool_sha256': dshas,
+                                       'measured_bytes': dmarks})
         tool = dtools[0]
-        if tool.startswith('/') or '..' in tool.split('/'):
+        if not _repo_relative(tool):
             raise SetupError('tool-path-not-repo-relative:%s:%s'
                              % (path, tool))
         return {'path': path, 'kind': 'design',
@@ -190,17 +224,18 @@ def parse_receipt(path):
         if len(values) > 1:
             raise SetupError('receipt-header-duplicate:%s:%s' % (path, name))
     # A recognised header prefix whose value does not parse (a space in the
-    # tool path, a short sha) must be refused, never silently ignored: a
-    # receipt with one valid and one malformed `# tool:` line would otherwise
-    # bind against the valid one while a reader sees two declarations
-    # (round-79 sentinel probe).
-    for name, values in (('measured_rev', revs), ('tool', tools),
-                         ('tool_sha256', shas), ('measured_bytes_rev', brevs)):
-        raw = len(re.findall(r'^# %s:' % name, text, re.M))
-        if raw != len(values):
-            raise SetupError('receipt-header-malformed:%s:%s' % (path, name))
+    # tool path, a short sha, a stray design line) must be refused, never
+    # silently ignored: a receipt with one valid and one malformed `# tool:`
+    # line would otherwise bind against the valid one while a reader sees two
+    # declarations (round-79 sentinel probe; widened to every prefix round 80).
+    _refuse_malformed(path, text, {'measured_rev': revs, 'tool': tools,
+                                   'tool_sha256': shas,
+                                   'measured_bytes_rev': brevs,
+                                   'design_base': [], 'design_tool': [],
+                                   'design_tool_sha256': [],
+                                   'measured_bytes': []})
     tool = tools[0]
-    if tool.startswith('/') or '..' in tool.split('/'):
+    if not _repo_relative(tool):
         raise SetupError('tool-path-not-repo-relative:%s:%s' % (path, tool))
     return {'path': path, 'kind': 'measured', 'measured_rev': revs[0],
             'tool': tool, 'tool_sha256': shas[0],
@@ -384,15 +419,29 @@ def selftest(out=sys.stdout):
                 return 2, buf.getvalue(), str(exc)
             return rc, buf.getvalue(), err
 
-        # arm 1: a receipt naming the revision that carries its sha -> bound
+        # arm 1: a receipt naming the revision that carries its sha -> bound.
+        # Round 80 folds in the CRLF form (sentinel F1: a CRLF receipt was
+        # invisible, so a newline conversion could hide an unbound one).
         root = os.path.join(work, 'pop1')
         os.makedirs(root)
         receipt(os.path.join(root, 'bound.txt'), rev1, sha1)
         rc, txt, err = run(root)
+        root1b = os.path.join(work, 'pop1b')
+        os.makedirs(root1b)
+        crlf = os.path.join(root1b, 'crlf.txt')
+        with open(crlf, 'w', newline='') as fh:
+            fh.write('# receipt: crlf\r\n'
+                     '# measured_rev: %s\r\n'
+                     '# tool: tools/toy.py\r\n'
+                     '# tool_sha256: %s\r\n' % (rev1, sha1))
+        rc1b, txt1b, err1b = run(root1b)
         arm('ARM1_bound', rc == 0 and 'state=bound' in txt
             and 'RECEIPT_BIND: receipts=1 bound=1 corrected=0 design=0 '
-                'unbound=0' in txt,
-            'rc=%r %r %r' % (rc, txt, err))
+                'unbound=0' in txt
+            and rc1b == 0 and 'state=bound' in txt1b
+            and 'receipts=1 bound=1' in txt1b,
+            'rc=%r %r %r | crlf rc=%r %r %r'
+            % (rc, txt, err, rc1b, txt1b, err1b))
 
         # arm 2: the measured rev's bytes differ, no correction -> unbound
         root = os.path.join(work, 'pop2')
@@ -447,14 +496,25 @@ def selftest(out=sys.stdout):
         receipt(os.path.join(root6b, 'malformed.txt'), rev1, sha1,
                 extra='# tool: tools/path with spaces.py\n')
         rc6b, txt6b, err6b = run(root6b)
+        # round 80 (executor probe T80W1E3): a file naming a design header
+        # that does not parse carries no complete block and used to be skipped
+        # silently; a raw prefix now makes it an incomplete receipt.
+        root6c = os.path.join(work, 'pop6c')
+        os.makedirs(root6c)
+        with open(os.path.join(root6c, 'broken.txt'), 'w', newline='\n') as fh:
+            fh.write('# receipt: broken\n# design_base: NOT-A-REV\n')
+        rc6c, txt6c, err6c = run(root6c)
         arm('ARM6_duplicate_header_refused', rc == 2
             and 'RECEIPT_BIND:' not in txt
             and 'receipt-header-duplicate' in err
             and rc6b == 2
             and 'RECEIPT_BIND:' not in txt6b
-            and 'receipt-header-malformed' in err6b,
-            'rc=%r %r %r | malformed rc=%r %r %r'
-            % (rc, txt, err, rc6b, txt6b, err6b))
+            and 'receipt-header-malformed' in err6b
+            and rc6c == 2
+            and 'RECEIPT_BIND:' not in txt6c
+            and 'receipt-header-incomplete' in err6c,
+            'rc=%r %r %r | malformed rc=%r %r %r | incomplete rc=%r %r %r'
+            % (rc, txt, err, rc6b, txt6b, err6b, rc6c, txt6c, err6c))
 
         # arm 7: an empty population is a setup refusal, never a vacuous pass
         root = os.path.join(work, 'pop7')
@@ -501,14 +561,28 @@ def selftest(out=sys.stdout):
         receipt(os.path.join(root10b, 'absolute.txt'), rev1, sha1,
                 tool='/etc/passwd')
         rc10b, txt10b, err10b = run(root10b)
+        root10c = os.path.join(work, 'pop10c')
+        os.makedirs(root10c)
+        design_receipt(os.path.join(root10c, 'win.txt'), rev1, sha1,
+                       tool='..\\outside.py')
+        rc10c, txt10c, err10c = run(root10c)
+        root10d = os.path.join(work, 'pop10d')
+        os.makedirs(root10d)
+        design_receipt(os.path.join(root10d, 'drive.txt'), rev1, sha1,
+                       tool='C:\\outside.py')
+        rc10d, txt10d, err10d = run(root10d)
         arm('ARM10_tool_path_escape_refused', rc == 2
             and 'RECEIPT_BIND:' not in txt
             and 'tool-path-not-repo-relative' in err
             and rc10b == 2
             and 'RECEIPT_BIND:' not in txt10b
-            and 'tool-path-not-repo-relative' in err10b,
-            'rc=%r %r %r | absolute rc=%r %r %r'
-            % (rc, txt, err, rc10b, txt10b, err10b))
+            and 'tool-path-not-repo-relative' in err10b
+            and rc10c == 2
+            and 'tool-path-not-repo-relative' in err10c
+            and rc10d == 2
+            and 'tool-path-not-repo-relative' in err10d,
+            'rc=%r %r %r | abs rc=%r | win rc=%r | drive rc=%r'
+            % (rc, txt, err, rc10b, rc10c, rc10d))
 
         # arm 11 (round 80): a declared design receipt is MEASURED as
         # `design`, not invisible. Round-79's control receipts carried the
@@ -527,16 +601,34 @@ def selftest(out=sys.stdout):
             'rc=%r %r %r' % (rc, txt, err))
 
         # arm 12 (round 80): a design block without the uncommitted marker is
-        # an unbound declaration, never a design pass
+        # an unbound declaration, never a design pass; a valid marker plus a
+        # second, bogus `# measured_bytes:` line is ambiguous (executor probe
+        # T80W1E3 measured both forms accepted before the fold).
         root = os.path.join(work, 'pop12')
         os.makedirs(root)
         design_receipt(os.path.join(root, 'naked.txt'), rev1, sha1,
                        marker=False)
         rc, txt, err = run(root)
+        root12b = os.path.join(work, 'pop12b')
+        os.makedirs(root12b)
+        with open(os.path.join(root12b, 'twomarkers.txt'), 'w',
+                  newline='\n') as fh:
+            fh.write('# receipt: twomarkers\n'
+                     '# design_base: %s\n'
+                     '# design_tool: tools/toy.py\n'
+                     '# design_tool_sha256: %s\n'
+                     '# measured_bytes: worktree (uncommitted at design_base)\n'
+                     '# measured_bytes: bogus\n' % (rev1, sha1))
+        rc12b, txt12b, err12b = run(root12b)
         arm('ARM12_design_marker_absent_refused', rc == 2
             and 'RECEIPT_BIND:' not in txt
-            and 'design-marker-absent' in err,
-            'rc=%r %r %r' % (rc, txt, err))
+            and 'design-marker-absent' in err
+            and rc12b == 2
+            and 'RECEIPT_BIND:' not in txt12b
+            and 'receipt-header-duplicate' in err12b
+            and 'measured_bytes' in err12b,
+            'rc=%r %r %r | duplicate rc=%r %r %r'
+            % (rc, txt, err, rc12b, txt12b, err12b))
 
         # arm 13 (round 80): a design base the repo does not carry is unbound
         # by name, never design
@@ -548,6 +640,7 @@ def selftest(out=sys.stdout):
             and 'state=unbound' in txt
             and 'detail=design-base-unresolvable' in txt,
             'rc=%r %r %r' % (rc, txt, err))
+
     finally:
         shutil.rmtree(work, ignore_errors=True)
 

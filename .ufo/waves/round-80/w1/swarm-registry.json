@@ -1,0 +1,126 @@
+{
+  "schema": "ufo-swarm-registry-v1",
+  "wave": "r80-w1",
+  "createdAt": "2026-11-04T07:27:48.508Z",
+  "updatedAt": "2026-11-04T07:27:48.508Z",
+  "reportDir": ".ufo/waves/round-80/w1",
+  "members": {
+    "T80W1E1": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nTARGET: independent rebuild + adversarial probe of R80-C1's counter.\nWork in S=$HYAKU_SCRATCH/tameshi-r80/T80W1E1 (delete it before yield). Do NOT\nedit the lane and do NOT trust the L1 candidate.\n1. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/plans/round-80.plan.md section R80-C1 and\n   /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/registry-figure-bind.py + tools/registry-figure-bind.json.\n2. In a scratch copy, rebuild the manifest from the PLAN TEXT alone (different\n   fixture docs/registry files), and check each rule the tool claims: latest\n   row wins, absent vs stale, duplicate registry row refused, unparsable\n   registry refused, instrument non-zero exit is an error row, live figure\n   absent is an error, figure matching twice in a doc row is refused, the\n   `expect=stale` standing red arm.\n3. Probe the declared population: count the manifest rows (must be 7) and\n   measure each one against the tool bytes at the declaration commit\n   ae591d5a2cf5d08cafad68a4c6ffaa62e0d3f608 with `git show`. Report the exact per-row declared/live tokens you\n   observe at that commit and whether they match the plan's before-state.\n4. Try to cheat the counter: a manifest row whose declared surface contains\n   the live token only as part of a longer unrelated token; a doc with the row\n   name as a substring of another row; a registry row whose\n   `expect.stdout_contains` is an empty list. Report which cheats pass.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1E1.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1E2": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nTARGET: independent rebuild of R80-C2's four new arms and their defenders.\nWork in S=$HYAKU_SCRATCH/tameshi-r80/T80W1E2. Do NOT edit the lane.\n1. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/plans/round-80.plan.md section R80-C2 and the landed\n   tools/selfstate-freshness.py (arms 15-17), tools/wave-reconcile.py (arm24),\n   both mutant specs.\n2. In a scratch clone (`git clone --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin D`), run the two selftests and\n   the two batteries exactly as the plan's counting commands state; confirm\n   `SELFSTATE_SELFTEST: 17/17 pass`, `WAVE_RECONCILE_SELFTEST: 24/24 pass`,\n   `defects=4 killed=4` and `defects=13 killed=13` with CONTROL GREEN and\n   byte-identical restore.\n3. Adversarial probes, each in scratch: (a) delete arm17's `-X utf8` alone and\n   confirm ONLY arm17 fails; (b) delete arm16's argv from the cache key and\n   confirm ONLY arm16 fails; (c) delete arm15's BOM guard and confirm ONLY\n   arm15 fails; (d) delete arm24's unknown-root guard and confirm ONLY arm24\n   fails with a named FAIL (not a suite crash); (e) run arm17's CLI under\n   LC_ALL=C and report what utf8_mode measures (the locale caveat).\n4. Judge the control batteries: are they a real do-nothing (0 kills on base\n   bytes) and would a round that added the fixtures without the arms reach\n   the after-state? Answer with the receipts.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1E2.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1E3": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nTARGET: independent rebuild + adversarial probe of R80-C3's design class.\nWork in S=$HYAKU_SCRATCH/tameshi-r80/T80W1E3. Do NOT edit the lane.\n1. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/plans/round-80.plan.md section R80-C3 and\n   /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-bytes-bind.py.\n2. Build scratch receipt populations and measure: a valid design block\n   (`design_base`/`design_tool`/`design_tool_sha256` + the uncommitted\n   marker) -> `state=design`; the marker missing -> setup refusal\n   `design-marker-absent`; `design_base` unresolvable -> `state=unbound`\n   `detail=design-base-unresolvable`; a file with BOTH blocks ->\n   `receipt-header-mixed`; a design tool path `../x` or `/etc/passwd` ->\n   refused; duplicate/malformed design headers -> refused.\n3. Run the whole-tree sweep twice on committed bytes: at base dd2b9e2c44df680174a829901829fe86a2185185 the base\n   instrument (`git show dd2b9e2c44df680174a829901829fe86a2185185:tools/receipt-bytes-bind.py`) over a scratch\n   clone's `.ufo/evidence`; and the landed instrument over the same tree.\n   Report the exact summary lines and whether the 7 round-79 design receipts\n   are the whole difference.\n4. Report any population file the instrument still cannot see (a receipt-like\n   header file that is neither measured nor design nor refused).\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1E3.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1E4": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nTARGET: the cheapest do-nothing control for all three claims, measured.\nWork in S=$HYAKU_SCRATCH/tameshi-r80/T80W1E4. Do NOT edit the lane.\n1. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/plans/round-80.plan.md (the three claims' before-states and\n   controls).\n2. In a scratch clone at base dd2b9e2c44df680174a829901829fe86a2185185, run the plan's three before-state\n   commands verbatim as far as base bytes allow: the C1 sweep needs the landed\n   instrument (run it from the declaration commit's tool bytes against the\n   BASE docs/registry); the C2 control batteries use the base tool bytes and\n   the two control specs; the C3 sweep uses the base instrument. Report each\n   exact summary line and exit code.\n3. For each claim, state whether an explicit do-nothing (add nothing / add\n   only the fixture with no arm / recognise nothing) reaches the after-state,\n   and by which printed token it would be visible.\n4. Flag any before-state that is NOT the plan's declared value.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1E4.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1S1": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nTARGET: prose drafts for the round-80 records (no lane edits).\nWork in S=$HYAKU_SCRATCH/tameshi-r80/T80W1S1.\n1. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/plans/round-80.plan.md, /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/QUALITY.md's\n   criteria tail (find the current highest criterion number) and\n   /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-79.md (shape).\n2. Draft, in your report: (a) the `## Mistakes` entries round 80 can honestly\n   mine (the round-79 closure defects 1, 4 and 5 are candidates — one class\n   each, with evidence pointer and the criterion/rule that should have caught\n   it, or `none`); (b) two QUALITY criteria, one for \"a self-assessment\n   surface's printed figure is re-derived from its instrument\" and one for\n   \"a declared non-committed receipt class is measured, never invisible\",\n   each citing its mistake; (c) the `## Gate` prose for S308 (PEP 540) and\n   S309 (rejected sys.html row), using the snapshots under\n   /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-80/sources/ — quote exactly, count words.\n3. Do not invent numbers: where a value must come from a run, write\n   `<placeholder: command>`.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1S1.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1SC1": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nTARGET: source-row ground check for round 80 (read-only).\nWork in S=$HYAKU_SCRATCH/tameshi-r80/T80W1SC1.\n1. S308 (new, PEP 540): re-fetch https://peps.python.org/pep-0540/ and compare\n   bytes with /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-80/sources/pep540.html\n   (sha256 c6ed7151…). Locate the sentence \"This mode is disabled by default\n   and enabled by the POSIX locale.\" and report its snapshot line and word\n   count. State exactly what it grounds for arm17 (`-X utf8` sets UTF-8 mode;\n   the POSIX locale enables it, so the arm must pin a UTF-8 locale).\n2. S309 (rejected row, docs.python.org/3.15/library/sys.html): re-open\n   https://docs.python.org/3.15/library/sys.html, compare with\n   /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-80/sources/sys315.html (sha256\n   68094f11…), and verify the rejection ground: the `flags.isolated` entry\n   maps the attribute to `-I` and states no isolation semantics. Quote a\n   <=25-word located sentence that supports the rejection.\n3. S289 (re-open): fetch https://git-scm.com/docs/git-cat-file, report its\n   sha256/size and the `blob <rev>:<path>` ground line the measured block\n   binds on. Note any drift from `.ufo/evidence/round-79/sources/catfile.html`.\n4. Report every drift, every URL you could not open, and the exact words.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1SC1.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1SC2": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nTARGET: re-derive the survivor anchors and hunt for unguarded rules.\nWork in S=$HYAKU_SCRATCH/tameshi-r80/T80W1SC2.\n1. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/plans/round-80.plan.md C2 and\n   /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-79/w1/T79W1SC2.md.\n2. On the landed design bytes (declaration ae591d5a2cf5d08cafad68a4c6ffaa62e0d3f608), verify each of the four\n   mutants' `@old` strings occurs EXACTLY once in its target\n   (`str.count`), and that the edit is the single change the arm claims.\n3. Re-run the round-79 scout's 20-row rule table against the LANDED bytes\n   (arms 17 and 24 exist now): list the rows still unguarded, with a\n   single-edit mutant each and the measured survivor/killed verdict in a\n   scratch battery. Shortlist the next round's survivors.\n4. Check the `-X utf8` arm's environment dependence: under LC_ALL=C does the\n   `python-utf8-dropped` mutant still die? Report the measured answer.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1SC2.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1R1": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nATTACK: R80-C1 (calibration) and its counter. Read-only on the lane; work in\nS=$HYAKU_SCRATCH/tameshi-r80/T80W1R1.\n1. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/plans/round-80.plan.md R80-C1, the instrument and manifest, and\n   the receipts under /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-80/design/.\n2. Re-derive the before-state independently (base docs/registry at dd2b9e2c44df680174a829901829fe86a2185185,\n   instrument at the declaration commit) and compare with\n   `c1-before-sweep.txt` row by row: which of the 7 rows are stale/absent and\n   is that the truth?\n3. Cheat it: can a manifest row `match` while the surface's figure is a\n   different token? Can a doc row's `figure` regex match a token in a\n   neighbouring row? Can a registry row with `stdout_contains` naming only a\n   prefix of the live figure pass? Write each attempt and its measured verdict.\n4. Decide whether the counter measures self-assessment against repo state\n   (AXES calibration) or something weaker, and name the weakest row.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1R1.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1R2": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nATTACK: R80-C2 (coverage) and its frozen kill matrix. Read-only on the lane;\nwork in S=$HYAKU_SCRATCH/tameshi-r80/T80W1R2.\n1. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/plans/round-80.plan.md R80-C2, the two selftests and specs, and\n   the receipts c2-*.txt.\n2. Re-run the two batteries in a scratch clone and diff every defect's FAIL\n   set against the plan's matrix. Any extra or missing arm is a finding.\n3. Check no base arm changed: diff arm lines base↔landed (selfstate 1-14,\n   wave-reconcile 1-23) — the only difference must be the appended arms.\n4. Look for vacuous arms: does arm15's second branch (not-utf8) die if only\n   the BOM guard is removed? Does arm16 pass when the two rows share argv?\n   Does arm24 pass if `readers` happens to contain the ghost key? Report each\n   measured answer, and whether any new arm asserts a token the production\n   path cannot print.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1R2.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1C1": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nFALSIFY: the three claims' predicates, separability and axis labels.\nS=$HYAKU_SCRATCH/tameshi-r80/T80W1C1. Read-only on the lane.\n1. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/plans/round-80.plan.md as a whole. For each claim: is the\n   after-state one concrete value a closure can re-derive from committed\n   bytes? Is there a do-nothing path to it? Is the axis label right by AXES\n   (C1 calibration = self-assessment vs observed state; C2 coverage = a new\n   edge class, not a re-score; C3 operability = a runnable artifact's surface\n   grew)?\n2. Separability: name every byte each claim's counter READS that another claim\n   lands. Is any after-state unreachable without another claim landing?\n3. Attack the kill rules for holes: a token that can match for the wrong\n   reason, an `expect=stale` row that hides a stale row, a battery count that\n   passes with a crashed suite.\n4. State, per claim, whether the honest verdict would be verifies / harmed /\n   unprovable, with the sentence you would write in the closure.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1C1.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1M1": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nMUTATION-TEST the three claim counters themselves (not the tools).\nS=$HYAKU_SCRATCH/tameshi-r80/T80W1M1. Do NOT edit the lane: copy the counters\ninto scratch.\n1. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/plans/round-80.plan.md and the three counters\n   (tools/registry-figure-bind.py, tools/selfstate-freshness.py arms 15-17,\n   tools/wave-reconcile.py arm24, tools/receipt-bytes-bind.py design class).\n2. Declare and run single-edit mutants of THE COUNTERS, one each, in scratch:\n   (a) registry-figure-bind: accept a live token that is a superstring of the\n   declared row; accept an empty `stdout_contains`; use the FIRST same-named\n   doc row instead of the last; (b) receipt-bytes-bind: skip the design\n   marker check; count design as bound; (c) the selfstate arms: register arm15\n   but assert only the BOM branch; register arm16 with identical argv on both\n   rows; (d) wave-reconcile arm24: prefix `unknown` instead of\n   `unknown-root:`.\n3. For each mutant report KILLED/SURVIVED against the claim's own counter or\n   battery, with the exact command. A survivor is a finding for the L1.\n4. Do not fix anything; report the survivor list with the smallest edit.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1M1.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1CN1": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "connector",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nCONNECT: sibling-overlap scan + assimilation re-derivation.\nS=$HYAKU_SCRATCH/tameshi-r80/T80W1CN1. Read-only everywhere.\n1. Scan the sibling lanes under /home/vgpnk/Projects/shokunin (read-only)\n   for the three capabilities round 80 claims: a registry/doc-figure binding\n   sweep, a declared non-committed receipt class in a receipt verifier, and\n   the four survivor arms. Name any lane that already holds one, with\n   path:line, and say whether tameshi's row is a duplicate or a distinct\n   surface.\n2. Re-derive the staged-package id collision check (CORPUS.md section\n   SOURCES.md): count registry ids in\n   /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md and ids in\n   /home/vgpnk/Projects/shokuknow/merge/tameshi/SOURCES.append.md with the\n   0-3-space pattern, list the collision ids, and say whether any staged entry\n   can be adopted this round (`Assimilation: none` unless a clean subset\n   exists; never edit the staged tree).\n3. Check `considerthese/2026-10-28.md`: list each self-improvement proposal\n   and whether it is already implemented (pointer) or still open. At most one\n   open proposal may be recommended for a later round.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1CN1.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    },
+    "T80W1SN1": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "sentinel",
+      "item": "You are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\nSENTINEL: adversarial security/robustness review of round 80's three\ncounters. S=$HYAKU_SCRATCH/tameshi-r80/T80W1SN1. Do NOT edit the lane.\n1. Read /home/vgpnk/Projects/shokunin/tameshi-shokunin/plans/round-80.plan.md and the three tools.\n2. Probe, in scratch copies, the bypass families the lane has been bitten by:\n   - header parsing: a design receipt whose `# design_tool_sha256:` line is\n     written twice or with a trailing space; a measured receipt with a\n     duplicate malformed prefix; a `# measured_bytes:` marker altered by one\n     character; a BOM or CRLF receipt header.\n   - path handling: a registry/manifest doc path with `..` or absolute; a\n     design `design_tool` with a Windows separator; a manifest `argv` that is\n     a shell metacharacter (the tool runs argv directly — confirm no shell).\n   - git fixture hygiene: does any new arm omit the `rev-parse\n     --show-toplevel` assertion, or inherit GIT_DIR/GIT_WORK_TREE?\n   - scratch: does any new code path write outside TMPDIR/`--work`?\n3. Report every bypass that measured a wrong state, and every guard that is\n   absent but unreachable by the current arms. Name the must-fix set.\nReport at /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-80/w1/T80W1SN1.md.\n",
+      "axes": [
+        "verification-fixture-craft"
+      ]
+    }
+  }
+}
