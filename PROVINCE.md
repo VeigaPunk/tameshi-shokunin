@@ -143,3 +143,18 @@ creatable by the shell user (Developer Mode); `PYTHONUTF8=1` in the
 dispatch env, ignored under `-I`. Domain source trees of sibling lanes are
 read-only here exactly as on the old host; nothing in the Refuses lines
 changes.
+
+Corrections, appended at round 72 (the round-16 append's spans, re-measured):
+
+The round-16 append above says "the seven-leg list now sits at `:85-91`".
+Measured this round on the committed bytes (`grep -n` over
+`tools/mutate-and-run.sh`): line 84 is the `--regression` header, lines
+85-87 are the narrative that introduces the legs, and legs 1-4 sit at
+88-91 - so `:85-91` carries the narrative plus four legs, not seven. The
+seven-leg cut (legs 1-7) is `:88-94`, leg 7 `js-round-gate` at line 94; the
+ten-leg ledger (the r51 leg cut) is `:88-97`, leg 10 `bash-drift-pins` at
+line 97. The stale cell stands append-only (the lane's correction rule), and
+`tools/pointer-recheck.json` measures it on every sweep: the red row
+`province-r16-sevenleg-85-91` still reads miss, and the round-72 rows
+`province-r72-sevenleg-cut-88-94` and `province-r72-tenleg-88-97` read hit
+against these spans.
