@@ -91,7 +91,7 @@ SELFTEST_ARMS = 14
 # the function's own text only: a module-level edit, a vacuous comment inside
 # the function (over-kill) or a two-edit rewrite (weaken an arm and recompute
 # this constant) stay outside the class, exactly the round-81 declared limits.
-SELFTEST_TEXT_SHA256 = ("e2f744fad502f2b1eb88ee3e319801d088a6f49f5f0a9ae6953ce5f63a1259ec")
+SELFTEST_TEXT_SHA256 = ("9d2598911e8cd4a3daf49e34c8d43ddecef399c7fd65912070beadcc03bfa773")
 
 
 class SetupError(Exception):
@@ -452,7 +452,10 @@ def manifest_git_path(repo, manifest_path):
     path = manifest_path
     if os.path.isabs(path):
         try:
-            path = os.path.relpath(os.path.realpath(path),
+            # abspath, not realpath: resolving symlinks here would let a symlinked
+            # manifest be bound as its TARGET path, so the path the caller named is
+            # never the path measured (wave critic C1).
+            path = os.path.relpath(os.path.abspath(path),
                                    os.path.realpath(repo))
         except ValueError as exc:
             raise SetupError("invalid-path:manifest:%s" % exc)
@@ -474,6 +477,9 @@ def bind_manifest(repo, manifest_path, rev, raw):
     """
     path = manifest_git_path(repo, manifest_path)
     resolved = resolve_rev(repo, rev)
+    entry = tree_entry(repo, resolved, path)
+    if entry is None or entry[1] != "blob" or entry[0] not in REGULAR_MODES:
+        raise SetupError("manifest-not-regular:%s:%s" % (rev, path))
     proc = run_git(repo, "cat-file", "blob", "%s:%s" % (resolved, path),
                    check=False)
     if proc.returncode != 0:
@@ -865,10 +871,13 @@ def selftest(out=sys.stdout):
         noncommit_refused = _expect_setup(
             lambda: sweep(f.root, mpath, out=_io.StringIO(),
                           manifest_rev=rev4 + "^{tree}"), "rev-unresolvable")
+        symlink_manifest_refused = _expect_setup(
+            lambda: _symlinked_manifest(f, rev4), "manifest-not-regular")
         arm("A13_manifest_rev_binding",
             code_before == 0 and bound_tokens and code_bound == 0
             and narrowed_refused and narrowed_unbound and outside_refused
-            and absent_refused and unresolvable_refused and noncommit_refused,
+            and absent_refused and unresolvable_refused and noncommit_refused
+            and symlink_manifest_refused,
             bound_text.strip().splitlines()[-1])
 
         # arm 14: the selftest's own assertion text is pinned, so an edit that
@@ -888,6 +897,21 @@ def selftest(out=sys.stdout):
 
     out.write("DEFECT_BIND_SELFTEST: %d/%d pass\n" % (passed, total))
     return 0 if (passed == total == SELFTEST_ARMS) else 1
+
+
+def _symlinked_manifest(fixture, rev):
+    """A manifest path that is a committed symlink must be refused: the bytes
+    on disk would be the target's, the path named is the link (wave critic C1)."""
+    path = fixture.manifest([{"id": "s1", "kind": "tree-paths", "rev": rev,
+                              "paths": ["doc.md"]}], name="target.json")
+    link = os.path.join(fixture.root, "manifest-link.json")
+    if not os.path.lexists(link):
+        os.symlink("target.json", link)
+    fixture.git("-c", "user.name=t", "-c", "user.email=t@t", "add",
+                "target.json", "manifest-link.json")
+    fixture.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm",
+                "symlink manifest")
+    return sweep(fixture.root, link, out=io.StringIO(), manifest_rev=rev)
 
 
 def _cli_guards(fixture, rev):
