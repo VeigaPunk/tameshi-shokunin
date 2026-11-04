@@ -1967,3 +1967,73 @@ carries the "any mismatch, or an empty sample, fails the run" /
 ed3a66c2c5458fc6e4ecbc41cbaf93ed05f6db98:tools/coldread-precheck-portable.py | grep -c "probe_failed\|sampled.*< 1"`
 prints `0` — a described fix with no grep-addressable presence where the
 description says it lives.
+
+### Criterion 121 — a round record's execution claims are re-derivable from its committed wave artifacts; a printed count the artifacts contradict is a calibration defect
+
+A record that prints how many seats ran, how many seat reports the wave
+committed, which roles ran, or what share of them were attack seats is making
+a claim about committed artifacts, and the claim must survive a re-derivation
+from those artifacts at their own revision. A printed figure the artifacts
+contradict is not a rounding difference: it is the record running ahead of the
+bytes, the class the round-52/53 closures kept finding. The obligation is
+mechanical, not rhetorical — a record may state a count only if the counting
+command that re-derives it exists in the round's own instruments.
+
+Lesson: `corpus/lessons/round-72-verifier-spotcheck.md` §1 and §6 routed
+defects 1 and 2 (class record-runs-ahead-of-artifacts): the round-72 report
+printed "12 seats, 11 reports" while twelve seat reports were committed, and
+the frozen plan declared `1 labrat` while the executed wave ran `revenger`.
+Both are now standing red arms measured on every sweep by
+`tools/wave-reconcile.py` (`rows=6 met=6 unexpected=0`, the two drift rows
+`ok`), and `corpus/lessons/round-73.md` records the payment.
+
+Falsifier that must fail: `git -C /home/vgpnk/Projects/shokunin show
+3664a6d3:.ufo/reports/round-72/tameshi.md | sed -n '56p'` prints `- **The
+wave** (see "Wave" below): 12 seats, 11 reports; three seats found real`
+while `git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-tree -r
+a3dd3574 --name-only -- .ufo/waves/round-72/w1 | grep -cE
+'^\.ufo/waves/round-72/w1/[^/]+\.md$'` prints `12` — the record's own count
+contradicts the committed population it names.
+
+### Criterion 122 — a manifest's self-description counts what its rows carry, or carries no count
+
+When an instrument's manifest states in its own `note` (or any header field)
+how many rows of a class it carries, that sentence is a claim like any other
+and must equal the rows present. A count in a note is not decoration: a
+closure reading the note instead of the rows reaches the wrong figure, and the
+note is exactly the field no census or gate parses. Either keep the count in
+step or state no count at all.
+
+Lesson: `corpus/lessons/round-72-verifier-spotcheck.md` §6 routed defect 4
+(class stale-self-description): `tools/pointer-recheck.json`'s note ended
+"round 72 adds three green arms" while four round-72 green arms were present
+(the fourth, `province-r72-sixleg-cut-88-93`, was added after the freeze and
+disclosed elsewhere). The note is corrected in the round-73 record-edits commit
+and the same round's lesson carries the class.
+
+Falsifier that must fail: `python3 -c "import
+json;print(len([r for r in json.load(open('tools/pointer-recheck.json'))['rows']
+if 'r72' in r['id'] or 's303' in r['id']]))"` prints `4` while `grep -c 'adds
+three green arms' tools/pointer-recheck.json` prints `1` — the note's count and
+the rows' count disagree at the same bytes.
+
+### Criterion 123 — a prose sentence about a counter's behaviour is measured on the real input, not only on a fixture
+
+A record's sentence about what a gate prints is a measurement, and a fixture
+that reaches a code path by aligning two strings the real registry keeps apart
+does not establish that the real input takes it. When a sentence is true only
+of a same-scope fixture, the sentence says so; a mechanism demonstrated by
+construction is stated as a construction, never as the live behaviour.
+
+Lesson: `corpus/lessons/round-72-verifier-spotcheck.md` §4 and §6 routed
+defect 3 (class fixture-only-mechanism): the round-72 report's "the
+counter-run without the prefix prints E04" holds only when the superseding
+row's scope string equals the superseded row's; on the real registry the S303
+row prints `W04 duplicate url … across scopes` and the lane validates clean.
+The correction of record is `corpus/lessons/round-73.md` `## Gate`, and the
+census gate stays the lane's standing instrument for it.
+
+Falsifier that must fail: `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh
+validate --root /home/vgpnk/Projects/shokunin tameshi | grep -c 'E04'` prints
+`0` while the same run `| grep -c 'W04.*S303'` prints `1` — the live row takes
+the warning path the round-72 sentence said was the error path.
