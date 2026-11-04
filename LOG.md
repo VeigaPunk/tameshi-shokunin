@@ -4329,3 +4329,29 @@ reconciliation` 19/19 → 23/23; `non-Python instrument freshness row` 13/13 →
 `1f6709d0`: `WAVE_RECONCILE: rows=6 met=6 unexpected=0`, `SELFSTATE: rows=22
 match=20 stale=2 unexpected=0`, `RECEIPT_BIND: receipts=14 bound=6 corrected=8
 unbound=0`.
+
+## Round 80 (2026-11-04) — the registry home measured, four survivors become arms, the design class
+
+Three claims frozen at `ae591d5a` before any wave data (`plans/round-80.plan.md`):
+R80-C1 calibration (the registry home's printed figures equal the live
+figures), R80-C2 coverage (the four survivors the round-79 wave named become
+arms), R80-C3 operability (the receipt population covers the declared tree,
+design class included).
+
+- C1: `tools/registry-figure-bind.py` + a declared 7-row manifest; before
+  `REGISTRY_BIND: rows=7 match=0 stale=5 absent=2 error=0 unexpected=7` exit 1,
+  after `rows=7 match=7 stale=0 absent=0 error=0 unexpected=0` exit 0,
+  `--selftest` 11/11. The SKILL.md round-80 registry section and the
+  refreshed `tools/registry.json` rows carry the figures; the capability row
+  `registry-home figure binding` enters `## Capabilities`.
+- C2: selfstate arms 15–17 and wave-reconcile arm24; control batteries
+  `defects=3 killed=0 survived=3` and `defects=1 killed=0 survived=1` on base
+  bytes, landed `defects=4 killed=4` and `defects=13 killed=13` with
+  `CONTROL: GREEN` and byte-identical restore; selftests 17/17 and 24/24.
+  Sourced on S308 (PEP 540).
+- C3: the design block is a measured class; the whole-tree sweep moves
+  `receipts=22` → `receipts=29 bound=14 corrected=8 design=7 unbound=0`
+  (`--selftest` 13/13); a standing `receipt-bytes-tree` registry row runs it.
+- Sources: S308 opened (PEP 540), S309 appended as the round-79 refused row
+  (`docs.python.org/3/library/sys.html`), S289 re-opened. Census exit 0 before
+  and after (167 → 169 rows).

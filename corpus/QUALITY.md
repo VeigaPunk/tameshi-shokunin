@@ -2291,3 +2291,19 @@ mutants survive the 21-arm control (`MUTATE: DONE
 (target=wave-reconcile-control-r79 defects=12 killed=10 survived=2 …)`,
 `.ufo/evidence/round-79/c2-control-battery.txt`) and die on arm22 / arm23 only
 on the landed bytes (`c2-landed-battery.txt`).
+
+## Criteria appended — round 80
+
+76. A gate figure printed in the lane's registry home is measured against the
+    figure its instrument prints now; the surface's staleness is a counted
+    mismatch, never an assumption. A binding declares its rows, reads the
+    LAST row of a repeated name, requires exactly one figure-shaped token on
+    each side, and keeps a per-row `expect` so a known-red row measures its
+    divergence on every sweep. (`lessons/round-80.md` `## Mistakes` 1;
+    `lessons/round-79-verifier-spotcheck.md` §6.5)
+77. A receipt verifier's population is every file carrying a declared header
+    prefix, not only the forms its regexes happen to parse: a declared
+    non-committed block is a measured class (not invisible, not blind-refused),
+    and a file naming a prefix without a complete block is refused by name.
+    (`lessons/round-80.md` `## Mistakes` 2; `lessons/round-79-verifier-spotcheck.md`
+    §6.4)

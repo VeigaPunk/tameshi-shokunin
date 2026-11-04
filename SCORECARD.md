@@ -5076,3 +5076,51 @@ The wave changed the landed bytes in six disclosed places (see
 **Planned (round 80):** the wave-named survivors (`python-utf8-dropped`, the
 scout's 18-row survivor shortlist) and the connector's assimilation verdict; the
 carried 17-of-44 registry rows stay carried unless a claim slots them.
+
+## Round 80 — declared claims (2026-11-04), frozen before data
+
+Plan: `plans/round-80.plan.md` (frozen at `ae591d5a`; predicates, counters,
+kill rules, the frozen kill matrix and the do-nothing controls in that commit).
+Base `dd2b9e2c44df680174a829901829fe86a2185185` (= `origin/master`, the
+round-79 closure and spot-check tip). Round shape: one v1 wave, 13 seats
+(4 executor · 1 scribe · 2 scout · 2 reviewer · 1 critic · 1 mutation-tester ·
+1 connector · 1 sentinel; attack seats 4 = 30.8 %), policy
+`scripts/hyaku/ufo-wave-policy.json`, band 8–16. `labrat` is a frozen-topology
+seat the validator rejects; the planner seat stays with the L1 per the
+orchestrator ruling. Saturation: scored axes depth 10, calibration 8,
+freshness 9; round 79 entered a capability, so the stagnation nudge does NOT
+fire and C1 works calibration (the lowest scored axis).
+
+- **R80-C1 — calibration.** The registry home's printed figures equal the
+  instruments' figures. Before: `REGISTRY_BIND: rows=7 match=0 stale=5
+  absent=2 error=0 unexpected=7` exit 1 (five stale rows for wave-record
+  reconciliation and self-state freshness on both SKILL.md and
+  `tools/registry.json`, plus the registry sweep row; two absent rows for
+  `receipt-bytes binding sweep`). After: `rows=7 match=7 stale=0 absent=0
+  error=0 unexpected=0` exit 0 and `REGISTRY_BIND_SELFTEST: 11/11 pass`; the
+  capability row `registry-home figure binding` enters `## Capabilities`.
+- **R80-C2 — coverage.** The four survivors the round-79 wave named become
+  fixture coverage: selfstate arm15 (`ss-bom-strip`, both decode refusals),
+  arm16 (`ss-cache-key-drops-argv`), arm17 (`python-utf8-dropped`, sourced on
+  S308), wave-reconcile arm24 (`wr-record-unknown-root-check-removed`).
+  Control batteries 0/3 and 0/1 on base bytes; landed `defects=4 killed=4`
+  and `defects=13 killed=13` with `CONTROL: GREEN` and byte-identical restore;
+  selftests 17/17 and 24/24.
+- **R80-C3 — operability.** The receipt population covers the declared tree,
+  design class included. Before `receipts=22` with no design field (seven
+  round-79 design receipts invisible); after `receipts=29 bound=14 corrected=8
+  design=7 unbound=0` exit 0 and `RECEIPT_BIND_SELFTEST: 13/13 pass`.
+
+## Round 80 — measured claims (appended at the records commit, 2026-11-04)
+
+| Claim | Verdict | After (measured) | Counting commands | Measured commit |
+|---|---|---|---|---|
+| R80-C1 | verifies (measured) | `REGISTRY_BIND: rows=7 match=7 stale=0 absent=0 error=0 unexpected=0` exit 0; `REGISTRY_BIND_SELFTEST: 11/11 pass`; the capability row `registry-home figure binding` is in `## Capabilities` and its figure is a live selfstate row | `python3 -I -X utf8 tools/registry-figure-bind.py --repo .`; `--selftest` | 01ca77cd1bdac3d991e0319644146ace3970b30d |
+| R80-C2 | verifies (measured) | `SELFSTATE_SELFTEST: 17/17 pass`; `WAVE_RECONCILE_SELFTEST: 24/24 pass`; batteries `defects=4 killed=4 survived=0` and `defects=13 killed=13 survived=0`, `CONTROL: GREEN`, byte-identical restore; the kill matrix is the plan's (each new mutant on exactly its own new arm; defects 1–12 keep their arms) | the two selftest commands and the two battery commands in the plan | 01ca77cd1bdac3d991e0319644146ace3970b30d |
+| R80-C3 | verifies (measured) | `RECEIPT_BIND: receipts=29 bound=14 corrected=8 design=7 unbound=0` exit 0; `RECEIPT_BIND_SELFTEST: 13/13 pass`; the `receipt-bytes-tree` registry row runs the whole-tree sweep | `python3 -I -X utf8 tools/receipt-bytes-bind.py --repo . --root .ufo/evidence`; `--selftest` | 01ca77cd1bdac3d991e0319644146ace3970b30d |
+
+**Planned (round 81):** the two test-text survivors (`ss-bom-only`,
+`wr-prefix`) stay named at the report/convention level; the design class's
+open limits (64 KiB header window, trusted manifest argv) are documented, not
+claims; the receipt alarm on a `design` receipt whose recorded sha exists in a
+committed blob (it would be a measured-block orphan) is unbuilt.
