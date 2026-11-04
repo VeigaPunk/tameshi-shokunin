@@ -2011,11 +2011,16 @@ Lesson: `corpus/lessons/round-72-verifier-spotcheck.md` §6 routed defect 4
 disclosed elsewhere). The note is corrected in the round-73 record-edits commit
 and the same round's lesson carries the class.
 
-Falsifier that must fail: `python3 -c "import
-json;print(len([r for r in json.load(open('tools/pointer-recheck.json'))['rows']
-if 'r72' in r['id'] or 's303' in r['id']]))"` prints `4` while `grep -c 'adds
-three green arms' tools/pointer-recheck.json` prints `1` — the note's count and
-the rows' count disagree at the same bytes.
+Falsifier that must fail (revision-pinned: the note is corrected at round 73,
+so the contradiction exists at the round-72 bytes and only there):
+`git show 9b4ffe47:tools/pointer-recheck.json | python3 -c "import json,sys;
+print(len([r for r in json.load(sys.stdin)['rows'] if 'r72' in r['id'] or
+'s303' in r['id']]))"` prints `4` while `git show
+9b4ffe47:tools/pointer-recheck.json | grep -c 'adds three green arms'` prints
+`1` — at those bytes the note's count and the rows' count disagree, and the
+note is the field no census parses. Round 73 corrected the note
+(`grep -c 'adds four green arms' tools/pointer-recheck.json` prints `1` at the
+tip), which is why the falsifier pins the revision its defect lives at.
 
 ### Criterion 123 — a prose sentence about a counter's behaviour is measured on the real input, not only on a fixture
 
