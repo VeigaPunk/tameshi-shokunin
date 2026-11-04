@@ -3944,3 +3944,35 @@ as work: the named-refusal hardening (T74W1R1), the totals-union fix, the
 `rows=11 met=11 unexpected=0` with `kind=commits-union raw_old_only=5079
 norm_cr_old_only=7`. Records commits then re-staled two cold-read sections
 (`credited=62/64` at `1c3a428e`), paid by `r74-batch-2`.
+
+## Round 75 — declared (frozen before data, 2026-11-03)
+
+Base `21ef81e9` (admitted round-74 closure, branch `master` = `origin/master`,
+clean tree). Two claims, frozen with their predicates, counters, kill rules and
+controls in `plans/round-75.plan.md` before any data:
+
+- **R75-C1 (operability, sourced on re-opened S006)** — the two round-74
+  survivors become measured arms of `tools/wave-reconcile.py`: `M-C` (printed
+  bound to the whole record) and the selective `_record_claim` bypass on
+  roles/attack_share. Before: `WAVE_RECONCILE_SELFTEST: 15/15 pass` and all
+  three mutants alive. After: `18/18 pass` and each named mutant killed on its
+  named arm (`arm16`/`arm17`/`arm18`) under the lane runner.
+- **R75-C2 (calibration, lowest scored axis 8)** — `tools/selfstate-freshness.py`
+  + `tools/selfstate-freshness.json`: the live SCORECARD `## Capabilities`
+  figures re-derive from the instruments that print them. Before (control scan
+  at base): 16 rows, 9 match, 7 stale. After: `SELFSTATE: rows=17 match=16
+  stale=1 unexpected=0` at the tip, with one frozen red row measuring `stale`
+  every sweep and seven live cells superseded to their instrument's figure.
+
+Pre-data receipts under `.ufo/evidence/round-75/`: `base-measure-c1.txt`
+(pristine sha256 `97bb9272…`, 15/15, three mutants alive),
+`base-measure-c2.txt` (the 16-row control scan, `stale=7`, exit 1),
+`selfstate-control-scan.py`, `census-start.txt` (exit 0, 164 rows),
+`rekey-cost-r75.txt` (`sections=64 planned=4 at_risk=13 predicted_lost=13`) and
+`sources/s006-shmutant-readme.md` (+ headers; sha256 `96057728…`).
+
+Controls frozen with the plan: do-nothing on both claims cannot reach the
+target; an always-fail arm is not a kill (each new arm passes unmutated); an
+echo stub that copies the doc figure reads `stale=0`, so the receipt carries
+the per-row `measured=` tokens and the frozen red row must read `stale`; a
+manifest row whose capability no longer resolves is a setup refusal.

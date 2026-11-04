@@ -1,0 +1,18 @@
+# R75 controls measured before freeze (base 21ef81e9)
+
+## control 1 — do-nothing (C1): see base-measure-c1.txt (15/15, three mutants alive)
+## control 1b — do-nothing (C2): see base-measure-c2.txt (stale=7, exit 1)
+
+## control 2 — echo stub (C2): an instrument that copies the doc figure
+$ git show 21ef81e9:SCORECARD.md | python3 -I -X utf8 <echo-stub> | tail -1
+SELFSTATE_CONTROL: rows=16 match=16 stale=0
+-> the summary alone is not an authenticator; the frozen red row and the per-row measured= tokens are.
+
+## control 3 — always-fail arm (C1): a new arm that fails on the UNMUTATED copy
+$ python3 -I -X utf8 <pristine + one always-fail arm> --selftest | tail -2
+SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+WAVE_RECONCILE_SELFTEST: 15/16 pass
+-> an arm that fails without a mutation is visible on the unmutated copy (15/16), so it cannot be counted as a kill.
+
+## control 4 — row-deletion (C2): a manifest capability that no longer resolves must refuse, not pass
+(the instrument's selftest fixture; declared in the plan, exercised by the wave)
