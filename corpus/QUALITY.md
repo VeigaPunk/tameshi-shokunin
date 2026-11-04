@@ -2042,3 +2042,27 @@ Falsifier that must fail: `/home/vgpnk/Projects/shokunin/scripts/sources-census.
 validate --root /home/vgpnk/Projects/shokunin tameshi | grep -c 'E04'` prints
 `0` while the same run `| grep -c 'W04.*S303'` prints `1` — the live row takes
 the warning path the round-72 sentence said was the error path.
+
+### Criterion 124 — an append-only claim is measured over the commit range it describes, with the claim class declared
+
+A record that says a file was appended to, or that its content was preserved,
+makes a claim about a *population of commits*, not about a chosen pair of
+revisions. A receipt over one pair can be clean while the range it stands for
+contains a rewrite: the round-73 closure routed exactly that (LOG.md rewritten
+CRLF->LF at `862e8844`, corpus/QUALITY.md at `21a7332f`, neither covered by any
+receipt). The claim therefore carries two things a reader can check: the range
+it speaks for, and the class of comparison it means — `append-only-raw` (no
+existing line removed on the committed bytes) or `append-only-content` (the
+same after CR normalization). The weaker class cannot see a line-ending
+rewrite, so it is never used to answer a question the stronger class asks, and
+the two numbers are printed side by side.
+
+Lesson: `corpus/lessons/round-73-verifier-spotcheck.md` §6 routed defects 1-2
+(undisclosed EOL rewrites); `corpus/lessons/round-74.md` `## What was measured —
+R74-C2` (the standing sweep and its controls).
+
+Falsifier that must fail: `python3 -I tools/additivity-range.py --repo . --manifest tools/additivity-range.json`
+prints `ADDRANGE: rows=6 met=6 unexpected=0` while the two rewrite rows read
+`measured=violated` with `raw_old_only=3484` / `1593` and `norm_cr_old_only=0`
+/ `5`; flipping `r73-log-eol-rewrite` to `expect: hold` prints
+`unexpected=1` and exit 1 (`.ufo/evidence/round-74/controls-r74.txt`).

@@ -1389,6 +1389,107 @@
    "tags": [
     "new-r57"
    ]
+  },
+  {
+   "name": "wave-reconcile-selftest",
+   "kind": "selftest",
+   "argv": [
+    "python3",
+    "-I",
+    "-X",
+    "utf8",
+    "tools/wave-reconcile.py",
+    "--selftest"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "WAVE_RECONCILE_SELFTEST: 15/15 pass"
+    ]
+   },
+   "timeout_s": 120,
+   "source": "tools/wave-reconcile.py@2bbf97965791f55c58e405887f038741ab705164:1-40",
+   "status": "active",
+   "tags": [
+    "round-74"
+   ]
+  },
+  {
+   "name": "wave-reconcile-mutants",
+   "kind": "gate",
+   "argv": [
+    "bash",
+    "tools/mutate-and-run.sh",
+    "--target",
+    "tools/wave-reconcile.py",
+    "--defects",
+    "tools/wave-reconcile-mutants.spec",
+    "--suite",
+    "python3 -I -X utf8 \"$MUTANT\" --selftest",
+    "--label",
+    "wave-reconcile-arms"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "MUTATE: DONE (target=wave-reconcile-arms defects=3 killed=3"
+    ]
+   },
+   "timeout_s": 300,
+   "source": "tools/wave-reconcile-mutants.spec@2bbf97965791f55c58e405887f038741ab705164:1-20",
+   "status": "active",
+   "tags": [
+    "round-74"
+   ],
+   "scratch_root": "Allocates under TMPDIR via the runner's mktemp; a set-but-unusable TMPDIR is the runner's setup refusal (round 53 scratch-root contract)."
+  },
+  {
+   "name": "additivity-range-selftest",
+   "kind": "selftest",
+   "argv": [
+    "python3",
+    "-I",
+    "tools/additivity-range.py",
+    "--selftest"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "ADDITIVITY_RANGE_SELFTEST: 8/8 pass"
+    ]
+   },
+   "timeout_s": 120,
+   "source": "tools/additivity-range.py@2e0ac486c6709ed8b9560e45f9e74065da712411:1-40",
+   "status": "active",
+   "tags": [
+    "round-74"
+   ],
+   "scratch_root": "One stderr line, exit 2, could-not-evaluate when TMPDIR is set but not a directory; an empty TMPDIR means unset and the platform default applies; the fixture repo is built in a TMPDIR-honouring mkdtemp and removed (round 74)."
+  },
+  {
+   "name": "additivity-range-sweep",
+   "kind": "probe",
+   "argv": [
+    "python3",
+    "-I",
+    "tools/additivity-range.py",
+    "--repo",
+    ".",
+    "--manifest",
+    "tools/additivity-range.json"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "ADDRANGE: rows=6 met=6 unexpected=0"
+    ]
+   },
+   "timeout_s": 120,
+   "source": "tools/additivity-range.py@2e0ac486c6709ed8b9560e45f9e74065da712411:1-40",
+   "status": "active",
+   "tags": [
+    "round-74"
+   ]
   }
  ]
 }
