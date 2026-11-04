@@ -109,7 +109,7 @@ SELFTEST_ARMS = 24
 # two-edit mutant that also recomputes the constant is out of the declared
 # single-edit class; the battery's control measures the pin's own do-nothing
 # state.
-SELFTEST_TEXT_SHA256 = ('891d3acc844977a1b7e7365a743f49ee7e585550522e42608eac8012514fafd3')
+SELFTEST_TEXT_SHA256 = ('0cd7c8bc548feccd2747e5e2991cf9ecb5d2495167448fe3c35a614aefdc0f46')
 MODES = ('capability', 'span')
 EXPECTS = ('match', 'stale')
 # R83-C1: a row id is printed into a `SELFSTATE_ROW` line, so it is an output
@@ -274,7 +274,7 @@ def validate_manifest(manifest):
         rid = row.get('id')
         if not isinstance(rid, str) or not rid:
             raise SetupError('row-id-missing')
-        if not ROW_ID_RE.match(rid):
+        if not ROW_ID_RE.fullmatch(rid):
             # the repr keeps a newline escaped: the refusal itself must be one
             # line, or the refusal forges the same output line it refuses
             raise SetupError('row-id-alphabet:%r' % rid)
@@ -1405,8 +1405,17 @@ def selftest(out=sys.stdout):
              "--repo", fx9, "--manifest", "manifest.json"],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180,
             cwd=fx9)
+        trailing = dict(_toy_row('trailing\n', 'capability', 'match', fig,
+                                 capability='toy capture'))
+        try:
+            validate_manifest({'rows': [trailing]})
+        except SetupError as exc:
+            trailing_refused = str(exc).startswith('row-id-alphabet:')
+        else:
+            trailing_refused = False
         arm('ARM24_row_id_alphabet',
             proc9.returncode == 2
+            and trailing_refused
             and b"row-id-alphabet:" in proc9.stderr
             and b"SELFSTATE:" not in proc9.stdout
             and proc9.stderr.count(b"\n") == 1,
