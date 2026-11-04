@@ -414,6 +414,14 @@ def _toy_runner(stdouts):
     return run
 
 
+DOC_REV1 = (
+    '# toy scorecard\n\n## Capabilities\n\n'
+    '| Capability | What it can now do | Evidence pointer | Round |\n'
+    '|---|---|---|---|\n'
+    '| toy capture | writes a figure | `TOY_FIGURE: 4/4 pass` | toy |\n'
+)
+DOC_WT = DOC_REV1.replace('4/4', '9/9')
+
 def selftest(out=sys.stdout):
     doc_bytes = TOY_DOC.encode('utf-8')
     ok = 0
@@ -532,12 +540,12 @@ def selftest(out=sys.stdout):
         and 'SELFSTATE:' not in txt and 'figure-not-unique' in err,
         'rc=%r %r %r' % (rc, txt, err))
 
-
     # arm 11: the CLI binds --doc-rev (round-76 carry: the --doc-rev-ignored
     # mutant survived the round-75 battery 10/10, T75W1M1 settlement errata).
-    # The arm runs the real CLI as a subprocess against a two-commit fixture
-    # repo whose worktree doc disagrees with rev1: reading rev1 must measure
-    # match; a tool that ignores --doc-rev reads the worktree and fails.
+    # The arm runs the real CLI as a subprocess against a two-state fixture
+    # whose worktree doc disagrees with the committed rev: reading the rev
+    # must measure match; a tool that ignores --doc-rev reads the worktree
+    # doc and measures stale instead.
     fx = tempfile.mkdtemp(prefix="selfstate-arm11-",
                           dir=os.environ.get("TMPDIR") or None)
     try:
@@ -550,16 +558,13 @@ def selftest(out=sys.stdout):
             parent = os.path.dirname(path)
             if parent:
                 os.makedirs(parent, exist_ok=True)
-            with open(path, "w", newline="
-") as fh:
+            with open(path, "w", newline="\n") as fh:
                 fh.write(text)
 
         _put("SCORECARD.md", DOC_REV1)
-        _put("tools/toy.py", "print('TOY_FIGURE: 4/4 pass')
-")
+        _put("tools/toy.py", "print('TOY_FIGURE: 4/4 pass')\n")
         mpath = os.path.join(fx, "manifest.json")
-        with open(mpath, "w", newline="
-") as fh:
+        with open(mpath, "w", newline="\n") as fh:
             json.dump({"schema": "tameshi-selfstate-freshness-v1",
                        "rows": [{"id": "toy-cli", "mode": "capability",
                                  "capability": "toy capture",
@@ -573,13 +578,12 @@ def selftest(out=sys.stdout):
         _git("-c", "user.name=t", "-c", "user.email=t@t", "commit",
              "-qm", "rev1")
         rev1 = subprocess.run(["git", "-C", fx, "rev-parse", "HEAD"],
-                              check=True, stdout=subprocess.PIPE)
-        rev1 = rev1.stdout.decode().strip()
-        rows = json.load(open(mpath))
-        rows["rows"][0]["instrument"]["rev"] = rev1
-        with open(mpath, "w", newline="
-") as fh:
-            json.dump(rows, fh)
+                              check=True,
+                              stdout=subprocess.PIPE).stdout.decode().strip()
+        rows_manifest = json.load(open(mpath))
+        rows_manifest["rows"][0]["instrument"]["rev"] = rev1
+        with open(mpath, "w", newline="\n") as fh:
+            json.dump(rows_manifest, fh)
         _put("SCORECARD.md", DOC_WT)
         proc = subprocess.run(
             [sys.executable, "-I", "-X", "utf8",
@@ -596,8 +600,7 @@ def selftest(out=sys.stdout):
     finally:
         shutil.rmtree(fx, ignore_errors=True)
 
-    out.write('SELFSTATE_SELFTEST: %d/%d pass
-' % (ok, total))
+    out.write('SELFSTATE_SELFTEST: %d/%d pass\n' % (ok, total))
     return 0 if (ok == total == SELFTEST_ARMS) else 1
 
 

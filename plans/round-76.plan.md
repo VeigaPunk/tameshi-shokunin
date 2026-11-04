@@ -280,3 +280,24 @@ supersessions + the round-76 disclosure line; (6) records (SCORECARD block,
 LOG measured, lesson Gate/Gate-census/Mistakes/routed-reconciliation, SOURCES
 note, QUALITY criteria 126/127, r73/r74 appends); (7) the rekey batch;
 (8) the report (cites the pushed lane tip) and the fleet commit.
+
+### Design-phase correction 1 (appended before any wave data, 2026-11-04): committed evidence repaired
+
+The first wave seat (T76W1M1) caught that the committed `.ufo/waves/round-76/l1/cand-ss-11.py`
+and the five committed `mut-*.py` instrument mutants did not parse (a broken
+string-templating builder inside `design.py` had silently overwritten the good
+`design2.py` build during a re-run, and the wave-dir copy then committed the
+broken bytes while the committed `mut-*.out` receipts came from the earlier
+good builds). This is the receipt-revision-binding violation the lane's
+standing rule names; it is mined in `corpus/lessons/round-76.md`.
+
+Repair (pre-data; no predicate, counter, kill rule or matrix changed): the
+candidate and the five mutants were rebuilt from base via `design2.py`, the
+five mutants re-run on the rebuilt bytes, and the wave-dir copies replaced.
+Post-repair receipts, measured on the rebuilt bytes: `SELFSTATE_SELFTEST:
+11/11 pass` exit 0; `echo-doc-token` → 8/11 (ARM2 + ARM3 + ARM9 FAIL);
+`expect-ignored` → 10/11 (ARM2); `capability-absent-deflected` → 10/11
+(ARM4); `zero-rows-success` → 10/11 (ARM6); `doc-rev-ignored` → 10/11
+(ARM11 only). The battery-certified pair (`cand-wr-19.py` + `bat-wr.out`,
+19/19 pristine, 7/7 killed) was unaffected. The repair commit carries the
+sha256 list of the corrected bytes.

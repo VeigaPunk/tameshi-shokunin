@@ -1,0 +1,36 @@
+--- base
++++ committed-candidate
+@@ -71,7 +71,7 @@
+ import sys
+ import tempfile
+ 
+-SELFTEST_ARMS = 18
++SELFTEST_ARMS = 19
+ BOM = b'\xef\xbb\xbf'
+ ATTACK_NOTE = ('named attack roles are the row\'s own declaration; the policy '
+                'floor is the row\'s floor_pct')
+@@ -529,6 +529,24 @@
+                                'span': '13 seats'},
+                        named=['reviewer', 'critic', 'mutation-tester'],
+                        floor_pct=25))
++        # round 76: the printed-less seat_reports bypass (round-75 carry,
++        # T75W1R1). A seat_reports row whose record carries NO `printed` value
++        # must refuse; the bypass mutant drops require_printed in this branch
++        # only, so printed=None reaches the comparison and the detail
++        # formatting raises TypeError — the wrapper catches that crash and the
++        # arm fails on its named refusal instead of crashing the suite.
++        def _seatreports_printed_required():
++            try:
++                return measure_row(
++                    kind='seat_reports',
++                    record={'path': 'report.md', 'rev': REV,
++                            'span': '12 seats, 11 reports'})
++            except SetupError as exc:
++                return 'setup:' + str(exc).split(':')[0]
++            except TypeError:
++                return 'printed-none-reached-comparison'
++        arm('arm19-seatreports-printed-required',
++            'setup:record-printed-absent', _seatreports_printed_required)
+     finally:
+         shutil.rmtree(work, ignore_errors=True)
+ 
