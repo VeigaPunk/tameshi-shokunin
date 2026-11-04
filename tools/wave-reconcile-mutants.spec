@@ -58,3 +58,11 @@
 @defect record-unknown-root-check-removed | `_record_span`'s unknown-root guard is deleted, so a row whose record names an undeclared reader root reads the default reader silently (round-79 scout T79W1SC2 W7 `wr-record-unknown-root-check-removed` survived 23/23); arm24-record-unknown-root-refused must kill it
 @old     root = rec.get('root', 'lane')\n    if root not in readers:\n        raise SetupError('unknown-root:%s:%s' % (root, row.get('id')))
 @new     root = rec.get('root', 'lane')
+
+# Defect 14 (round 81, R81-C3): the round-80 mutation-tester's `wr-prefix`
+# survivor (T80W1M1) — arm24's expected-prefix assertion is weakened from
+# `setup:unknown-root:` to `setup:unknown`; counter output cannot distinguish
+# the weakened diagnostic. Killed by arm25's selftest-text pin.
+@defect wr-prefix | arm24's expected-prefix assertion is weakened from `setup:unknown-root:` to `setup:unknown` (round-80 mutation-tester T80W1M1 `wr-prefix` survived 24/24); arm25-selftest-text-pin must kill it
+@old             state.startswith('setup:unknown-root:'), state,
+@new             state.startswith('setup:unknown'), state,

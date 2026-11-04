@@ -4369,3 +4369,57 @@ and `rekey_round: 80` landed at `93991f1a` (ledger 1009); the copied tool's
 round-79 label and its accepted-but-unwritten `--entries-out` are recorded as
 `corpus/lessons/round-80.md` `## Mistakes` 3. Post-rekey monitor:
 `.ufo/evidence/round-80/coldread-after-rekey.json`.
+
+## Round 81 (2026-11-04) — the closure's six routed defects, bound
+
+Base `56a0129f` (= `origin/master`, the round-80 closure and spot-check tip),
+declaration `1b115ba0`. Round shape: one v1 wave, 13 seats (attack 5 =
+38.5 %). Saturation: depth 10, calibration 8, freshness 9; round 80 entered a
+capability, so the nudge does not fire and C1 works calibration.
+
+- **R81-C1 (calibration):** `tools/defect-bind.py` + `tools/defect-bind.json`
+  bind the round-80 closure's routed defects D1/D2/D4/D5/D6 (D3 is C2's, so
+  the two claims verify without each other). Five row kinds — `tree-paths`,
+  `tree-bytes`, `receipt-tokens`, `sources-cell`, `doc-contains` — each read
+  from git objects at `HEAD`; a refusal is setup exit 2 before any row effect.
+  Before: `DEFECT_BIND: rows=6 closed=0 open=6 unexpected=6` exit 1
+  (`.ufo/evidence/round-81/controls/c1-before.txt`). The six fixes: the two
+  7 MB round-80 receipts and the census-before receipt committed (D1; one of
+  them had been committed as a 0-byte blob), the SCORECARD erratum with the
+  receipt's true `24/24` / `17/17` tokens (D2), S289's `used-by` cell (D4),
+  the S289 fetch receipt at `.ufo/evidence/round-81/sources/` (D5), and the
+  Round 80 + Round 81 bounded-search notes in `## Search log` (D6).
+  Upstream cause of D1: the round-80 commit named a directory, and new files
+  over 1 MiB inside a named directory are skipped by the commit helper — the
+  0-byte blob is that skip. After: `rows=6 closed=6 open=0 unexpected=0`
+  exit 0; `DEFECT_BIND_SELFTEST: 11/11 pass`.
+- **R81-C2 (freshness):** `--pin-audit` / `--pin-rev` in
+  `tools/selfstate-freshness.py` measures, per row, whether the instrument's
+  blob at the row's pin is byte-identical to its blob at the tip (`settled`),
+  plus arms 18–20 (stale measurement, refusals, the single-row non-vacuity
+  guard). Before: `SELFSTATE_PINS: rows=23 settled=20 stale=3` exit 1 — the
+  round-80 closure's D3 pair and a third row it did not name
+  (`receipt-exists-selftest`, pin `21ef81e9` vs last change `4af6695f`). The
+  three rows re-pin at their instruments' last-modifying commits
+  (`4af6695f`, `01ca77cd`, `01ca77cd`); the standing sweep stays green
+  (`SELFSTATE: rows=23 match=21 stale=2 unexpected=0`). Sourced on S289.
+- **R81-C3 (coverage):** both standing sweeps pin their own assertion text —
+  `SELFTEST_TEXT_SHA256` over `inspect.getsource(selftest)` against a constant
+  (`ARM21_selftest_text_pin`, `arm25-selftest-text-pin`) — and the two round-80
+  test-text survivors are appended to the standing specs (`ss-bom-only`,
+  `wr-prefix`). Before (base tool bytes): `MUTATE: DONE (target=c3-base-ss
+  defects=1 killed=0 survived=1)` and the wave twin, both `CONTROL: GREEN`
+  (`.ufo/evidence/round-81/controls/c3-base-*.txt`). After: selfstate
+  `defects=5 killed=5 survived=0`, wave `defects=14 killed=14 survived=0`,
+  `SELFSTATE_SELFTEST: 21/21`, `WAVE_RECONCILE_SELFTEST: 25/25`; frozen FAIL
+  sets `ss-bom-only` → `ARM21` only, `wr-prefix` → arm25 only. Disclosed
+  matrix change: `arm20-cleanup-removed` (an existing defect that edits
+  arm20's fixture cleanup inside the selftest function) now also fails
+  `arm25` beside its own arm20 — still killed. Sourced on S310.
+- **Registry coupling:** `SELFTEST_ARMS` 17 → 21 and 24 → 25 moved two live
+  figures; `tools/registry.json` (both selftest rows, the mutants row with
+  `defects=14` and label `wave-reconcile-arms-r81`) and the new SKILL.md
+  round-81 registry section were refreshed, and `tools/registry-figure-bind.py`
+  re-read `rows=7 match=7 stale=0 absent=0 error=0 unexpected=0` exit 0.
+  Three new registry rows (`defect-bind-selftest`, `defect-bind-sweep`,
+  `selfstate-pins`) register the round's instruments.

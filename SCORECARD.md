@@ -5124,3 +5124,54 @@ fire and C1 works calibration (the lowest scored axis).
 open limits (64 KiB header window, trusted manifest argv) are documented, not
 claims; the receipt alarm on a `design` receipt whose recorded sha exists in a
 committed blob (it would be a measured-block orphan) is unbuilt.
+
+## Round-81 erratum (D2): the round-80 C1 before-state live tokens
+
+Round-81 erratum (D2): the round-80 C1 before-state live tokens are `24/24`
+and `17/17` — the cited `.ufo/evidence/round-80/design/c1-before-sweep.txt`
+prints them — not the `23/23` / `14/14` pair the round-80 report paragraph and
+`plans/round-80.plan.md` state. The `23/23` / `14/14` figures belong to the
+**base tool bytes** (`c2-base-*`/`c2-control-*` receipts, shas `ca8acdd9…` /
+`d9336fcd…`); the declaration instrument ran against the candidate tools in the
+declaration worktree. Status-neutral and append-only: the round-80 record above
+is preserved as written and its cells stay flagged by the standing sweeps; the
+round-80 C1 verdict is unaffected (the stale tokens `19/19` and `11/11` are
+stale against either pair). Bound by `tools/defect-bind.json` row
+`D2-before-tokens`.
+
+## Round 81 — declared claims (2026-11-04), frozen before data
+
+Plan: `plans/round-81.plan.md` (frozen at
+`1b115ba038e3d3bffc1432e62bbe5eb422c81266`; predicates, counters, kill rules,
+the do-nothing controls and the base receipts in that commit). Base
+`56a0129fe9bfd0ce607290a36350e38ac4df9c72` (= `origin/master`, the round-80
+closure and spot-check tip). Round shape: one v1 wave, 13 seats
+(4 executor · 2 scout · 1 scribe · 2 reviewer · 1 critic · 1 mutation-tester ·
+1 sentinel · 1 connector; attack seats 5 = 38.5 %), policy
+`scripts/hyaku/ufo-wave-policy.json`, band 8–16. Saturation: scored axes depth
+10, calibration 8, freshness 9; round 80 entered a capability, so the
+stagnation nudge does NOT fire and C1 works calibration (the lowest scored
+axis).
+
+- **R81-C1 — calibration.** The round-80 closure's routed-defect register is
+  bound to repo state: D1/D2/D4/D5/D6 (D3 is C2's) MEASURE `closed` under
+  `tools/defect-bind.py`. Before: `DEFECT_BIND: rows=6 closed=0 open=6
+  unexpected=6` exit 1. After: `rows=6 closed=6 open=0 unexpected=0` exit 0;
+  selftest 11/11.
+- **R81-C2 — freshness.** Every standing self-state row pins settled
+  instrument bytes: before `SELFSTATE_PINS: rows=23 settled=20 stale=3`
+  exit 1; after `settled=23 stale=0` exit 0 at the tip, the standing sweep
+  green.
+- **R81-C3 — coverage.** The suite's own assertion text is pinned
+  (`ARM21_selftest_text_pin`, `arm25-selftest-text-pin`), so the two round-80
+  test-text survivors die: before `defects=1 killed=0 survived=1` per tool;
+  after `defects=5 killed=5` and `defects=14 killed=14`, both `CONTROL: GREEN`,
+  byte-identical restore.
+
+## Round 81 — capabilities entered
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| closure-defect bind | turn a non-author closure's routed-defect prose into declared rows whose state is measured over committed bytes (five probe kinds: tree-paths, tree-bytes, receipt-tokens, sources-cell, doc-contains), so "closed" is a count and not an assertion | `python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json` → `DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0` exit 0; `--selftest` → `DEFECT_BIND_SELFTEST: 11/11 pass`; `.ufo/evidence/round-81/controls/c1-before.txt` (before: `open=6`) | round 81 |
+| standing-pin audit | measure whether a standing sweep's declared population pins the instrument bytes the tip carries (`settled` = blob equality at pin vs tip), instead of trusting that a matching figure means settled bytes | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --pin-audit --pin-rev HEAD` → `SELFSTATE_PINS: rows=23 settled=23 stale=0` exit 0; before `settled=20 stale=3` (`.ufo/evidence/round-81/controls/c2-before.txt`) | round 81 |
+| selftest-text pin | pin a suite's own assertion text (digest of `inspect.getsource(selftest)` against a constant), so a weakened arm fails an arm instead of passing vacuously — the round-80 `ss-bom-only` / `wr-prefix` survivor class | `SELFSTATE_SELFTEST: 21/21 pass`, `WAVE_RECONCILE_SELFTEST: 25/25 pass`; batteries `defects=5 killed=5` / `defects=14 killed=14` with `CONTROL: GREEN`; base controls `killed=0 survived=1` per tool (`.ufo/evidence/round-81/controls/`) | round 81 |

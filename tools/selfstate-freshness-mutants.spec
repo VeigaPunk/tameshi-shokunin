@@ -26,3 +26,13 @@
 @defect python-isolation-dropped | the python tuple loses `-I`, so python rows run without isolated mode (round-78 wave seat T78W1M1 `s3-python-isolation-dropped` survived 13/13); arm14-ARM14_python_isolation_tuple must kill it
 @old     'python': ('python3', '-I', '-X', 'utf8'),
 @new     'python': ('python3', '-X', 'utf8'),
+
+# Defect 5 (round 81, R81-C3): the round-80 mutation-tester's `ss-bom-only`
+# survivor (T80W1M1) — only arm15's non-UTF-8 assertion conjuncts are deleted,
+# the arm name and both fixture executions are retained, so the suite stays
+# 17/17. Killed by arm21's selftest-text pin (the digest covers the selftest
+# function's source), never by arm15: a weakened test text is invisible to the
+# test it weakens.
+@defect ss-bom-only | only arm15's non-UTF-8 assertion conjuncts are deleted, retaining the arm name and both fixture executions (round-80 mutation-tester T80W1M1 `ss-bom-only` survived 17/17); arm21-ARM21_selftest_text_pin must kill it
+@old             and 'SELFSTATE:' not in bom_txt\n            and bad_rc == 2 and 'not-utf8:SCORECARD.md' in bad_err\n            and 'SELFSTATE:' not in bad_txt,
+@new             and 'SELFSTATE:' not in bom_txt,

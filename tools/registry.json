@@ -1404,16 +1404,17 @@
    "expect": {
     "exit": 0,
     "stdout_contains": [
-     "WAVE_RECONCILE_SELFTEST: 24/24 pass"
+     "WAVE_RECONCILE_SELFTEST: 25/25 pass"
     ]
    },
    "timeout_s": 120,
-   "source": "tools/wave-reconcile.py@4af6695fa526f4252cb6d8ceee24725d5b1cac6b:1-40",
+   "source": "tools/wave-reconcile.py@1b115ba038e3d3bffc1432e62bbe5eb422c81266:1-60",
    "status": "active",
    "tags": [
     "round-74",
     "round-75",
-    "round-76"
+    "round-76",
+    "round-81"
    ],
    "owner": "tameshi",
    "verdict_map": {
@@ -1437,12 +1438,12 @@
     "--suite",
     "python3 -I -X utf8 \"$MUTANT\" --selftest",
     "--label",
-    "wave-reconcile-arms-r80"
+    "wave-reconcile-arms-r81"
    ],
    "expect": {
     "exit": 0,
     "stdout_contains": [
-     "MUTATE: DONE (target=wave-reconcile-arms-r80 defects=13 killed=13"
+     "MUTATE: DONE (target=wave-reconcile-arms-r81 defects=14 killed=14"
     ]
    },
    "timeout_s": 300,
@@ -1451,7 +1452,8 @@
    "tags": [
     "round-74",
     "round-75",
-    "round-76"
+    "round-76",
+    "round-81"
    ],
    "scratch_root": "Allocates under TMPDIR via the runner's mktemp; a set-but-unusable TMPDIR is the runner's setup refusal (round 53 scratch-root contract).",
    "owner": "tameshi",
@@ -1525,15 +1527,16 @@
    "expect": {
     "exit": 0,
     "stdout_contains": [
-     "SELFSTATE_SELFTEST: 17/17 pass"
+     "SELFSTATE_SELFTEST: 21/21 pass"
     ]
    },
    "timeout_s": 120,
-   "source": "tools/selfstate-freshness.py@4af6695fa526f4252cb6d8ceee24725d5b1cac6b:1-40",
+   "source": "tools/selfstate-freshness.py@1b115ba038e3d3bffc1432e62bbe5eb422c81266:1-60",
    "status": "active",
    "tags": [
     "round-75",
-    "round-76"
+    "round-76",
+    "round-81"
    ],
    "scratch_root": "The instrument allocates only under TMPDIR via tempfile.mkdtemp; a set-but-unusable TMPDIR is the platform allocator's failure, never a /tmp fallback (round-53 scratch-root contract).",
    "owner": "tameshi",
@@ -1570,7 +1573,8 @@
    "status": "active",
    "tags": [
     "round-75",
-    "round-76"
+    "round-76",
+    "round-81"
    ],
    "scratch_root": "Runs 10 lane instruments with TMPDIR honoured; no /tmp fallback in the instrument.",
    "owner": "tameshi",
@@ -2063,6 +2067,108 @@
     "2": "could-not-evaluate (setup)"
    },
    "write_scope": "read-only: git objects only; no lane write, no scratch"
+  },
+  {
+   "kind": "selftest",
+   "timeout_s": 120,
+   "status": "active",
+   "owner": "tameshi",
+   "verdict_map": {
+    "0": "clean",
+    "1": "failed",
+    "2": "could-not-evaluate"
+   },
+   "write_scope": "TMPDIR scratch only (git fixture); reads the lane read-only",
+   "name": "defect-bind-selftest",
+   "argv": [
+    "python3",
+    "-I",
+    "-X",
+    "utf8",
+    "tools/defect-bind.py",
+    "--selftest"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "DEFECT_BIND_SELFTEST: 11/11 pass"
+    ]
+   },
+   "source": "tools/defect-bind.py@1b115ba038e3d3bffc1432e62bbe5eb422c81266:1-60",
+   "tags": [
+    "round-81"
+   ]
+  },
+  {
+   "kind": "gate",
+   "timeout_s": 300,
+   "status": "active",
+   "owner": "tameshi",
+   "verdict_map": {
+    "0": "clean",
+    "1": "failed",
+    "2": "could-not-evaluate"
+   },
+   "write_scope": "TMPDIR scratch only (git fixture); reads the lane read-only",
+   "name": "defect-bind-sweep",
+   "argv": [
+    "python3",
+    "-I",
+    "-X",
+    "utf8",
+    "tools/defect-bind.py",
+    "--repo",
+    ".",
+    "--manifest",
+    "tools/defect-bind.json"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0"
+    ]
+   },
+   "source": "tools/defect-bind.py@1b115ba038e3d3bffc1432e62bbe5eb422c81266:1-60",
+   "tags": [
+    "round-81"
+   ]
+  },
+  {
+   "kind": "probe",
+   "timeout_s": 300,
+   "status": "active",
+   "owner": "tameshi",
+   "verdict_map": {
+    "0": "clean",
+    "1": "failed",
+    "2": "could-not-evaluate"
+   },
+   "write_scope": "TMPDIR scratch only (git fixture); reads the lane read-only",
+   "name": "selfstate-pins",
+   "argv": [
+    "python3",
+    "-I",
+    "-X",
+    "utf8",
+    "tools/selfstate-freshness.py",
+    "--repo",
+    ".",
+    "--manifest",
+    "tools/selfstate-freshness.json",
+    "--pin-audit",
+    "--pin-rev",
+    "HEAD"
+   ],
+   "expect": {
+    "exit": 0,
+    "stdout_contains": [
+     "SELFSTATE_PINS: rows=23 settled=23 stale=0"
+    ]
+   },
+   "source": "tools/selfstate-freshness.py@1b115ba038e3d3bffc1432e62bbe5eb422c81266:1-60",
+   "tags": [
+    "round-81"
+   ]
   }
  ]
 }
