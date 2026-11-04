@@ -16,11 +16,11 @@
 @new             and True,
 
 @defect db-manifest-binding-removed | the manifest byte binding is switched off, so a narrowed manifest measures green with the flag on (the round-81 D-CN3 cheat); A13_manifest_rev_binding must kill it
-@old     if manifest_rev:
-@new     if False:
+@old     raw = read_manifest_bytes(manifest_path)\n    bound = None\n    if manifest_rev:\n        bound = bind_manifest(repo, manifest_path, manifest_rev, raw)
+@new     raw = read_manifest_bytes(manifest_path)\n    bound = None\n    if False:\n        bound = bind_manifest(repo, manifest_path, manifest_rev, raw)
 
 @defect db-manifest-mismatch-accepted | the byte comparison is deleted, so a manifest edited after the declared revision is accepted as that revision's (the same cheat, one line down); A13_manifest_rev_binding must kill it
-@old     if disk != proc.stdout:
+@old     if raw != proc.stdout:
 @new     if False:
 
 @defect db-regular-file-check-removed | check_tree_paths stops consulting the type/mode boundary, so a directory measures closed (round-81 reviewer D1a/D5); A12_regular_file_boundary must kill it. Re-derived at the round-82 repair: the boundary is shared with blob_bytes, so the edit targets the caller (recipe step 1, substrate movement), keeping the suite enumerating.
