@@ -192,3 +192,31 @@ exit 0). Both pairs are 64 → 64; the wrong id was named in the first sentence,
 and the historical floor `8b0042bd` reading 46 → 64 is unchanged
 (`live-green-hist-r72.out`). Caught by the seat reading the receipt bytes rather
 than the claim — the class this lane's instruments exist for, one more time.
+
+## Wave — seat verdicts and what they changed (appended at the close)
+
+One v1 wave, 12 seats (3 executor · 2 scribe · scout · reviewer · critic ·
+mutation-tester · sentinel · revenger · connector), dispatched as
+`.ufo/waves/round-72/w1-dispatch.json` and taken at 21:21:33. Attack seats by
+the policy's named set = 3/12 (25 %, the floor) plus a revenger probe.
+
+| seat | role | verdict | what changed |
+|---|---|---|---|
+| T72W1S01 | executor | support | independent oracle (own heading parser) agrees with the tool on all six arms: 13/6/6/0/0/17 |
+| T72W1S02 | executor | artifacts landed | `ledger-census.json` + `ledger-census.md`: entries, per-heading counts, membership histogram |
+| T72W1S03 | executor | **falsify → fixed** | the rekey merge rewrote the ledger CRLF→LF (293,268 insertions / 281,925 deletions); repaired at `b611e763`, raw additivity now 0/38 → 0/53 |
+| T72W1S04 | scribe | support | live sed fetch (sha256 `511edd60…`, byte-identical to the r71 snapshot), §4.2 heading 2246 / sentence 2255, §4.4 quote 2446–2449 |
+| T72W1S05 | scribe | **falsify → fixed** | third stale span (`PROVINCE.md:56` `:84-89` → `:88-93`); the frozen control line is unattainable (F1); the lesson's floor id was wrong (F5) |
+| T72W1S06 | scout | support | 96 record files, 2,310 pointer tokens: 995 resolvable, **30 out-of-range**, 302 target-missing (270 bare sibling basenames), 53 ambiguous |
+| T72W1S07 | reviewer | support | constant-13, constant-0 and sum-not-union cheats each fail a frozen arm; the 17-heading set re-derived independently |
+| T72W1S08 | critic | support | §4.2 is the correct label (§4.3 is "selecting lines by text matching"); the census E04 exemption is real (dropping the `supersedes` prefix prints E04) |
+| T72W1S09 | mutation-tester | support + gap | four mutants killed; the `IGNORED`-filter mutant survives every arm (selftest-only kill) |
+| T72W1S10 | sentinel | support | no credentials/tokens, no misroot at the fleet root, TMPDIR honoured, no escaping symlinks |
+| T72W1S11 | revenger | support | the credit rule keys on recorded input pins: one mutated pin uncredits exactly that section (`input-drift:…`) |
+| T72W1S12 | connector | support | no sibling lane holds cold-read cost accounting or pointer/anchor-drift instrumenting; `shokuknow/merge/tameshi/` not readable |
+
+Seat findings adopted as work, not argued away: the EOL repair (S03), the third
+correction + batch-2 rekey (S05), the floor-id erratum (S05), and the
+coverage-gap carry (S09). Seat findings disclosed and left standing: the frozen
+control line (F1/F2) and the plan's loose "header" wording (F4 — the header line
+is 84, 85-87 are its narrative; the landed correction states this precisely).
