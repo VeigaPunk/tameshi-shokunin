@@ -395,6 +395,9 @@ def load_manifest(path, raw=None):
         for key in REQUIRED:
             if key not in row:
                 raise SetupError("row-missing-%s" % key)
+        if (not isinstance(row["id"], str)
+                or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", row["id"]) is None):
+            raise SetupError("row-id-alphabet:%r" % (row["id"],))
         if row["kind"] not in CHECKERS:
             raise SetupError("unknown-kind:%s" % row["kind"])
         if row["id"] in seen:
