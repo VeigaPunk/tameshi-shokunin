@@ -22,7 +22,7 @@ Four row kinds. Each binds a RECORD claim to an ARTIFACT re-derivation:
   attack_share   the share of seats whose agent is in the row's named attack
                  set, measured against the row's floor percentage.
 
-Binding rules (eighteen arms: seats-meet/mismatch, seat_reports-drift,
+Binding rules (twenty-one arms: seats-meet/mismatch, seat_reports-drift,
 roles-spec/text-drift, attack-below-floor/at-floor, five setup refusals, - from
 round 74 - arm13 delimited-token, arm14 record-span-substring and arm15
 seat_reports-top-level-only, the three rules round 73 carried as arm gaps and
@@ -32,7 +32,11 @@ arm16 printed-span-not-record, arm17 record-claim-live-on-roles and arm18
 record-claim-live-on-attack-share, the two round-74 survivors: a `printed` token
 delimited in the record but outside the bound span, and the selective
 `_record_claim` bypass on the `roles` and `attack_share` branches. Each new arm
-names its mutant in `tools/wave-reconcile-mutants.spec`):
+names its mutant in `tools/wave-reconcile-mutants.spec`; from round 76
+arm19 seat_reports-printed-required and arm20 nested-listing-recursion - the
+first REAL git fixture, S305 - and from round 78 arm20's leftover
+post-condition plus arm21 pinned-rev-listing-at-head-drift, the two survivors
+the round-77 wave named):
 
   * the record span must be a byte substring of the record at the record rev;
   * the printed integer must occur in the span as a delimited token;
@@ -71,7 +75,7 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 20
+SELFTEST_ARMS = 21
 BOM = b'\xef\xbb\xbf'
 ATTACK_NOTE = ('named attack roles are the row\'s own declaration; the policy '
                'floor is the row\'s floor_pct')
@@ -556,9 +560,26 @@ def selftest():
         # report: a recursive listing yields the top-level file and excludes the
         # nested one, while `ls-tree` without -r yields the tree entry itself
         # and counts zero. S305: `-r` recurses into sub-trees.
+        # Round 78 closes the two survivors the round-77 wave named: arm20 now
+        # carries a leftover post-condition (a cleanup-deleted mutant stayed
+        # green 20/20 and leaked one fixture per run) and arm21 builds a
+        # TWO-commit fixture so the pinned rev differs from HEAD (a
+        # `git-listing-uses-head` mutant stayed green 20/20 because the
+        # single-commit fixture made HEAD == rev).
+        GIT_FIXTURE_PREFIX = 'wave-reconcile-git-'
+
+        def _fixture_entries():
+            try:
+                return set(p for p in os.listdir(tempfile.gettempdir())
+                           if p.startswith(GIT_FIXTURE_PREFIX))
+            except OSError:
+                return set()
+
         def _nested_listing_arm():
-            fix = tempfile.mkdtemp(prefix='wave-reconcile-git-',
+            before = _fixture_entries()
+            fix = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
                                    dir=os.environ.get('TMPDIR') or None)
+            got = 'setup'
             try:
                 def g(*args):
                     proc = subprocess.run(['git', '-C', fix] + list(args),
@@ -589,17 +610,87 @@ def selftest():
                   '-c', 'commit.gpgsign=false',
                   'commit', '-q', '-m', 'fixture')
                 rev = g('rev-parse', 'HEAD').decode().strip()
-                return measure({'id': 'nested-listing',
-                                'kind': 'seat_reports',
-                                'record': {'path': 'report.md', 'rev': rev,
-                                           'span': '1 seat report',
-                                           'printed': 1},
-                                'wave': {'dir': 'wave',
-                                         'results': 'report.md', 'rev': rev}},
-                               {'lane': GitReader(fix)})[0]
+                got = measure({'id': 'nested-listing',
+                               'kind': 'seat_reports',
+                               'record': {'path': 'report.md', 'rev': rev,
+                                          'span': '1 seat report',
+                                          'printed': 1},
+                               'wave': {'dir': 'wave',
+                                        'results': 'report.md', 'rev': rev}},
+                              {'lane': GitReader(fix)})[0]
             finally:
                 shutil.rmtree(fix, ignore_errors=True)
+            leaked = _fixture_entries() - before
+            if leaked:
+                return 'leak:%d' % len(leaked)
+            return got
         arm('arm20-nested-listing-recursion', 'meet', _nested_listing_arm)
+
+        # arm21: the fixture is TWO commits deep. The record and the wave dir
+        # live in rev1; rev2 (HEAD) adds `wave/two.md`. A reader that resolves
+        # the row's rev sees one top-level report and meets the printed 1; a
+        # reader that resolves HEAD sees two and drifts. gitrevisions: "HEAD
+        # names the commit on which you based the changes in the working tree"
+        # — a revision argument, never the argument's substitute.
+        def _pinned_rev_listing_arm():
+            before = _fixture_entries()
+            fix = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
+                                   dir=os.environ.get('TMPDIR') or None)
+            got = 'setup'
+            try:
+                def g(*args):
+                    proc = subprocess.run(['git', '-C', fix] + list(args),
+                                          stdout=subprocess.PIPE,
+                                          stderr=subprocess.PIPE)
+                    if proc.returncode != 0:
+                        raise SetupError('git-fixture-failed:%s'
+                                         % proc.stderr.decode('utf-8',
+                                                              'replace')[:120])
+                    return proc.stdout
+                g('init', '-q')
+                top = g('rev-parse', '--show-toplevel').decode().strip()
+                if os.path.realpath(top) != os.path.realpath(fix):
+                    raise SetupError('git-fixture-misroot:%s' % top)
+                os.makedirs(os.path.join(fix, 'wave'))
+                with open(os.path.join(fix, 'wave', 'one.md'), 'w',
+                          encoding='utf-8') as fh:
+                    fh.write('one\n')
+                with open(os.path.join(fix, 'report.md'), 'w',
+                          encoding='utf-8') as fh:
+                    fh.write('1 seat report\n')
+                g('add', '-A')
+                g('-c', 'user.name=tameshi-fixture',
+                  '-c', 'user.email=tameshi@shokunin.local',
+                  '-c', 'commit.gpgsign=false',
+                  'commit', '-q', '-m', 'rev1')
+                rev = g('rev-parse', 'HEAD').decode().strip()
+                with open(os.path.join(fix, 'wave', 'two.md'), 'w',
+                          encoding='utf-8') as fh:
+                    fh.write('two\n')
+                g('add', '-A')
+                g('-c', 'user.name=tameshi-fixture',
+                  '-c', 'user.email=tameshi@shokunin.local',
+                  '-c', 'commit.gpgsign=false',
+                  'commit', '-q', '-m', 'rev2')
+                head = g('rev-parse', 'HEAD').decode().strip()
+                if head == rev:
+                    raise SetupError('git-fixture-head-equals-rev')
+                got = measure({'id': 'pinned-rev-listing',
+                               'kind': 'seat_reports',
+                               'record': {'path': 'report.md', 'rev': rev,
+                                          'span': '1 seat report',
+                                          'printed': 1},
+                               'wave': {'dir': 'wave',
+                                        'results': 'report.md', 'rev': rev}},
+                              {'lane': GitReader(fix)})[0]
+            finally:
+                shutil.rmtree(fix)
+            leaked = _fixture_entries() - before
+            if leaked:
+                return 'leak:%d' % len(leaked)
+            return got
+        arm('arm21-pinned-rev-listing-at-head-drift', 'meet',
+            _pinned_rev_listing_arm)
     finally:
         shutil.rmtree(work, ignore_errors=True)
 

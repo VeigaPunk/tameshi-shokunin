@@ -67,7 +67,10 @@ instrument stdout per row, no git, no lane subprocess. Nine arms: match,
 stale measured, frozen-span stale, absent capability refused, absent figure
 refused, zero rows refused, unknown expect refused, unknown mode refused, and
 an instrument whose stdout lacks the figure refused (a setup refusal, never
-a match).
+a match), a figure regex matching more than once refused, the `--doc-rev` CLI
+binding against a two-state fixture, an unknown interpreter refused, and a
+`bash` row executed from extracted bytes through the frozen tuple table
+(round 78: the arms list had fallen behind the count).
 
 Usage:
 
@@ -86,12 +89,22 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 11
+SELFTEST_ARMS = 13
 MODES = ('capability', 'span')
 EXPECTS = ('match', 'stale')
 BOM = b'\xef\xbb\xbf'
 CAPS_HEADING = '## Capabilities'
 INSTRUMENT_TIMEOUT = 600
+# Frozen runner tuple table (criterion 127: a widened runner needs its own
+# before/after and a frozen tuple table). A row names its interpreter here; an
+# unnamed interpreter is python (the round-75 default, unchanged). `bash` is
+# the round-78 addition: the lane's mutation runner is a bash instrument and no
+# live freshness row could exist for it (round-77 carry).
+INTERPRETERS = {
+    'python': ('python3', '-I', '-X', 'utf8'),
+    'bash': ('bash',),
+}
+DEFAULT_INTERPRETER = 'python'
 # Location-dependent lane instruments read support bytes relative to their own
 # path: rekey-cost.py:240 copies `Path(__file__).resolve().parent.parent /
 # '.ufo/evidence/round-18/measure.py'` into its fixture. The extraction root is
@@ -238,6 +251,9 @@ def validate_manifest(manifest):
         argv = inst.get('argv')
         if not isinstance(argv, list) or not all(isinstance(a, str) for a in argv):
             raise SetupError('instrument-argv-invalid:%s' % rid)
+        interp = inst.get('interpreter', DEFAULT_INTERPRETER)
+        if interp not in INTERPRETERS:
+            raise SetupError('interpreter-unknown:%s:%s' % (rid, interp))
     return rows
 
 
@@ -292,8 +308,9 @@ class GitInstrumentRunner(object):
         dest = self._extract(rev, path)
         self._support(rev)
         try:
+            prefix = INTERPRETERS[inst.get('interpreter', DEFAULT_INTERPRETER)]
             proc = subprocess.run(
-                ['python3', '-I', '-X', 'utf8', dest] + list(argv),
+                list(prefix) + [dest] + list(argv),
                 cwd=self.repo, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                 timeout=INSTRUMENT_TIMEOUT)
         except subprocess.TimeoutExpired:
@@ -599,6 +616,73 @@ def selftest(out=sys.stdout):
                 proc.stderr.decode("utf-8", "replace")[-160:]))
     finally:
         shutil.rmtree(fx, ignore_errors=True)
+
+    # arm 12: an interpreter outside the frozen tuple table -> setup refusal
+    row12 = _toy_row('toy-interp', 'capability', 'match', fig,
+                     capability='toy capture')
+    row12['instrument']['interpreter'] = 'zsh'
+    rc, txt, err = run([row12], {'toy-interp': 'TOY_FIGURE: 4/4 pass\n'})
+    arm('ARM12_unknown_interpreter_refused', rc == 2
+        and 'SELFSTATE:' not in txt and 'interpreter-unknown:toy-interp:zsh' in err,
+        'rc=%r %r %r' % (rc, txt, err))
+
+    # arm 13: a `bash` row runs from extracted bytes through the tuple table.
+    # The real CLI is a subprocess against a git fixture whose instrument is a
+    # bash script: a runner that keeps the hardcoded `python3 -I` prefix cannot
+    # execute it, and the row never measures match.
+    fx2 = tempfile.mkdtemp(prefix="selfstate-arm13-",
+                           dir=os.environ.get("TMPDIR") or None)
+    try:
+        def _git2(*args):
+            subprocess.run(["git", "-C", fx2] + list(args), check=True,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        def _put2(rel, text):
+            path = os.path.join(fx2, rel)
+            parent = os.path.dirname(path)
+            if parent:
+                os.makedirs(parent, exist_ok=True)
+            with open(path, "w", newline="\n") as fh:
+                fh.write(text)
+
+        _put2("SCORECARD.md", DOC_REV1)
+        _put2("tools/toy.sh", "#!/bin/bash\nprintf 'TOY_FIGURE: 4/4 pass\\n'\n")
+        mpath2 = os.path.join(fx2, "manifest.json")
+        with open(mpath2, "w", newline="\n") as fh:
+            json.dump({"schema": "tameshi-selfstate-freshness-v1",
+                       "rows": [{"id": "toy-bash", "mode": "capability",
+                                 "capability": "toy capture",
+                                 "expect": "match", "figure": fig,
+                                 "instrument": {"path": "tools/toy.sh",
+                                                "rev": None, "argv": [],
+                                                "interpreter": "bash"}}]},
+                      fh)
+        _git2("init", "-q")
+        _git2("-c", "user.name=t", "-c", "user.email=t@t", "add",
+              "SCORECARD.md", "tools/toy.sh")
+        _git2("-c", "user.name=t", "-c", "user.email=t@t", "commit",
+              "-qm", "rev1")
+        rev2 = subprocess.run(["git", "-C", fx2, "rev-parse", "HEAD"],
+                              check=True,
+                              stdout=subprocess.PIPE).stdout.decode().strip()
+        rows_manifest2 = json.load(open(mpath2))
+        rows_manifest2["rows"][0]["instrument"]["rev"] = rev2
+        with open(mpath2, "w", newline="\n") as fh:
+            json.dump(rows_manifest2, fh)
+        proc2 = subprocess.run(
+            [sys.executable, "-I", "-X", "utf8",
+             os.path.abspath(__file__),
+             "--repo", fx2, "--doc-rev", rev2, "--manifest", mpath2],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=120)
+        out_text2 = proc2.stdout.decode("utf-8", "replace")
+        arm("ARM13_bash_interpreter_row",
+            proc2.returncode == 0
+            and "SELFSTATE: rows=1 match=1 stale=0 unexpected=0" in out_text2,
+            "rc=%r tail=%r err=%r" % (
+                proc2.returncode, out_text2[-160:],
+                proc2.stderr.decode("utf-8", "replace")[-160:]))
+    finally:
+        shutil.rmtree(fx2, ignore_errors=True)
 
     out.write('SELFSTATE_SELFTEST: %d/%d pass\n' % (ok, total))
     return 0 if (ok == total == SELFTEST_ARMS) else 1

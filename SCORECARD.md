@@ -262,6 +262,7 @@ written and are superseded here:
 | wave-record reconciliation | re-derive a round record's own execution claims (seat count, committed seat-report count, role multiset, attack share) from the committed wave artifacts: four row kinds, each binding a record span by byte substring at the record revision with the printed integer a delimited token, artifacts read from git objects at their own revision, `expect` is meet or drift so a standing red arm MEASURES the drift on every sweep, a UTF-8 BOM refused as setup exit 2 (S066 §8.1) | `python3 -I -X utf8 tools/wave-reconcile.py --selftest` → `WAVE_RECONCILE_SELFTEST: 19/19 pass`; `python3 -I -X utf8 tools/wave-reconcile.py --repo . --extra-root fleet=/home/vgpnk/Projects/shokunin --manifest tools/wave-reconcile.json` → `WAVE_RECONCILE: rows=6 met=6 unexpected=0` with both r72-closure red arms measured (`printed=11 files=12`; plan `labrat` vs executed `revenger`); independent oracle `ORACLE_CMP rows=6 equal=6` (seat T73W1S01); `.ufo/evidence/round-73/`: `wave-selftest-r73.txt`, `wave-reconcile-live-r73.txt`, `hardening-r73.txt` | round 73 |
 
 | round-range additivity sweep | measure a round's append-only / content-preservation claims over a declared commit range with a declared claim class per row, naming the worst commit and the class-specific counts | `python3 -I tools/additivity-range.py --repo . --manifest tools/additivity-range.json` → `ADDRANGE: rows=11 met=11 unexpected=0` exit 0; `--selftest` → `ADDITIVITY_RANGE_SELFTEST: 8/8 pass`; `.ufo/evidence/round-74/addr-r74.txt` | round 74 |
+| non-Python instrument freshness row | execute a freshness row's instrument under a frozen per-row interpreter tuple (python as the unchanged default, bash added) and bind a non-Python instrument's printed figure to the capability row it demonstrates | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --doc-rev 5bcb13ea7cc08bb0b594fcd0c2bb770cb8fe64a0` -> `SELFSTATE: rows=21 match=19 stale=2 unexpected=0` exit 0 with `SELFSTATE_ROW mutation-runner-selftest capability=mutation sweep runner expect=match measured=match ok`; `--selftest` -> `SELFSTATE_SELFTEST: 13/13 pass`; `.ufo/evidence/round-78/c1-landed-sweep.txt`, `c1-landed-selftest.txt` | round 78 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -4879,3 +4880,59 @@ report under `.ufo/waves/round-77/w1/`:
    ledger prints the same state (wave critic `T77W1C1`, in-memory probe). The
    claim's barrier is the producer receipt (`REBIND OK` + the trace files),
    which is producer evidence, not independent proof.
+
+## Round 78 — declared claims and measured record (2026-11-04)
+
+Plan: `plans/round-78.plan.md` (frozen at `c1c220d4`, predicates, counters,
+kill rules, the frozen kill matrix and both do-nothing controls in that commit).
+Base `5bcb13ea7cc08bb0b594fcd0c2bb770cb8fe64a0` (= `origin/master`, the round-77
+non-author closure verdict commit). Round shape: one v1 wave, 12 seats
+(3 executor, 1 scribe, 1 scout, 2 reviewer, 1 critic, 1 mutation-tester,
+1 connector, 1 sentinel, 1 simplifier; attack seats 4 = 33.3 %), policy
+`scripts/hyaku/ufo-wave-policy.json`, band 8–16. Saturation: depth 10,
+calibration 8, freshness 9 all at or above the line 8; rounds 75, 76 and 77
+entered no capability row, so the stagnation nudge was ACTIVE and this round is
+the capability round.
+
+- **R78-C1 — operability, capability acquisition (sourced on S306, opened this
+  round).** A non-Python instrument can carry a live freshness row. Before
+  (base): the runner executed every instrument under the hardcoded
+  `python3 -I -X utf8` prefix, and the do-nothing control (base runner + the
+  new manifest row) refused: `SELFSTATE error=setup
+  figure-absent:mutation-runner-selftest` exit 2
+  (`.ufo/evidence/round-78/c1-control-bash-row-on-base-runner.txt`); base sweep
+  with the base manifest `rows=20 match=18 stale=2 unexpected=0` exit 0. After:
+  a frozen interpreter tuple table (python default unchanged, bash added; an
+  unknown name refused before any row effect) and the live row
+  `mutation-runner-selftest` binding `MUTATE_SELFTEST: 107/107 pass` to
+  `tools/mutate-and-run.sh --selftest` at the base revision →
+  `SELFSTATE: rows=21 match=19 stale=2 unexpected=0` exit 0,
+  `SELFSTATE_SELFTEST: 13/13 pass` exit 0
+  (`.ufo/evidence/round-78/c1-landed-sweep.txt`, `c1-landed-selftest.txt`). The
+  capability row above enters through this demonstration.
+- **R78-C2 — coverage (sourced on S091, re-opened this round).** The two
+  survivors the round-77 wave named become fixture coverage. Before (base):
+  `WAVE_RECONCILE_SELFTEST: 20/20 pass`; the 10-defect spec on base bytes reads
+  `MUTATE: DONE (target=wave-reconcile-base-control-r78 defects=10 killed=8
+  survived=2 …)`, survivors exactly `git-listing-uses-head` and
+  `arm20-cleanup-removed` (`.ufo/evidence/round-78/c2-base-control-battery.txt`).
+  After: arm20 carries a leftover post-condition (`leak:<n>`), arm21 builds a
+  two-commit fixture and measures at the pinned rev (HEAD ≠ rev) →
+  `WAVE_RECONCILE_SELFTEST: 21/21 pass`; battery `CONTROL: GREEN`,
+  `MUTATE_RESTORE: OK` byte-identical, `MUTATE: DONE
+  (target=wave-reconcile-arms-r78 defects=10 killed=10 survived=0
+  inconclusive=0 kill-rate=100%)` (`.ufo/evidence/round-78/c2-landed-selftest.txt`,
+  `c2-landed-battery.txt`, per-defect streams `battery/`). Kill matrix as frozen:
+  the eight base defects keep their arms except `git-listing-recursion-removed`,
+  which now also fails arm21 (disclosed intrinsic collateral),
+  `git-listing-uses-head` dies on arm21 only, `arm20-cleanup-removed` on arm20
+  only.
+
+**No axis harmed.** Arms 1–19 byte-identical between base and landed selftests;
+the base 20 selfstate rows identical between base and landed sweeps; the bash
+instrument unchanged (`MUTATE_SELFTEST: 107/107 pass` before and after).
+
+**Planned (round 79):** the wave-named survivors and the connector's
+assimilation verdict; the carried 17-of-44 registry rows and the bash-instrument
+row widening for `selfstate`'s support-blob path stay carried unless a claim
+slots them.

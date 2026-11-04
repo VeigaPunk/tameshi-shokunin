@@ -4212,3 +4212,37 @@ grep, the false separability sentence corrected (C2's `needed_paths` pins
 `tools/wave-reconcile.py`), and two named survivors carried to round 78
 (arm20's `finally` cleanup, `git-listing-uses-head`). Provenance limitation:
 the monitor does not authenticate `read_rev`.
+
+## Round 78 (2026-11-04) — the capability round: a non-Python freshness row and the two round-77 survivors
+
+Base `5bcb13ea` (= `origin/master`), declaration `c1c220d4`. Round shape: one
+v1 wave, 12 seats (attack 4 = 33.3 %). Stagnation nudge ACTIVE (rounds 75–77
+capability-less), so C1 acquires a capability.
+
+- **R78-C1 (operability, capability):** `tools/selfstate-freshness.py` gains a
+  frozen interpreter tuple table (`python` default unchanged, `bash` added) and
+  the live row `mutation-runner-selftest`, so the lane's bash mutation runner is
+  a freshness row for the first time. Before: the runner's hardcoded
+  `python3 -I -X utf8` prefix refused the row (`SELFSTATE error=setup
+  figure-absent:mutation-runner-selftest`, exit 2 on base bytes + new manifest);
+  after: `SELFSTATE: rows=21 match=19 stale=2 unexpected=0` exit 0 with the bash
+  row `measured=match`, `SELFSTATE_SELFTEST: 13/13 pass` exit 0. Capability row
+  `non-Python instrument freshness row` enters `SCORECARD.md`. Sourced on S306.
+- **R78-C2 (coverage):** `tools/wave-reconcile.py` arm20 gains a leftover
+  post-condition and arm21 builds a two-commit fixture (HEAD ≠ pinned rev);
+  `tools/wave-reconcile-mutants.spec` 8 → 10 defects. Before: base battery
+  `killed=8 survived=2` (exactly `git-listing-uses-head`,
+  `arm20-cleanup-removed`); after: `WAVE_RECONCILE_SELFTEST: 21/21 pass` and
+  `defects=10 killed=10 survived=0` with `CONTROL: GREEN` and byte-identical
+  restore. Kill matrix as frozen; `git-listing-recursion-removed`'s new arm21
+  collateral disclosed. Sourced on S091 (re-opened).
+- **Registry:** S306 appended (Bash *Invoking Bash*); S091 re-opened for the
+  revision-name ground (`used-by` old → new in the row and the lesson Gate); the
+  round-77 row S305's missing per-round log entry corrected append-only.
+  Criterion 129 written. Census `validate --root … tameshi` exit 0 before
+  (`.ufo/evidence/round-78/census-before.txt`, 165 rows) and after
+  (`census-after-append.txt`, 166 rows).
+- **Continuation of round 77's carries:** the two named survivors are closed
+  (above); the 17-of-44 registry-row gap and the bash-instrument `--regression`
+  row stay carried, unchanged in scope.
+

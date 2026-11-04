@@ -2222,3 +2222,27 @@ at `ac6baf7a`, the base immediately after the closure commit, with
 uncredited; receipt `.ufo/evidence/round-77/coldread-base-r77.json`). Under
 this criterion the round-77 record names its settlement revision, and the
 monitor at that revision reads the claimed `65/65` with `box3_full_page=true`.
+
+### Criterion 129 — a registry row lands with its round's log entry; a census-clean registry whose newest row has no round entry is a conformance defect
+
+A source registry row is only half the record: the per-round log line is what
+tells a reader which round opened the row, on what evidence, and what it
+changed. The census validates ids, schema, URLs, statuses, rechecks and
+`used-by`, and it does not read the round log — so a row appended without its
+round entry census-validates clean and the gap stays invisible until a later
+round reads the file. The rule is mechanical: the commit that appends a row
+also appends that round's log entry; a re-open is logged in the same place with
+its old -> new cells. A registry whose newest row has no round entry is a
+conformance defect even when the census exits 0.
+
+Lesson: `corpus/lessons/round-78.md` `## Mistakes` 1 (class
+registry-row-without-its-round-entry, captured-by: this criterion).
+
+Falsifier that must fail: at `5bcb13ea` the registry carries S305 and no
+round-77 entry — `grep -c '^| S305 ' corpus/SOURCES.md` prints 1 while
+`grep -c '^- Round 77' corpus/SOURCES.md` prints 0, and
+`scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin
+tameshi` still exits 0 (`.ufo/evidence/round-78/census-before.txt`). Under this
+criterion the round-78 commit carries the append-only round-77 correction entry,
+and the round-78 entry carries both its new row and its re-open.
+

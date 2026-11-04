@@ -38,3 +38,11 @@
 @defect git-listing-recursion-removed | GitReader.listing drops -r, so a directory path yields the tree entry instead of its descendants (round-76 wave seat M1 survivor); arm20-nested-listing-recursion must kill it
 @old     out = self._git('ls-tree', '-r', '--name-only', rev, '--', path)
 @new     out = self._git('ls-tree', '--name-only', rev, '--', path)
+
+@defect git-listing-uses-head | GitReader.listing resolves HEAD instead of the row's rev, so a two-commit fixture's pinned listing silently becomes the tip listing (round-77 wave seat T77W1E2 survivor); arm21-pinned-rev-listing-at-head-drift must kill it
+@old out = self._git('ls-tree', '-r', '--name-only', rev, '--', path)
+@new out = self._git('ls-tree', '-r', '--name-only', 'HEAD', '--', path)
+
+@defect arm20-cleanup-removed | the arm20 fixture cleanup is deleted, leaking one scratch dir per run with the suite green (round-77 wave seat T77W1M1 survivor); arm20-nested-listing-recursion's leftover post-condition must kill it
+@old                 shutil.rmtree(fix, ignore_errors=True)
+@new                 pass
