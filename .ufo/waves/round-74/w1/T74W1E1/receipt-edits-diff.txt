@@ -1,0 +1,31 @@
+# single-hunk diffs pristine -> mutant (git diff --no-index --unified=1)
+=== m2-delimited-tautology
+diff --git 1/pristine/wave-reconcile.py 2/mutants/m2-delimited-tautology.py
+index 314e02d..7a767e4 100644
+--- 1/pristine/wave-reconcile.py
++++ 2/mutants/m2-delimited-tautology.py
+@@ -93,3 +93,3 @@ def decode_json(raw, label):
+ def delimited(value, span):
+-    return re.search(r'(?<![0-9])%d(?![0-9])' % value, span) is not None
++    return True
+ 
+=== span-rule-removed
+diff --git 1/pristine/wave-reconcile.py 2/mutants/span-rule-removed.py
+index 314e02d..fdad0db 100644
+--- 1/pristine/wave-reconcile.py
++++ 2/mutants/span-rule-removed.py
+@@ -161,4 +161,2 @@ def _record_span(row, readers):
+     raw = reader.blob(rec['rev'], rec['path'])
+-    if rec['span'].encode('utf-8') not in raw:
+-        raise SetupError('span-not-in-record:%s:%s' % (row['id'], rec['path']))
+     return raw.decode('utf-8'), rec
+=== w2-seatreports-any-depth
+diff --git 1/pristine/wave-reconcile.py 2/mutants/w2-seatreports-any-depth.py
+index 314e02d..7450cc0 100644
+--- 1/pristine/wave-reconcile.py
++++ 2/mutants/w2-seatreports-any-depth.py
+@@ -221,3 +221,3 @@ def measure(row, readers):
+         files = [p for p in reader.listing(rev, path)
+-                 if p.startswith(prefix) and '/' not in p[len(prefix):]
++                 if p.startswith(prefix)
+                  and p.endswith('.md')]

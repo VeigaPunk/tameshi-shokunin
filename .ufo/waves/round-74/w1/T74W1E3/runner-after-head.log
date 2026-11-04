@@ -1,0 +1,52 @@
+$ python3 -I -X utf8 head-wave-reconcile.py --selftest | tail -4
+SELFTEST arm13-printed-undelimited-refused    ok (got=setup want=setup)
+SELFTEST arm14-span-not-in-record-refused     ok (got=setup want=setup)
+SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+WAVE_RECONCILE_SELFTEST: 15/15 pass
+SELFTEST_EXIT=0
+
+$ bash tools/mutate-and-run.sh --target <scratch>/head-wave-reconcile.py --defects <scratch>/committed.spec --suite 'python3 -I -X utf8 "$MUTANT" --selftest' --workdir <scratch>/work-after --label wave-reconcile-arms
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda
+MUTATE_DATE: 2026-11-04T01:46:44Z
+MUTATE_TARGET: /fast/scratch/hyaku/tameshi-r74/T74W1E3/head-wave-reconcile.py sha256=9532c12b186e4f5dd011f3d59cd38f23caf6f14de4c137da555863d575c4133d bytes=23238
+MUTATE_SPEC: /fast/scratch/hyaku/tameshi-r74/T74W1E3/committed.spec defects=3
+CONTROL: GREEN (exit=0 duration-ms=36 pristine-sha256=9532c12b186e4f5dd011f3d59cd38f23caf6f14de4c137da555863d575c4133d)
+  | SELFTEST arm9-invalid-utf8-refused            ok (got=setup want=setup)
+  | SELFTEST arm10-zero-rows-refused              ok (got=setup want=setup)
+  | SELFTEST arm11-unresolvable-rev-refused       ok (got=setup want=setup)
+  | SELFTEST arm12-declaration-absent-refused     ok (got=setup want=setup)
+  | SELFTEST arm13-printed-undelimited-refused    ok (got=setup want=setup)
+  | SELFTEST arm14-span-not-in-record-refused     ok (got=setup want=setup)
+  | SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+  | WAVE_RECONCILE_SELFTEST: 15/15 pass
+DEFECT m2-delimited-tautology: KILLED (exit=1 duration-ms=39) delimited() accepts any substring occurrence (r73 T73W1S02 m2); arm13-printed-undelimited-refused must kill it
+  | SELFTEST arm9-invalid-utf8-refused            ok (got=setup want=setup)
+  | SELFTEST arm10-zero-rows-refused              ok (got=setup want=setup)
+  | SELFTEST arm11-unresolvable-rev-refused       ok (got=setup want=setup)
+  | SELFTEST arm12-declaration-absent-refused     ok (got=setup want=setup)
+  | SELFTEST arm13-printed-undelimited-refused    FAIL (got=drift want=setup)
+  | SELFTEST arm14-span-not-in-record-refused     ok (got=setup want=setup)
+  | SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+  | WAVE_RECONCILE_SELFTEST: 14/15 pass
+DEFECT span-rule-removed: KILLED (exit=1 duration-ms=40) the record-span byte-substring guard is deleted (r73 T73W1S02); arm14-span-not-in-record-refused must kill it
+  | SELFTEST arm9-invalid-utf8-refused            ok (got=setup want=setup)
+  | SELFTEST arm10-zero-rows-refused              ok (got=setup want=setup)
+  | SELFTEST arm11-unresolvable-rev-refused       ok (got=setup want=setup)
+  | SELFTEST arm12-declaration-absent-refused     ok (got=setup want=setup)
+  | SELFTEST arm13-printed-undelimited-refused    ok (got=setup want=setup)
+  | SELFTEST arm14-span-not-in-record-refused     FAIL (got=drift want=setup)
+  | SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+  | WAVE_RECONCILE_SELFTEST: 14/15 pass
+DEFECT seat-reports-any-depth: KILLED (exit=1 duration-ms=39) the top-level clause is dropped, nested .md counted (r73 T73W1S10 W2); arm15-seatreports-top-level-only must kill it
+  | SELFTEST arm9-invalid-utf8-refused            ok (got=setup want=setup)
+  | SELFTEST arm10-zero-rows-refused              ok (got=setup want=setup)
+  | SELFTEST arm11-unresolvable-rev-refused       ok (got=setup want=setup)
+  | SELFTEST arm12-declaration-absent-refused     ok (got=setup want=setup)
+  | SELFTEST arm13-printed-undelimited-refused    ok (got=setup want=setup)
+  | SELFTEST arm14-span-not-in-record-refused     ok (got=setup want=setup)
+  | SELFTEST arm15-seatreports-top-level-only     FAIL (got=drift want=meet)
+  | WAVE_RECONCILE_SELFTEST: 14/15 pass
+MUTATE_RESTORE: OK (target-sha256 before=9532c12b186e4f5dd011f3d59cd38f23caf6f14de4c137da555863d575c4133d after=9532c12b186e4f5dd011f3d59cd38f23caf6f14de4c137da555863d575c4133d pristine-sha256=9532c12b186e4f5dd011f3d59cd38f23caf6f14de4c137da555863d575c4133d)
+MUTATE_EVIDENCE: /fast/scratch/hyaku/tameshi-r74/T74W1E3/work-after
+MUTATE: DONE (target=wave-reconcile-arms defects=3 killed=3 survived=0 inconclusive=0 kill-rate=100%)
+RUNNER_EXIT=0

@@ -1,0 +1,41 @@
+# T74W1S1 verification receipt — R74-C2 sourced half
+# host local 2026-11-03T22:4x -03:00 (UTC 2026-11-04T01:4x); lane HEAD 9fe58b40
+
+== 1. landed Gate quotes (corpus/lessons/round-74.md @ 9fe58b40 lines 44,47,50,72) ==
+Q1 S294: words=13 minimal_span=2667-2668 cited=2667-2668 OK
+Q2 S294: words=9 minimal_span=2679-2680 cited=2678-2679 MISMATCH
+Q3 S294: words=20 minimal_span=2758-2759 cited=2758-2759 OK
+S304: words=11 minimal_span=4157 cited=4157 OK
+S294 legacy anchor (row cell): words=17 minimal_span=2678-2679 cited=2678-2679 OK
+S294 unset (not quoted in the Gate): words=19 minimal_span=2685-2686 cited=- unquoted
+S294 boundary (not quoted in the Gate): words=23 minimal_span=2660-2662 cited=- unquoted
+
+== 2. blob bytes and raw vs CR-blind comparison at the two routed rewrite commits (plain git) ==
+git cat-file -s 862e8844^:LOG.md -> bytes=298274 ; CR bytes=3759
+git cat-file -s 862e8844:LOG.md -> bytes=297388 ; CR bytes=0
+git cat-file -s 21a7332f^:corpus/QUALITY.md -> bytes=144899 ; CR bytes=1915
+git cat-file -s 21a7332f:corpus/QUALITY.md -> bytes=143370 ; CR bytes=0
+862e8844 LOG.md: raw ins/del=3801/3759 ; CR-blind ins/del=42/0
+21a7332f corpus/QUALITY.md: raw ins/del=1925/1920 ; CR-blind ins/del=10/5
+
+== 3. S294 page drift: round-63 extract vs round-74 fetch ==
+r63 extract bytes=131046 sha256=56f2e80e4afadac4458da6c8e0e952e514eba23a125383eab1931cc6210e9d30
+r74 fetch   bytes=131174 sha256=ceb3351f931ae86283f51416cf0042fd78265eda59e5af7d09e17581ec0f77f7
+diff -u0 changed lines (word-for-word):
+-  <link rel="stylesheet" href="/application.min.30a88cf2b7a1c9603a6853e42996cef77335ab31d161d1435c7cd652ccde7525.css">
++  <link rel="stylesheet" href="/application.min.38bd3bdb5689478217e1fd5a15a5306a5e75138ee77f6757098c30b6d15fbd35.css" integrity="sha256-OL0721aJR4IX4f1aFaUwal51E47nf2dXCYwwttFfvTU=">
+-<script src="/js/application.min.b1596bd8193dbaa5632b401c79dd5164e1d16ad54e9836877fae59882510a0bb.js"></script>
++<script src="/js/application.min.b1596bd8193dbaa5632b401c79dd5164e1d16ad54e9836877fae59882510a0bb.js" integrity="sha256-sVlr2Bk9uqVjK0Aced1RZOHRatVOmDaHf65ZiCUQoLs="></script>
+
+== 4. held-page greps, base bytes vs after the lane's append ==
+base 3d6ea1ee: gitattributes -> 4
+base 3d6ea1ee: git-diff[^-] -> 0
+base 3d6ea1ee: catalogue rows -> 163
+base 3d6ea1ee: carriage -> 0
+HEAD 9fe58b40: gitattributes -> 5
+HEAD 9fe58b40: git-diff[^-] -> 2
+HEAD 9fe58b40: catalogue rows -> 164
+HEAD 9fe58b40: carriage -> 1
+
+== 5. census (read-only validate, run by this seat on the working tree) ==
+exit=0; last line: tameshi	ok	/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md; lines=20
