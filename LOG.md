@@ -4655,3 +4655,11 @@ successful quality claim. Scores10/8/9 unchanged, no capability/frontier
 increment. Next work remains actual self-assessment discrepancy measurement,
 unhashable-kind/source-id boundaries, descriptor race/parent aliases,
 conversion comparison and design-orphan alarm, all unclaimed here.
+
+**Round84 terminal reviewer evidence (append).** Main supplied the actual
+T84R1 final failure after settlement: `[amr/deepseek-v4.1-flash] 402
+[code=insufficient_balance]`, Coding Plan quota exhausted and wallet balance
+insufficient; reset2026-11-06T22:28:24Z does not replenish wallet.
+Exact message `.ufo/waves/round-84/failure-events.json`. This names only
+the failing final provider/model, not its prior route sequence. Eight
+completed reports and one failed seat remain the accounting; no retry.

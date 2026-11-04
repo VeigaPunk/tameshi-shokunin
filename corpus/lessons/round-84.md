@@ -84,3 +84,11 @@ re-runnable frozen command; conciseness3, necessary duplicated historical
 limits. Overall3.6/5. Highest-impact change next round: test axis-to-counter
 data flow before freeze, rather than merely counting behavioral cases.
 The user should agree that preserved failure is preferable to relabelled success.
+
+Terminal-status addendum: Main subsequently supplied the actual T84R1
+failure: final response `[amr/deepseek-v4.1-flash] 402
+[code=insufficient_balance]`, quota exhausted/wallet insufficient, reset
+2026-11-06T22:28:24Z does not replenish wallet. Exact error retained in
+`.ufo/waves/round-84/failure-events.json`; no prior route sequence inferred.
+Thus nine settled = eight completed reports + one failed reviewer. Its
+nonterminal narrative is not a completed review and no replacement ran.

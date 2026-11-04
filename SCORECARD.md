@@ -5387,3 +5387,8 @@ Literal behavioral predicate verifies at this revision; declared calibration
 claim remains honest-stop for missing self-assessment input. Numeric axis
 delta0; no capability addition. Independent non-author admission remains
 outside this lane's authority.
+
+Round84 terminal-status addendum: T84R1 is failed, not merely
+status-unavailable: Main delivered the actual final402/insufficient_balance
+error retained in `.ufo/waves/round-84/failure-events.json`. Counts stay
+nine settled/eight completed/one failed, no replacement.
