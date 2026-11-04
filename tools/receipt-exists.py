@@ -39,7 +39,10 @@ extra-root pass.
 
 --selftest is hermetic: it builds a throwaway git repository under the
 scratch root (TMPDIR), runs the tool against it out-of-process, and never
-touches the lane. Arms: green (cited blob and cited directory resolve,
+touches the lane. Every mkdtemp'd directory (the repo root and the
+extra-root fixture) is removed in a `finally` via
+`shutil.rmtree(..., ignore_errors=True)` — the S299 caller-deletion duty;
+the selftest leaves zero scratch entries behind. Arms: green (cited blob and cited directory resolve,
 exit 0), red (a cited path absent -> exit 1), usage (doc absent at the
 rev -> exit 2), extra-root (a path absent in the repo resolving under an
 extra root -> exit 0 with an EXTRA line). Prints
@@ -50,6 +53,7 @@ import argparse
 import hashlib
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -144,62 +148,66 @@ def sweep(repo, rev, docs, extra_roots=()):
 
 def selftest():
     tmp = tempfile.mkdtemp(prefix='receipt-exists-selftest-')
-    passed = failed = 0
-
-    def arm(name, ok):
-        nonlocal passed, failed
-        if ok:
-            passed += 1
-        else:
-            failed += 1
-            print('FAIL %s' % name)
-
-    def run_tool(argv):
-        tool = Path(__file__).resolve()
-        env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
-        return subprocess.run([sys.executable, '-I', str(tool)] + argv,
-                              capture_output=True, env=env, cwd=tmp)
-
-    g = lambda *a: git_run(tmp, *a)
-    g('init', '-q')
-    g('config', 'user.email', 'selftest@invalid')
-    g('config', 'user.name', 'selftest')
-    d = Path(tmp)
-    (d / '.ufo/evidence/r64').mkdir(parents=True)
-    (d / '.ufo/evidence/r64/ok.txt').write_bytes(b'receipt bytes\n')
-    (d / '.ufo/evidence/r64/sub').mkdir(parents=True)
-    (d / '.ufo/evidence/r64/sub/inner.txt').write_bytes(b'inner\n')
-    (d / 'docs').mkdir()
-    (d / 'docs/lesson.md').write_bytes(
-        b'cite `.ufo/evidence/r64/ok.txt` and dir `.ufo/evidence/r64/sub/` '
-        b'with suffix `.ufo/evidence/r64/ok.txt:12` skipped\n')
-    (d / 'docs/bad.md').write_bytes(b'cite `.ufo/evidence/r64/gone.txt`\n')
-    (d / 'docs/cross.md').write_bytes(b'cite `.ufo/other-root-file.txt`\n')
-    g('add', '.')
-    g('commit', '-qm', 'fixtures')
-    rev = resolve_rev(tmp, 'HEAD')
-
-    r = run_tool(['--repo', tmp, '--rev', rev, '--doc', 'docs/lesson.md'])
-    out = r.stdout.decode('utf-8', 'replace')
-    arm('green-exit0', r.returncode == 0 and 'missing=0' in out
-        and 'checked=2' in out and 'skipped=1' in out)
-    r = run_tool(['--repo', tmp, '--rev', rev, '--doc', 'docs/bad.md'])
-    out = r.stdout.decode('utf-8', 'replace')
-    arm('red-exit1', r.returncode == 1 and 'missing=1' in out
-        and 'gone.txt' in out)
-    r = run_tool(['--repo', tmp, '--rev', rev, '--doc', 'docs/absent.md'])
-    arm('usage-exit2', r.returncode == 2)
     extra = Path(tmp + '-extra')
-    extra.mkdir()
-    (extra / '.ufo').mkdir()
-    (extra / '.ufo/other-root-file.txt').write_bytes(b'fleet-root surface\n')
-    r = run_tool(['--repo', tmp, '--rev', rev, '--doc', 'docs/cross.md',
-                  '--extra-root', str(extra)])
-    out = r.stdout.decode('utf-8', 'replace')
-    arm('extra-root-exit0', r.returncode == 0 and 'missing=0' in out
-        and 'extra=1' in out and 'RECEIPT_EXISTS_EXTRA' in out)
-    print('RECEIPT_EXISTS_SELFTEST: %d/%d pass' % (passed, passed + failed))
-    return 1 if failed else 0
+    try:
+        passed = failed = 0
+
+        def arm(name, ok):
+            nonlocal passed, failed
+            if ok:
+                passed += 1
+            else:
+                failed += 1
+                print('FAIL %s' % name)
+
+        def run_tool(argv):
+            tool = Path(__file__).resolve()
+            env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+            return subprocess.run([sys.executable, '-I', str(tool)] + argv,
+                                  capture_output=True, env=env, cwd=tmp)
+
+        g = lambda *a: git_run(tmp, *a)
+        g('init', '-q')
+        g('config', 'user.email', 'selftest@invalid')
+        g('config', 'user.name', 'selftest')
+        d = Path(tmp)
+        (d / '.ufo/evidence/r64').mkdir(parents=True)
+        (d / '.ufo/evidence/r64/ok.txt').write_bytes(b'receipt bytes\n')
+        (d / '.ufo/evidence/r64/sub').mkdir(parents=True)
+        (d / '.ufo/evidence/r64/sub/inner.txt').write_bytes(b'inner\n')
+        (d / 'docs').mkdir()
+        (d / 'docs/lesson.md').write_bytes(
+            b'cite `.ufo/evidence/r64/ok.txt` and dir `.ufo/evidence/r64/sub/` '
+            b'with suffix `.ufo/evidence/r64/ok.txt:12` skipped\n')
+        (d / 'docs/bad.md').write_bytes(b'cite `.ufo/evidence/r64/gone.txt`\n')
+        (d / 'docs/cross.md').write_bytes(b'cite `.ufo/other-root-file.txt`\n')
+        g('add', '.')
+        g('commit', '-qm', 'fixtures')
+        rev = resolve_rev(tmp, 'HEAD')
+
+        r = run_tool(['--repo', tmp, '--rev', rev, '--doc', 'docs/lesson.md'])
+        out = r.stdout.decode('utf-8', 'replace')
+        arm('green-exit0', r.returncode == 0 and 'missing=0' in out
+            and 'checked=2' in out and 'skipped=1' in out)
+        r = run_tool(['--repo', tmp, '--rev', rev, '--doc', 'docs/bad.md'])
+        out = r.stdout.decode('utf-8', 'replace')
+        arm('red-exit1', r.returncode == 1 and 'missing=1' in out
+            and 'gone.txt' in out)
+        r = run_tool(['--repo', tmp, '--rev', rev, '--doc', 'docs/absent.md'])
+        arm('usage-exit2', r.returncode == 2)
+        extra.mkdir()
+        (extra / '.ufo').mkdir()
+        (extra / '.ufo/other-root-file.txt').write_bytes(b'fleet-root surface\n')
+        r = run_tool(['--repo', tmp, '--rev', rev, '--doc', 'docs/cross.md',
+                      '--extra-root', str(extra)])
+        out = r.stdout.decode('utf-8', 'replace')
+        arm('extra-root-exit0', r.returncode == 0 and 'missing=0' in out
+            and 'extra=1' in out and 'RECEIPT_EXISTS_EXTRA' in out)
+        print('RECEIPT_EXISTS_SELFTEST: %d/%d pass' % (passed, passed + failed))
+        return 1 if failed else 0
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+        shutil.rmtree(extra, ignore_errors=True)
 
 
 def main(argv=None):

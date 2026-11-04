@@ -30,3 +30,7 @@
 @defect attack-bypass | _record_claim is deleted from the attack_share branch only (r74 selective bypass); arm18-record-claim-live-on-attack-share must kill it
 @old         _record_claim(row, readers)\n        seats, records = _results(row, readers)
 @new         seats, records = _results(row, readers)
+
+@defect adv-seatreports-require-printed-bypass | require_printed is dropped in the seat_reports branch only (r75 carry T75W1R1); arm19-seatreports-printed-required must kill it
+@old     if kind == 'seat_reports':\n        printed = _record_claim(row, readers, require_printed=True)
+@new     if kind == 'seat_reports':\n        printed = _record_claim(row, readers)
