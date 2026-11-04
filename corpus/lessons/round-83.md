@@ -114,3 +114,7 @@ Overall3.6/5. Highest-impact improvement: reconcile fixture counts before
 freeze, and use at most two claims. A new round, not a rewritten target,
 would be required to claim the missed receipt boundary. The operator should
 agree that a durable honest stop is preferable to a manufactured pass.
+
+Gate count correction: the S289 quoted sentence has18 whitespace-separated
+words, not21; the S291 excerpt has11, not12. Both remain below25. These
+counts follow `len(quote.split())`; quoted bytes and located sources unchanged.

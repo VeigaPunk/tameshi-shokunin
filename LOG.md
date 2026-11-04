@@ -4600,3 +4600,7 @@ bytes after the type check. It is not a race-safe guarantee. The frozen
 population1 also misses actual2. No admission or universal no-harm claim.
 Fleet misroot sweep shows only .scratch, another lane report and the
 pre-existing `after` file; no round83 seat misroot found or deleted.
+
+Final copy correction: four changed arm counts in SKILL (not three);
+lesson quote word counts18/11, both under25, from `len(quote.split())`.
+No tool, manifest population, measured row or frozen predicate changed.

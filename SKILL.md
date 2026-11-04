@@ -2273,7 +2273,7 @@ error=0 unexpected=0`, exit 0).
 ### Gate/probe registry — round 83 (R82 closure §2.3/§6 and the R82 plan's round-83 carry paid)
 
 Appended; every earlier registry section is preserved append-only and this
-section is the live one. Round 83 moves three arm counts (self-state 21 → 24,
+section is the live one. Round 83 moves four arm counts (self-state 21 → 24,
 registry bind 11 → 13, receipt bind 13 → 14, receipt gate 19 → 20), gives the
 self-state sweep a manifest-revision binding and a row-id alphabet guard,
 binds the two `defect-bind` registry rows (the binding population 7 → 9), and
