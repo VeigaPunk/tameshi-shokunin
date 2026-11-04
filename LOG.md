@@ -3930,3 +3930,17 @@ findings adopted as work: the named-refusal hardening (T74W1R1), the totals
 line that rejects the echo stub (T74W1R2), and the lesson corrections; carries
 to round 75 are named in `SCORECARD.md`. Assimilation: none — the claim set
 carried no `shokuknow/merge/tameshi/` theme slot.
+
+## Round 74 — appended after the wave settlement (2026-11-03)
+
+Wave settled: 12/12 seats returned a report, 0 dead (`.ufo/waves/round-74/
+w1-results.json`, 12 records: 4 executor · 2 reviewer · 1 scribe · 1 scout ·
+1 critic · 1 mutation-tester · 1 connector · 1 sentinel). Seat findings adopted
+as work: the named-refusal hardening (T74W1R1), the totals-union fix, the
+`walked=` fix, the damage/repair labels and the two whole-range rows
+(T74W1C1), the lesson corrections (T74W1S1/T74W1R2), and the carry list in
+`SCORECARD.md`. The frozen six-row C2 predicate is re-run at its frozen commit
+(`rows=6 met=6 unexpected=0`); the extended 11-row manifest reads
+`rows=11 met=11 unexpected=0` with `kind=commits-union raw_old_only=5079
+norm_cr_old_only=7`. Records commits then re-staled two cold-read sections
+(`credited=62/64` at `1c3a428e`), paid by `r74-batch-2`.

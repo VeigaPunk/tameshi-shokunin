@@ -4564,3 +4564,30 @@ the totals line (T74W1R2); the range sweep's raw counts are predicate-dependent
 (set-based 3484/1593 vs S1's line-counting 3801/3759 across the range) and the
 `ADDRANGE` line is a receipt, never an authenticator; the six older standing
 instruments still lack registry rows (T74W1SC1).
+
+### Round 74 — appended: counter extension (wave seat T74W1C1) and the no-harm sequence
+
+Appended after the wave; the measured-claims block above stands as written and
+its frozen predicate is re-run, not replaced.
+
+- **R74-C2 counter extended.** Every frozen `commits` row spanned one commit
+  (seat T74W1C1), so the range mode was unexercised; the manifest now carries
+  two whole-range walks plus the three missing commit-pairs (11 rows), and the
+  extended line reads `ADDRANGE: rows=11 met=11 unexpected=0` with
+  `ADDRANGE_TOTALS kind=commits-union keys=8 raw_old_only=5079
+  norm_cr_old_only=7`. The frozen six-row line re-runs at `2e0ac486`:
+  `ADDRANGE: rows=6 met=6 unexpected=0` exit 0
+  (`.ufo/evidence/round-74/frozen-six-row-r74.txt`). The totals union, the
+  `walked=` field and the `be1199d3` (damage) / `1d118c14` (repair) labels are
+  corrected in the lesson's appended section.
+- **No-harm sequence, measured.** `credited=64/64` at `9d9ab7d3` and
+  `ee395675`; the records commit `1c3a428e` (LOG.md + SCORECARD.md) dropped the
+  two sections whose newest entries pin those files → `credited=62/64`
+  (receipt `.ufo/evidence/round-74/live-red2-r74.out`), rekeyed as
+  `r74-batch-2` and re-measured green at the merging tip
+  (`.ufo/evidence/round-74/live-green2-r74.out`).
+- **Disclosure.** The first rekey attempt (commit `141dead0`) used the
+  round-73 script copy, which wrote its traces to the round-73 path; the ledger
+  and traces were restored byte-exactly from `607b96d8` and the corrected
+  round-74 script re-ran (`9d9ab7d3`). `141dead0` stays in history as the
+  superseded merge; no record cites it as the rekey.

@@ -71,6 +71,66 @@
    "claim": "append-only-raw",
    "expect": "violated",
    "note": "the round-73 closure's range-total view: base->tip over the whole round removes raw lines"
+  },
+  {
+   "id": "r73-sources-damage-commit",
+   "file": "corpus/SOURCES.md",
+   "kind": "commits",
+   "claim": "append-only-raw",
+   "range": [
+    "fddbb6675bae86155a116ef3bbd6cac9788dc1ea",
+    "be1199d3874df1b3548a5571a97ffb76edff2a6b"
+   ],
+   "expect": "violated",
+   "note": "the S066 used-by append that collapsed the row to 8 fields (r73 mistake destructive-prefix-edit): 1 raw line removed, 1 normalized \u2014 the DAMAGE commit, not a repair"
+  },
+  {
+   "id": "r73-sources-row-repair",
+   "file": "corpus/SOURCES.md",
+   "kind": "commits",
+   "claim": "append-only-raw",
+   "range": [
+    "3e0ef1c8390fcf262bc54f4428b208684b7ad710",
+    "1d118c14cce63fc78bac7d3095056d60a11ed8f5"
+   ],
+   "expect": "violated",
+   "note": "the S066 row rebuild (repair of the damage above): 1 raw line removed by design, 1 normalized"
+  },
+  {
+   "id": "r73-log-closeout-append",
+   "file": "LOG.md",
+   "kind": "commits",
+   "claim": "append-only-raw",
+   "range": [
+    "862e8844481702df9968cb96ca8697a5418b80b1",
+    "bbb7b18907dbc943be1781581ad476d94306c99f"
+   ],
+   "expect": "hold",
+   "note": "the round-73 quote-backing pointer append is a clean append (11 new lines, 0 removed)"
+  },
+  {
+   "id": "r73-log-range-walk",
+   "file": "LOG.md",
+   "kind": "commits",
+   "claim": "append-only-raw",
+   "range": [
+    "a3dd35742eee608d1205843dacebc461b4242b9e",
+    "3d6ea1ee8e551e3baf94904384890e3a112088f0"
+   ],
+   "expect": "violated",
+   "note": "whole-range row (multi-commit walk): the worst commit is named by the walk, 862e8844 \u2014 a pair over the same endpoints cannot attribute a middle commit"
+  },
+  {
+   "id": "r73-quality-range-walk",
+   "file": "corpus/QUALITY.md",
+   "kind": "commits",
+   "claim": "append-only-raw",
+   "range": [
+    "be1199d3874df1b3548a5571a97ffb76edff2a6b",
+    "3d6ea1ee8e551e3baf94904384890e3a112088f0"
+   ],
+   "expect": "violated",
+   "note": "whole-range row (multi-commit walk): worst commit 21a7332f (1593 raw / 5 normalized); a pair over the same endpoints reads 1588, so the attribution is the walk's product (T74W1C1)"
   }
  ]
 }

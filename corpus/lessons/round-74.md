@@ -317,3 +317,62 @@ span-bound from record-bound delimitedness; that arm is the named next-round
 carry (`T74W1M1.md` §4–§5). The claim is unaffected — the three frozen mutants
 die on their named arms — but this lesson does not present the suite as
 covering the rule's binding scope.
+
+## Appended — counter extension and the fixes the wave forced (seats C1, R2)
+
+Wave seat T74W1C1 measured that **every frozen `commits` row spanned exactly
+one commit**, so the pre-existing per-pair recipe reproduced the frozen line
+and the totals: the range mode was carried by no row. Adopted in-round, with
+the frozen six-row line kept as the claim's predicate and re-run at the frozen
+commit:
+
+- the manifest grows to **11 rows** and now carries two whole-range walks —
+  `r73-log-range-walk` (`a3dd3574..3d6ea1ee`, 24 commits walked, 4 changed,
+  worst `862e8844`) and `r73-quality-range-walk` (21 walked, worst `21a7332f`)
+  — plus the three missing commit-pairs (`corpus/SOURCES.md` at `be1199d3` and
+  `1d118c14`, `LOG.md` at `bbb7b189`), so all eight monitored-file commit-pairs
+  of the round-73 range are covered;
+- the walk's product is the **attribution**: a `pair` row over the same
+  endpoints prints `worst=3d6ea1ee` and cannot name the middle commit, measured
+  in `controls-r74.txt` control 5;
+- the extended line is `ADDRANGE: rows=11 met=11 unexpected=0` exit 0 with
+  `ADDRANGE_TOTALS kind=commits-union keys=8 raw_old_only=5079
+  norm_cr_old_only=7` (`.ufo/evidence/round-74/addr-r74.txt`); the frozen
+  six-row predicate re-runs byte-identically at `2e0ac486`
+  (`rows=6 met=6 unexpected=0`, `.ufo/evidence/round-74/frozen-six-row-r74.txt`).
+
+Two defects the same seat found, both fixed in the tool:
+
+- **Totals double-counted.** The first totals line summed rows, so the pair row
+  and the single-commit row added `LOG.md@862e8844` twice (`8561`); the union is
+  now over `kind: commits` rows keyed `(file, worst commit)` → `5079 / 7`.
+- **`walked=` printed the changed count** (it was passed twice); it now prints
+  `len(rev-list)` and `changed=` the changed count, and the frozen six rows'
+  verdicts are unchanged by the fix.
+
+**Labels corrected (seat C1).** `be1199d3` is the S066 **damage** commit (the
+`used-by` append that collapsed the row to eight fields — the round-73
+`destructive-prefix-edit` mistake), and `1d118c14` is the **repair**. Both
+measure `raw_old_only=1`; neither note calls the damage commit a repair.
+
+**Echo-stub disclosure (updated).** With the totals line now containing the
+derived union, a stub that types those numbers can print them too
+(`controls-r74.txt` control 3). No printed line is an authenticator: the
+defence is that the numbers are re-derivable per row (and were re-derived
+independently by seats T74W1E4, T74W1R2 and T74W1C1), never that the line is
+unforgeable.
+
+**Class control, re-measured on the 11 rows** (control 1): under
+`append-only-content` the LOG rows read `hold` (the rewrite is invisible) while
+the rows whose commits also changed content read `violated` (`corpus/QUALITY.md`
+norm 5; `corpus/SOURCES.md` norm 1 twice), i.e. `rows=11 met=7 unexpected=4`.
+That is the class distinction working as designed — and it is the second,
+stronger measurement of the frozen-text defect recorded above (clause (iv)
+cannot read `hold` "for both" rewrite rows; here four rows legitimately cannot).
+
+**Frozen-text defects (C1, recorded not repaired).** The plan's expected
+`MUTANTS:` token is never printed by the runner (it prints `MUTATE: DONE
+(target=… defects=3 killed=3 survived=0 inconclusive=0 kill-rate=100%)`,
+receipt `battery-r74.txt`), and kill-rule (v)'s "an always-fail arm is not a
+kill" reads inverted as written; the operative C1 counters (15/15, killed=3,
+named-arm kills, 12 pre-existing arms unchanged) are unaffected.

@@ -216,7 +216,7 @@ def row_measure(repo, row):  # returns (measured, worst_measurement, walked)
         m = measure(repo, base, tip, path)
         m["commit"] = tip[:12]
         measured = "violated" if judged(m, claim) > 0 else "hold"
-        return measured, m, 1
+        return measured, m, (1, 1)
     rng = row.get("range")
     if (not isinstance(rng, list) or len(rng) != 2):
         die("row-range-malformed:%s" % (row.get("id"),))
@@ -231,10 +231,11 @@ def row_measure(repo, row):  # returns (measured, worst_measurement, walked)
                                      or judged(m, claim) > judged(worst, claim)):
             worst = m
     measured = "violated" if worst is not None else "hold"
-    return measured, (worst or (rows[-1] if rows else None)), len(rows)
+    return measured, (worst or (rows[-1] if rows else None)), (len(revs), len(rows))
 
 
-def detail_of(measured, m, n_walked, n_changed):
+def detail_of(measured, m, walked, changed):
+    n_walked, n_changed = walked, changed
     if m is None:
         return "walked=%d changed=0 (file untouched in range)" % n_walked
     return ("walked=%d changed=%d worst=%s raw_old_only=%d raw_new_only=%d "
@@ -265,14 +266,15 @@ def sweep(manifest, repo, quiet=False):
             die("row-claim-unknown:%s" % row["id"])
     out, unexpected = [], 0
     for row in rows:
-        measured, m, n = row_measure(repo, row)
+        measured, m, counts = row_measure(repo, row)
         ok = measured == row["expect"]
         if not ok:
             unexpected += 1
         out.append({"id": row["id"], "file": row["file"], "kind": row["kind"],
                     "claim": row["claim"], "expect": row["expect"],
                     "measured": measured, "ok": ok,
-                    "detail": detail_of(measured, m, n, n),
+                    "detail": detail_of(measured, m, counts[0], counts[1]),
+                    "worst": (m or {}).get("commit", ""),
                     "raw_old_only": (m or {}).get("raw_old_only", 0),
                     "norm_cr_old_only": (m or {}).get("norm_cr_old_only", 0)})
         if not quiet:
@@ -285,11 +287,21 @@ def sweep(manifest, repo, quiet=False):
     if not quiet:
         print("ADDRANGE: rows=%d met=%d unexpected=%d"
               % (len(out), met, unexpected))
-        # derived populations beside the tally: a stub that echoes each row's
+        # Derived populations beside the tally: a stub that echoes each row's
         # `expect` cannot print sums it never measured (the r73 S07 carry).
-        print("ADDRANGE_TOTALS raw_old_only=%d norm_cr_old_only=%d"
-              % (sum(r["raw_old_only"] for r in out),
-                 sum(r["norm_cr_old_only"] for r in out)))
+        # The union is over COMMITS rows only, keyed (file, worst commit): a
+        # pair row is a range-total view of the same bytes and would double
+        # count it (round-74 seat T74W1C1 measured the 8561-vs-5079 defect).
+        seen = {}
+        for r in out:
+            if r["kind"] != "commits":
+                continue
+            seen[(r["file"], r["worst"])] = (r["raw_old_only"],
+                                             r["norm_cr_old_only"])
+        print("ADDRANGE_TOTALS kind=commits-union keys=%d raw_old_only=%d "
+              "norm_cr_old_only=%d"
+              % (len(seen), sum(v[0] for v in seen.values()),
+                 sum(v[1] for v in seen.values())))
     return out, unexpected
 
 
