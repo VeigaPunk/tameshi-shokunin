@@ -5324,3 +5324,16 @@ No declaration bytes rewritten.
 measured claims; reconcile committed fixture populations before freeze,
 preserve directory-alias/race and conversion limits, and assess the
 defect-bind unhashable-id debt. Design-orphan alarm remains unbuilt.
+
+### Round83 settled remeasurement
+
+Final measured revision a69b7cbef234005661fd4b4be24b8e984185c2b7;
+`.ufo/evidence/round-83/settled/` carries exact commands/exits.
+C1 bound26/24/2/0 exit0, narrowing/idforge/cwd-decoy each refused exit2;
+C2 live9/9 exit0 and drift9/8/1 exit1; pins26 settled exit0.
+C1/C2 measured predicates verify. C3 remains honest-stop: frozen1 versus
+actual2, plus reviewer R2's demonstrated lstat/open target-read race
+(`.ufo/waves/round-83/w1/T83W1R2.md:15-25`). Retain those limits rather
+than claim an unconditional symlink guarantee. Scores unchanged10/8/9;
+outside admission pending. Final wave13 settled,8 reports,5 error/no-output
+seats; no replacement, failure events retained.

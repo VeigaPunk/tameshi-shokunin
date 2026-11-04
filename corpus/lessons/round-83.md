@@ -88,3 +88,29 @@ SN1 confirms defect-bind array/object ids still traceback exit1; that existing
 debt is not fixed by selfstate's separate id guard. Record it for next round.
 
 Independent non-author discernment remains pending, not supplied by these seats.
+
+## Closing evidence and assessment
+
+Final integrated measurements at a69b7cbe are committed under
+`.ufo/evidence/round-83/settled/`: C1 full population26/24/2/0 exit0,
+pin audit26 settled, C2 live9/9 and drift exit1, C3 actual2 entries.
+Eight bounded no-harm sweeps exit0; census-after exit0, rows170,
+tiers A152/B14/C4, statuses mined137/queued22/rejected11.
+Row counting command: parse each 11-column Registry row matching
+`S[0-9]{3,}`; canonical validation command is recorded verbatim in the
+census receipt. No source rows added, no frontier advanced.
+
+Dispatcher supplied actual error events for the5 empty seats: SC1/SC2/S1/CN1
+permission_denied (Devin swe-2 unavailable); R1 rate-limit1302 then cyber_policy
+on fallback. Exact events retained in `failure-events.json`; expired process
+statuses are unavailable. No rephrasing, retry, replacement or alternate
+route after the policy event.
+
+Self-evaluation (not a lane admission score): accuracy3 (frozen population
+miss openly retained); completeness4 (round artifacts landed,5 seat outputs
+unavailable); clarity4 (long raw evidence but indexed); actionability4
+(commands and limits explicit); conciseness3 (record duplication remains).
+Overall3.6/5. Highest-impact improvement: reconcile fixture counts before
+freeze, and use at most two claims. A new round, not a rewritten target,
+would be required to claim the missed receipt boundary. The operator should
+agree that a durable honest stop is preferable to a manufactured pass.

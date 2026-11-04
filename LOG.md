@@ -4578,3 +4578,25 @@ E04/exit1 (`final/census-duplicate-replay.txt`); never backdated.
 Falsifiable next work remains: directory-alias/race boundaries in receipts,
 defect-bind unhashable-id debt, object-only conversion comparison, and the
 design-orphan alarm. These are named limits, not this round's unlanded claims.
+
+**Wave settlement / final measurement (round83 append).** WAVE-DONE received:
+13 settled,8 reports and5 no-output failures; dispatcher error events are
+retained in `.ufo/waves/round-83/failure-events.json`. No seat replaced or
+rerouted. Empty connector means no delivered sibling-overlap scan; nothing
+absorbed. M1's four guard mutants die on named arms, with pristine/restored
+controls and an honestly retained initial harness failure.
+
+Sentinel's cwd-decoy finding fixed at c374699c; pin settlement and wave record
+landed a69b7cbef234005661fd4b4be24b8e984185c2b7. Final counters at that
+revision are in `.ufo/evidence/round-83/settled/`: C1 bound26/24/2/0,
+narrow/idforge refusals exit2; cwd decoy refused exit2; pins26 settled;
+C2 live9/9, drift8match/1stale exit1. Four suites24/24,13/13,14/14,20/20.
+Eight bounded no-harm sweeps exit0; receipt population29 remains14bound,
+8corrected,7design,0unbound. Sources census170 exit0.
+
+C3 honest-stop is strengthened by reviewer R2's deterministic lstat/open
+interleaving: both receipt instruments can still consume symlink-target
+bytes after the type check. It is not a race-safe guarantee. The frozen
+population1 also misses actual2. No admission or universal no-harm claim.
+Fleet misroot sweep shows only .scratch, another lane report and the
+pre-existing `after` file; no round83 seat misroot found or deleted.
