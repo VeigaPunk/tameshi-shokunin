@@ -269,7 +269,8 @@ report is append-only history.
 
 `AGREE rows=6/6` — `.ufo/waves/round-73/w1/T73W1S08.md`;
 `agent='task'` — `.ufo/waves/round-73/w1/T73W1S06.md`;
-`tameshi E01 S066 fields=8` — `.ufo/waves/round-73/w1/T73W1S05.md`;
+`S066 fields=8` — `.ufo/evidence/round-73/mistake-s066-field-count-r73.txt`
+(the census prints it tab-separated, so the quote is the span, not the line);
 `measured := expect` and `rows=4 met=4 unexpected=0` —
 `.ufo/waves/round-73/w1/T73W1S07.md` and
 `.ufo/evidence/round-73/reh/reh-c1-controls.txt`;
@@ -284,6 +285,5 @@ report is append-only history.
 `ORACLE_CMP rows=6 equal=6` — `.ufo/waves/round-73/w1/T73W1S01.md`;
 `KILLING_ARMS=0/6` — `.ufo/evidence/round-73/reh/reh-c2-m3-six-arms.txt`.
 
-`tameshi E01 S066 fields=8` and the row's `NF=10` —
-`.ufo/evidence/round-73/mistake-s066-field-count-r73.txt` (measured at the
-commit that carried the broken row).
+`S066 fields=8` and the row's `NF=10` are measured at the commit that
+carried the broken row (`.ufo/evidence/round-73/mistake-s066-field-count-r73.txt`).
