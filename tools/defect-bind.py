@@ -321,7 +321,10 @@ def _validate_payload(row):
     raise SetupError("unknown-kind:%s" % kind)
 
 
-def sweep(repo, manifest_path, rev=None, out=sys.stdout):
+def sweep(repo, manifest_path, out=sys.stdout):
+    """Measure every declared row; each row reads its own `rev` (never a
+    caller-supplied default, so a caller cannot silently re-point the whole
+    population at a different revision than the one it declared)."""
     rows = load_manifest(manifest_path)
     resolved = {}
     for row in rows:
