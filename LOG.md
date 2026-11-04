@@ -3709,3 +3709,32 @@ measured loss at the edit commit). Controls: the do-nothing control manifest
 reads miss; an always-13, always-0 or sum-not-union forecast fails a frozen
 arm. Round shape: one v1 wave, 12 seats (3 executor · 2 scribe · scout ·
 reviewer · critic · mutation-tester · sentinel · revenger · connector).
+
+## Round 72 — measured (2026-11-03)
+
+R72-C1 verifies: `tools/rekey-cost.py` (capability `rekey-cost forecast`, first
+working round 72) prices a planned edit set against the cold-read ledger's own
+input pins — selftest `REKEY_COST_SELFTEST: 8/8 pass` and arms
+`at_risk=13/6/6/0/0/17` plus exit 2 on no path (`cost-live-*.txt`), every
+non-structural arm equal to a guard-measured counterfactual re-driven before
+the freeze (`reh/reh-*.out`: `lost=13`, `lost=6`, `lost=6`, `lost=0`), and the
+round's forecast 17 equal to the guard's `lost=17 RED` at the edit commit
+`d618518a` (`live-red-r72.out`). The capability row entered `SCORECARD.md` at
+`b3392010`. R72-C2 verifies: S303 supersedes S302 at `corpus/SOURCES.md:178`
+with the measured §4.2 label and page lines 2446–2449 (the live page is
+byte-identical to the r71 snapshot, sha256 `511edd60…`), the PROVINCE append
+corrects the round-16 `:85-91` to `:88-94`/`:88-97`, the pointer sweep reads
+`POINTER_RECHECK: rows=11 met=11 unexpected=0` with the three new rows
+`hit ok` and the base control `rows=2 met=2` both `miss ok`, and the rekey
+paid the RED: `REBIND OK sections=17 entries_added=17 ledger_before=797`,
+monitor `lost=0 ok` at both floors (`4ed9ce1c` 64 → 64, `8b0042bd` 46 → 64)
+and `credited=64/64` in rev mode. Shared no-harm: monitored bytes identical
+base → tip (`monitored-bytes-r72.txt`), SOURCES additivity 0 missing / 1
+added, ledger prefix identical + 17 `r72-batch-1` entries; standpoint
+instruments clean (figure-attribution 3/3, count-recheck 7/7, anchor-drift
+16/16, arm-liveness 9/9 live). Round shape: one v1 wave, 12 seats (3
+executor · 2 scribe · scout · reviewer · critic · mutation-tester · sentinel ·
+revenger · connector); attack roles 3 by the policy's named set (25 %) plus a
+revenger probe. Assimilation: considerthese 2026-10-28 proposal 3
+(cold-read cost forecast at planning time) adopted as C1; shokuknow
+unreachable this round (checked read-only by the connector seat).

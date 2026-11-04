@@ -4346,3 +4346,31 @@ Plan: `plans/round-72.plan.md` (predicates, counters, kill rules, arms).
 
 Verdicts and measurements are appended at the receipts commit; nothing above
 is a measured result.
+
+## Round 72 — measured claims (appended at the receipts commit, 2026-11-03)
+
+Declaration `dfb534ca4f1156e8a45005b52a3c48e43461b348` (plan, wave spec +
+dispatch, census-start, base measure, five counterfactual rehearsals). Work
+commits: C2 `d618518a6783cc0384a8b2c699d757baae5a6b0f` (S303 supersession +
+the PROVINCE append + corrections note + this lesson), rekey
+`bc7dc2fba353e604e687f7cd594c8358937d8908` (17 sections, ledger 797 -> 814),
+C1 `b3392010cc8b9e5b98acba5d0c2dff9fb08b4691` (the forecast tool + the
+capability row). Receipts: this commit.
+
+| Claim | Verdict | After (measured) | Counting commands (live outputs in `.ufo/evidence/round-72/`) | Measured commit |
+|---|---|---|---|---|
+| R72-C1 | verifies (measured) | selftest `REKEY_COST_SELFTEST: 8/8 pass` exit 0; arms `at_risk=13` / `6` / `6` / `0` / `0` / `17`, no-path exit 2; the forecast 17 equals the guard's `COLDREAD_PRECHECK … lost=17 RED` at the edit commit; the model was validated against the guard on four single-edit counterfactuals before the freeze (`reh/`: `lost=13`, `lost=6`, `lost=6`, `lost=0`) | `python3 -I tools/rekey-cost.py --selftest`; `python3 -I tools/rekey-cost.py --edit <path>`; `python3 -I tools/coldread-precheck-portable.py --repo . --floor f20ba482c744 --cand d618518a6783` | `b3392010` (tool bytes; the live forecast at `d618518a`) |
+| R72-C2 | verifies (measured) | `POINTER_RECHECK: rows=11 met=11 unexpected=0` with the three new rows `hit ok`; the control manifest `rows=2 met=2` both `miss ok`; the census on the edited file exits 0; the RED `lost=17 RED` at the edit commit paid by `REBIND OK sections=17 entries_added=17 ledger_before=797`, monitor `lost=0 ok` at both floors (`4ed9ce1c` 64 → 64, `8b0042bd` 46 → 64) and `credited=64/64` in rev mode | `python3 -I tools/pointer-recheck.py --repo . --manifest tools/pointer-recheck.json`; `… --manifest .ufo/evidence/round-72/control-manifest.json`; `python3 -I tools/coldread-precheck-portable.py …`; `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root … tameshi` | `d618518a` (edits) → `bc7dc2fb` (rekey) |
+
+Capability row entered (see `## Capabilities`): **rekey-cost forecast** —
+first working round 72; the mid-file insertion is disclosed and the file's
+additivity holds (appends + one table row).
+
+No axis harmed: depth 10, calibration 8 and freshness 9 unchanged — the
+monitored bytes are identical base → tip (`monitored-bytes-r72.txt`), the
+only monitored edits are SOURCES.md and PROVINCE.md and both are rekeyed, and
+the standing instruments re-read clean (figure-attribution 3/3, count-recheck
+7/7, anchor-drift 16/16, arm-liveness 9/9 live, pointer selftest 7/7).
+Calibration's score is not re-scored by this round: the row records the axis
+move (two routed defects measured-and-corrected), not a new number — a score
+no reader can re-derive is an opinion.
