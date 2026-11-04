@@ -89,6 +89,8 @@ Usage:
 """
 
 import argparse
+import hashlib
+import inspect
 import io
 import json
 import os
@@ -98,7 +100,16 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 17
+SELFTEST_ARMS = 21
+# R81-C3: the selftest's own assertion text is pinned. The round-80 battery's
+# `ss-bom-only` mutant deleted arm15's non-UTF-8 conjuncts and survived 17/17:
+# a weakened test text is invisible to the suite it weakens. The digest below
+# covers this function's source (inspect.getsource), so any edit to an arm's
+# assertion text fails an arm until the pin is recomputed deliberately. A
+# two-edit mutant that also recomputes the constant is out of the declared
+# single-edit class; the battery's control measures the pin's own do-nothing
+# state.
+SELFTEST_TEXT_SHA256 = ('a9feb3c49068f981cef513ae62a35f1f7810f0511be76cfbf603475ddd2eaf40')
 MODES = ('capability', 'span')
 EXPECTS = ('match', 'stale')
 BOM = b'\xef\xbb\xbf'
@@ -1062,8 +1073,176 @@ def selftest(out=sys.stdout):
     finally:
         shutil.rmtree(fx6, ignore_errors=True)
 
+    # arm 18 (round 81): the pin audit MEASURES a row pinned at pre-settlement
+    # bytes. The round-80 closure defect D3: two rows pinned the declaration
+    # commit while their instruments changed at the landing commit.
+    fx7 = tempfile.mkdtemp(prefix='selfstate-arm18-',
+                           dir=os.environ.get('TMPDIR') or None)
+    try:
+        def _git7(*args):
+            subprocess.run(['git', '-C', fx7] + list(args), check=True,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                           env=_fixture_env())
+
+        def _put7(rel, text):
+            path = os.path.join(fx7, rel)
+            parent = os.path.dirname(path)
+            if parent:
+                os.makedirs(parent, exist_ok=True)
+            with open(path, 'w', newline='\n') as fh:
+                fh.write(text)
+
+        _git7('init', '-q')
+        _top7 = subprocess.run(['git', '-C', fx7, 'rev-parse',
+                                '--show-toplevel'], check=True,
+                               stdout=subprocess.PIPE,
+                               env=_fixture_env()).stdout.decode().strip()
+        if os.path.realpath(_top7) != os.path.realpath(fx7):
+            raise SetupError('git-fixture-misroot:%s' % _top7)
+        _put7('tools/toy.py', "print('rev1')\n")
+        _git7('-c', 'user.name=t', '-c', 'user.email=t@t', 'add', '-A')
+        _git7('-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qm',
+              'rev1')
+        pin1 = subprocess.run(['git', '-C', fx7, 'rev-parse', 'HEAD'],
+                              check=True, stdout=subprocess.PIPE,
+                              env=_fixture_env()).stdout.decode().strip()
+        _put7('tools/toy.py', "print('rev2')\n")
+        _git7('-c', 'user.name=t', '-c', 'user.email=t@t', 'add', '-A')
+        _git7('-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qm',
+              'rev2')
+        pin2 = subprocess.run(['git', '-C', fx7, 'rev-parse', 'HEAD'],
+                              check=True, stdout=subprocess.PIPE,
+                              env=_fixture_env()).stdout.decode().strip()
+
+        def _pin_row(rid, rev, path='tools/toy.py'):
+            return {'id': rid, 'mode': 'capability', 'capability': 'toy',
+                    'expect': 'match', 'figure': r'TOY: \d+/\d+',
+                    'instrument': {'path': path, 'rev': rev, 'argv': []}}
+
+        rows_stale = [_pin_row('stale-row', pin1), _pin_row('settled-row',
+                                                            pin2)]
+        buf = io.StringIO()
+        rc_stale = pin_audit(fx7, rows_stale, pin2, out=buf)
+        txt_stale = buf.getvalue()
+        buf = io.StringIO()
+        rc_settled = pin_audit(fx7, [_pin_row('a', pin2), _pin_row('b', pin2)],
+                               pin2, out=buf)
+        txt_settled = buf.getvalue()
+        arm('ARM18_pin_audit_measures_stale',
+            rc_stale == 1
+            and 'SELFSTATE_PINS_ROW stale-row path=tools/toy.py' in txt_stale
+            and 'state=stale' in txt_stale
+            and 'state=settled' in txt_stale
+            and 'SELFSTATE_PINS: rows=2 settled=1 stale=1' in txt_stale
+            and rc_settled == 0
+            and 'SELFSTATE_PINS: rows=2 settled=2 stale=0' in txt_settled,
+            'rc=%r %r | rc2=%r %r' % (rc_stale, txt_stale[-160:], rc_settled,
+                                      txt_settled[-120:]))
+
+        # arm 19 (round 81): the audit's refusals are setup exit 2 before any
+        # row effect — an unresolvable pin rev, a path absent at the pin, and
+        # the manifest-level zero-row / unpinned-row refusals.
+        def _refused(prefix, fn):
+            try:
+                fn()
+            except SetupError as exc:
+                return str(exc).startswith(prefix)
+            return False
+
+        arm('ARM19_pin_audit_refusals',
+            _refused('pin-rev-unresolvable',
+                     lambda: pin_audit(fx7, [_pin_row('x', pin2)], 'nope-rev',
+                                       out=io.StringIO()))
+            and _refused('pin-path-absent',
+                         lambda: pin_audit(fx7, [_pin_row('x', pin2,
+                                                          'tools/ghost.py')],
+                                           pin2, out=io.StringIO()))
+            and _refused('zero-rows',
+                         lambda: validate_manifest({'rows': []}))
+            and _refused('instrument-rev-unresolvable',
+                         lambda: validate_manifest({'rows': [
+                             _pin_row('x', None)]}))
+            and _refused('instrument-path-invalid',
+                         lambda: validate_manifest({'rows': [
+                             _pin_row('x', pin2, '../escape')]})),
+            '')
+
+        # arm 20 (round 81): the pin audit's summary counts every validated
+        # row and exits 0 only when the whole population is settled — an
+        # audit over one row is not evidence for the manifest's others.
+        buf = io.StringIO()
+        rc_one = pin_audit(fx7, [_pin_row('only', pin1)], pin2, out=buf)
+        buf_all = io.StringIO()
+        pin_audit(fx7, rows_stale, pin2, out=buf_all)
+        arm('ARM20_pin_audit_single_row_not_vacuous',
+            rc_one == 1
+            and 'SELFSTATE_PINS: rows=1 settled=0 stale=1' in buf.getvalue()
+            and 'SELFSTATE_PINS: rows=2 settled=1 stale=1'
+            in buf_all.getvalue(),
+            'rc=%r' % rc_one)
+    finally:
+        shutil.rmtree(fx7, ignore_errors=True)
+
+    # arm 21 (round 81): the selftest's own assertion text is pinned. The
+    # round-80 battery's `ss-bom-only` mutant deleted arm15's non-UTF-8
+    # conjuncts, kept the arm name and both fixture executions, and survived
+    # 17/17: a weakened test text is invisible to the suite it weakens. The
+    # digest covers this function's source (inspect.getsource), so any edit to
+    # an arm's assertion text fails this arm until the constant is recomputed
+    # deliberately (a second edit — outside the single-edit mutant class).
+    try:
+        self_text = inspect.getsource(selftest)
+        measured_digest = hashlib.sha256(self_text.encode('utf-8')).hexdigest()
+        arm('ARM21_selftest_text_pin', measured_digest == SELFTEST_TEXT_SHA256,
+            'measured=%s pinned=%s' % (measured_digest[:12],
+                                       SELFTEST_TEXT_SHA256[:12]))
+    except OSError as exc:
+        arm('ARM21_selftest_text_pin', False, 'source-unreadable:%s' % exc)
+
     out.write('SELFSTATE_SELFTEST: %d/%d pass\n' % (ok, total))
     return 0 if (ok == total == SELFTEST_ARMS) else 1
+
+
+def _resolve_commit(repo, rev):
+    proc = subprocess.run(['git', '-C', repo, 'rev-parse', '--verify',
+                           '%s^{commit}' % rev],
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                          env=_fixture_env())
+    if proc.returncode != 0:
+        raise SetupError('pin-rev-unresolvable:%s' % rev)
+    return proc.stdout.decode('ascii').strip()
+
+
+def pin_audit(repo, rows, pin_rev, out=sys.stdout):
+    """Measure whether every row's PINNED instrument bytes are the bytes the
+    named tip carries. R81-C2: the round-80 closure defect D3 — two rows pinned
+    the declaration commit while their instruments changed at the landing
+    commit, so the standing sweep measured pre-settlement bytes (the figures
+    happened to agree; the pin did not).
+
+    State per row: `settled` when the instrument's blob at the row's pinned
+    revision is byte-identical to its blob at `pin_rev`; `stale` otherwise.
+    An unresolvable pin revision or a path absent at the pin is setup exit 2
+    before any row effect; a zero-row manifest is refused by the same
+    validate_manifest the sweep uses."""
+    reader = GitReader(repo)
+    tip = _resolve_commit(repo, pin_rev)
+    counts = {'settled': 0, 'stale': 0}
+    for row in rows:
+        inst = row['instrument']
+        path = inst['path']
+        rev = inst['rev']
+        if not reader.exists(tip, path):
+            raise SetupError('pin-path-absent:%s:%s' % (tip, path))
+        pinned = reader.blob(rev, path)
+        settled = pinned == reader.blob(tip, path)
+        state = 'settled' if settled else 'stale'
+        counts[state] += 1
+        out.write('SELFSTATE_PINS_ROW %s path=%s pin=%s tip=%s state=%s\n'
+                  % (row['id'], path, rev[:12], tip[:12], state))
+    out.write('SELFSTATE_PINS: rows=%d settled=%d stale=%d\n'
+              % (len(rows), counts['settled'], counts['stale']))
+    return 0 if counts['stale'] == 0 else 1
 
 
 def main(argv=None):
@@ -1073,6 +1252,8 @@ def main(argv=None):
     ap.add_argument('--doc-rev')
     ap.add_argument('--manifest', default='tools/selfstate-freshness.json')
     ap.add_argument('--selftest', action='store_true')
+    ap.add_argument('--pin-audit', action='store_true')
+    ap.add_argument('--pin-rev', default='HEAD')
     a = ap.parse_args(argv)
 
     if a.selftest:
@@ -1094,6 +1275,9 @@ def main(argv=None):
         except ValueError as exc:
             raise SetupError('manifest-unparsable:%s:%s' % (a.manifest, exc))
         rows = validate_manifest(manifest)
+
+        if a.pin_audit:
+            return pin_audit(repo, rows, a.pin_rev)
 
         if a.doc_rev:
             doc_bytes = GitReader(repo).blob(a.doc_rev, a.doc)

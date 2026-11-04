@@ -70,6 +70,8 @@ Usage:
 """
 
 import argparse
+import hashlib
+import inspect
 import json
 import os
 import re
@@ -78,7 +80,16 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 24
+SELFTEST_ARMS = 25
+# R81-C3: the selftest's own assertion text is pinned (see
+# tools/selfstate-freshness.py for the class; the round-80 battery's
+# `wr-prefix` mutant weakened arm24's expected-prefix assertion and survived
+# 24/24). compute with
+#   python3 -I -X utf8 -c "import hashlib,inspect,sys;sys.path.insert(0,'tools');\
+#     import importlib.util as u;s=u.spec_from_file_location('w','tools/wave-reconcile.py');\
+#     m=u.module_from_spec(s);s.loader.exec_module(m);\
+#     print(hashlib.sha256(inspect.getsource(m.selftest).encode()).hexdigest())"
+SELFTEST_TEXT_SHA256 = ('3ea7fc7206c8545445c7a4ae6e70ed68544d9ee379c0b556f64f9f166cbebfb8')
 BOM = b'\xef\xbb\xbf'
 ATTACK_NOTE = ('named attack roles are the row\'s own declaration; the policy '
                'floor is the row\'s floor_pct')
@@ -787,6 +798,21 @@ def selftest():
                             state.startswith('setup:unknown-root:'), state,
                             'setup:unknown-root:'))
         _unknown_root_arm()
+
+        # arm 25 (round 81): the selftest's own assertion text is pinned. The
+        # round-80 battery's `wr-prefix` mutant weakened arm24's expected
+        # prefix and survived 24/24; the digest covers this function's source
+        # so any arm-text edit fails until the constant is recomputed
+        # deliberately (a second edit, outside the single-edit class).
+        try:
+            _measured = hashlib.sha256(
+                inspect.getsource(selftest).encode('utf-8')).hexdigest()
+            results.append(('arm25-selftest-text-pin',
+                            _measured == SELFTEST_TEXT_SHA256,
+                            _measured[:12], SELFTEST_TEXT_SHA256[:12]))
+        except OSError as exc:
+            results.append(('arm25-selftest-text-pin', False,
+                            'source-unreadable', str(exc)[:40]))
     finally:
         shutil.rmtree(work, ignore_errors=True)
 
