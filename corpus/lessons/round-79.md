@@ -233,3 +233,21 @@ population sweep and the append-only correction contract.
    move is that the runner's execution contract is now measured, not that the
    runner changed. The operability label follows the lane's arm-addition
    precedent; the critic's reading is recorded rather than argued away.
+4. **A copied run-book rekey tool carried the round-78 trace path and the
+   round-61 label (recurrence of the round-78 `## Mistakes` 4 class).** Class:
+   frozen-copy drift. The settlement's first batch appended 14 ledger entries
+   whose `traces` pointed at `.ufo/evidence/round-78/rekey/traces/…` (a
+   hardcoded `trace_rel` in the copied `coldread-rekey-rebind-r63.py`), so at
+   the settlement tip the monitor read `credited=51/65` with
+   `trace-input-drift:LOG.md` — the trace files it resolved were the committed
+   round-78 ones, not the batch's. Evidence:
+   `.ufo/evidence/round-79/coldread-after-r79.json` at `a4b2d4c7` (51/65).
+   Captured-by: the tool's own summary printed `REBIND OK`, which the lane's
+   run-book treats as producer evidence — nothing re-ran the monitor before the
+   commit. Fix: the copy's `trace_rel` is now
+   `str(Path(--traces-dir) / 'section-%02d.json')` and `rekey_round` is 79;
+   batch 2 appended 14 corrected entries (ledger 976 → 990) and the monitor
+   reads `credited=65/65` at `1a210b1f` (`.ufo/evidence/round-79/
+   coldread-after-r79.json`). The batch-1 entries stay (append-only) and are
+   harmless: a section is credited by any matching entry and only a failing
+   entry vetoes.
