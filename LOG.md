@@ -3846,3 +3846,25 @@ quoted-line sweep resolves quotes only against receipts the record cites):
 `.ufo/waves/round-73/w1/T73W1S01.md` and `.ufo/waves/round-73/w1/T73W1S08.md`;
 `ASSIMILATION=readable` — `.ufo/waves/round-73/w1/T73W1S13.md`;
 `KILLING_ARMS=0/6` — `.ufo/evidence/round-73/reh/reh-c2-m3-six-arms.txt`.
+
+## Round 73 — appended after the wave (2026-11-03)
+
+Wave settlement (13/13 seats, 0 dead) landed at `9ffaf039` with the seat
+reports and `w1-results.json`. Seat findings were adopted as work, not argued
+away: the S066 row repair (`1d118c14`, caught by T73W1S05 — the used-by append
+had collapsed four cells) and its rekey batch-2 (`caa5c4c5`, 13 sections,
+ledger 833 → 846); the C1 hardening from T73W1S03 (`8f7ff279`: record binding
+on every kind, unknown-root setup exit 2, roles rows de-printed, docstring
+arm-coverage narrowed) with the frozen counters unchanged; the criterion-122
+falsifier re-pinned revision-stable from T73W1S04 (`21a7332f`) and its rekey
+batch-3 (`06ce20f7`, 6 sections, 846 → 852); the pointer-recheck note style
+repair (`7c5ffe04`); the RFC header's `set-cookie` line redacted after
+T73W1S11's `SECRETS=1` (`8b6e1bbe`). The measured entry above landed at
+`862e8844`; quote-backing pointers and the S066 field-count receipt at
+`bbb7b189`; the remaining live-instrument receipts at `de036cc9`; the lesson
+pointer correction at `9afadc1a`; tip receipts at `1decfb23`. Open findings
+carried to round 74 (recorded in `corpus/lessons/round-73.md` and
+`SCORECARD.md`): the delimited-token and span-substring arms (S02), the
+any-depth `seat_reports` arm (S10), the IGNORED over-filtering arm (S09's
+M3c), the `population` field proposal (S12), the counter-cheat disclosure
+(S07), and the 11 unpinnable rounds 61–71 (S06).
