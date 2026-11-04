@@ -2303,3 +2303,23 @@ other malformed fields and revision-authority limits remain separate.
 | name | gate/probe | entry command | verdict map | self-test | pinned-value path | write scope | owner |
 |---|---|---|---|---|---|---|---|
 | closure-defect bind | gate | `python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json [--manifest-rev REV]` | 0 every row meets its declared expectation; 1 an unexpected row; 2 pre-effect setup refusal, including `row-id-alphabet` for a non-string/empty/non-alphabet id | `python3 -I -X utf8 tools/defect-bind.py --selftest` → `DEFECT_BIND_SELFTEST: 15/15 pass` (A15 eight invalid ids and valid sibling; A14 text pin retained) | `tools/defect-bind.json`, unchanged six-row population; selftest constants in `tools/defect-bind.py` | read-only committed objects; selftest fixture under TMPDIR, removed | tameshi |
+
+### Gate/probe registry — round 85
+
+This standalone instrument is retained operational work, **not an admitted
+repertoire acquisition**. The frozen eight-case certification counter accepts
+a no-git basename oracle (T85C1), violating standing QUALITY criterion111.
+The claim remains honest-stop; additional selftests do not rewrite its rule.
+S289 reopened this round grounds raw committed-object inspection only.
+
+| name | gate/probe | entry command | verdict map | self-test | pinned-value path | write scope | owner |
+|---|---|---|---|---|---|---|---|
+| design-receipt blob audit | gate | `python3 -I -X utf8 tools/design-blob-audit.py --repo . --receipt-rev REV --root .ufo/evidence/round-79 --candidate-rev REV` | 0 every design receipt's named candidate path carries its declared digest; 1 at least one different/absent/nonregular path; 2 setup/usage refusal before row output (including zero design population, malformed/mixed/duplicate headers or unresolvable revisions) | `python3 -I -X utf8 tools/design-blob-audit.py --selftest` → expected `DESIGN_BLOB_AUDIT_SELFTEST: 21/21 pass`; real public-CLI fixtures, ASCII path controls, unusable TMPDIR and late-header populations | literal expected states/digests in selftest; frozen eight-case instrument `.ufo/evidence/round-85/measure.py` is known cheat-passable, not certification | read-only committed objects; selftest only under TMPDIR, deleted finally | tameshi |
+
+Use one explicit receipt revision and one explicit candidate revision.
+The real round79 population contains both carried and different design
+digests; exit1 is useful detection, not an execution failure. A named-path
+difference is not absence from all Git history. A carried digest establishes
+neither runtime execution nor trusted revision authority. Files above8MiB
+refuse; nonregular receipt entries are excluded. The existing receipt-gate
+race, parent aliases and conversion limits remain separate.
