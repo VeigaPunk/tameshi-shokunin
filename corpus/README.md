@@ -682,3 +682,11 @@ plumbing arm was reconciled to exit 2 (8/8 at
 `da2ae6b361de2d6294c6324a02ae141ff6cb482f`). F11's remaining open ground is
 not a counter gap: it is author-independent trust for the binding itself,
 which the lane does not claim.
+
+## Round 83 — existing-core boundary refinement
+
+`knowledge/non-regular-receipt-boundary.md` (S291) records the symlink
+receipt counterexample and its named refusal, with a regular sibling
+control. This deepens existing object/receipt verification ground; no
+frontier row moves and no new capability is entered. Frozen C3's numerical
+population misses honestly (one declared, two committed).

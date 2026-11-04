@@ -2353,3 +2353,22 @@ on the landed bytes (`c2-landed-battery.txt`).
     accepts a non-regular entry can certify bytes no measurement ever parsed.
     (`lessons/round-82.md` `## Mistakes` 5–6; the wave's critic C1 and
     sentinel S1)
+
+## Criteria appended — round 83
+
+84. A row identity printed into a verdict-bearing stream uses a full-string,
+    line-safe alphabet check; regex `$` alone admits a final newline. The
+    refusal escapes the rejected value rather than echoing a forged line.
+    Lesson: `lessons/round-83.md` Mistakes M1; the committed base id-forge
+    control prints two summary-shaped lines, whereas the changed tool refuses
+    before producing a verdict.
+85. Inspect a receipt path's own type before treating its readable contents
+    as evidence. A symlink to a valid receipt is not a regular receipt;
+    retain a regular-file sibling to detect over-kill. This does not assert
+    race-free opening or parent-directory confinement.
+    Lesson: `lessons/round-83.md` Mistakes M2; base symlink controls certify,
+    changed tools name the unbound/refused entry.
+86. Reconcile the frozen target with the actual committed fixture population
+    before freezing. A later, better fixture does not authorize rewriting the
+    target; report a miss rather than changing the number.
+    Lesson: `lessons/round-83.md` Mistakes M3 (one declared entry, two committed).
