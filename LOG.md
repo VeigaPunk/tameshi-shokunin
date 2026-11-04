@@ -4088,3 +4088,56 @@ criteria 126/127 from the r75 spotcheck items 1–2, the registry home
 (SKILL.md rows + standing-instrument registry rows), the disclosed
 out-of-population `wave-record reconciliation` cell repair, and four
 `tools/registry.json` re-pins.
+
+## Round 76 — measured (appended at the records commit, 2026-11-04)
+
+Declaration `5b7bbe1a`; design-evidence repair `be4e7c86`; work commit
+`4af6695f` (tool bytes: wave-reconcile arm19 + seventh spec defect, selfstate
+ARM11, receipt-exists cleanup fix; C2 cell repairs + the round-76 disclosure
+paragraph; the out-of-population `wave-record reconciliation` cell 18/18 →
+19/19, disclosed; SKILL.md gate-registry rows for the four instruments).
+Receipts under `.ufo/evidence/round-76/`; the round's report cites the tip.
+
+- **R76-C1 verifies (measured).** `WAVE_RECONCILE_SELFTEST: 19/19 pass` and
+  `SELFSTATE_SELFTEST: 11/11 pass` on the landed bytes
+  (`c1-landed-selftest-wr.txt`, `c1-landed-selftest-ss.txt`); battery
+  `MUTATE: DONE (target=wave-reconcile-arms-r76 defects=7 killed=7 survived=0
+  inconclusive=0 kill-rate=100%)`, `CONTROL: GREEN`, `MUTATE_RESTORE: OK`
+  byte-identical (`c1-landed-battery.txt`); the adv defect dies on arm19 with
+  `got=printed-none-reached-comparison`; the five instrument mutants die on
+  their named arms (`ss-mut-*-landed.txt`; `doc-rev-ignored` on ARM11 only);
+  arms 1–15 byte-identical base→landed. All three wave re-derivations agree:
+  E1 (byte-identical candidate + battery), E2 (independent ARM11 build,
+  unshare/strace hermeticity proof), M1 (battery replication + the
+  committed-bytes catch), R1 (clause-by-clause), C1 (verifies-as-frozen with
+  three cheap forgeries caught by rules (i), (iii) and the frozen matrix).
+- **R76-C2 verifies (measured).** Before at base
+  `SELFSTATE: rows=20 match=16 stale=4 unexpected=2` exit 1
+  (`c2-before-r76.txt`, re-derived byte-identically by E3 and R2); after
+  `SELFSTATE: rows=20 match=18 stale=2 unexpected=0` exit 0 at `4af6695f`
+  (`c2-after-r76.txt`); the 17-row base population re-runs green
+  (`c2-base17-at-landing.txt`); the tuple freeze is load-bearing and complete
+  — the critic's manifest-data forgery (expect-flip) reaches
+  `unexpected=0` at base with zero repairs and is caught only by the plan's
+  tuple table (canonical sha256 `14789e6a…` matched across plan transcription,
+  L1 manifest and landed bytes).
+- **Routed payments landed.** receipt-exists scratch leak: red-before
+  `leftover_count=2` (`receipt-exists-leak-r76.txt`, independently reproduced
+  by E4) → green-after `leftover_count=0` with the selftest at `4/4 pass`
+  (`receipt-exists-leak-green-after-r76.txt`); round-73 plan erratum appended;
+  round-74 S294 used-by old→new appended; the routed queue reconciled in
+  `corpus/lessons/round-76.md`; QUALITY criteria 126/127; the registry home
+  (SKILL.md rows + 11 new `tools/registry.json` rows for the six standing
+  instruments with measured hermetic expects, four rows re-pinned with
+  Gate-standard fields).
+- **Wave results.** `w1-results.json`: 12 records, 12 seat reports
+  (`T76W1{E1,E2,E3,E4,S1,SC1,R1,R2,C1,M1,CN1,SN1}.md`), no dead seats.
+  Seat findings adopted as work: M1's committed-bytes catch (the design
+  repair `be4e7c86` + the mined mistake), E4's leak fix + registry rows,
+  E3's repair patch + the two named-gap receipts, C1's forgery battery +
+  closure checks (all four re-run green at the landing), SC1's S006 fetch +
+  census, CN1's assimilation verdict (`none`) and considerthese baseline.
+  Assimilation: none — the connector's overlap scan found comparator material
+  only (kasegi figure-audit, r10-witness-scope-counted), all deferred with
+  reasons; the mined proposal is 2026-10-28 #4 as a provenance-qualified
+  baseline in the lesson, citing `considerthese/2026-10-28.md`.

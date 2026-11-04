@@ -1,0 +1,22 @@
+# receipt-exists scratch leak — red-before (seat T76W1E4, round 76)
+
+Reproduced independently from base bytes (worktree tools/receipt-exists.py is
+byte-identical to base blob 451ed5cb6d5f8c2bf4b3e10836e4634cfcb03ee0:
+tools/receipt-exists.py, sha256 528f78a5cf26802976d5ada1868cc998305bea23a612cfcd3802c497e3b16569).
+
+Command:
+  TMPDIR=/fast/scratch/hyaku/tameshi-r76/T76W1E4/probe \
+    python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-exists.py --selftest
+
+Exact output (stdout+stderr, rc=0):
+  RECEIPT_EXISTS_SELFTEST: 4/4 pass
+
+Listing of $TMPDIR after the run (leftover_count=2):
+  receipt-exists-selftest-syz4vbmd
+  receipt-exists-selftest-syz4vbmd-extra
+
+Both dirs are mkdtemp'd throwaway fixture surfaces never removed: the selftest
+repo root (tempfile.mkdtemp(prefix='receipt-exists-selftest-')) and the
+extra-root fixture (tmp + '-extra'). Matches the committed design-phase receipt
+.ufo/evidence/round-76/receipt-exists-leak-r76.txt (leftover_count=2 under
+/fast/scratch/hyaku/tameshi-r76/leak-probe2).

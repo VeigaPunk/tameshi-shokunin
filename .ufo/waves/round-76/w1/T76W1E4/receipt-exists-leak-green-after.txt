@@ -1,0 +1,25 @@
+# receipt-exists scratch leak — green-after (seat T76W1E4, round 76)
+
+Candidate: .ufo/waves/round-76/w1/T76W1E4/cand-receipt-exists-fix.py
+(sha256 835e1261cb470b5bb824cf987b6ee62550c9cca8bc56d9471518a5f74c34a66b;
+built from base bytes 451ed5cb6d5f8c2bf4b3e10836e4634cfcb03ee0:
+tools/receipt-exists.py; diff in cand-diff.txt).
+
+Run 1 — TMPDIR honoured:
+  TMPDIR=/fast/scratch/hyaku/tameshi-r76/T76W1E4/probe2 \
+    python3 -I <candidate> --selftest
+Exact output (rc=0):
+  RECEIPT_EXISTS_SELFTEST: 4/4 pass
+leftover_count under probe2 = 0 (directory empty after the run).
+
+Run 2 — no TMPDIR (platform default), /tmp observed before/after:
+  find /tmp -maxdepth 1 -name 'receipt-exists-*' -mmin -5
+  before: 0 entries; run rc=0 (RECEIPT_EXISTS_SELFTEST: 4/4 pass); after: 0 entries.
+  diff of before/after listings: empty (NO_NEW_TMP_LEFTOVERS).
+  (108 pre-existing receipt-exists-* dirs older than the 5-minute window sit
+  in /tmp from earlier host runs — none created or touched by this run.)
+
+Fix shape: every mkdtemp'd directory (selftest repo root tmp and extra-root
+fixture tmp+'-extra') is removed in a finally via
+shutil.rmtree(..., ignore_errors=True); TMPDIR honoured via
+tempfile.mkdtemp (no /tmp literal anywhere in the candidate).

@@ -185,3 +185,33 @@ labrat item exists — both are frozen-topology seats the validator rejects
 (`ufo-swarm-wave.mjs:263`); the bounded planning data-walk rides the scout
 item. Every seat is read-only on tracked files: it writes only under
 `.ufo/waves/round-73/w1/<name>/` and its own `$HYAKU_SCRATCH` tree.
+
+## Erratum, appended 2026-11-04 (round 76)
+
+This plan is frozen text and stands as written; one sentence of the R73-C1
+kill rule is contradicted by the round's own receipt, and the mismatch is
+recorded here rather than rewritten (the round-73 verifier spotcheck §"Frozen
+plan kill-rule wording" routed it; the round-75 spotcheck §6 item 3
+re-flagged the missing erratum; the r72 plan erratum `3e0ef1c8` is the
+precedent).
+
+- Lines 80–82 declare "**Kill rule.** C1 fails if the selftest is not 12/12,
+  if any standing row reads other than its expected status, or if any control
+  below reaches `unexpected=0`." The green-rows-only control — a reconciler
+  over a manifest carrying only the four green round-72 rows — reads
+  `WAVE_RECONCILE: rows=4 met=4 unexpected=0` exit 0 (measured in the
+  round's own control receipt
+  `.ufo/evidence/round-73/reh/reh-c1-controls.txt`, `--- control: green-only
+  ---` block; the always-meet and echo-printed controls correctly read
+  `unexpected=1`/exit 1 over the standing six-row manifest). A control that
+  reaches `unexpected=0` by design therefore cannot be a failure condition
+  as written. The operative predicate is the frozen LINE —
+  `WAVE_RECONCILE: rows=6 met=6 unexpected=0` exit 0 over the standing
+  six-row `tools/wave-reconcile.json` — which the green-only control cannot
+  print; the wave seat T73W1S07 recorded the contradiction in
+  `corpus/lessons/round-73.md` ("[landed] the plan's kill-rule wording is
+  wrong"), the round-75 report corrected the round-73 report's own minor
+  counts in the correcting-round form, and C1's claim was unaffected: the
+  landed tool reads the six-row line at the round tip, and the two
+  genuinely-measuring controls still refuse the stubs the clause was
+  written against.

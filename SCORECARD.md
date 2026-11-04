@@ -667,7 +667,10 @@ instruments’ own current selftest tokens: pin-disposition reads
 `.ufo/evidence/round-76/`, instruments pinned at `451ed5cb`). The two bash-instrument
 gaps named at round 17 stay routed, not population rows: the mutation sweep runner
 selftest is now `MUTATE_SELFTEST: 107/107 pass` (round 17 said 95/95) and the
-six-leg regression ledger now runs `cases=10` (round 17 said `cases=7`).
+six-leg regression ledger now runs `cases=10` (round 17 said `cases=7`;
+receipts `.ufo/evidence/round-76/c2-after-r76.txt`,
+`.ufo/waves/round-76/w1/T76W1E3/mutate-selftest.out`,
+`.ufo/waves/round-76/w1/T76W1E3/mutate-regression.out`).
 The round-17 values stand as dated history; the rows stay as written elsewhere.
 
 Corrections, appended (round-16 rows above stay as written): `:571` and
@@ -4687,3 +4690,74 @@ literals under the round-17 disclosure (`SCORECARD.md:655-659`) whose own
 superseding values are stale; round-73 routed items 3–4 and the r74 cold-read
 pointer erratum remain open. If R75-C1 verifies, the two round-74 arm carries
 (`M-C` and the selective `_record_claim` bypass) close.
+
+## Round 76 — declared claims (2026-11-04), frozen before data
+
+Plan: `plans/round-76.plan.md` (predicates, counters, kill rules, the frozen
+kill matrix, controls and the C2 tuple table; plus the appended design-phase
+correction 1 that repairs the committed evidence bytes). Base
+`451ed5cb6d5f8c2bf4b3e10836e4634cfcb03ee0` (= `origin/master`, the round-75
+non-author closure verdict commit). Declaration `5b7bbe1a`; design-evidence
+repair `be4e7c86`. Round shape: one v1 wave, 12 seats (4 executor · 1 scribe ·
+1 scout · 2 reviewer · 1 critic · 1 mutation-tester · 1 connector · 1
+sentinel; attack seats 4 = 33.3 %), policy
+`scripts/hyaku/ufo-wave-policy.json`, band 8–16. `labrat` is a frozen-topology
+seat the validator rejects, so no labrat item exists; the planner seat stays
+with the L1 per the orchestrator ruling.
+
+- **R76-C1 — operability (verdict-only; sourced on the re-opened S006).** The
+  two round-75 survivors become measured arms: `arm19-seatreports-printed-required`
+  in `tools/wave-reconcile.py` (the seventh spec defect
+  `adv-seatreports-require-printed-bypass` dies on arm19 only) and
+  `ARM11_doc_rev_cli_binding` in `tools/selfstate-freshness.py` (the
+  `--doc-rev-ignored` survivor dies on ARM11 only). Before: `18/18` and
+  `10/10` with both survivors alive. After: `19/19` and `11/11`, battery
+  `defects=7 killed=7`, five instrument mutants killed on their named arms.
+- **R76-C2 — calibration (the lowest scored numeric axis at 8).** The selfstate
+  population 17 → 20 rows: the two routed dated-literal capability cells
+  (`six-leg content-disposition probe` `18/18` → `SELFTEST: PASS (19/19)`;
+  `effective expectation reconciliation` `34/34` → `SELFTEST: PASS (66/66)`)
+  and the round-17 line's `56/56` as a standing stale span row. Before:
+  `SELFSTATE: rows=20 match=16 stale=4 unexpected=2` exit 1. After:
+  `rows=20 match=18 stale=2 unexpected=0` exit 0, with the round-17 bash
+  values (`95/95`, `cases=7`) disclosed as named gaps, never rows.
+
+Capability to enter: none this round (no new capability row; the r75
+settlement declined acquisition credit, so one capability-less completed
+round sits inside the stagnation window N = 2; the nudge does not fire).
+
+## Round 76 — measured claims (appended at the records commit, 2026-11-04)
+
+Declaration `5b7bbe1a`; design repair `be4e7c86`; work commit `4af6695f`
+(tool bytes, C2 cell repairs, SKILL registry rows; receipt
+`.ufo/evidence/round-76/`). Receipts under `.ufo/evidence/round-76/`; the
+round's report cites the tip.
+
+| Claim | Verdict | After (measured) | Counting commands (live outputs in the receipts) | Measured commit |
+|---|---|---|---|---|
+| R76-C1 | verifies (measured) | `WAVE_RECONCILE_SELFTEST: 19/19 pass` exit 0; `SELFSTATE_SELFTEST: 11/11 pass` exit 0; battery `MUTATE: DONE (target=wave-reconcile-arms-r76 defects=7 killed=7 survived=0 inconclusive=0 kill-rate=100%)` with `CONTROL: GREEN` and byte-identical `MUTATE_RESTORE: OK` (target sha256 `ca05ec15…` = the landed bytes); the adv defect's frozen matrix row is the arm19 FAIL line `got=printed-none-reached-comparison` (`.ufo/evidence/round-76/c1-landed-battery.txt:75`); the five instrument mutants die on their named arms (`echo-doc-token` → ARM2 + disclosed ARM3/ARM9; `expect-ignored` → ARM2; `capability-absent-deflected` → ARM4; `zero-rows-success` → ARM6; `doc-rev-ignored` → ARM11 only; receipts `ss-mut-*-landed.txt`); arms 1–15 byte-identical base→landed (`c1-arms1-15-base.txt` vs `c1-arms1-15-landed.txt`, `cmp` empty) | `python3 -I -X utf8 tools/wave-reconcile.py --selftest`; `python3 -I -X utf8 tools/selfstate-freshness.py --selftest`; `bash tools/mutate-and-run.sh --target tools/wave-reconcile.py --defects tools/wave-reconcile-mutants.spec --suite 'python3 -I -X utf8 "$MUTANT" --selftest' --label wave-reconcile-arms-r76` | `4af6695f` |
+| R76-C2 | verifies (measured) | `SELFSTATE: rows=20 match=18 stale=2 unexpected=0` exit 0 at the landing rev (`.ufo/evidence/round-76/c2-after-r76.txt`), the two repaired rows reading `measured_figure=19/19`/`66/66` from the pinned instruments' own stdout and the two stale-ok rows `r74-frozen-addr-six` + `r76-r17-evidence-disposition`; the 17-row base population re-runs green (`rows=17 match=16 stale=1 unexpected=0` exit 0, `c2-base17-at-landing.txt`); the landed manifest's rows[17:] canonical sha256 `14789e6a…` equals the critic's own transcription (`T76W1C1.md` §3) and the plan table | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --doc-rev 4af6695f`; `python3 -I -X utf8 tools/selfstate-freshness.py --selftest` | `4af6695f` (repairs); after at `4af6695f` |
+
+**No axis harmed.** depth 10, calibration 8 and freshness 9 unchanged as
+numbers (the round records axis moves, not new scores). C1 and C2 are causally
+separable as the critic re-verified from committed diffs (`T76W1C1.md` §4: C1
+touches only `SELFTEST_ARMS`, two constants and the ARM11 block; C2 never
+touches wave-reconcile or the spec; the `wave-record reconciliation` cell
+repair is out-of-population, receipted, and outside both claims' counters).
+Monitored edits this round: `SCORECARD.md`, `LOG.md`, `corpus/SOURCES.md`,
+`corpus/QUALITY.md`, `SKILL.md`, `tools/registry.json` → forecast
+`REKEY_COST sections=64 planned=6 at_risk=16 predicted_lost=16`
+(`.ufo/evidence/round-76/rekey-cost-full-r76.txt`, pre-data); the rekey batch
+and its receipts land in this round's final commits.
+
+**Named carries to round 77.** The `adv-seatreports-require-printed-bypass`
+and `--doc-rev-ignored` survivors closed; the round-77 list opens with the
+mutation seat's new survivor: a recursion-removal mutant of the seat_reports
+listing walk survives 19/19 and differs on a production-shaped listing
+(127 reports → 0; `T76W1M1.md`) — the next arm needs a nested-listing fixture;
+the two bash-instrument gaps (`95/95` → `107/107`, `cases=7` → `cases=10`)
+stay routed until the selfstate runner widens beyond `python3 -I` scripts;
+17 of the 44 `--selftest` tools still carry no `tools/registry.json` row
+(`T76W1E4/registry-gaps.txt` names them); C1 wording notes (verify the adv
+defect by its frozen matrix row, and C2's full summary line, not exit counts)
+are recorded for the closure.

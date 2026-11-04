@@ -376,3 +376,13 @@ cannot read `hold` "for both" rewrite rows; here four rows legitimately cannot).
 receipt `battery-r74.txt`), and kill-rule (v)'s "an always-fail arm is not a
 kill" reads inverted as written; the operative C1 counters (15/15, killed=3,
 named-arm kills, 12 pre-existing arms unchanged) are unaffected.
+
+## Appended — S294 `used-by` old→new (round 76)
+
+The round-74 verifier spotcheck's defect 5 records that this lesson's Gate
+named only the added path; the old→new pair lived in the round's report and
+the SOURCES `Round 74` note. Recorded here, append-only, so the lesson
+carries its own curation delta:
+
+- S294 (`gitattributes`) `used-by` old → new: `corpus/lessons/round-63.md`
+  → `corpus/lessons/round-63.md, corpus/lessons/round-74.md`.
