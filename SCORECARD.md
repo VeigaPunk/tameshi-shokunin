@@ -4476,3 +4476,15 @@ closure routed. The plan's own kill-rule wording ("any control below reaches
 `unexpected=0`") is contradicted by the green-only control (`rows=4 met=4
 unexpected=0` exit 0) and is reported as a frozen-text defect; the operative
 reading is the frozen line with `rows=6`.
+
+**Evidence pointers for the quoted spans above (full paths, so the standing
+quoted-line sweep can back them).** `printed=11 files=12` and the six
+`WAVE_ROW` lines live in `.ufo/evidence/round-73/wave-reconcile-live-r73.txt`;
+`WAVE_RECONCILE_SELFTEST: 12/12 pass` in
+`.ufo/evidence/round-73/wave-selftest-r73.txt`; `ORACLE_CMP rows=6 equal=6` in
+`.ufo/waves/round-73/w1/T73W1S01.md`; `agent='task'` in
+`.ufo/waves/round-73/w1/T73W1S06.md`; `rows=4 met=4 unexpected=0` in
+`.ufo/evidence/round-73/reh/reh-c1-controls.txt`; `measured := expect` in
+`.ufo/waves/round-73/w1/T73W1S07.md`; `TMPDIR_VIOLATIONS=0` and
+`SECRETS=1` in `.ufo/waves/round-73/w1/T73W1S11.md`; `tameshi E01 S066
+fields=8` in `.ufo/waves/round-73/w1/T73W1S05.md`.

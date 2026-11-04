@@ -3792,3 +3792,45 @@ here — the round-72 receipt-only commits `93cae77b`, `ebad004b` and `d8e7f337`
 inherit the "Round 72 — appended after the wave" entry above and carry no
 separate entry; carry 6 is C2; carry 7 is re-measured at the tip and reported
 as inherited.
+
+## Round 73 — measured (2026-11-03)
+
+R73-C1 verifies: `tools/wave-reconcile.py` + `tools/wave-reconcile.json`
+(capability `wave-record reconciliation`, first working round 73) re-derive a
+round record's execution claims from the committed wave artifacts — selftest
+`WAVE_RECONCILE_SELFTEST: 12/12 pass` and the standing sweep `WAVE_RECONCILE:
+rows=6 met=6 unexpected=0` exit 0 with both round-72-closure red arms measured
+(`printed=11 files=12`; plan `labrat` vs executed `revenger`), receipts
+`.ufo/evidence/round-73/wave-selftest-r73.txt` and
+`wave-reconcile-live-r73.txt`; independent support from the wave (seat S01
+`ORACLE_CMP rows=6 equal=6`, S08 `AGREE rows=6/6`, S02's six setup cases, S03's
+binding audit, S09 upholding both claims at five tips); the three pre-freeze
+controls cannot print the frozen line (`rows=6 met=4 unexpected=2`; the
+green-only control reads `rows=4`). R73-C2 verifies: `python3 -I
+tools/rekey-cost.py --arms` → `REKEY_ARMS: arms=7 meet=7 unexpected=0` exit 0
+at the C2 commit `7982619f`, after each of the round's three rekeys and at the
+tip, with `REKEY_COST_SELFTEST: 8/8 pass` unchanged and the IGNORED-filter
+mutant M3 killed (`ARM_UNEXPECTED ignored-skill expected=0 measured=9`,
+`arms=7 meet=6 unexpected=1` exit 1; replicated by seat S10), against a
+before-state of `KILLING_ARMS=0/6` over the six recorded arms.
+Shared no-harm (measured): the round's monitored edit set was
+`{corpus/SOURCES.md, corpus/QUALITY.md}` (forecast 13 before any byte changed,
+`REKEY_COST sections=64 planned=2 at_risk=13 predicted_lost=13`); the live RED
+read `lost=13 RED` at the edit commit `be1199d3` and the monitor was restored
+by three rekeys — `r73-batch-1` 13 sections (`2e89e539`, ledger 820 → 833),
+`r73-batch-2` 13 sections after the S066 repair (`caa5c4c5`, 833 → 846) and
+`r73-batch-3` 6 sections after the criterion-122 pin (`06ce20f7`, 846 → 852) —
+each merge `eol=CRLF` with CRLF counts preserved, `lost=0 ok` at both floors
+(`a3dd3574` 64 → 64; `8b0042bd` 46 → 64) and `credited=64/64` in rev mode;
+additivity raw `raw_old_only=0` on the ledger and QUALITY, 1 on SOURCES (the
+documented S066 `used-by` cell edit, decoded in
+`additivity-sources-decode-r73.txt`). Standing instruments at the tip:
+figure-attribution 7/7, count-recheck 7/7 met, anchor-drift 16/16,
+arm-liveness 9/9 live, pointer 12/12, bind selftest 7/7; census end exit 0,
+163 rows, warnings only. Round shape: one v1 wave, 13 seats (3 executor · 2
+scribe · scout · 2 reviewer · critic · mutation-tester · sentinel · revenger ·
+connector; attack seats 4 = 30.8 %); seats returned 13 reports, dead seats:
+none. Assimilation: none this round — `shokuknow/merge/tameshi/` is
+readable (seat S13 `ASSIMILATION=readable`) but the round's claim set carried
+no theme slot; considerthese 2026-10-28 proposal 4 remains the only
+unimplemented proposal.

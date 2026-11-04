@@ -264,3 +264,22 @@ report is append-only history.
   orchestrator-owned runtime state (`.scratch/run13-state.json`, the
   dispatcher log, the watchdog log), none written by this round, and
   `.scratch/` is orchestrator-owned and was not touched.
+
+## Evidence pointers (full paths for the quoted spans in this lesson)
+
+`AGREE rows=6/6` — `.ufo/waves/round-73/w1/T73W1S08.md`;
+`agent='task'` — `.ufo/waves/round-73/w1/T73W1S06.md`;
+`tameshi E01 S066 fields=8` — `.ufo/waves/round-73/w1/T73W1S05.md`;
+`measured := expect` and `rows=4 met=4 unexpected=0` —
+`.ufo/waves/round-73/w1/T73W1S07.md` and
+`.ufo/evidence/round-73/reh/reh-c1-controls.txt`;
+`TMPDIR_VIOLATIONS=0` and `SECRETS=1` —
+`.ufo/waves/round-73/w1/T73W1S11.md`;
+`REKEY_ARMS: arms=7 meet=7 unexpected=0` —
+`.ufo/evidence/round-73/rekey-arms-r73.txt`;
+`WAVE_RECONCILE: rows=6 met=6 unexpected=0` and `printed=11 files=12` —
+`.ufo/evidence/round-73/wave-reconcile-live-r73.txt`;
+`WAVE_RECONCILE_SELFTEST: 12/12 pass` —
+`.ufo/evidence/round-73/wave-selftest-r73.txt`;
+`ORACLE_CMP rows=6 equal=6` — `.ufo/waves/round-73/w1/T73W1S01.md`;
+`KILLING_ARMS=0/6` — `.ufo/evidence/round-73/reh/reh-c2-m3-six-arms.txt`.
