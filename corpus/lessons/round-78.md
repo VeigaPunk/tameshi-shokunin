@@ -148,6 +148,22 @@ frontier section (connector seat `T78W1CN1`).
    only receipts its own commit carries, or says in the plan which receipt
    lands later and why.**
 
+4. **class copied-runbook-carries-a-hardcoded-output-path · evidence pointer
+   the round-78 settlement batch 1 (`4a8d1078`): the copied
+   `coldread-rekey-rebind-r63.py` writes its ledger entry `traces` to
+   `.ufo/evidence/round-63/rekey/traces/section-%02d.json` (the round-63 path,
+   hardcoded at line 137) regardless of `--traces-dir`, so the committed
+   entries named trace files the batch never committed and the monitor read
+   `trace-missing` (51/65 at `4a8d1078`); the same run also overwrote 14
+   tracked round-63 trace files in the worktree · captured-by: none (the
+   batch's own `REBIND OK` and the ledger growth looked correct; only the
+   monitor at the settlement commit exposed it) · fix: the round-78 copy is
+   patched to write round-78 trace paths, the round-63 traces are restored from
+   the branch, the ledger is rebuilt from the pre-rekey tip and re-keyed as
+   batch 2 (`c4281f39`, ledger 948 -> 962, 65/65 at the settlement commit), and
+   the rule for round 79 is that a copied run-book tool's output paths are
+   re-read against the ledger entry it writes before its commit lands.**
+
 ## Wave findings (adopted)
 
 Twelve seats under `scripts/hyaku/ufo-wave-policy.json` band 8–16 (3 executor,
