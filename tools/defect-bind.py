@@ -91,7 +91,7 @@ SELFTEST_ARMS = 14
 # the function's own text only: a module-level edit, a vacuous comment inside
 # the function (over-kill) or a two-edit rewrite (weaken an arm and recompute
 # this constant) stay outside the class, exactly the round-81 declared limits.
-SELFTEST_TEXT_SHA256 = ("86ba963bd3449287a425cd6b0bc643654d3ff0487e9378e9d4acc722bc072dbd")
+SELFTEST_TEXT_SHA256 = ("9d9dcf373be1f13795c6382d39e36551e04bf9ceadf3de375158beb23e78e8a7")
 
 
 class SetupError(Exception):
@@ -117,6 +117,19 @@ def run_git(repo, *args, check=True):
 
 
 def blob_bytes(repo, rev, path):
+    """The committed bytes of a REGULAR file at `rev`.
+
+    Every kind reads through here, so the type/mode boundary is one gate: a
+    doc or receipt that is a directory or a symlink is a setup refusal, never
+    silently the tree or the link target (round-82 reviewer D1: three kinds
+    called `cat-file blob` directly and were mode-blind).
+    """
+    entry = tree_entry(repo, rev, path)
+    if entry is None:
+        raise SetupError("blob-unresolvable:%s:%s" % (rev, path))
+    mode, kind = entry
+    if kind != "blob" or mode not in REGULAR_MODES:
+        raise SetupError("not-regular-file:%s:%s=%s" % (rev, path, mode))
     proc = run_git(repo, "cat-file", "blob", "%s:%s" % (rev, path),
                    check=False)
     if proc.returncode != 0:
@@ -767,13 +780,24 @@ def selftest(out=sys.stdout):
         code_regular, _ = f.run([{"id": "r4", "kind": "tree-bytes",
                                   "rev": rev3, "paths": ["doc.md"],
                                   "min_bytes": 1}])
+        link_doc_refused = _expect_setup(
+            lambda: f.run([{"id": "r5", "kind": "receipt-tokens", "rev": rev3,
+                            "doc": "link.txt", "span": "x",
+                            "receipt": "receipt.txt", "tokens": ["x"]}]),
+            "not-regular-file")
+        code_symlink_bytes, text_symlink_bytes = f.run([
+            {"id": "r6", "kind": "tree-bytes", "rev": rev3,
+             "paths": ["link.txt"], "min_bytes": 1}])
         arm("A12_regular_file_boundary",
             code_dir == 1 and "not-regular-file:sub=040000" in text_dir
             and code_link == 1
             and "not-regular-file:link.txt=120000" in text_link
             and code_link_bytes == 1
             and "not-regular-file:link.txt=120000" in text_link_bytes
-            and code_regular == 0, text_dir.strip().splitlines()[-1])
+            and code_regular == 0 and link_doc_refused
+            and code_symlink_bytes == 1
+            and "not-regular-file:link.txt=120000" in text_symlink_bytes,
+            text_dir.strip().splitlines()[-1])
 
         # arm 13: the manifest is bound to the bytes committed at a declared
         # revision. A narrowed manifest measures green UNBOUND, and is
