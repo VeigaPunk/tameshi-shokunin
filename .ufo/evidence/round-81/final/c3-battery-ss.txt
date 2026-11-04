@@ -1,0 +1,61 @@
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda
+MUTATE_DATE: 2026-11-04T09:15:01Z
+MUTATE_TARGET: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/selfstate-freshness.py sha256=6624f5db31bc6143074e7bca90454fc1672438a1cc2dc424f799a4ee256a3e5e bytes=60111
+MUTATE_SPEC: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/selfstate-freshness-mutants.spec defects=5
+CONTROL: GREEN (exit=0 duration-ms=424 pristine-sha256=6624f5db31bc6143074e7bca90454fc1672438a1cc2dc424f799a4ee256a3e5e)
+  | SELFTEST_ARM15_decode_refusals: PASS
+  | SELFTEST_ARM16_cache_key_keeps_argv: PASS
+  | SELFTEST_ARM17_python_utf8_mode_tuple: PASS
+  | SELFTEST_ARM18_pin_audit_measures_stale: PASS
+  | SELFTEST_ARM19_pin_audit_refusals: PASS
+  | SELFTEST_ARM20_pin_audit_single_row_not_vacuous: PASS
+  | SELFTEST_ARM21_selftest_text_pin: PASS
+  | SELFSTATE_SELFTEST: 21/21 pass
+DEFECT ss-bom-strip: KILLED (exit=1 duration-ms=432) the BOM guard is deleted, so a BOM-prefixed doc is decoded as text (round-79 scout T79W1SC2 S1 `ss-bom-strip` survived 14/14); arm15-ARM15_decode_refusals must kill it
+  | SELFTEST_ARM15_decode_refusals: FAIL bom rc=0 err='' | bad rc=2 err="SELFSTATE error=setup not-utf8:SCORECARD.md:'utf-8' codec can't decode byte 0xff in position 0: invalid start byte\n"
+  | SELFTEST_ARM16_cache_key_keeps_argv: PASS
+  | SELFTEST_ARM17_python_utf8_mode_tuple: PASS
+  | SELFTEST_ARM18_pin_audit_measures_stale: PASS
+  | SELFTEST_ARM19_pin_audit_refusals: PASS
+  | SELFTEST_ARM20_pin_audit_single_row_not_vacuous: PASS
+  | SELFTEST_ARM21_selftest_text_pin: PASS
+  | SELFSTATE_SELFTEST: 20/21 pass
+DEFECT ss-cache-key-drops-argv: KILLED (exit=1 duration-ms=424) the row cache key loses argv, so two rows on one path/rev with different argv share the first row's stdout (round-79 scout T79W1SC2 S4 `ss-cache-key-drops-argv` survived 14/14); arm16-ARM16_cache_key_keeps_argv must kill it
+  | SELFTEST_ARM15_decode_refusals: PASS
+  | SELFTEST_ARM16_cache_key_keeps_argv: FAIL rc=1 tail='-b capability=toy argv b expect=match measured=stale UNEXPECTED doc_figure=TOY_ARGV: B: 1/1 pass measured_figure=TOY_ARGV: A: 1/1 pass instrument_exit=0\nSELFSTATE: rows=2 match=1 stale=1 unexpected=1\n' err=''
+  | SELFTEST_ARM17_python_utf8_mode_tuple: PASS
+  | SELFTEST_ARM18_pin_audit_measures_stale: PASS
+  | SELFTEST_ARM19_pin_audit_refusals: PASS
+  | SELFTEST_ARM20_pin_audit_single_row_not_vacuous: PASS
+  | SELFTEST_ARM21_selftest_text_pin: PASS
+  | SELFSTATE_SELFTEST: 20/21 pass
+DEFECT python-utf8-dropped: KILLED (exit=1 duration-ms=418) the python tuple loses `-X utf8`, so python rows run in the locale encoding instead of UTF-8 mode (round-79 mutation-tester T79W1M1 `python-utf8-dropped` survived 14/14); arm17-ARM17_python_utf8_mode_tuple must kill it
+  | SELFTEST_ARM15_decode_refusals: PASS
+  | SELFTEST_ARM16_cache_key_keeps_argv: PASS
+  | SELFTEST_ARM17_python_utf8_mode_tuple: FAIL rc=1 tail='oy-utf8 capability=toy capture expect=match measured=stale UNEXPECTED doc_figure=TOY_UTF8: 1/1 pass measured_figure=TOY_UTF8: 0/1 pass instrument_exit=0\nSELFSTATE: rows=1 match=0 stale=1 unexpected=1\n' err=''
+  | SELFTEST_ARM18_pin_audit_measures_stale: PASS
+  | SELFTEST_ARM19_pin_audit_refusals: PASS
+  | SELFTEST_ARM20_pin_audit_single_row_not_vacuous: PASS
+  | SELFTEST_ARM21_selftest_text_pin: PASS
+  | SELFSTATE_SELFTEST: 20/21 pass
+DEFECT python-isolation-dropped: KILLED (exit=1 duration-ms=425) the python tuple loses `-I`, so python rows run without isolated mode (round-78 wave seat T78W1M1 `s3-python-isolation-dropped` survived 13/13); arm14-ARM14_python_isolation_tuple must kill it
+  | SELFTEST_ARM15_decode_refusals: PASS
+  | SELFTEST_ARM16_cache_key_keeps_argv: PASS
+  | SELFTEST_ARM17_python_utf8_mode_tuple: PASS
+  | SELFTEST_ARM18_pin_audit_measures_stale: PASS
+  | SELFTEST_ARM19_pin_audit_refusals: PASS
+  | SELFTEST_ARM20_pin_audit_single_row_not_vacuous: PASS
+  | SELFTEST_ARM21_selftest_text_pin: PASS
+  | SELFSTATE_SELFTEST: 20/21 pass
+DEFECT ss-bom-only: KILLED (exit=1 duration-ms=418) only arm15's non-UTF-8 assertion conjuncts are deleted, retaining the arm name and both fixture executions (round-80 mutation-tester T80W1M1 `ss-bom-only` survived 17/17); arm21-ARM21_selftest_text_pin must kill it
+  | SELFTEST_ARM15_decode_refusals: PASS
+  | SELFTEST_ARM16_cache_key_keeps_argv: PASS
+  | SELFTEST_ARM17_python_utf8_mode_tuple: PASS
+  | SELFTEST_ARM18_pin_audit_measures_stale: PASS
+  | SELFTEST_ARM19_pin_audit_refusals: PASS
+  | SELFTEST_ARM20_pin_audit_single_row_not_vacuous: PASS
+  | SELFTEST_ARM21_selftest_text_pin: FAIL measured=9853c63af903 pinned=a9feb3c49068
+  | SELFSTATE_SELFTEST: 20/21 pass
+MUTATE_RESTORE: OK (target-sha256 before=6624f5db31bc6143074e7bca90454fc1672438a1cc2dc424f799a4ee256a3e5e after=6624f5db31bc6143074e7bca90454fc1672438a1cc2dc424f799a4ee256a3e5e pristine-sha256=6624f5db31bc6143074e7bca90454fc1672438a1cc2dc424f799a4ee256a3e5e)
+MUTATE_EVIDENCE: /fast/scratch/hyaku/tameshi-r81/final-batt/ss
+MUTATE: DONE (target=selfstate-arms-r81 defects=5 killed=5 survived=0 inconclusive=0 kill-rate=100%)

@@ -4444,3 +4444,14 @@ bound=14 corrected=8 design=7 unbound=0`, `ADDRANGE: rows=11 met=11
 unexpected=0`, `MUTATE_SELFTEST` `VERDICT: PASS` (`noharm-*.txt`). Base
 controls stay in `controls/` (`c1-before.txt` open=6, `c2-before.txt` stale=3,
 `c3-base-ss.txt`/`c3-base-wr.txt` survived=1 each).
+
+**Final re-derivation at `fc7ccfb7`** (after the wave's corrections landed; the
+D2 check was made faithful to the declared predicate, so the measured commit
+above is the wave commit): `DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0`
+exit 0, `DEFECT_BIND_SELFTEST: 11/11`; `SELFSTATE_PINS: rows=23 settled=23
+stale=0` exit 0, `SELFSTATE: rows=23 match=21 stale=2 unexpected=0`, selftest
+`21/21`; batteries `defects=5 killed=5` and `defects=14 killed=14`, both
+`CONTROL: GREEN`; `WAVE_RECONCILE_SELFTEST: 25/25`. Receipts:
+`.ufo/evidence/round-81/final/` (`c1-*`, `c2-*`, `c3-*`, `noharm-*`,
+`census-after.txt`). The base readings under the corrected instrument stay
+`open=6` exit 1 (`controls/c1-before-instrument-v2.txt`).
