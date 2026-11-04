@@ -306,3 +306,40 @@ appended beyond the S006 `used-by` cell above.
   `--doc-rev`-ignored survivor dies on ARM11 only); item 8 (load order) is
   honored this round — the lane read `skill://shokunin`, the canonical
   protocol files, the fleet MISSION/AXES, then the lane files, in order.
+
+## Settlement: the rekey took four batches, and why (append-only)
+
+The plan's landing order said "one rekey batch"; the monitor's actual
+convergence took **four** (`r76-batch-1` 13 sections, `r76-batch-2` 4,
+`r76-batch-3` 11, `r76-batch-4` 3; ledger 899 → 916 → 927 → 930), and two of
+the detours are mined mistakes, recorded above and in the SCORECARD round
+block:
+
+1. **The stale need_rekey artifact.** `union-plan.py` reads
+   `rekey-plan.json` from its own directory — the committed round-63 copy,
+   last written 2026-11-01 — so a batch planned from it rekeys a
+   round-63-era section set, not the measured loses. Batches must plan from
+   the monitor's own measured uncredited set (batch-3 onward did; the fresh
+   plans are `rekey-plan-r76b3.json` / `-r76b4.json`, committed).
+2. **Flat trace numbering.** The rebind writes `traces/section-NN.json`
+   numbered by plan index, so batch-2 overwrote batch-1's first four trace
+   receipts and my recovery `mv` made it worse before the per-batch fix:
+   the script now takes `--batch-tag` and writes `traces-<tag>/`, and every
+   entry labels its own batch (`rekey_round: 76`, `rekey_batch: bN`).
+   Consequence of the detour: b4 exists solely to re-credit three sections
+   whose b2 trace receipts b3 destroyed.
+3. **A `cp` overwrote an edited plan.** The batch-2 union plan's new-section
+   row was filled in-memory and written to the lane, then a scratch→lane
+   `cp` restored the unfilled version; the rebind recorded an entry with no
+   inputs (`inputs-unrecorded`). Mined: never copy scratch artifacts over
+   landed edits; the landing step re-verifies the bytes it is about to run.
+
+Final state: monitor `credited=65/65` at the landing tip `b2b0f82a`
+(`.ufo/evidence/round-76/coldread-green-r76.txt`); the red-before receipt
+`credited=48/65` at the records commit
+(`.ufo/evidence/round-76/coldread-red-r76.out`). The standing sweeps all
+read clean at the tip (`WAVE_RECONCILE: rows=6 met=6 unexpected=0`;
+`SELFSTATE: rows=20 match=18 stale=2 unexpected=0`; `COUNT_RECHECK: rows=7
+met=7 unexpected=0`; `POINTER_RECHECK: rows=12 met=12 unexpected=0`;
+`ANCHOR_DRIFT: rows=16 met=16 unexpected=0`; `ARM_LIVENESS: rows=9 live=9
+dead=0`; `ADDRANGE` totals line; `SELFSTATE_SELFTEST: 11/11 pass`).

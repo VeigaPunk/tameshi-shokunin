@@ -4141,3 +4141,20 @@ Receipts under `.ufo/evidence/round-76/`; the round's report cites the tip.
   only (kasegi figure-audit, r10-witness-scope-counted), all deferred with
   reasons; the mined proposal is 2026-10-28 #4 as a provenance-qualified
   baseline in the lesson, citing `considerthese/2026-10-28.md`.
+
+### Round 76 — appended: the rekey settlement (four batches, monitor green)
+
+The plan said one rekey batch; the measured convergence took four
+(`r76-batch-1` 13 sections → `r76-batch-2` 4 → `r76-batch-3` 11 →
+`r76-batch-4` 3; ledger 899 → 916 → 927 → 930), commits `826d2fae`,
+`beb0599b` (+ trace-restore `18cdc29f`), `881ded79`, `b2b0f82a`. Two mined
+defects: the union-plan generator reads a stale 2026-11-01
+`rekey-plan.json` (batch-1 planned from the wrong set; batches 3-4 plan from
+the monitor's measured uncredited set), and the rebind's flat
+`traces/section-NN.json` numbering let batch-2 overwrite batch-1 trace
+receipts (the corrected per-batch script takes `--batch-tag`, writes
+`traces-<tag>/`, labels every entry `rekey_round: 76` / its own batch).
+Monitor `credited=65/65` at the landing tip `b2b0f82a`
+(`.ufo/evidence/round-76/coldread-green-r76.txt`; red-before 48/65 at the
+records commit). Full narrative: `corpus/lessons/round-76.md` settlement
+section.
