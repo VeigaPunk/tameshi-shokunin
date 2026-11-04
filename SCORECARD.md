@@ -5175,3 +5175,24 @@ axis).
 | closure-defect bind | turn a non-author closure's routed-defect prose into declared rows whose state is measured over committed bytes (five probe kinds: tree-paths, tree-bytes, receipt-tokens, sources-cell, doc-contains), so "closed" is a count and not an assertion | `python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json` → `DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0` exit 0; `--selftest` → `DEFECT_BIND_SELFTEST: 11/11 pass`; `.ufo/evidence/round-81/controls/c1-before.txt` (before: `open=6`) | round 81 |
 | standing-pin audit | measure whether a standing sweep's declared population pins the instrument bytes the tip carries (`settled` = blob equality at pin vs tip), instead of trusting that a matching figure means settled bytes | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --pin-audit --pin-rev HEAD` → `SELFSTATE_PINS: rows=23 settled=23 stale=0` exit 0; before `settled=20 stale=3` (`.ufo/evidence/round-81/controls/c2-before.txt`) | round 81 |
 | selftest-text pin | pin a suite's own assertion text (digest of `inspect.getsource(selftest)` against a constant), so a weakened arm fails an arm instead of passing vacuously — the round-80 `ss-bom-only` / `wr-prefix` survivor class | `SELFSTATE_SELFTEST: 21/21 pass`, `WAVE_RECONCILE_SELFTEST: 25/25 pass`; batteries `defects=5 killed=5` / `defects=14 killed=14` with `CONTROL: GREEN`; base controls `killed=0 survived=1` per tool (`.ufo/evidence/round-81/controls/`) | round 81 |
+
+## Round 81 — measured claims (appended at the records commit, 2026-11-04)
+
+| Claim | Verdict | After (measured) | Counting commands | Measured commit |
+|---|---|---|---|---|
+| R81-C1 | verifies (measured) | `DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0` exit 0; `DEFECT_BIND_SELFTEST: 11/11 pass`; each of the six rows prints its own `state=closed` detail (`.ufo/evidence/round-81/c1-after.txt`, `c1-selftest.txt`) | `python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json`; `--selftest` | `e27f28e8271062c3a1217f85cf51620735bb4e99` |
+| R81-C2 | verifies (measured) | `SELFSTATE_PINS: rows=23 settled=23 stale=0` exit 0; the standing sweep stays green (`SELFSTATE: rows=23 match=21 stale=2 unexpected=0`, exit 0); `SELFSTATE_SELFTEST: 21/21 pass` (`.ufo/evidence/round-81/c2-after.txt`, `c2-sweep.txt`, `c2-selftest.txt`) | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --pin-audit --pin-rev HEAD`; the sweep and `--selftest` commands | `e27f28e8271062c3a1217f85cf51620735bb4e99` |
+| R81-C3 | verifies (measured) | `MUTATE: DONE (target=selfstate-arms-r81 defects=5 killed=5 survived=0 inconclusive=0 kill-rate=100%)` and `MUTATE: DONE (target=wave-reconcile-arms-r81 defects=14 killed=14 survived=0 inconclusive=0 kill-rate=100%)`, both `CONTROL: GREEN` and byte-identical `MUTATE_RESTORE: OK`; `SELFSTATE_SELFTEST: 21/21 pass`, `WAVE_RECONCILE_SELFTEST: 25/25 pass`; FAIL sets `ss-bom-only` → `ARM21_selftest_text_pin` only, `wr-prefix` → `arm25-selftest-text-pin` only (`.ufo/evidence/round-81/c3-landed-*.txt`) | the two battery commands of the plan; `--selftest` for both tools | `e27f28e8271062c3a1217f85cf51620735bb4e99` |
+
+**No axis harmed.** depth 10, calibration 8 and freshness 9 are unchanged as
+numbers; the round's registry figures were refreshed (`REGISTRY_BIND: rows=7
+match=7 stale=0 absent=0 error=0 unexpected=0`, exit 0), the standing sweeps
+stayed green (`WAVE_RECONCILE: rows=6 met=6 unexpected=0`;
+`RECEIPT_BIND: receipts=29 bound=14 corrected=8 design=7 unbound=0`;
+`ADDRANGE: rows=11 met=11 unexpected=0`), and no SCORECARD row was lowered.
+
+**Planned (round 82):** bind the three round-81 capability rows as live
+selfstate rows (population 23 → 26, a claim of its own since it moves a frozen
+number); the design-orphan alarm (a design receipt whose recorded
+`design_tool_sha256` resolves to a committed blob) stays unbuilt and named; the
+carried `arm19`/`arm20` multi-arm FAIL sets are evidence, not defects.

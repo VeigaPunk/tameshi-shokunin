@@ -4423,3 +4423,21 @@ capability, so the nudge does not fire and C1 works calibration.
   re-read `rows=7 match=7 stale=0 absent=0 error=0 unexpected=0` exit 0.
   Three new registry rows (`defect-bind-selftest`, `defect-bind-sweep`,
   `selfstate-pins`) register the round's instruments.
+
+**As landed (measured at `e27f28e8`).** C1: `DEFECT_BIND: rows=6 closed=6
+open=0 unexpected=0` exit 0 and `DEFECT_BIND_SELFTEST: 11/11 pass`
+(`.ufo/evidence/round-81/c1-after.txt`, `c1-selftest.txt`). C2:
+`SELFSTATE_PINS: rows=23 settled=23 stale=0` exit 0, the sweep
+`SELFSTATE: rows=23 match=21 stale=2 unexpected=0` exit 0 and
+`SELFSTATE_SELFTEST: 21/21 pass` (`c2-after.txt`, `c2-sweep.txt`,
+`c2-selftest.txt`). C3: `MUTATE: DONE (target=selfstate-arms-r81 defects=5
+killed=5 survived=0)`, `MUTATE: DONE (target=wave-reconcile-arms-r81
+defects=14 killed=14 survived=0)`, both `CONTROL: GREEN` and byte-identical
+restore; `WAVE_RECONCILE_SELFTEST: 25/25 pass` (`c3-landed-ss.txt`,
+`c3-landed-wr.txt`, `c3-wr-selftest.txt`). No-harm at the same revision:
+`REGISTRY_BIND: rows=7 match=7 stale=0 absent=0 error=0 unexpected=0`,
+`WAVE_RECONCILE: rows=6 met=6 unexpected=0`, `RECEIPT_BIND: receipts=29
+bound=14 corrected=8 design=7 unbound=0`, `ADDRANGE: rows=11 met=11
+unexpected=0`, `MUTATE_SELFTEST` `VERDICT: PASS` (`noharm-*.txt`). Base
+controls stay in `controls/` (`c1-before.txt` open=6, `c2-before.txt` stale=3,
+`c3-base-ss.txt`/`c3-base-wr.txt` survived=1 each).
