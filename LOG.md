@@ -3757,3 +3757,38 @@ two-row stale-span control plus the seat's MISMATCH measurement; C2's claim
 is unaffected.
 
 Floor-id correction (round 72, appended): the round floor in `live-green-r72.out` is `f20ba482c744`; `4ed9ce1c` 64 -> 64 was measured separately at the tip (`live-green-floor4ed9-r72.txt`), and `8b0042bd` 46 -> 64 stands. All three read `lost=0 ok`.
+
+## Round 73 — declared (2026-11-03), before data
+
+Frozen in `plans/round-73.plan.md`: predicates, counters, kill rules, arms and
+controls. R73-C1 (calibration — the lowest scored axis at 8; capability
+acquisition; sourced on the re-opened S066) — `tools/wave-reconcile.py` +
+`tools/wave-reconcile.json` re-derive a round record's execution claims (seat
+count, committed seat-report count, role multiset, attack share) from the
+committed wave artifacts, with the round-72 non-author closure's two routed
+defects (spot-check defects 1 and 2) standing as MEASURED red arms; frozen
+counter `python3 -I -X utf8 tools/wave-reconcile.py --repo .
+--extra-root fleet=/home/vgpnk/Projects/shokunin --manifest
+tools/wave-reconcile.json` -> `WAVE_RECONCILE: rows=6 met=6 unexpected=0`
+exit 0, selftest `WAVE_RECONCILE_SELFTEST: 12/12 pass`. R73-C2 (operability,
+verdict-only) — `tools/rekey-cost.py --arms` becomes a re-runnable 7-arm
+battery with the ignored-path arm the round-72 wave's coverage finding named;
+frozen counter `REKEY_ARMS: arms=7 meet=7 unexpected=0` exit 0, selftest
+unchanged 8/8, and the IGNORED-filter mutant M3 killed (`unexpected=1`
+naming `ignored-skill`, measured 0 -> 9). Controls measured pre-freeze
+(`.ufo/evidence/round-73/reh/`): an always-meet and an echo-printed reconcile
+stub each read `rows=6 met=4 unexpected=2` exit 1; a green-rows-only stub
+reads `rows=4 met=4 unexpected=0` and fails the frozen row count; M3
+survives 0/6 recorded arms (`KILLING_ARMS=0/6`) and 0/7 of the new battery.
+Census at round start: `sources-census.sh validate --root <fleet> tameshi`
+exit 0, 163 rows, warnings only (W04 set + W01 S101). Round shape: one v1
+wave, 13 seats (3 executor · 2 scribe · scout · 2 reviewer · critic ·
+mutation-tester · sentinel · revenger · connector; attack seats 4 = 30.8 %);
+`labrat` is a frozen-topology seat the validator rejects
+(`ufo-swarm-wave.mjs:263`). Round-72 closure carry: defects 1 and 2 become
+C1's red arms; defect 3 is restated in `corpus/lessons/round-73.md` `## Gate`;
+defect 4 corrects `tools/pointer-recheck.json`'s note count; defect 5 is paid
+here — the round-72 receipt-only commits `93cae77b`, `ebad004b` and `d8e7f337`
+inherit the "Round 72 — appended after the wave" entry above and carry no
+separate entry; carry 6 is C2; carry 7 is re-measured at the tip and reported
+as inherited.
