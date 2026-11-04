@@ -266,8 +266,11 @@ written and are superseded here:
 | receipt-bytes binding sweep | bind a receipt's recorded `# tool_sha256:` to the committed blob of a revision the receipt names (or of an append-only `# measured_bytes_rev:`); a false correction, a malformed recognised header and a duplicate header are refused before any row effect | `python3 -I -X utf8 tools/receipt-bytes-bind.py --repo . --root .ufo/evidence/round-78` -> `RECEIPT_BIND: receipts=12 bound=4 corrected=8 unbound=0` exit 0; `--selftest` -> `RECEIPT_BIND_SELFTEST: 13/13 pass` (round 80 re-demonstration: the design class and the whole-tree sweep); `.ufo/evidence/round-79/c1-landed-sweep.txt`, `c1-selftest.txt` | round 79 |
 
 | registry-home figure binding | bind a gate figure printed in the lane's registry home (SKILL.md's latest named row and `tools/registry.json`) to the figure its instrument prints now: a declared 7-row manifest, `match`/`stale`/`absent`/`error` states, `expect` per row as a standing red arm, and a `--selftest` 11/11 with planted stale/absent/duplicate/unparsable/error arms | `python3 -I -X utf8 tools/registry-figure-bind.py --repo .` → `REGISTRY_BIND: rows=7 match=7 stale=0 absent=0 error=0 unexpected=0` exit 0; `--selftest` → `REGISTRY_BIND_SELFTEST: 11/11 pass`; measured at the round-80 records commit | round 80 |
+| closure-defect bind | turn a non-author closure's routed-defect prose into declared rows whose state is measured over committed bytes (five probe kinds: tree-paths, tree-bytes, receipt-tokens, sources-cell, doc-contains), and bind the population to the bytes committed at a declared revision (`--manifest-rev`), so "closed" is a count and a narrowed register is refused rather than certified | `python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json --manifest-rev HEAD` → `DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0 manifest=bound` exit 0; `--selftest` → `DEFECT_BIND_SELFTEST: 14/14 pass` (14 arms; A12 the regular-file boundary, A13 the manifest binding, A14 the selftest-text pin) | round 81; round-82 extension (`--manifest-rev`, the mode/type boundary, the text pin) |
+| standing-pin audit | measure whether a standing sweep's declared population pins the instrument bytes the tip carries (`settled` = blob equality at pin vs tip), instead of trusting that a matching figure means settled bytes | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --pin-audit --pin-rev HEAD` → `SELFSTATE_PINS: rows=26 settled=26 stale=0` exit 0; before the round-81 landing `settled=20 stale=3` (`.ufo/evidence/round-81/controls/c2-before.txt`) | round 81; the three capability rows are live under R82-C2 |
+| selftest-text pin | pin a suite's own assertion text (digest of `inspect.getsource(selftest)` against a constant), so a weakened arm fails an arm instead of passing vacuously — the round-80 `ss-bom-only` / `wr-prefix` survivor class; extended to `tools/defect-bind.py` in round 82 | `SELFSTATE_SELFTEST: 21/21 pass`, `WAVE_RECONCILE_SELFTEST: 25/25 pass`, `DEFECT_BIND_SELFTEST: 14/14 pass`; batteries `defects=5 killed=5` / `defects=14 killed=14` / `defects=5 killed=5` with `CONTROL: GREEN`; base controls `killed=0 survived=1` per tool (`.ufo/evidence/round-81/controls/`, `.ufo/evidence/round-82/controls/c3-before-mutant.txt`) | round 81; the defect-bind arm is round 82 |
 
-Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
+Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout. The three round-81 capabilities above now live here rather than only in `## Round 81 — capabilities entered` (the round-81 closure's routed defect 6); each is a live self-state row from round 82 (`tools/selfstate-freshness.json` rows `closure-defect-bind`, `standing-pin-audit`, `selftest-text-pin`).
 
 ## Saturation
 
@@ -5196,3 +5199,68 @@ selfstate rows (population 23 → 26, a claim of its own since it moves a frozen
 number); the design-orphan alarm (a design receipt whose recorded
 `design_tool_sha256` resolves to a committed blob) stays unbuilt and named; the
 carried `arm19`/`arm20` multi-arm FAIL sets are evidence, not defects.
+
+## Round-82 corrections — the round-81 closure's routed record defects (append-only)
+
+Appended at the round-82 landing; the round-81 cells above are preserved as
+written (the lane's append-only correction rule) and stay flagged where a
+standing sweep pins them. The round-81 non-author closure
+(`corpus/lessons/round-81-verifier-spotcheck.md` §6) routed six defects; these
+paragraphs are the correction of record for its record items, and
+`tools/defect-bind-r82.json` measures each as a row (the register is the
+count, not this prose).
+
+1. **Manifest-binding receipt (item 1).** The round-81 report's
+   `git rev-parse 1b115ba0:tools/defect-bind.json = fc7ccfb7:…` equality no
+   longer held: the manifest changed at the wave commit (D2's span extended;
+   rows unchanged, no `expect` relaxed). Reissued at the round-81 measured
+   commit in `.ufo/evidence/round-82/manifest-binding.txt`, which carries both
+   blob ids and the delta; the round-81 predicate, population and kill rule
+   are unchanged.
+2. **Measured-claim pointers (item 2).** R81-C1's and R81-C2's evidence cells
+   named the pre-wave receipts (`c1-after.txt`, `c2-after.txt`, recorded tips
+   `e27f28e8`) while their measured-commit cell read `fc7ccfb7`. The tip
+   receipts are `.ufo/evidence/round-81/final/c1-sweep.txt` and
+   `.ufo/evidence/round-81/final/c2-pins.txt`; both are the ones this
+   correction points at.
+3. **Tip re-derivation (item 3).** The round-81 report's sentence "All three
+   were re-derived at the lane tip `ccef5f1d` … identical outputs" had no
+   committed receipt. The re-derivation is re-run and committed this round at
+   `.ufo/evidence/round-82/tip-rederivation.txt`, naming the revision it
+   measured.
+4. **Capability placement (item 6).** The three round-81 capabilities now sit
+   in the live `## Capabilities` repertoire table above, each bound by a live
+   self-state row (R82-C2); the `## Round 81 — capabilities entered` table is
+   preserved as the round snapshot it was.
+
+## Round 82 — declared claims (2026-11-04), frozen before data
+
+Plan: `plans/round-82.plan.md` (frozen at
+`4005a48ac73a66c794ff8fd528e6926633fe2af3`; predicates, counters, kill rules,
+the do-nothing controls and the base receipts in that commit). Base
+`4dfc3181310088c2f32d51e87a4d82c047d05231` (= `origin/master`, the round-81
+closure and spot-check tip). Round shape: one v1 wave, 13 seats
+(4 executor · 2 scout · 1 scribe · 2 reviewer · 1 critic · 1 mutation-tester ·
+1 sentinel · 1 connector; attack seats 5 = 38.5 %), policy
+`scripts/hyaku/ufo-wave-policy.json`, band 8–16. Saturation: scored axes depth
+10, calibration 8, freshness 9; round 82 enters no new capability row (it binds
+existing ones), so the stagnation nudge does NOT fire and C1 works calibration,
+the lowest scored axis.
+
+- **R82-C1 — calibration.** The routed-defect register is content-bound: the
+  six-row register measures `DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0
+  manifest=bound` at the declared revision, a manifest whose bytes differ from
+  that revision is refused (exit 2, no row effect), and a path row reads the
+  object's type and mode, so a directory or symlink cannot stand in for a
+  regular file. Before (base instrument): the flag is unrecognized, the
+  narrowed register reads `rows=5 closed=5` exit 0, a directory reads
+  `state=closed`.
+- **R82-C2 — freshness.** The three round-81 capabilities are live self-state
+  rows: before `SELFSTATE: rows=23 match=21 stale=2 unexpected=0`; after
+  `rows=26 match=24 stale=2 unexpected=0` and `SELFSTATE_PINS: rows=26
+  settled=26 stale=0` at the tip.
+- **R82-C3 — coverage.** The newest instrument's own assertion text is pinned:
+  the single test-text mutant that survives at the base bytes
+  (`defects=1 killed=0 survived=1`, suite `11/11`) is killed by
+  `A14_selftest_text_pin`; the 5-defect battery reads `defects=5 killed=5
+  survived=0`, FAIL set = A14 only.

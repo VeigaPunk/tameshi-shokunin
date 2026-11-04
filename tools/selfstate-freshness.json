@@ -1,6 +1,6 @@
 {
  "schema": "tameshi-selfstate-freshness-v1",
- "note": "the live `## Capabilities` figures the round-75 control scan measured (9 matched, 7 stale at 21ef81e9), the frozen historical span rows, and the round-78 `mutation-runner-selftest` row (bash interpreter). Every instrument is pinned at its named revision; the doc is read at --doc-rev for the base measurement and from the worktree at the landing tip.",
+ "note": "the live `## Capabilities` figures the round-75 control scan measured (9 matched, 7 stale at 21ef81e9), the frozen historical span rows, and the round-78 `mutation-runner-selftest` row (bash interpreter). Every instrument is pinned at its named revision; the doc is read at --doc-rev for the base measurement and from the worktree at the landing tip. Round 82: the three round-81 capability rows enter as live rows (closure-defect-bind, standing-pin-audit, selftest-text-pin); population 23 -> 26. The selftest-text-pin row binds the figure of the suite the A14 text pin protects.",
  "rows": [
   {
    "id": "commit-bind-selftest",
@@ -340,6 +340,59 @@
    "instrument": {
     "path": "tools/registry-figure-bind.py",
     "rev": "01ca77cd1bdac3d991e0319644146ace3970b30d",
+    "argv": [
+     "--selftest"
+    ]
+   },
+   "expect": "match"
+  },
+  {
+   "id": "closure-defect-bind",
+   "mode": "capability",
+   "capability": "closure-defect bind",
+   "figure": "DEFECT_BIND: rows=\\d+ closed=\\d+ open=\\d+ unexpected=\\d+ manifest=(?:bound|unbound)",
+   "instrument": {
+    "path": "tools/defect-bind.py",
+    "rev": "4005a48ac73a66c794ff8fd528e6926633fe2af3",
+    "argv": [
+     "--repo",
+     ".",
+     "--manifest",
+     "tools/defect-bind.json",
+     "--manifest-rev",
+     "HEAD"
+    ]
+   },
+   "expect": "match"
+  },
+  {
+   "id": "standing-pin-audit",
+   "mode": "capability",
+   "capability": "standing-pin audit",
+   "figure": "SELFSTATE_PINS: rows=\\d+ settled=\\d+ stale=\\d+",
+   "instrument": {
+    "path": "tools/selfstate-freshness.py",
+    "rev": "1b115ba038e3d3bffc1432e62bbe5eb422c81266",
+    "argv": [
+     "--repo",
+     ".",
+     "--manifest",
+     "tools/selfstate-freshness.json",
+     "--pin-audit",
+     "--pin-rev",
+     "HEAD"
+    ]
+   },
+   "expect": "match"
+  },
+  {
+   "id": "selftest-text-pin",
+   "mode": "capability",
+   "capability": "selftest-text pin",
+   "figure": "DEFECT_BIND_SELFTEST: \\d+/\\d+ pass",
+   "instrument": {
+    "path": "tools/defect-bind.py",
+    "rev": "4005a48ac73a66c794ff8fd528e6926633fe2af3",
     "argv": [
      "--selftest"
     ]
