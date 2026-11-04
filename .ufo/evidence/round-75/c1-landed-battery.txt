@@ -1,0 +1,94 @@
+# R75-C1 landed-tool measurements (measured at this commit's tool bytes)
+$ sha256sum tools/wave-reconcile.py tools/wave-reconcile-mutants.spec
+bf10c0e490e78e3f98fdb580442916e685968a94ff8c3fc977dead4b74a7f791  tools/wave-reconcile.py
+7becb33d07acb629432b9f03487b205cc03518328af0325b30aa90f55ccff92e  tools/wave-reconcile-mutants.spec
+
+$ python3 -I -X utf8 tools/wave-reconcile.py --selftest | tail -1
+WAVE_RECONCILE_SELFTEST: 18/18 pass
+
+$ diff <(git show 21ef81e9:tools/wave-reconcile-mutants.spec) <(head -n 18 tools/wave-reconcile-mutants.spec)
+1,3c1,5
+< # round 74 mutant battery for tools/wave-reconcile.py (R74-C1).
+< # Each defect is the exact single edit a round-73 wave seat measured as a
+< # survivor; the named frozen arm is the kill the round installs.
+---
+> # round 75 mutant battery for tools/wave-reconcile.py (R75-C1).
+> # Defects 1-3 are the round-74 spec verbatim (tools/wave-reconcile-mutants.spec);
+> # defects 4-6 are the three mutants measured as survivors at the round-74 base
+> # (plans/round-75.plan.md R75-C1): each is the exact single edit its named
+> # round-75 arm kills and no other round-75 arm covers.
+17,18d18
+< @old                  if p.startswith(prefix) and '/' not in p[len(prefix):]
+< @new                  if p.startswith(prefix)
+
+$ bash tools/mutate-and-run.sh --target tools/wave-reconcile.py --defects tools/wave-reconcile-mutants.spec --suite 'python3 -I -X utf8 "$MUTANT" --selftest' --workdir <scratch> --label wave-reconcile-arms-r75
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda
+MUTATE_DATE: 2026-11-04T02:44:35Z
+MUTATE_TARGET: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/wave-reconcile.py sha256=bf10c0e490e78e3f98fdb580442916e685968a94ff8c3fc977dead4b74a7f791 bytes=25927
+MUTATE_SPEC: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/wave-reconcile-mutants.spec defects=6
+CONTROL: GREEN (exit=0 duration-ms=29 pristine-sha256=bf10c0e490e78e3f98fdb580442916e685968a94ff8c3fc977dead4b74a7f791)
+  | SELFTEST arm12-declaration-absent-refused     ok (got=setup want=setup)
+  | SELFTEST arm13-printed-undelimited-refused    ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+  | SELFTEST arm14-span-not-in-record-refused     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+  | SELFTEST arm16-printed-span-not-record        ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+  | SELFTEST arm17-record-claim-live-on-roles     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | SELFTEST arm18-record-claim-live-on-attack-share ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | WAVE_RECONCILE_SELFTEST: 18/18 pass
+DEFECT m2-delimited-tautology: KILLED (exit=1 duration-ms=28) delimited() accepts any substring occurrence (r73 T73W1S02 m2); arm13-printed-undelimited-refused must kill it
+  | SELFTEST arm12-declaration-absent-refused     ok (got=setup want=setup)
+  | SELFTEST arm13-printed-undelimited-refused    FAIL (got=no-refusal want=setup:printed-not-in-span)
+  | SELFTEST arm14-span-not-in-record-refused     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+  | SELFTEST arm16-printed-span-not-record        FAIL (got=no-refusal want=setup:printed-not-in-span)
+  | SELFTEST arm17-record-claim-live-on-roles     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | SELFTEST arm18-record-claim-live-on-attack-share ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | WAVE_RECONCILE_SELFTEST: 16/18 pass
+DEFECT span-rule-removed: KILLED (exit=1 duration-ms=28) the record-span byte-substring guard is deleted (r73 T73W1S02); arm14-span-not-in-record-refused must kill it
+  | SELFTEST arm12-declaration-absent-refused     ok (got=setup want=setup)
+  | SELFTEST arm13-printed-undelimited-refused    ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+  | SELFTEST arm14-span-not-in-record-refused     FAIL (got=no-refusal want=setup:span-not-in-record)
+  | SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+  | SELFTEST arm16-printed-span-not-record        ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+  | SELFTEST arm17-record-claim-live-on-roles     FAIL (got=no-refusal want=setup:span-not-in-record)
+  | SELFTEST arm18-record-claim-live-on-attack-share FAIL (got=no-refusal want=setup:span-not-in-record)
+  | WAVE_RECONCILE_SELFTEST: 15/18 pass
+DEFECT seat-reports-any-depth: KILLED (exit=1 duration-ms=30) the top-level clause is dropped, nested .md counted (r73 T73W1S10 W2); arm15-seatreports-top-level-only must kill it
+  | SELFTEST arm12-declaration-absent-refused     ok (got=setup want=setup)
+  | SELFTEST arm13-printed-undelimited-refused    ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+  | SELFTEST arm14-span-not-in-record-refused     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | SELFTEST arm15-seatreports-top-level-only     FAIL (got=drift want=meet)
+  | SELFTEST arm16-printed-span-not-record        ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+  | SELFTEST arm17-record-claim-live-on-roles     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | SELFTEST arm18-record-claim-live-on-attack-share ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | WAVE_RECONCILE_SELFTEST: 17/18 pass
+DEFECT mc-record-bound: KILLED (exit=1 duration-ms=29) _record_claim binds printed to the whole decoded RECORD instead of the row's span (r74 M-C); arm16-printed-span-not-record must kill it
+  | SELFTEST arm12-declaration-absent-refused     ok (got=setup want=setup)
+  | SELFTEST arm13-printed-undelimited-refused    ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+  | SELFTEST arm14-span-not-in-record-refused     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+  | SELFTEST arm16-printed-span-not-record        FAIL (got=no-refusal want=setup:printed-not-in-span)
+  | SELFTEST arm17-record-claim-live-on-roles     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | SELFTEST arm18-record-claim-live-on-attack-share ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | WAVE_RECONCILE_SELFTEST: 17/18 pass
+DEFECT roles-bypass: KILLED (exit=1 duration-ms=28) _record_claim is deleted from the roles branch only (r74 selective bypass); arm17-record-claim-live-on-roles must kill it
+  | SELFTEST arm12-declaration-absent-refused     ok (got=setup want=setup)
+  | SELFTEST arm13-printed-undelimited-refused    ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+  | SELFTEST arm14-span-not-in-record-refused     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+  | SELFTEST arm16-printed-span-not-record        ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+  | SELFTEST arm17-record-claim-live-on-roles     FAIL (got=no-refusal want=setup:span-not-in-record)
+  | SELFTEST arm18-record-claim-live-on-attack-share ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | WAVE_RECONCILE_SELFTEST: 17/18 pass
+DEFECT attack-bypass: KILLED (exit=1 duration-ms=30) _record_claim is deleted from the attack_share branch only (r74 selective bypass); arm18-record-claim-live-on-attack-share must kill it
+  | SELFTEST arm12-declaration-absent-refused     ok (got=setup want=setup)
+  | SELFTEST arm13-printed-undelimited-refused    ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+  | SELFTEST arm14-span-not-in-record-refused     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+  | SELFTEST arm16-printed-span-not-record        ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+  | SELFTEST arm17-record-claim-live-on-roles     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+  | SELFTEST arm18-record-claim-live-on-attack-share FAIL (got=no-refusal want=setup:span-not-in-record)
+  | WAVE_RECONCILE_SELFTEST: 17/18 pass
+MUTATE_RESTORE: OK (target-sha256 before=bf10c0e490e78e3f98fdb580442916e685968a94ff8c3fc977dead4b74a7f791 after=bf10c0e490e78e3f98fdb580442916e685968a94ff8c3fc977dead4b74a7f791 pristine-sha256=bf10c0e490e78e3f98fdb580442916e685968a94ff8c3fc977dead4b74a7f791)
+MUTATE_EVIDENCE: /fast/scratch/hyaku/tameshi-r75/l1/battery-landed
+MUTATE: DONE (target=wave-reconcile-arms-r75 defects=6 killed=6 survived=0 inconclusive=0 kill-rate=100%)

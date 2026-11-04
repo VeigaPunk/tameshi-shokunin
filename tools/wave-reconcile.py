@@ -22,13 +22,17 @@ Four row kinds. Each binds a RECORD claim to an ARTIFACT re-derivation:
   attack_share   the share of seats whose agent is in the row's named attack
                  set, measured against the row's floor percentage.
 
-Binding rules (fifteen arms: seats-meet/mismatch, seat_reports-drift,
-roles-spec/text-drift, attack-below-floor/at-floor, five setup refusals, and -
-from round 74 - arm13 delimited-token, arm14 record-span-substring and arm15
+Binding rules (eighteen arms: seats-meet/mismatch, seat_reports-drift,
+roles-spec/text-drift, attack-below-floor/at-floor, five setup refusals, - from
+round 74 - arm13 delimited-token, arm14 record-span-substring and arm15
 seat_reports-top-level-only, the three rules round 73 carried as arm gaps and
 measured as survivors: `delimited := True` 12/12, the span-rule removal 12/12,
-`seat_reports` any-depth 12/12 plus the standing sweep. Each new arm names its
-mutant in `tools/wave-reconcile-mutants.spec`):
+`seat_reports` any-depth 12/12 plus the standing sweep, and - from round 75 -
+arm16 printed-span-not-record, arm17 record-claim-live-on-roles and arm18
+record-claim-live-on-attack-share, the two round-74 survivors: a `printed` token
+delimited in the record but outside the bound span, and the selective
+`_record_claim` bypass on the `roles` and `attack_share` branches. Each new arm
+names its mutant in `tools/wave-reconcile-mutants.spec`):
 
   * the record span must be a byte substring of the record at the record rev;
   * the printed integer must occur in the span as a delimited token;
@@ -67,7 +71,7 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 15
+SELFTEST_ARMS = 18
 BOM = b'\xef\xbb\xbf'
 ATTACK_NOTE = ('named attack roles are the row\'s own declaration; the policy '
                'floor is the row\'s floor_pct')
@@ -497,6 +501,34 @@ def selftest():
                                 record={'path': 'report.md', 'rev': REV,
                                         'span': '12 seats, 11 reports',
                                         'printed': 12}))
+        # round 75: the two round-74 survivors. arm16: a `printed` token that
+        # is delimited in the RECORD but not in the bound span must refuse (the
+        # M-C mutant binds printed to the whole record). arm17/arm18: the
+        # `roles` and `attack_share` branches must bind the record span before
+        # measuring (the selective `_record_claim` bypass).
+        arm_raises('arm16-printed-span-not-record', 'printed-not-in-span',
+                   lambda: measure_row(
+                       kind='seats',
+                       extra_blobs={(REV, 'late.md'):
+                                    b'- The wave: 11 reports; '
+                                    b'1 seat filed late.\n'},
+                       record={'path': 'late.md', 'rev': REV,
+                               'span': '11 reports', 'printed': 1}))
+        arm_raises('arm17-record-claim-live-on-roles', 'span-not-in-record',
+                   lambda: measure_row(
+                       kind='roles',
+                       record={'path': 'report.md', 'rev': REV,
+                               'span': '13 seats'},
+                       declaration={'form': 'spec-items', 'path': 'spec.json',
+                                    'rev': REV}))
+        arm_raises('arm18-record-claim-live-on-attack-share',
+                   'span-not-in-record',
+                   lambda: measure_row(
+                       kind='attack_share',
+                       record={'path': 'report.md', 'rev': REV,
+                               'span': '13 seats'},
+                       named=['reviewer', 'critic', 'mutation-tester'],
+                       floor_pct=25))
     finally:
         shutil.rmtree(work, ignore_errors=True)
 
