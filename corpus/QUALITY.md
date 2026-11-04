@@ -2372,3 +2372,17 @@ on the landed bytes (`c2-landed-battery.txt`).
     before freezing. A later, better fixture does not authorize rewriting the
     target; report a miss rather than changing the number.
     Lesson: `lessons/round-83.md` Mistakes M3 (one declared entry, two committed).
+
+## Criteria appended — round 84
+
+87. A calibration counter reads the lane's actual self-assessment
+    (SCORECARD/SHONEN) and compares it with observed state; an input-rejection
+    battery alone measures instrument behavior, not calibration. Before
+    freezing, ask whether changing only production code while leaving both
+    self-assessment files unchanged can satisfy the counter. If so, reject the
+    calibration attribution unless the actual self-assessment mismatch is
+    independently counted. This rule rejects round84 itself: the frozen
+    measure.py reads neither file and the base already disclosed the id debt.
+    The passing nine-case predicate does not repair its wrong-axis claim.
+    Lesson: `lessons/round-84.md` Mistakes M2; critic T84C1's committed
+    counter/data-flow audit is the demonstrated failing case.

@@ -4604,3 +4604,29 @@ pre-existing `after` file; no round83 seat misroot found or deleted.
 Final copy correction: four changed arm counts in SKILL (not three);
 lesson quote word counts18/11, both under25, from `len(quote.split())`.
 No tool, manifest population, measured row or frozen predicate changed.
+
+## Round 84 (2026-11-04) — identity refusal and an honestly rejected axis attribution
+
+Declared R84-C1 calibration (lowest score8), frozen at
+5dbac2fdc389cf6b27b34140f30dc1e6fea1909d over base
+69d33afc078304e537028ee233643358b97fbdcb. The nine-case counter and its
+do-nothing control are committed under `.ufo/evidence/round-84/`:
+`IDENTITY_CALIBRATION: cases=9 invalid_refused=0 valid_accepted=1 mismatches=8 R84_C1_PASS=false`,
+exit1. Population reconciled before freeze: eight invalid ids, one valid.
+Guard candidate c6ed7cce4b272acba56b526b290bf3cdb9bb5cb5 adds type/fullmatch
+validation before set membership or any row effect.
+
+Critic T84C1 correctly identifies wrong-axis attribution: the counter reads
+only instrument output, not SCORECARD/SHONEN, and the base already names the
+id debt. A later green battery cannot establish calibration improvement.
+Retain the frozen claim and report honest-stop; no retrospective rename or
+substitute claim. `corpus/lessons/round-84.md` MistakesM2 and QUALITY
+criterion87 capture this error with this round as its failing example.
+
+Round83 routed item3 is separately corrected: the standing receipt-bytes
+capability summary now states static leaf refusal, not a never-read-target
+guarantee; reviewer R2's lstat/open replacement and ancestor-alias limits
+remain explicit. That correction is not substituted for R84-C1.
+S311 grounds full-string matching (L1-opened official re.fullmatch page,
+2026-11-04; located excerpt in `.ufo/evidence/round-84/sources/`).
+Assimilation none; no frontier or repertoire increment claimed.

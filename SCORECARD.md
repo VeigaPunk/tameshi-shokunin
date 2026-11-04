@@ -263,12 +263,12 @@ written and are superseded here:
 
 | round-range additivity sweep | measure a round's append-only / content-preservation claims over a declared commit range with a declared claim class per row, naming the worst commit and the class-specific counts | `python3 -I tools/additivity-range.py --repo . --manifest tools/additivity-range.json` → `ADDRANGE: rows=11 met=11 unexpected=0` exit 0; `--selftest` → `ADDITIVITY_RANGE_SELFTEST: 8/8 pass`; `.ufo/evidence/round-74/addr-r74.txt` | round 74 |
 | non-Python instrument freshness row | execute a freshness row's instrument under a frozen per-row interpreter tuple (python as the unchanged default, bash added) and bind a non-Python instrument's printed figure to the capability row it demonstrates | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --doc-rev 5bcb13ea7cc08bb0b594fcd0c2bb770cb8fe64a0` -> `SELFSTATE: rows=22 match=20 stale=2 unexpected=0` exit 0 with `SELFSTATE_ROW mutation-runner-selftest capability=mutation sweep runner expect=match measured=match ok`; `--selftest` -> `SELFSTATE_SELFTEST: 14/14 pass`; re-demonstrated round 79 (`receipt-bind-selftest` row added, arm14); `.ufo/evidence/round-78/c1-landed-sweep.txt`, `c1-landed-selftest.txt` | round 78 |
-| receipt-bytes binding sweep | bind a receipt's recorded `# tool_sha256:` to the committed blob of a revision the receipt names (or of an append-only `# measured_bytes_rev:`); a false correction, a malformed recognised header and a duplicate header are refused before any row effect | `python3 -I -X utf8 tools/receipt-bytes-bind.py --repo . --root .ufo/evidence/round-78` -> `RECEIPT_BIND: receipts=12 bound=4 corrected=8 unbound=0` exit 0; `--selftest` -> `RECEIPT_BIND_SELFTEST: 14/14 pass` (round 80 re-demonstration: the design class and the whole-tree sweep; round 83: a symlink enters the population as a declared `unbound detail=not-regular-file` row and its target's bytes are never read); `.ufo/evidence/round-79/c1-landed-sweep.txt`, `c1-selftest.txt` | round 79; round-83 non-regular-path class |
+| receipt-bytes binding sweep | bind a receipt's recorded `# tool_sha256:` to the committed blob of a revision the receipt names (or of an append-only `# measured_bytes_rev:`); a false correction, a malformed recognised header and a duplicate header are refused before any row effect | `python3 -I -X utf8 tools/receipt-bytes-bind.py --repo . --root .ufo/evidence/round-78` -> `RECEIPT_BIND: receipts=12 bound=4 corrected=8 unbound=0` exit 0; `--selftest` -> `RECEIPT_BIND_SELFTEST: 14/14 pass` (round 80: design class and whole-tree sweep; round 83: the static leaf-symlink fixture becomes an `unbound detail=not-regular-file` row. This is not a never-read-target guarantee: reviewer R2 demonstrated an lstat/open replacement race; parent-component aliases also remain outside the measured boundary. See `corpus/lessons/round-83-verifier-spotcheck.md` routed item 3 and `.ufo/waves/round-83/w1/T83W1R2.md:15-25`); `.ufo/evidence/round-79/c1-landed-sweep.txt`, `c1-selftest.txt` | round 79; round-83 non-regular-path class; round-84 summary qualification |
 
 | registry-home figure binding | bind a gate figure printed in the lane's registry home (SKILL.md's latest named row and `tools/registry.json`) to the figure its instrument prints now: a declared 9-row manifest, `match`/`stale`/`absent`/`error` states, `expect` per row as a standing red arm, and a `--selftest` 13/13 with planted stale/absent/duplicate/unparsable/error arms (round 83 adds the registry-json drift arm and the registry-surface absent arm) | `python3 -I -X utf8 tools/registry-figure-bind.py --repo .` → `REGISTRY_BIND: rows=9 match=9 stale=0 absent=0 error=0 unexpected=0` exit 0; `--selftest` → `REGISTRY_BIND_SELFTEST: 13/13 pass`; measured at the round-83 records commit | round 80; round-83 two defect-bind registry rows bound |
-| closure-defect bind | turn a non-author closure's routed-defect prose into declared rows whose state is measured over committed bytes (five probe kinds: tree-paths, tree-bytes, receipt-tokens, sources-cell, doc-contains), and bind the population to the bytes committed at a declared revision (`--manifest-rev`), so "closed" is a count and a narrowed register is refused rather than certified | `python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json --manifest-rev HEAD` → `DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0 manifest=bound` exit 0; `--selftest` → `DEFECT_BIND_SELFTEST: 14/14 pass` (14 arms; A12 the regular-file boundary, A13 the manifest binding, A14 the selftest-text pin) | round 81; round-82 extension (`--manifest-rev`, the mode/type boundary, the text pin) |
+| closure-defect bind | turn a non-author closure's routed-defect prose into declared rows whose state is measured over committed bytes (five probe kinds: tree-paths, tree-bytes, receipt-tokens, sources-cell, doc-contains), and bind the population to the bytes committed at a declared revision (`--manifest-rev`), so "closed" is a count and a narrowed register is refused rather than certified | `python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json --manifest-rev HEAD` → `DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0 manifest=bound` exit 0; `--selftest` → `DEFECT_BIND_SELFTEST: 15/15 pass` (A12 regular-file boundary, A13 manifest binding, A14 text pin, A15 identity alphabet public CLI); isolated selftest evidence `.ufo/waves/round-84/w1/T84E1.md` | round 81; round82 binding/type/text-pin extension; round84 identity guard |
 | standing-pin audit | measure whether a standing sweep's declared population pins the instrument bytes the tip carries (`settled` = blob equality at pin vs tip), instead of trusting that a matching figure means settled bytes | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --pin-audit --pin-rev HEAD` → `SELFSTATE_PINS: rows=26 settled=26 stale=0` exit 0; before the round-81 landing `settled=20 stale=3` (`.ufo/evidence/round-81/controls/c2-before.txt`) | round 81; the three capability rows are live under R82-C2 |
-| selftest-text pin | pin a suite's own assertion text (digest of `inspect.getsource(selftest)` against a constant), so a weakened arm fails an arm instead of passing vacuously — the round-80 `ss-bom-only` / `wr-prefix` survivor class; extended to `tools/defect-bind.py` in round 82 | `SELFSTATE_SELFTEST: 24/24 pass`, `WAVE_RECONCILE_SELFTEST: 25/25 pass`, `DEFECT_BIND_SELFTEST: 14/14 pass`; batteries `defects=5 killed=5` / `defects=14 killed=14` / `defects=5 killed=5` with `CONTROL: GREEN`; base controls `killed=0 survived=1` per tool (`.ufo/evidence/round-81/controls/`, `.ufo/evidence/round-82/controls/c3-before-mutant.txt`) | round 81; the defect-bind arm is round 82 |
+| selftest-text pin | pin a suite's own assertion text (digest of `inspect.getsource(selftest)` against a constant), so a weakened arm fails an arm instead of passing vacuously — the round-80 `ss-bom-only` / `wr-prefix` survivor class; extended to `tools/defect-bind.py` in round 82 | `SELFSTATE_SELFTEST: 24/24 pass`, `WAVE_RECONCILE_SELFTEST: 25/25 pass`, `DEFECT_BIND_SELFTEST: 15/15 pass` (round84 A15 adds public-CLI identity refusals and valid sibling; text pin explicitly recomputed). Historical round81/82 batteries `defects=5 killed=5` / `defects=14 killed=14` / `defects=5 killed=5` with `CONTROL: GREEN`; base controls `killed=0 survived=1` per tool (`.ufo/evidence/round-81/controls/`, `.ufo/evidence/round-82/controls/c3-before-mutant.txt`); round84 isolated selftest output in `.ufo/waves/round-84/w1/T84E1.md` | round 81; defect-bind text-pin arm round 82; identity arm round84 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout. The three round-81 capabilities above now live here rather than only in `## Round 81 — capabilities entered` (the round-81 closure's routed defect 6); each is a live self-state row from round 82 (`tools/selfstate-freshness.json` rows `closure-defect-bind`, `standing-pin-audit`, `selftest-text-pin`).
 
@@ -5337,3 +5337,38 @@ actual2, plus reviewer R2's demonstrated lstat/open target-read race
 than claim an unconditional symlink guarantee. Scores unchanged10/8/9;
 outside admission pending. Final wave13 settled,8 reports,5 error/no-output
 seats; no replacement, failure events retained.
+
+## Round 84 — frozen claim and axis-attribution honest stop
+
+Declaration5dbac2fdc389cf6b27b34140f30dc1e6fea1909d; base
+69d33afc078304e537028ee233643358b97fbdcb. One claim,
+R84-C1 calibration (lowest scored non-retired axis8). Frozen predicate:
+`IDENTITY_CALIBRATION: cases=9 invalid_refused=8 valid_accepted=1 mismatches=0 R84_C1_PASS=true`,
+exit0. Command: `python3 -I .ufo/evidence/round-84/measure.py --repo .
+--rev REV --work /fast/scratch/hyaku/tameshi-r84/L1`.
+
+| Claim | Before | Measured after | Verdict | Measured commits/evidence |
+|---|---|---|---|---|
+| R84-C1 calibration | nine CLI cases, invalid_refused0/valid_accepted1/mismatches8, exit1 | same nine cases, invalid_refused8/valid_accepted1/mismatches0, exit0 | literal behavior predicate verifies; calibration attribution honest-stop (wrong axis), no admission | base69d33afc; candidatec6ed7cce; `.ufo/evidence/round-84/before.txt`, `.ufo/waves/round-84/w1/T84E2.md`, critic `T84C1.md` |
+
+The counter never reads SCORECARD/SHONEN; base assessment already names the
+id debt. Therefore this is not a measurement of self-assessment mismatches,
+despite the counter's label. Criterion87 rejects this round as its own
+demonstrated failing case; frozen bytes and axis are not rewritten. Separate
+qualification of the standing receipt safety summary pays round83 routed
+item3 but is not a replacement claim. Scores remain depth10/calibration8/
+freshness9 (delta0); no capability enters, no saturation/retirement changes.
+C1's implementation ground is opened S311, not an invented calibration
+source.
+
+One v1 wave9 seats: L1 planner; executor3, scribe1, scout1, connector1,
+reviewer1, critic1, mutation-tester1. Attack3/9=33.3%. WAVE-DONE received.
+Eight substantive reports; reviewer T84R1 returned an interrupted narrative
+and no completed report, so its stated unfinished controls earn no credit.
+No seat replaced. Wave artifacts remain advisory lane-authored evidence.
+
+**Planned:** next steered round should freeze at most two claims only after
+the axis counter has read the actual surface it calls an assessment. Preserve
+unhashable-kind/source-id-injection debts, receipt race/parent aliases,
+caller-selected revision authority and object conversion limits; the
+design-orphan alarm remains unbuilt. No claim is pre-approved here.

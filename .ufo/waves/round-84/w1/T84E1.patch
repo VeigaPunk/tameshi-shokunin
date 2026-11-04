@@ -1,0 +1,73 @@
+diff --git i/tools/defect-bind.py w/tools/defect-bind.py
+index 22fedf8a..ff36ba76 100755
+--- i/tools/defect-bind.py
++++ w/tools/defect-bind.py
+@@ -86,12 +86,12 @@ KINDS = ("tree-paths", "tree-bytes", "receipt-tokens", "sources-cell",
+          "doc-contains")
+ SOURCES_PATH = "corpus/SOURCES.md"
+ REGULAR_MODES = ("100644", "100755")
+-SELFTEST_ARMS = 14
++SELFTEST_ARMS = 15
+ # sha256 of inspect.getsource(selftest) at the landing commit. The pin covers
+ # the function's own text only: a module-level edit, a vacuous comment inside
+ # the function (over-kill) or a two-edit rewrite (weaken an arm and recompute
+ # this constant) stay outside the class, exactly the round-81 declared limits.
+-SELFTEST_TEXT_SHA256 = ("9d2598911e8cd4a3daf49e34c8d43ddecef399c7fd65912070beadcc03bfa773")
++SELFTEST_TEXT_SHA256 = ("ec2d59a4e726e124a69e5f1f4dd29be021874549473a9ba35c5160f4bbc69a4b")
+ 
+ 
+ class SetupError(Exception):
+@@ -895,6 +895,53 @@ def selftest(out=sys.stdout):
+                                            SELFTEST_TEXT_SHA256[:12]))
+         except OSError as exc:
+             arm("A14_selftest_text_pin", False, "source-unreadable:%s" % exc)
++
++        # arm 15: all eight frozen malformed identities are setup refusals,
++        # including a trailing newline that a $-anchored match can accept.
++        # Put a valid sibling first to catch verdict output before refusal.
++        sibling = {"id": "safe-id_1.2", "kind": "tree-paths", "rev": base,
++                   "paths": ["doc.md"]}
++        invalid_ids = [
++            ("array", []), ("object", {}), ("null", None), ("integer", 7),
++            ("boolean", True), ("empty", ""),
++            ("internal-newline",
++             "x\nDEFECT_BIND: rows=0 closed=0 open=0 unexpected=0"),
++            ("trailing-newline", "x\n"),
++        ]
++        failures = []
++        refused = 0
++        for name, ident in invalid_ids:
++            path = f.manifest([sibling, dict(sibling, id=ident)],
++                              name="identity-%s.json" % name)
++            result = subprocess.run(
++                [sys.executable, "-I", "-X", "utf8", os.path.abspath(__file__),
++                 "--repo", f.root, "--manifest", path],
++                capture_output=True, text=True)
++            expected_error = "defect-bind: row-id-alphabet:%r\n" % (ident,)
++            ok = (result.returncode == 2 and result.stdout == ""
++                  and result.stderr == expected_error)
++            refused += int(ok)
++            if not ok:
++                failures.append(name)
++        path = f.manifest([sibling], name="identity-valid.json")
++        result = subprocess.run(
++            [sys.executable, "-I", "-X", "utf8", os.path.abspath(__file__),
++             "--repo", f.root, "--manifest", path],
++            capture_output=True, text=True)
++        accepted = (result.returncode == 0 and result.stderr == ""
++                    and result.stdout.startswith(
++                        "DEFECT_BIND_ROW safe-id_1.2 kind=tree-paths "
++                        "expect=closed state=closed ")
++                    and result.stdout.endswith(
++                        "DEFECT_BIND: rows=1 closed=1 open=0 unexpected=0 "
++                        "manifest=unbound\n")
++                    and len(result.stdout.splitlines()) == 2)
++        if not accepted:
++            failures.append("valid")
++        arm("A15_row_id_alphabet", refused == 8 and accepted,
++            "invalid_refused=%d/8 valid_accepted=%d/1%s"
++            % (refused, int(accepted),
++               (" failures=" + ",".join(failures)) if failures else ""))
+     finally:
+         shutil.rmtree(fx, ignore_errors=True)
+ 
