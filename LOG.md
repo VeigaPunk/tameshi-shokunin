@@ -3739,3 +3739,19 @@ revenger · connector); attack roles 3 by the policy's named set (25 %) plus a
 revenger probe. Assimilation: considerthese 2026-10-28 proposal 3
 (cold-read cost forecast at planning time) adopted as C1; shokuknow
 unreachable this round (checked read-only by the connector seat).
+
+## Round 72 — appended after the wave (2026-11-03)
+
+Third correction + batch-2 rekey: seat T72W1S05 measured `PROVINCE.md:56`'s
+`:84-89` stale (six-leg cut is `:88-93`, leg 6 `js-claims-check` at 93) — a
+second append at `b7b98375`, `lost=6 RED` (`live-red2-r72.out`), rekeyed as
+`r72-batch-2` (`REBIND OK sections=6 entries_added=6 ledger_before=814`,
+ledger 814 → 820, CRLF preserved), monitor `lost=0 ok` at both floors at
+`d7eb02c2` and `credited=64/64` in rev; pointer sweep `POINTER_RECHECK:
+rows=12 met=12 unexpected=0` (four new rows; the frozen plan said 11,
+disclosed). EOL defect caught by seat T72W1S03 and repaired at `b611e763`
+(`additivity-ledger-r72-raw.txt`: `raw_old_only=0`, exit 0). Plan defect
+disclosed: the frozen C2 control line is unattainable as written (the
+instrument refuses a base-rev record), replaced after the freeze by the
+two-row stale-span control plus the seat's MISMATCH measurement; C2's claim
+is unaffected.

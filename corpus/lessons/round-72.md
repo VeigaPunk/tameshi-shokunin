@@ -116,3 +116,67 @@ selftest 7/7.
 
 Pending: the 12-seat wave's results are integrated at the round's closeout
 section below.
+
+## Erratum, appended after the wave's attacks (2026-11-03)
+
+**The ledger merge rewrote every line ending.** The r67 rebind driver splices the
+entries array through `Path.read_text()` / `write_text()`, and on this host that
+normalized the ledger's CRLF to LF: the first rekey commit `bc7dc2fb` reads
+293,268 insertions / 281,925 deletions against the base — a whole-file EOL
+rewrite, not the append the additivity rule requires. Caught by **seat
+T72W1S03**, which re-ran the lane's own `tools/additivity-receipt.py
+--require-raw` over the landed commit and read exit 1 with
+`eol_rewrite_disclosed=true`, while the monitor stayed green (the guard parses
+the JSON, so credit never saw it). Repaired in `b611e763`: the merge rebuilt on
+the base bytes with CRLF, the old entries byte-identical, `raw_old_only=0
+raw_new_only=38` (`additivity-ledger-r72-raw.txt`, exit 0), and the guard re-read
+at the repair commit reads `lost=0 ok` at both floors and `credited=64/64` in rev
+mode. C2's measured chain is therefore `d618518a` (edits, `lost=17 RED`) →
+`bc7dc2fb` (merge, EOL defect) → `b611e763` (repair, byte-additive).
+
+The lesson: a JSON evidence file's line endings are part of its record, and no
+instrument that parses the file can see them. The additivity receipt is the only
+one that can, and it was not in this round's own run list until a seat added it.
+
+## Mistakes — appended
+
+| class | evidence pointer | captured-by | fix |
+|---|---|---|---|
+| landing | the first rekey merge `bc7dc2fb` rewrote the ledger CRLF→LF: 293,268 insertions / 281,925 deletions against the base; `tools/additivity-receipt.py --require-raw` over that commit exits 1 with `eol_rewrite_disclosed=true`. | none in the lane's round-run list — the guard is blind to EOLs (it parses JSON) and the additivity receipt was not part of this round's receipts until seat T72W1S03 ran it. | the merge was rebuilt on the base bytes with CRLF (`b611e763`): `raw_old_only=0 raw_new_only=38`, exit 0 (`additivity-ledger-r72-raw.txt`), guard re-read `lost=0 ok` at both floors + `credited=64/64`; the additivity receipt is now a named step of the rekey run-book. |
+| survivor | the frozen arm battery does not cover the `IGNORED` filter: mutant M3 (drop the filter) survives every arm and is killed only by the selftest (seat T72W1S09). | none — the arm table was designed from the guard counterfactuals, which never include `SKILL.md` or a ledger path. | recorded as a coverage finding: the arm table gains an ignored-path arm (forecast 0 with a `SKILL.md` edit) in the next round that re-prices the instrument; the selftest keeps the only kill until then. |
+
+## Third correction and batch-2 rekey, appended (2026-11-03)
+
+Seat T72W1S05, re-measuring the PROVINCE append, found a third stale cell in the
+same paragraph: `PROVINCE.md:56` carries `tools/mutate-and-run.sh:84-89` as "the
+round-1 six-leg anchor", while the six-leg cut is `:88-93` (leg 6
+`js-claims-check` at line 93; line 84 is the header, 85-87 the narrative).
+Accepted as work, not carried: a second correction block was appended
+(`b7b98375`), the drift it re-owed was measured (`lost=6 RED`,
+`live-red2-r72.out`), and the 6 PROVINCE-pinning sections were rekeyed as
+`r72-batch-2` (`REBIND OK sections=6 entries_added=6 ledger_before=814`; ledger
+814 → 820, CRLF preserved by rebuilding on the pre-merge bytes — the batch-1 EOL
+defect was not repeated; `additivity-ledger-r72-raw.txt` over the final pín reads
+`raw_old_only=0 raw_new_only=53`, exit 0). The monitor at `d7eb02c2` reads
+`lost=0 ok` at both floors (`4ed9ce1c` 64 → 64; `8b0042bd` 46 → 64) and
+`credited=64/64` in rev mode. A fourth pointer row,
+`province-r72-sixleg-cut-88-93`, pins the corrected span: the sweep now reads
+`POINTER_RECHECK: rows=12 met=12 unexpected=0` (the frozen plan said 11; the
+extra row is disclosed here, not retro-fitted into the frozen text).
+
+## Plan defect, disclosed (not repaired after data)
+
+The frozen C2 control sentence — "the control manifest (same three rows,
+record/target revs = base) reads three `miss ok` under `rows=3 met=3`" — is
+**unattainable as written**: the pointer instrument refuses a record revision
+whose pointer token is absent (`ERROR reason=pointer-absent-in-record`), so a
+row whose record does not exist at base cannot be scored there at all (seat
+T72W1S05 measured `POINTER_RECHECK error=setup … corrections.md … not in
+'f20ba48'`, exit 2). The control was re-shaped **after the freeze** to the
+two-row stale-span manifest landed at `.ufo/evidence/round-72/control-manifest.json`
+(`rows=2 met=2`, both `miss ok`) plus the seat's own `rows=3 met=2
+unexpected=1` run (record at the edit commit, target at base: the S303 row
+reads MISSING against the base line), which is the discriminating base
+measurement. C2's *claim* is unaffected — the three (now four) tip rows read
+hit, the census exits 0 and the monitor is green — but the frozen control
+sentence was wrong and is reported as wrong rather than silently replaced.

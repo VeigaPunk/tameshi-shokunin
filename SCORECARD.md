@@ -4374,3 +4374,30 @@ the standing instruments re-read clean (figure-attribution 3/3, count-recheck
 Calibration's score is not re-scored by this round: the row records the axis
 move (two routed defects measured-and-corrected), not a new number — a score
 no reader can re-derive is an opinion.
+
+### Round 72 — appended: third correction, batch-2 rekey, plan defect (2026-11-03)
+
+Appended after the wave's attacks; the rows above stand as written.
+
+- **Third correction.** Seat T72W1S05 found `PROVINCE.md:56`'s `:84-89` (the
+  round-1 six-leg anchor) stale: the six-leg cut is `:88-93` (leg 6
+  `js-claims-check` at 93). Corrected by a second append at `b7b98375`; the
+  drift it owed was measured (`lost=6 RED`, `live-red2-r72.out`) and rekeyed as
+  `r72-batch-2` (`REBIND OK sections=6 entries_added=6 ledger_before=814`;
+  ledger 814 → 820, CRLF preserved). The fourth pointer row
+  `province-r72-sixleg-cut-88-93` reads hit: the sweep is
+  `POINTER_RECHECK: rows=12 met=12 unexpected=0` — the frozen plan said 11, the
+  extra row is disclosed, never retro-fitted.
+- **Plan defect (disclosed).** The frozen C2 control sentence ("the same three
+  rows at base revs read three miss ok under rows=3 met=3") is unattainable as
+  written: the instrument refuses a record revision whose pointer token is
+  absent (`pointer-absent-in-record`), so a base-rev record cannot be scored
+  (`POINTER_RECHECK error=setup … not in 'f20ba48'`, exit 2, seat T72W1S05). The
+  control landed as the two-row stale-span manifest (`rows=2 met=2`, both miss)
+  plus the seat's `rows=3 met=2 unexpected=1` measurement (the S303 row aims at
+  the base line and MISSES) — the discriminating base evidence. C2's claim is
+  unaffected; the frozen control line was wrong and is reported as wrong.
+- **Coverage finding (carried).** The frozen arm battery does not cover the
+  `IGNORED` filter: mutant M3 (drop it) survives every arm and is killed only by
+  the selftest (seat T72W1S09). The arm table gains an ignored-path arm in the
+  next round that re-prices the instrument.
