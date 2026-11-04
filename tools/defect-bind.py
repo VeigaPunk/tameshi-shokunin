@@ -91,7 +91,7 @@ SELFTEST_ARMS = 14
 # the function's own text only: a module-level edit, a vacuous comment inside
 # the function (over-kill) or a two-edit rewrite (weaken an arm and recompute
 # this constant) stay outside the class, exactly the round-81 declared limits.
-SELFTEST_TEXT_SHA256 = ("9d9dcf373be1f13795c6382d39e36551e04bf9ceadf3de375158beb23e78e8a7")
+SELFTEST_TEXT_SHA256 = ("e2f744fad502f2b1eb88ee3e319801d088a6f49f5f0a9ae6953ce5f63a1259ec")
 
 
 class SetupError(Exception):
@@ -355,11 +355,27 @@ CHECKERS = {
 REQUIRED = ("id", "kind")
 
 
-def load_manifest(path):
+def read_manifest_bytes(path):
+    """The ONE read of the manifest for a sweep.
+
+    Bound and parsed bytes must be the same bytes: reading the path twice (once
+    to compare against the declared revision, once to parse) leaves a window in
+    which the file can be swapped, so a manifest edited between the two reads
+    would be measured without being bound (round-82 sentinel S1).
+    """
     try:
-        raw = open(path, "rb").read()
+        with open(path, "rb") as fh:
+            return fh.read()
+    except OSError as exc:
+        raise SetupError("manifest-unreadable:%s" % exc)
+
+
+def load_manifest(path, raw=None):
+    if raw is None:
+        raw = read_manifest_bytes(path)
+    try:
         man = json.loads(raw.decode("utf-8"))
-    except (OSError, ValueError, UnicodeDecodeError) as exc:
+    except (ValueError, UnicodeDecodeError) as exc:
         raise SetupError("manifest-unreadable:%s" % exc)
     if not isinstance(man, dict) or man.get("schema") != SCHEMA:
         raise SetupError("manifest-schema:%r" % (man.get("schema")
@@ -425,16 +441,10 @@ def _validate_payload(row):
     raise SetupError("unknown-kind:%s" % kind)
 
 
-def bind_manifest(repo, manifest_path, rev):
-    """Refuse a manifest whose bytes are not the blob committed at `rev`.
-
-    A sweep's denominator is its manifest; read from a path, a caller can
-    delete a row or relax an `expect` and every remaining row still measures
-    green (the round-81 carried defect D-CN3). S103: the object id names the
-    bytes, not the path; S289 reads them. The declared limit is S311: on a
-    path carrying `text`/`eol`/filter attributes the worktree bytes may
-    legitimately differ from the blob.
-    """
+def manifest_git_path(repo, manifest_path):
+    """The manifest's repo-relative path, refusing an escaping path BEFORE any
+    read (a path check that ran after the read reported `manifest-unreadable`
+    for a path the caller should never have named)."""
     path = manifest_path
     if os.path.isabs(path):
         try:
@@ -445,18 +455,26 @@ def bind_manifest(repo, manifest_path, rev):
         if path == ".." or path.startswith(".." + os.sep):
             raise SetupError("invalid-path:manifest:escaping-repo")
         path = path.replace(os.sep, "/")
-    path = repo_relative(path, "manifest")
+    return repo_relative(path, "manifest")
+
+
+def bind_manifest(repo, manifest_path, rev, raw):
+    """Refuse a manifest whose bytes are not the blob committed at `rev`.
+
+    A sweep's denominator is its manifest; read from a path, a caller can
+    delete a row or relax an `expect` and every remaining row still measures
+    green (the round-81 carried defect D-CN3). S103: the object id names the
+    bytes, not the path; S289 reads them. The declared limit is S311: on a
+    path carrying `text`/`eol`/filter attributes the worktree bytes may
+    legitimately differ from the blob.
+    """
+    path = manifest_git_path(repo, manifest_path)
     resolved = resolve_rev(repo, rev)
     proc = run_git(repo, "cat-file", "blob", "%s:%s" % (resolved, path),
                    check=False)
     if proc.returncode != 0:
         raise SetupError("manifest-rev-unreadable:%s:%s" % (rev, path))
-    try:
-        with open(manifest_path, "rb") as fh:
-            disk = fh.read()
-    except OSError as exc:
-        raise SetupError("manifest-unreadable:%s" % exc)
-    if disk != proc.stdout:
+    if raw != proc.stdout:
         raise SetupError("manifest-rev-mismatch:%s:%s" % (rev, path))
     return resolved
 
@@ -465,10 +483,13 @@ def sweep(repo, manifest_path, out=sys.stdout, manifest_rev=None):
     """Measure every declared row; each row reads its own `rev` (never a
     caller-supplied default, so a caller cannot silently re-point the whole
     population at a different revision than the one it declared)."""
+    if manifest_rev:
+        manifest_git_path(repo, manifest_path)
+    raw = read_manifest_bytes(manifest_path)
     bound = None
     if manifest_rev:
-        bound = bind_manifest(repo, manifest_path, manifest_rev)
-    rows = load_manifest(manifest_path)
+        bound = bind_manifest(repo, manifest_path, manifest_rev, raw)
+    rows = load_manifest(manifest_path, raw)
     resolved = {}
     for row in rows:
         key = row["rev"]
@@ -833,7 +854,7 @@ def selftest(out=sys.stdout):
         absent_refused = _expect_setup(
             lambda: sweep(f.root, "no-such-manifest.json",
                           out=_io.StringIO(), manifest_rev=rev4),
-            "manifest-rev-unreadable")
+            "manifest-unreadable")
         unresolvable_refused = _expect_setup(
             lambda: sweep(f.root, mpath, out=_io.StringIO(),
                           manifest_rev="deadbeef"), "rev-unresolvable")
