@@ -1505,6 +1505,9 @@ def main(argv=None):
     repo = os.path.abspath(a.repo)
     try:
         if a.manifest_rev:
+            if not _safe_relpath(a.manifest):
+                raise SetupError('manifest-path-not-repo-relative:%r'
+                                 % a.manifest)
             # R83-C1: the manifest the sweep measures must be the object at the
             # declared revision. The object's checks run FIRST (mode, then
             # bytes), because the worktree copy is what may be lying: a
@@ -1522,7 +1525,9 @@ def main(argv=None):
                                  % (mode, a.manifest))
             bound = reader.blob(rev, a.manifest)
         try:
-            with open(a.manifest, 'rb') as fh:
+            manifest_path = (os.path.join(repo, a.manifest)
+                             if a.manifest_rev else a.manifest)
+            with open(manifest_path, 'rb') as fh:
                 raw = fh.read()
         except OSError as exc:
             raise SetupError('manifest-unreadable:%s:%s' % (a.manifest, exc))
