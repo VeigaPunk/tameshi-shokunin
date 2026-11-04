@@ -158,3 +158,13 @@ line 97. The stale cell stands append-only (the lane's correction rule), and
 `province-r16-sevenleg-85-91` still reads miss, and the round-72 rows
 `province-r72-sevenleg-cut-88-94` and `province-r72-tenleg-88-97` read hit
 against these spans.
+
+Second correction, appended at round 72 (the round-1 six-leg anchor):
+
+The eight lines above still carry `tools/mutate-and-run.sh:84-89` as "the round-1
+six-leg anchor". Measured this round on the committed bytes: line 84 is the
+header and 85-87 the narrative, so `:84-89` carries the header plus legs 1-2; the
+six-leg cut (legs 1-6) is `:88-93`, leg 6 `js-claims-check` at line 93. The
+round-16 sentence one line later carries `:85-91` and is corrected by the block
+appended above; both stale cells stand append-only, and the pointer rows pin the
+measured spans (`province-r72-sixleg-cut-88-93` alongside the two above).
