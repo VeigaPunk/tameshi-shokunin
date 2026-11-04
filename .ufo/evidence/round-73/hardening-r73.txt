@@ -1,0 +1,19 @@
+# S03 findings fixed and shown able to fail (round 73, post-wave hardening).
+
+## (1) a forged record span on an attack_share row was a SILENT PASS before the fix
+$ python3 -I -X utf8 tools/wave-reconcile.py --repo . --extra-root fleet=<fleet> --manifest <attack_share span forged>
+exit=2
+WAVE_RECONCILE error=setup:span-not-in-record:r72-attack-share:.ufo/reports/round-72/tameshi.md
+
+## (2) a row-level root with no --extra-root was an uncaught KeyError (exit 1 traceback); now setup exit 2
+$ python3 -I -X utf8 tools/wave-reconcile.py --repo . --manifest tools/wave-reconcile.json   # no --extra-root
+exit=2
+WAVE_RECONCILE error=setup:unknown-root:fleet:r72-report-seats
+
+## (3) pristine after the hardening
+$ --selftest
+exit=0
+WAVE_RECONCILE_SELFTEST: 12/12 pass
+$ standing sweep
+exit=0
+WAVE_RECONCILE: rows=6 met=6 unexpected=0

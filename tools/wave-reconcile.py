@@ -22,7 +22,12 @@ Four row kinds. Each binds a RECORD claim to an ARTIFACT re-derivation:
   attack_share   the share of seats whose agent is in the row's named attack
                  set, measured against the row's floor percentage.
 
-Binding rules (each is a frozen selftest arm):
+Binding rules (arms: seats-meet/mismatch, seat_reports-drift, roles-spec/
+text-drift, attack-below-floor/at-floor, and the five setup refusals; the
+delimited-token rule and the span-substring rule are enforced on every row but
+carried by NO arm of this suite - round-73 seat T73W1S02 measured that
+`delimited := True` survives all twelve arms, so the arm for it is a named
+next-round carry, not a claim):
 
   * the record span must be a byte substring of the record at the record rev;
   * the printed integer must occur in the span as a delimited token;
@@ -149,11 +154,32 @@ def _record_span(row, readers):
     for key in ('path', 'rev', 'span'):
         if key not in rec:
             raise SetupError('record-missing-%s:%s' % (key, row.get('id')))
-    reader = readers[rec.get('root', 'lane')]
+    root = rec.get('root', 'lane')
+    if root not in readers:
+        raise SetupError('unknown-root:%s:%s' % (root, row.get('id')))
+    reader = readers[root]
     raw = reader.blob(rec['rev'], rec['path'])
     if rec['span'].encode('utf-8') not in raw:
         raise SetupError('span-not-in-record:%s:%s' % (row['id'], rec['path']))
     return raw.decode('utf-8'), rec
+
+
+def _record_claim(row, readers, require_printed=False):
+    """Bind the record span for EVERY kind (round-73 seat T73W1S03: an inert
+    record block made a forged span a silent pass on roles/attack_share rows).
+    A `printed` value, when the row carries one, must be a delimited token in
+    the bound span; `seats`/`seat_reports` rows must carry one."""
+    _, rec = _record_span(row, readers)
+    printed = rec.get('printed')
+    if printed is None:
+        if require_printed:
+            raise SetupError('record-printed-absent:%s' % row['id'])
+        return None
+    if not isinstance(printed, int):
+        raise SetupError('record-printed-not-int:%s' % row['id'])
+    if not delimited(printed, rec['span']):
+        raise SetupError('printed-not-in-span:%s' % row['id'])
+    return printed
 
 
 def _results(row, readers):
@@ -183,24 +209,14 @@ def measure(row, readers):
     """Return (measured, detail). measured in {'meet', 'drift'}."""
     kind = row.get('kind')
     if kind == 'seats':
+        printed = _record_claim(row, readers, require_printed=True)
         seats, records = _results(row, readers)
-        text, rec = _record_span(row, readers)
-        printed = rec.get('printed')
-        if not isinstance(printed, int):
-            raise SetupError('record-printed-absent:%s' % row['id'])
-        if not delimited(printed, rec['span']):
-            raise SetupError('printed-not-in-span:%s' % row['id'])
         ok = printed == seats == len(records)
         return ('meet' if ok else 'drift',
                 'printed=%d seats=%d records=%d' % (printed, seats, len(records)))
     if kind == 'seat_reports':
+        printed = _record_claim(row, readers, require_printed=True)
         reader, rev, path = _artifact(row, 'dir', readers)
-        _, rec = _record_span(row, readers)
-        printed = rec.get('printed')
-        if not isinstance(printed, int):
-            raise SetupError('record-printed-absent:%s' % row['id'])
-        if not delimited(printed, rec['span']):
-            raise SetupError('printed-not-in-span:%s' % row['id'])
         prefix = path.rstrip('/') + '/'
         files = [p for p in reader.listing(rev, path)
                  if p.startswith(prefix) and '/' not in p[len(prefix):]
@@ -209,6 +225,7 @@ def measure(row, readers):
         return ('meet' if ok else 'drift',
                 'printed=%d files=%d' % (printed, len(files)))
     if kind == 'roles':
+        _record_claim(row, readers)
         _, records = _results(row, readers)
         measured = _agents(records)
         decl = row.get('declaration') or {}
@@ -248,6 +265,7 @@ def measure(row, readers):
                     json.dumps(declared, sort_keys=True),
                     json.dumps(measured, sort_keys=True)))
     if kind == 'attack_share':
+        _record_claim(row, readers)
         seats, records = _results(row, readers)
         named = row.get('named')
         floor = row.get('floor_pct')
