@@ -259,6 +259,7 @@ written and are superseded here:
 | printed-count recheck | verify that a record's printed counting figure is still the count its named command produces at the revision the record names: a manifest row pins the record bytes at a revision, the exact record span that carries the figure, the printed integer and the counting command of record `git grep -c [-E] <pattern> <rev> -- <path>` (SOURCES S301: the --count contract; zero matches print nothing and exit 1, read as the count 0 - measured, disclosed); the span binding requires the span to be a byte substring of the record and the printed integer to occur in it as a delimited token; rows carry expect match or drift so the standing red arm MEASURES the drift on every sweep; unresolvable records are setup exit 2 before any row effect, a zero-row manifest is refused exit 2 | `python -I -X utf8 tools/count-recheck.py --selftest` → `COUNT_RECHECK_SELFTEST: 6/6 pass`; the standing manifest → `COUNT_RECHECK: rows=7 met=7 unexpected=0` exit 0 with both routed red arms reading `COUNT_ROW scorecard-r68corr-unanchored-r67tip expect=drift printed=4 measured=0 ok` and `COUNT_ROW lesson-r69-unanchored-r67tip expect=drift printed=4 measured=0 ok` (`.ufo/evidence/round-70/win-host/count-selftest-r70.txt`, `count-standings-r70.txt`; SOURCES S301) | round 70 |
 | line-pointer recheck | verify that a record's cited line pointer still points at the content the record claims at the revisions the record names: a manifest row pins (the record bytes at a revision, the exact cited pointer token as it occurs in the record, the target path at a revision, the 1-indexed inclusive line span, the needle - the content the record claims the span carries); the span is extracted from git objects (never a worktree) with the engine of record `git cat-file blob <rev>:<path> | sed -n 'START,ENDp'` (SOURCES S302: the inclusive address-range contract; the page's numeric-address form grounds single-line spans), argv stages only, sed load-bearing (not spawnable = setup exit 2, could-not-evaluate, never a silent fallback); a span past the last line prints nothing (measured) and reads as a miss; needles match as UTF-8 bytes, mid-line needles terminator-agnostic (the CRLF selftest arm measures it); the pointer binding requires the token to occur in the record bytes (else ERROR - the always-match cheat refused by construction); rows carry expect hit or miss so the standing red arm MEASURES the drift on every sweep; unresolvable records/targets are setup exit 2 before any row effect, a zero-row manifest is refused exit 2 | `python -I -X utf8 tools/pointer-recheck.py --selftest` -> `POINTER_RECHECK_SELFTEST: 7/7 pass`; the standing manifest -> `POINTER_RECHECK: rows=8 met=8 unexpected=0` exit 0 with the three red arms reading `POINTER_ROW lesson-r48-s267-pointer-140 expect=miss measured=miss ok`, `POINTER_ROW lesson-r48-s268-pointer-141 expect=miss measured=miss ok` and `POINTER_ROW province-r16-sevenleg-85-91 expect=miss measured=miss ok` (`.ufo/evidence/round-71/win-host/pointer-selftest-r71.txt`, `pointer-standings-r71.txt`; SOURCES S302) | round 71 |
 | rekey-cost forecast | price a planned edit set against the cold-read ledger's own input pins before any byte changes: which SKILL.md sections lose credit and how many re-read sections the rekey will owe | `python3 -I tools/rekey-cost.py --selftest` → `REKEY_COST_SELFTEST: 8/8 pass`; `python3 -I tools/rekey-cost.py --edit corpus/SOURCES.md --edit PROVINCE.md` → `REKEY_COST sections=64 planned=2 at_risk=17 predicted_lost=17`, equal to the guard's measured `lost=17 RED` at `d618518a`; arms 13/6/6/0/0 each equal to a guard-measured counterfactual (`.ufo/evidence/round-72/reh/`, five receipts); the rekey paid it (`REBIND OK sections=17 entries_added=17 ledger_before=797`, monitor back to 64/64 at both floors) | round 72 |
+| wave-record reconciliation | re-derive a round record's own execution claims (seat count, committed seat-report count, role multiset, attack share) from the committed wave artifacts: four row kinds, each binding a record span by byte substring at the record revision with the printed integer a delimited token, artifacts read from git objects at their own revision, `expect` is meet or drift so a standing red arm MEASURES the drift on every sweep, a UTF-8 BOM refused as setup exit 2 (S066 §8.1) | `python3 -I -X utf8 tools/wave-reconcile.py --selftest` → `WAVE_RECONCILE_SELFTEST: 12/12 pass`; `python3 -I -X utf8 tools/wave-reconcile.py --repo . --extra-root fleet=/home/vgpnk/Projects/shokunin --manifest tools/wave-reconcile.json` → `WAVE_RECONCILE: rows=6 met=6 unexpected=0` with both r72-closure red arms measured (`printed=11 files=12`; plan `labrat` vs executed `revenger`); independent oracle `ORACLE_CMP rows=6 equal=6` (seat T73W1S01); `.ufo/evidence/round-73/`: `wave-selftest-r73.txt`, `wave-reconcile-live-r73.txt`, `hardening-r73.txt` | round 73 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -4403,3 +4404,75 @@ Appended after the wave's attacks; the rows above stand as written.
   next round that re-prices the instrument.
 
 Floor-id correction (round 72, appended): the round floor in `live-green-r72.out` is `f20ba482c744`; `4ed9ce1c` 64 -> 64 was measured separately at the tip (`live-green-floor4ed9-r72.txt`), and `8b0042bd` 46 -> 64 stands. All three read `lost=0 ok`.
+
+## Round 73 — declared claims (2026-11-03), frozen before data
+
+Plan: `plans/round-73.plan.md` (predicates, counters, kill rules, arms,
+controls). Round shape: one v1 wave, 13 seats (3 executor · 2 scribe · scout ·
+2 reviewer · critic · mutation-tester · sentinel · revenger · connector; attack
+seats 4 = 30.8 %). `labrat` is a frozen-topology seat the validator rejects
+(`ufo-swarm-wave.mjs:263`), so no labrat item exists.
+
+- **R73-C1 — calibration (the lowest scored numeric axis at 8; capability
+  acquisition; sourced on the re-opened S066).** `tools/wave-reconcile.py` +
+  `tools/wave-reconcile.json`: a round record's execution claims (seat count,
+  committed seat-report count, role multiset, attack share) are re-derivable
+  from the committed wave artifacts, with the round-72 closure's two routed
+  defects standing as MEASURED red arms.
+- **R73-C2 — operability (verdict-only).** `tools/rekey-cost.py --arms`: the
+  recorded arm table becomes a re-runnable 7-arm battery and gains the
+  ignored-path arm the round-72 wave's coverage finding named.
+
+## Round 73 — measured claims (appended at the receipts commit, 2026-11-03)
+
+Declaration `17cd19396b36d4c15f1bce1bbdb7c42346f1df76`; work commits C1 tool
+`fddbb667`, C1 record edits `be1199d3`, rekey batch-1 `2e89e539`, C2
+`7982619f`, plan erratum `3e0ef1c8`, S066 repair `1d118c14`, rekey batch-2
+`caa5c4c5`, pointer style repair `7c5ffe04`, C1 hardening `8f7ff279`,
+criterion-122 pin `21a7332f`, rekey batch-3 `06ce20f7`. Receipts land under
+`.ufo/evidence/round-73/`; the round's report cites the tip.
+
+| Claim | Verdict | After (measured) | Counting commands (live outputs in the receipts) | Measured commit |
+|---|---|---|---|---|
+| R73-C1 | verifies (measured) | selftest `WAVE_RECONCILE_SELFTEST: 12/12 pass` exit 0; the standing sweep `WAVE_RECONCILE: rows=6 met=6 unexpected=0` exit 0 with both red arms measured (`printed=11 files=12`; plan `labrat` vs executed `revenger`); independent oracle `ORACLE_CMP rows=6 equal=6`; the three pre-freeze controls cannot reach the line (`rows=6 met=4 unexpected=2`; the green-only control reads `rows=4`); seat findings T73W1S03 adopted as hardening (`record` binding on every kind, unknown-root setup exit 2, roles rows de-printed) with the frozen counters unchanged | `python3 -I -X utf8 tools/wave-reconcile.py --selftest`; `python3 -I -X utf8 tools/wave-reconcile.py --repo . --extra-root fleet=/home/vgpnk/Projects/shokunin --manifest tools/wave-reconcile.json` | `fddbb667` → `8f7ff279` (tool bytes); rows pinned at `a3dd3574`/`3664a6d3` |
+| R73-C2 | verifies (measured) | `REKEY_ARMS: arms=7 meet=7 unexpected=0` exit 0 at the C2 commit, after each of the round's three rekeys and at the tip; selftest `REKEY_COST_SELFTEST: 8/8 pass`; M3 killed by the battery (`ARM_UNEXPECTED ignored-skill expected=0 measured=9`, `arms=7 meet=6 unexpected=1` exit 1) and replicated origin-independently by seat T73W1S10 (1/7 battery arms, 1/8 selftest arms, value re-derived); before-state `KILLING_ARMS=0/6` over the six recorded arms | `python3 -I tools/rekey-cost.py --arms`; `python3 -I tools/rekey-cost.py --selftest` | `7982619f` (tool bytes); re-measured at `06ce20f7` and the tip |
+
+Capability row entered (see `## Capabilities`): **wave-record reconciliation** —
+first working round 73.
+
+**No axis harmed.** depth 10, calibration 8, freshness 9 unchanged as numbers
+(the round records axis moves, not new scores — r72's precedent). Monitored
+bytes: `corpus/SOURCES.md` and `corpus/QUALITY.md` are the only monitored edits
+and both are rekeyed (three batches: 13 + 13 + 6 sections, ledger 820 → 852);
+`SKILL.md`, `corpus/README.md`, `PROVINCE.md`, `SHENON`/`SHONEN.md`,
+`tools/registry.json`, `tools/mutate-and-run.sh` and
+`tools/coldread-precheck-portable.py` are blob-identical base → tip. The guard
+reads `lost=0 ok` at both floors and `credited=64/64` in rev mode at
+`06ce20f7`; the standing instruments re-read clean (figure-attribution 7/7,
+count-recheck 7/7, anchor-drift 16/16, arm-liveness 9/9 live, pointer 12/12,
+bind 7/7 selftest).
+
+**Named coverage gaps carried to round 74** (measured by wave seats, not this
+round's counters): the delimited-token rule and the span-substring rule carry
+no selftest arm (`delimited := True` survives 12/12 — T73W1S02); `seat_reports`
+counting at any depth survives 12/12 and the sweep with a non-equivalence probe
+(`files=12` vs `13` — T73W1S10); the IGNORED filter's *over-filtering*
+direction survives both the battery and the selftest while turning a 20-pin
+forecast into a false 0 (T73W1S09's M3c); rounds 61-71 carry no `results.json`
+(11 unpinnable rounds) and round 60's artifact vocabulary is `agent='task'`
+(T73W1S06).
+
+**Counter-cheat and span disclosures (wave seats T73W1S07/T73W1S09, appended at
+the same receipts commit).** Any output-pinned counter is spoofable by a stub
+that echoes the manifest's own `expect` column (S07 measured a byte-exact
+forgery with zero artifact reads), so the C1 line is a receipt, never an
+authenticator, and this round does not represent its cheat coverage as
+general; the evidence that the real tool derives its values is the independent
+oracle (`ORACLE_CMP rows=6 equal=6`, S01), the two mutant batteries (S02, S10)
+and the per-row `detail=` populations the summary line does not carry. The
+`seat_reports` red arm is red by span choice: the same report self-corrects 25
+lines later (S07), and the row deliberately pins the sentence the round-72
+closure routed. The plan's own kill-rule wording ("any control below reaches
+`unexpected=0`") is contradicted by the green-only control (`rows=4 met=4
+unexpected=0` exit 0) and is reported as a frozen-text defect; the operative
+reading is the frozen line with `rows=6`.
