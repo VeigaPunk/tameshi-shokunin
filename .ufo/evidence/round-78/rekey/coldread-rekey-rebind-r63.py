@@ -134,7 +134,7 @@ def main(argv=None):
         if m is None:
             failures.append('manifest-missing:%s' % heading)
             continue
-        trace_rel = '.ufo/evidence/round-63/rekey/traces/section-%02d.json' % sec_idx
+        trace_rel = '.ufo/evidence/round-78/rekey/traces/section-%02d.json' % sec_idx
         trace_abs = repo / trace_rel
         if a.resume and trace_abs.exists():
             summary.append({'heading': heading, 'skipped': 'resume'})
