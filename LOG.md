@@ -4045,3 +4045,46 @@ is disclosure, not a claim change. The round-74 cold-read pointer (defect 2)
 is corrected in the round-75 report and by the tip receipt
 `.ufo/evidence/round-75/coldread-tip-r75.out` (rev measured, not the report
 tip).
+
+## Round 76 — declared (frozen before data, 2026-11-04)
+
+Base `451ed5cb` (the round-75 non-author closure verdict commit, branch
+`master` = `origin/master`, clean tree). Two claims, frozen with their
+predicates, counters, kill rules and controls in `plans/round-76.plan.md`
+before any data:
+
+- **R76-C1 (operability, sourced on the re-opened S006)** — the two round-75
+  survivors become measured arms: `adv-seatreports-require-printed-bypass`
+  (wave-reconcile `arm19` + the seventh spec defect) and the selfstate
+  `--doc-rev-ignored` survivor (`ARM11_doc_rev_cli_binding`, a CLI-level arm).
+  Before: `18/18` and `10/10` with both survivors alive (base receipts).
+  After: `19/19` and `11/11`, the seven-defect battery `killed=7` with the new
+  mutant dying on arm19 only, and all five instrument mutants killed
+  (`doc-rev-ignored` on ARM11 only).
+- **R76-C2 (calibration, lowest scored axis 8)** — the selfstate population
+  17 → 20 rows (three frozen tuples in the plan: the two routed dated-literal
+  capability cells + the round-17 line's `56/56` as a standing stale span
+  row). Before: `SELFSTATE: rows=20 match=16 stale=4 unexpected=2` exit 1.
+  After: `rows=20 match=18 stale=2 unexpected=0` exit 0, the two cells
+  superseded to the instruments' own tokens (`SELFTEST: PASS (19/19)`,
+  `SELFTEST: PASS (66/66)`), and the round-17 line's bash-instrument values
+  (`95/95`, `cases=7`) disclosed as named gaps, never rows.
+
+Design-phase disclosure (same commit as this entry): both candidates and both
+batteries were built and measured in scratch BEFORE this freeze; the
+candidates, the seven-defect spec, the five instrument mutants, the battery
+transcripts with the full kill matrices, and the C2 before receipt land as
+pre-data evidence under `.ufo/waves/round-76/l1/` (the plan's own bytes carry
+the frozen matrix). The wave seats re-derive and attack them.
+
+Pre-data receipts under `.ufo/evidence/round-76/`:
+`census-start.txt` (exit 0, 164 rows), `rekey-cost-full-r76.txt`
+(`sections=64 planned=6 at_risk=16 predicted_lost=16`),
+`receipt-exists-leak-r76.txt` (red-before: 2 scratch dirs left by one
+selftest, the routed r75 wave finding). Routed payments this round (round
+work, not claims): the leak fix (red-before → green-after), the round-73 plan
+erratum, the round-74 S294 used-by append, the queue reconciliation, QUALITY
+criteria 126/127 from the r75 spotcheck items 1–2, the registry home
+(SKILL.md rows + standing-instrument registry rows), the disclosed
+out-of-population `wave-record reconciliation` cell repair, and four
+`tools/registry.json` re-pins.
