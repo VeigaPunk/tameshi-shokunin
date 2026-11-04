@@ -1,0 +1,41 @@
+
+## LANDED tools (lane worktree 2026-11-03T23:44, uncommitted at 7745d0e0)
+$ sha256sum tools/selfstate-freshness.py tools/wave-reconcile.py
+3b09676340fc63007d3a1e5de3e54471feddb22024a2f40bd4b3b469f560eba6  tools/selfstate-freshness.py
+bf10c0e490e78e3f98fdb580442916e685968a94ff8c3fc977dead4b74a7f791  tools/wave-reconcile.py
+$ python3 -I -X utf8 tools/selfstate-freshness.py --selftest | tail -1
+SELFSTATE_SELFTEST: 10/10 pass
+$ python3 -I -X utf8 tools/wave-reconcile.py --selftest | tail -1
+WAVE_RECONCILE_SELFTEST: 18/18 pass
+
+## landed C2 on the actual docs
+$ python3 -I -X utf8 tools/selfstate-freshness.py --repo <lane> --manifest tools/selfstate-freshness.json   # worktree
+SELFSTATE: rows=17 match=16 stale=1 unexpected=0
+exit=0
+$ ... --doc-rev 7745d0e0   # HEAD (unrepaired)
+SELFSTATE: rows=17 match=9 stale=8 unexpected=7
+exit=1
+$ ... --doc-rev 21ef81e9   # base
+SELFSTATE: rows=17 match=9 stale=8 unexpected=7
+exit=1
+
+## five C2 mutants on the landed bytes
+a echo         FAIL ARM2, ARM3, ARM9 -> 7/10
+b expect ign.  FAIL ARM2 only -> 9/10
+c cap absent   FAIL ARM4 only -> 9/10
+d zero rows    FAIL ARM6 only -> 9/10
+e doc-rev ign. 10/10 SURVIVED
+$ e doc-rev mutant ... --doc-rev 1763db52   # worktree is the repaired tip
+SELFSTATE: rows=17 match=16 stale=1 unexpected=0
+exit=0
+$ honest landed tool ... --doc-rev 1763db52
+SELFSTATE error=setup capability-absent:r-receipt-exists:receipt-existence sweep
+exit=2
+
+## C1 mutants on the landed bytes (wr_landed.py sha bf10c0e4)
+mc            arm16 FAIL only, 17/18
+roles         arm17 FAIL only, 17/18
+attack        arm18 FAIL only, 17/18
+a16           arm16 FAIL only, 17/18
+a17           arm12 FAIL only, 17/18
+a18/a19/a20   18/18 SURVIVED

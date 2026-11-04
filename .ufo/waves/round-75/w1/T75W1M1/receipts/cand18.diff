@@ -1,0 +1,61 @@
+--- pristine.py	2026-11-03 23:30:33.423999929 -0300
++++ cand18.py	2026-11-03 23:31:13.951497712 -0300
+@@ -67,7 +67,7 @@
+ import sys
+ import tempfile
+ 
+-SELFTEST_ARMS = 15
++SELFTEST_ARMS = 18
+ BOM = b'\xef\xbb\xbf'
+ ATTACK_NOTE = ('named attack roles are the row\'s own declaration; the policy '
+                'floor is the row\'s floor_pct')
+@@ -359,6 +359,8 @@
+                    {'name': 'S11', 'agent': 'connector'}]),
+ }
+ REPORT = (b'- **The wave**: 12 seats, 11 reports; three seats found defects.\n')
++# round-75 arm16: the record carries a delimited 1 OUTSIDE the span.
++CLAIM = (b'- The wave: 11 reports; 1 seat filed late.\n')
+ PLAN = (b'- Wave `w1`: 12 seats - 3 executor, 2 scribe, 1 scout, 1 connector,\n'
+         b'  1 reviewer, 1 critic, 1 mutation-tester, 1 sentinel, 1 labrat.\n')
+ SEAT_FILES = (['%s/T1W1S%02d.md' % ('wave', i) for i in range(12)]
+@@ -377,7 +379,8 @@
+                                               'revenger', 'connector'])]}
+                       ).encode('utf-8')
+     blobs = {(REV, 'report.md'): REPORT, (REV, 'plan.md'): PLAN,
+-             (REV, 'results.json'): results, (REV, 'spec.json'): spec}
++             (REV, 'results.json'): results, (REV, 'spec.json'): spec,
++             (REV, 'claim.md'): CLAIM}
+     listings = {(REV, 'wave'): SEAT_FILES}
+     return blobs, listings
+ 
+@@ -497,6 +500,30 @@
+                                 record={'path': 'report.md', 'rev': REV,
+                                         'span': '12 seats, 11 reports',
+                                         'printed': 12}))
++        # round 75: the three rules measured as survivors at base 21ef81e9.
++        # arm16 kills M-C (printed bound to the whole record, not the span);
++        # arm17/arm18 kill the selective _record_claim bypass on roles and
++        # attack_share. Each mutant dies on its NAMED arm and no other.
++        arm_raises('arm16-printed-span-not-record', 'printed-not-in-span',
++                   lambda: measure_row(kind='seats',
++                                       record={'path': 'claim.md', 'rev': REV,
++                                               'span': '11 reports',
++                                               'printed': 1}))
++        arm_raises('arm17-record-claim-live-on-roles', 'span-not-in-record',
++                   lambda: measure_row(kind='roles',
++                                       declaration={'form': 'spec-items',
++                                                    'path': 'spec.json',
++                                                    'rev': REV},
++                                       record={'path': 'report.md', 'rev': REV,
++                                               'span': '13 seats'}))
++        arm_raises('arm18-record-claim-live-on-attack-share',
++                   'span-not-in-record',
++                   lambda: measure_row(kind='attack_share',
++                                       named=['reviewer', 'critic',
++                                              'mutation-tester'],
++                                       floor_pct=25,
++                                       record={'path': 'report.md', 'rev': REV,
++                                               'span': '13 seats'}))
+     finally:
+         shutil.rmtree(work, ignore_errors=True)
+ 

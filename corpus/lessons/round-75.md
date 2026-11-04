@@ -183,3 +183,24 @@ frozen row; the landed manifest matches it tuple-for-tuple.
 - Round-73 routed items 3–4 (the contradicted kill-rule sentence with no
   erratum; the 22-of-23 landed table and the `19 × W04` census sentence) and
   the round-74 cold-read pointer erratum remain open.
+
+## Settlement errata (append-only)
+
+WAVE-DONE arrived after all 12 seats settled. T75W1M1's final reproduction
+supersedes the earlier sentence above saying five instrument mutants were
+each killed: **four were killed; `--doc-rev`-ignored survived 10/10** on the
+landed tool. The production implementation reads the requested revision
+correctly; its selftest lacks a CLI-level arm proving that binding. This is a
+named round-76 carry, not a five-of-five result.
+
+The plan's corrections were made while the wave was running. In particular,
+Correction 2 followed the critic's scored counterexample; calling both
+corrections "pre-data" above is too broad. The original frozen-text defects
+and the post-score tuple freeze remain admission defects for the non-author
+closure to judge; the measured improvements do not retroactively validate
+the original predicates.
+
+The C2 instrument is demonstrated, but its repertoire row was not added to
+the live Capabilities table this round. The "capability to enter" language in
+SCORECARD is intent, not an acquired capability row; no capability-acquisition
+credit is claimed.

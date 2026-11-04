@@ -1,0 +1,71 @@
+--- mc-record-bound (candidate -> mutant; single exact edit, count==1)
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-75/w1/T75W1E1/wave-reconcile-r75.py	2026-11-03 23:29:56.934888328 -0300
++++ battery/mutant-mc-record-bound.wave-reconcile-r75.py	2026-11-03 23:30:12.461832191 -0300
+@@ -182,7 +182,7 @@
+         return None
+     if not isinstance(printed, int):
+         raise SetupError('record-printed-not-int:%s' % row['id'])
+-    if not delimited(printed, rec['span']):
++    if not delimited(printed, _):
+         raise SetupError('printed-not-in-span:%s' % row['id'])
+     return printed
+ 
+--- roles-bypass (candidate -> mutant; single exact edit, count==1)
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-75/w1/T75W1E1/wave-reconcile-r75.py	2026-11-03 23:29:56.934888328 -0300
++++ battery/mutant-roles-bypass.wave-reconcile-r75.py	2026-11-03 23:30:12.470515550 -0300
+@@ -230,7 +230,6 @@
+         return ('meet' if ok else 'drift',
+                 'printed=%d files=%d' % (printed, len(files)))
+     if kind == 'roles':
+-        _record_claim(row, readers)
+         _, records = _results(row, readers)
+         measured = _agents(records)
+         decl = row.get('declaration') or {}
+--- attack-bypass (candidate -> mutant; single exact edit, count==1)
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-75/w1/T75W1E1/wave-reconcile-r75.py	2026-11-03 23:29:56.934888328 -0300
++++ battery/mutant-attack-bypass.wave-reconcile-r75.py	2026-11-03 23:30:12.479316628 -0300
+@@ -270,7 +270,6 @@
+                     json.dumps(declared, sort_keys=True),
+                     json.dumps(measured, sort_keys=True)))
+     if kind == 'attack_share':
+-        _record_claim(row, readers)
+         seats, records = _results(row, readers)
+         named = row.get('named')
+         floor = row.get('floor_pct')
+--- m2-delimited-tautology (candidate -> mutant; single exact edit, count==1)
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-75/w1/T75W1E1/wave-reconcile-r75.py	2026-11-03 23:29:56.934888328 -0300
++++ battery/mutant-m2-delimited-tautology.wave-reconcile-r75.py	2026-11-03 23:30:12.434460027 -0300
+@@ -96,7 +96,7 @@
+ 
+ 
+ def delimited(value, span):
+-    return re.search(r'(?<![0-9])%d(?![0-9])' % value, span) is not None
++    return True
+ 
+ 
+ class GitReader(object):
+--- span-rule-removed (candidate -> mutant; single exact edit, count==1)
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-75/w1/T75W1E1/wave-reconcile-r75.py	2026-11-03 23:29:56.934888328 -0300
++++ battery/mutant-span-rule-removed.wave-reconcile-r75.py	2026-11-03 23:30:12.443570545 -0300
+@@ -164,8 +164,7 @@
+         raise SetupError('unknown-root:%s:%s' % (root, row.get('id')))
+     reader = readers[root]
+     raw = reader.blob(rec['rev'], rec['path'])
+-    if rec['span'].encode('utf-8') not in raw:
+-        raise SetupError('span-not-in-record:%s:%s' % (row['id'], rec['path']))
++
+     return raw.decode('utf-8'), rec
+ 
+ 
+--- seat-reports-any-depth (candidate -> mutant; single exact edit, count==1)
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-75/w1/T75W1E1/wave-reconcile-r75.py	2026-11-03 23:29:56.934888328 -0300
++++ battery/mutant-seat-reports-any-depth.wave-reconcile-r75.py	2026-11-03 23:30:12.452972713 -0300
+@@ -224,7 +224,7 @@
+         reader, rev, path = _artifact(row, 'dir', readers)
+         prefix = path.rstrip('/') + '/'
+         files = [p for p in reader.listing(rev, path)
+-                 if p.startswith(prefix) and '/' not in p[len(prefix):]
++                 if p.startswith(prefix)
+                  and p.endswith('.md')]
+         ok = printed == len(files)
+         return ('meet' if ok else 'drift',

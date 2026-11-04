@@ -1,0 +1,97 @@
+# T75W1E4 — S006 fresh-open receipt (tameshi round 75, wave w1)
+generated_utc: 2026-11-04T02:32:15Z
+scratch: HYAKU_SCRATCH unset -> /tmp/tameshi-r75/T75W1E4 (removed after copy; all files < 50 MB)
+
+## 1 — fresh fetch
+$ curl -sS -D headers.txt -o readme.md https://raw.githubusercontent.com/BWBama85/shmutant/master/README.md
+status: HTTP/2 200 
+date:   date: Wed, 04 Nov 2026 02:28:30 GMT
+etag:   etag: "ba1136ae90ce813b56b43ecb045ce0df3194d4abe328a48c0fac78a2cddf0e4a"
+content-length: content-length: 13970
+$ wc -c readme.md -> 13970
+$ sha256sum readme.md -> 960577288ed5c5eb80f42669fcb30bf254b9a917ae2bde3a117888056ef354e2  s006-readme-fresh-head-bc80ff0e.md
+$ grep -ic 'set-cookie' headers.txt -> 0
+$ grep -Ei 'authorization|cookie|token|secret|password|bearer|credential' headers.txt
+vary: Authorization,Accept-Encoding
+$ grep -Eio 'gh[pousr]_[A-Za-z0-9]{10,}|x-oauth[^:]*|basic [A-Za-z0-9+/=]{8,}|bearer [A-Za-z0-9._-]{8,}' headers.txt
+NO_TOKEN_PATTERNS
+header_lines_with_colon: 24
+
+fallback: $ curl -sS -o readme-main.md https://raw.githubusercontent.com/BWBama85/shmutant/main/README.md
+  http=200 bytes=13970 sha=960577288ed5c5eb80f42669fcb30bf254b9a917ae2bde3a117888056ef354e2 (identical to the /master/ bytes)
+control:  $ curl -sS -o junk.md https://raw.githubusercontent.com/BWBama85/shmutant/no-such-ref-xyz/README.md -> http=404 bytes=14 '404: Not Found'
+repo API: default_branch=main head=bc80ff0e30911a5cb254c4f507774f6ba4ab5d9e (2026-10-28T06:12:17Z) stars=0 forks=0 commits=251 pushed_at=2026-10-28T13:19:06Z
+
+## 2 — quotes (verbatim, grep -n)
+$ grep -n 'the assertion that must fail' readme.md
+24:**witness**: the assertion that must fail. A harness that only checks for "red" banks three
+$ grep -n 'on its witness' readme.md
+29:| `killed` | The suite went red **on its witness**. The test detects the defect. |
+31:| `accidental` | The suite went red, but not on its witness. Caught by accident, not by the assertion that claims to cover it. |
+79:shmutant	1	row	killed	add subtracts	lib.sh	add-works	0.320	went red on its witness
+80:shmutant	1	row	killed	add multiplies	lib.sh	add-works	0.286	went red on its witness
+$ grep -n 'not on its witness' readme.md
+31:| `accidental` | The suite went red, but not on its witness. Caught by accident, not by the assertion that claims to cover it. |
+a: span 24:1-25:34 raw_tokens=20 folded_in_head=True folded_in_pinned=True
+   '**witness**: the assertion that must fail. A harness that only checks for "red" banks three very different outcomes as passes.'
+b: span 29:1-29:82 tokens=16 sentence_tokens=12 folded_in_head=True folded_in_pinned=True
+   '| `killed` | The suite went red **on its witness**. The test detects the defect. |'
+c: span 31:1-31:128 tokens=25 sentence_tokens=21 folded_in_head=True folded_in_pinned=True
+   '| `accidental` | The suite went red, but not on its witness. Caught by accident, not by the assertion that claims to cover it. |'
+section anchors: '## The three verdicts' line 21, '## How a row is run' line 88
+
+## 3 — held-page dedupe sweep (lane corpus/SOURCES.md)
+$ grep -c 'BWBama85/shmutant' /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
+1
+$ grep -c 'shmutant' /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
+1
+$ grep -n 'BWBama85/shmutant\|shmutant' /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
+17:| S006 | shmutant README (BWBama85/shmutant) — https://github.com/BWBama85/shmutant | code | A | shmutant's own bash mutation verdict semantics | README §The three verdicts and §How a row is run @ page currentOid 7eefc73010ad6342b80e3ed43915503e02c90618, fetched 2026-10-19 | a row is old literal, replacement, witness; verdicts killed vs accidental, unapplied, baseline; a non-unique literal is refused; authoritative only for its own semantics (0 stars, 239 commits at open) | mined | 2026-10-19 | 90d | corpus/knowledge/witness-scoped-kill-verdict.md, corpus/knowledge/mutation-score-semantics.md, corpus/lessons/round-12.md |
+$ awk -F'|' '$2 ~ /S006/ {print $7}' /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
+ README §The three verdicts and §How a row is run @ page currentOid 7eefc73010ad6342b80e3ed43915503e02c90618, fetched 2026-10-19 
+$ sha256sum corpus/SOURCES.md -> 5d9bd3b27d48b1cff88ec2de2ba29f31d6634e4a3a345c66826b3f3a3ed008f8  /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
+$ git show HEAD:corpus/SOURCES.md | sha256sum -> 5d9bd3b27d48b1cff88ec2de2ba29f31d6634e4a3a345c66826b3f3a3ed008f8  -
+$ git status --porcelain corpus/SOURCES.md -> '' (empty = clean)
+
+## 4 — backlog measurement (considerthese 2026-10-28 proposal 4)
+$ ls /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/*.md
+  ls: cannot access '/home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/*.md': No such file or directory
+  glob matches = 0 ; ls exit status = 2 (observed: $ ls ... ; echo $? -> exit=2)
+  (the receipt harness's captured field printed 0 because it sampled the sed stage; corrected here to the observed exit=2)
+$ find /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge -type f -name '*.md' | wc -l -> 81
+$ find /home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge -type f -name '*.md' | sed "s|/home/vgpnk/Projects/shokuknow/merge/tameshi/knowledge/||" | cut -d/ -f1 | sort | uniq -c
+       81 corpus
+exact repo-relative paths already present under corpus/knowledge/: 12
+  of those byte-identical: 0 ; differing: 12
+backlog (staged minus present): 69
+lane corpus/knowledge md at HEAD: 68
+shokuknow HEAD: 8b94c5c1 2026-10-24 Stage wave 13: every lane has a real queue, and the doctrine guard is closed
+
+## 5 — anchor drift (pinned oid vs head)
+pinned copy: $ curl -sS -o readme-pinned.md https://raw.githubusercontent.com/BWBama85/shmutant/7eefc73010ad6342b80e3ed43915503e02c90618/README.md
+  status: HTTP/2 200 
+ bytes=12117 sha=dc0051c79ab792d0f4e1b19404ed661b4c94a8e54016595aeae853d5410178a3
+  pinned commit date=2026-10-19T00:35:42Z msg=fix: guard each freeze against its shell's death, and fail a target read on any failed stage (#50)
+  compare 7eefc730...bc80ff0e: status=ahead ahead_by=12 behind_by=0 total_commits=12 files_changed=13; README.md +30/-10
+  anchor's '239 commits at open': head commits 251 - 12 ahead = 239 (consistent)
+  first 174 lines of both READMEs folded identical: yes
+  lane declaration snapshot: 960577288ed5c5eb80f42669fcb30bf254b9a917ae2bde3a117888056ef354e2  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-75/sources/s006-shmutant-readme.md
+  fresh snapshot == lane declaration snapshot: yes
+
+## 6 — the 12 path-present staged files are older drafts
+$ for f in <staged md present in lane>: grep -m1 '^verified-at:' <staged> and <lane>
+  flaky-aware-verdict-evidence.md staged=2026-10-23 lane=2026-10-25
+  pit-outcome-vocabulary.md staged=2026-10-23 lane=2026-10-25
+  change-aware-resweep-cadence.md staged=2026-10-23 lane=2026-10-27
+  llm-mutant-equivalence-cost.md staged=2026-10-23 lane=2026-10-30
+  delta-debugging-minimization-contract.md staged=2026-10-23 lane=2026-10-26
+  r5-undetected-flaky-failures.md staged=2026-10-23 lane=2026-10-25;
+  r6-flaky-failures-cluster.md staged=2026-10-23 lane=2026-10-25;
+  r8-gtest-order-and-seed.md staged=2026-10-24 lane=2026-10-25
+  r8-gtest-primer-independence.md staged=2026-10-24 lane=2026-10-25
+  r8-flakiness-not-static.md staged=2026-10-24 lane=2026-10-25
+  r8-flaky-cost-baseline.md staged=2026-10-24 lane=2026-10-25
+  r9-false-red-rate.md staged=2026-10-24 lane=2026-10-25;
+lane_verified_at_later=12 equal=0 staged_later=0
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin log --oneline -1 -- corpus/knowledge/flaky-aware-verdict-evidence.md
+8b0e15d2 round-47: content revision — rows, entries, v2 counters, records, QUALITY 91-93, wave-1 evidence

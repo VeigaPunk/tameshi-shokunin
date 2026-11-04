@@ -1,0 +1,23 @@
+Commands run from the lane root using python3 -I -X utf8.
+
+$ tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --doc-rev a9e6eef4
+exit=0
+SELFSTATE: rows=17 match=16 stale=1 unexpected=0
+
+$ tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --doc-rev 4e610748
+exit=0
+SELFSTATE: rows=17 match=16 stale=1 unexpected=0
+
+$ tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --doc-rev 21ef81e9
+exit=1
+SELFSTATE: rows=17 match=9 stale=8 unexpected=7
+
+$ .ufo/waves/round-75/w1/T75W1M1/receipts/lnd_e_doc_rev_ignored.py --repo . --manifest tools/selfstate-freshness.json --doc-rev 21ef81e9
+exit=0
+SELFSTATE: rows=17 match=16 stale=1 unexpected=0
+
+Committed and worktree tool SHA256 values match:
+selfstate-freshness.py 3b09676340fc63007d3a1e5de3e54471feddb22024a2f40bd4b3b469f560eba6
+wave-reconcile.py bf10c0e490e78e3f98fdb580442916e685968a94ff8c3fc977dead4b74a7f791
+
+The landed selftest is green at 10/10. The doc-rev-ignored mutant remains green at 10/10. Four other C2 mutants fail their named arms. C1 named mutations fail only arm16/17/18 respectively. Scratch removed.

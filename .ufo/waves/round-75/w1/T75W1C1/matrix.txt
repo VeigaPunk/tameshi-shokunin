@@ -1,0 +1,24 @@
+# C1 frozen-fixture cross-kill matrix (seat T75W1C1, read-only scratch)
+# Authors: arms appended to `git show 21ef81e9:tools/wave-reconcile.py` exactly as
+# plans/round-75.plan.md §R75-C1 specifies (arm16/17/18 fixtures + SELFTEST_ARMS=18).
+# Mutants are the plan-named single edits applied to the 18-arm bytes (count==1 asserted).
+
+## A. arms18-plan-as-frozen.py (span-not-in-record fixtures, per the plan)
+$ python3 -I -X utf8 arms18-plan-as-frozen.py --selftest
+pristine (18 arms)                 exit=0 WAVE_RECONCILE_SELFTEST: 18/18 pass FAILS=[]
+m18-mc-record-bound.py             exit=1 WAVE_RECONCILE_SELFTEST: 17/18 pass FAILS=['arm16-printed-span-not-record']
+m18-roles-bypass.py                exit=1 WAVE_RECONCILE_SELFTEST: 17/18 pass FAILS=['arm17-record-claim-live-on-roles']
+m18-attack-bypass.py               exit=1 WAVE_RECONCILE_SELFTEST: 17/18 pass FAILS=['arm18-record-claim-live-on-attack-share']
+m18-m2-delimited-tautology.py      exit=1 WAVE_RECONCILE_SELFTEST: 16/18 pass FAILS=['arm13-printed-undelimited-refused', 'arm16-printed-span-not-record']
+m18-span-rule-removed.py           exit=1 WAVE_RECONCILE_SELFTEST: 15/18 pass FAILS=['arm14-span-not-in-record-refused', 'arm17-record-claim-live-on-roles', 'arm18-record-claim-live-on-attack-share']
+m18-seatreports-any-depth.py       exit=1 WAVE_RECONCILE_SELFTEST: 17/18 pass FAILS=['arm15-seatreports-top-level-only']
+
+## B. arms18-selective-variant.py (arms 17/18 refuse on record-missing-span instead)
+$ python3 -I -X utf8 arms18-selective-variant.py --selftest
+pristine (18 arms, variant B)      exit=0 WAVE_RECONCILE_SELFTEST: 18/18 pass FAILS=[]
+m18b-mc.py                         exit=1 WAVE_RECONCILE_SELFTEST: 17/18 pass FAILS=['arm16-printed-span-not-record']
+m18b-roles.py                      exit=1 WAVE_RECONCILE_SELFTEST: 17/18 pass FAILS=['arm17-record-claim-live-on-roles']
+m18b-attack.py                     exit=1 WAVE_RECONCILE_SELFTEST: 17/18 pass FAILS=['arm18-record-claim-live-on-attack-share']
+m18b-m2.py                         exit=1 WAVE_RECONCILE_SELFTEST: 16/18 pass FAILS=['arm13-printed-undelimited-refused', 'arm16-printed-span-not-record']
+m18b-span.py                       exit=1 WAVE_RECONCILE_SELFTEST: 17/18 pass FAILS=['arm14-span-not-in-record-refused']
+m18b-seat.py                       exit=1 WAVE_RECONCILE_SELFTEST: 17/18 pass FAILS=['arm15-seatreports-top-level-only']
