@@ -54,3 +54,7 @@
 @defect head-guard-removed | the pinned fixture's HEAD != rev precondition is deleted, so a degenerate fixture is measured silently (round-78 wave seat T78W1M1 `w2-head-guard-removed` survived 21/21); arm23-head-equals-rev-refused must kill it
 @old     if head == rev:\n        raise SetupError('git-fixture-head-equals-rev')
 @new
+
+@defect record-unknown-root-check-removed | `_record_span`'s unknown-root guard is deleted, so a row whose record names an undeclared reader root reads the default reader silently (round-79 scout T79W1SC2 W7 `wr-record-unknown-root-check-removed` survived 23/23); arm24-record-unknown-root-refused must kill it
+@old     root = rec.get('root', 'lane')\n    if root not in readers:\n        raise SetupError('unknown-root:%s:%s' % (root, row.get('id')))
+@new     root = rec.get('root', 'lane')

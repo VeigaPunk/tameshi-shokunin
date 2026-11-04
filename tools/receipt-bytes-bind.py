@@ -21,25 +21,35 @@ The population is declared, never inferred:
   * an optional append-only correction `# measured_bytes_rev: <rev>` names the
     commit whose bytes carry the recorded sha when the measured revision does
     not (the receipt was produced from a worktree whose bytes landed later).
+  * a DESIGN receipt carries `# design_base: <rev>`, `# design_tool: <path>`,
+    `# design_tool_sha256: <64 hex>` and the marker
+    `# measured_bytes: worktree (uncommitted at design_base)` — one declared
+    block, never mixed with the measured triple. Its sha certifies bytes that
+    were never committed, so it is a measured `design` state: refusing the
+    block blind would lose the declaration, and binding it to a blob would be
+    false. A design block without the marker, or with an unresolvable
+    `design_base`, is refused or unbound (round-79 closure defect 4).
 
 A receipt measures one of:
 
   bound      sha256(`git cat-file blob <measured_rev>:<tool>`) == tool_sha256
   corrected  the measured-rev bytes differ, and exactly one
              `measured_bytes_rev` resolves and its bytes carry the sha
+  design     a declared design-phase candidate; `design_base` resolves
   unbound    neither, with the reason in `detail` (tool-absent,
              rev-unresolvable, bytes-rev-absent, bytes-rev-unresolvable,
-             bytes-rev-mismatch)
+             bytes-rev-mismatch, design-base-unresolvable)
 
 A `measured_bytes_rev` that does not carry the recorded sha makes the receipt
 unbound even when `measured_rev` happens to match: a false correction line is
-never a pass.
+never a pass. A file carrying both blocks is refused (`receipt-header-mixed`).
 
 Verdict lines:
 
   RECEIPT_BIND_ROW <path> measured_rev=<r12> tool=<path> recorded=<sha12>
-                   carrying=<rev12|-> state=bound|corrected|unbound detail=<s>
-  RECEIPT_BIND: receipts=N bound=B corrected=C unbound=U
+                   carrying=<rev12|-> state=bound|corrected|design|unbound
+                   detail=<s>
+  RECEIPT_BIND: receipts=N bound=B corrected=C design=D unbound=U
 
 Exit: 0 every receipt bound or corrected; 1 at least one unbound; 2 setup
 refusal before any row effect (zero population, a duplicate or malformed
@@ -61,12 +71,19 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 10
+SELFTEST_ARMS = 13
 REV_RE = re.compile(r'^# measured_rev:[ \t]*([0-9a-f]{7,40})[ \t]*$', re.M)
 BYTES_REV_RE = re.compile(r'^# measured_bytes_rev:[ \t]*([0-9a-f]{7,40})[ \t]*$',
                           re.M)
 TOOL_RE = re.compile(r'^# tool:[ \t]*(\S+)[ \t]*$', re.M)
 SHA_RE = re.compile(r'^# tool_sha256:[ \t]*([0-9a-f]{64})[ \t]*$', re.M)
+DESIGN_BASE_RE = re.compile(r'^# design_base:[ \t]*([0-9a-f]{7,40})[ \t]*$', re.M)
+DESIGN_TOOL_RE = re.compile(r'^# design_tool:[ \t]*(\S+)[ \t]*$', re.M)
+DESIGN_SHA_RE = re.compile(r'^# design_tool_sha256:[ \t]*([0-9a-f]{64})[ \t]*$',
+                           re.M)
+DESIGN_MARKER_RE = re.compile(
+    r'^# measured_bytes:[ \t]*worktree \(uncommitted at design_base\)'
+    r'[ \t]*$', re.M)
 MAX_RECEIPT_BYTES = 8 * 1024 * 1024
 HEAD_BYTES = 64 * 1024
 
@@ -108,14 +125,23 @@ def _one(pattern, text):
 def parse_receipt(path):
     """Return the receipt's header block, or None when the file is not a
     receipt (carries no complete header triple). Raises SetupError on a
-    duplicate header: an ambiguous block cannot be measured."""
+    duplicate or mixed header: an ambiguous block cannot be measured.
+
+    Two declared blocks exist. The measured block (`measured_rev` + `tool` +
+    `tool_sha256`) names committed bytes. The design block (`design_base` +
+    `design_tool` + `design_tool_sha256` + the `measured_bytes: worktree
+    (uncommitted at design_base)` marker) names a design-phase candidate whose
+    bytes were never committed; its sha cannot be bound to a blob and is
+    therefore a declared `design` state, never a silent pass (round-79 closure
+    defect 4: seven such receipts were outside the recognised population)."""
     try:
         with open(path, 'rb') as fh:
             head = fh.read(HEAD_BYTES)
             head_text = head.decode('utf-8', 'replace')
-            if not (REV_RE.search(head_text) or TOOL_RE.search(head_text)
-                    or SHA_RE.search(head_text)
-                    or BYTES_REV_RE.search(head_text)):
+            patterns = (REV_RE, TOOL_RE, SHA_RE, BYTES_REV_RE,
+                        DESIGN_BASE_RE, DESIGN_TOOL_RE, DESIGN_SHA_RE,
+                        DESIGN_MARKER_RE)
+            if not any(p.search(head_text) for p in patterns):
                 return None
             rest = fh.read(MAX_RECEIPT_BYTES + 1 - len(head))
     except OSError as exc:
@@ -125,8 +151,38 @@ def parse_receipt(path):
     text = head_text + rest.decode('utf-8', 'replace')
     revs, tools, shas, brevs = (_one(REV_RE, text), _one(TOOL_RE, text),
                                 _one(SHA_RE, text), _one(BYTES_REV_RE, text))
-    if not revs and not tools and not shas:
+    drevs, dtools, dshas, dmarks = (_one(DESIGN_BASE_RE, text),
+                                    _one(DESIGN_TOOL_RE, text),
+                                    _one(DESIGN_SHA_RE, text),
+                                    _one(DESIGN_MARKER_RE, text))
+    normal = bool(revs or tools or shas or brevs)
+    design = bool(drevs or dtools or dshas or dmarks)
+    if not normal and not design:
         return None
+    if normal and design:
+        raise SetupError('receipt-header-mixed:%s' % path)
+    if design:
+        if not (drevs and dtools and dshas):
+            raise SetupError('design-header-incomplete:%s' % path)
+        if len(dmarks) != 1:
+            raise SetupError('design-marker-absent:%s' % path)
+        for name, values in (('design_base', drevs),
+                             ('design_tool', dtools),
+                             ('design_tool_sha256', dshas)):
+            if len(values) > 1:
+                raise SetupError('receipt-header-duplicate:%s:%s'
+                                 % (path, name))
+            raw = len(re.findall(r'^# %s:' % name, text, re.M))
+            if raw != len(values):
+                raise SetupError('receipt-header-malformed:%s:%s'
+                                 % (path, name))
+        tool = dtools[0]
+        if tool.startswith('/') or '..' in tool.split('/'):
+            raise SetupError('tool-path-not-repo-relative:%s:%s'
+                             % (path, tool))
+        return {'path': path, 'kind': 'design',
+                'measured_rev': drevs[0], 'tool': tool,
+                'tool_sha256': dshas[0], 'design': True}
     if not (revs and tools and shas):
         raise SetupError('receipt-header-incomplete:%s' % path)
     for name, values in (('measured_rev', revs), ('tool', tools),
@@ -146,13 +202,18 @@ def parse_receipt(path):
     tool = tools[0]
     if tool.startswith('/') or '..' in tool.split('/'):
         raise SetupError('tool-path-not-repo-relative:%s:%s' % (path, tool))
-    return {'path': path, 'measured_rev': revs[0], 'tool': tool,
-            'tool_sha256': shas[0],
-            'measured_bytes_rev': brevs[0] if brevs else None}
+    return {'path': path, 'kind': 'measured', 'measured_rev': revs[0],
+            'tool': tool, 'tool_sha256': shas[0],
+            'measured_bytes_rev': brevs[0] if brevs else None,
+            'design': False}
 
 
 def measure_receipt(repo, rec):
     """Return (state, carrying_rev, detail) for one parsed receipt."""
+    if rec.get('design'):
+        if resolve_commit(repo, rec['measured_rev']) is None:
+            return 'unbound', None, 'design-base-unresolvable'
+        return 'design', None, 'uncommitted-design-candidate'
     measured = resolve_commit(repo, rec['measured_rev'])
     if measured is None:
         return 'unbound', None, 'rev-unresolvable'
@@ -209,7 +270,8 @@ def sweep(repo, root, out=sys.stdout):
     receipts = collect(root)
     if not receipts:
         raise SetupError('zero-receipts:%s' % root)
-    counts = {'bound': 0, 'corrected': 0, 'unbound': 0}
+    counts = {'bound': 0, 'corrected': 0, 'design': 0,
+              'unbound': 0}
     for rec in receipts:
         state, carrying, detail = measure_receipt(repo, rec)
         counts[state] += 1
@@ -219,9 +281,10 @@ def sweep(repo, root, out=sys.stdout):
             % (rec['path'], rec['measured_rev'][:12], rec['tool'],
                rec['tool_sha256'][:12],
                (carrying or '-')[:12], state, detail))
-    out.write('RECEIPT_BIND: receipts=%d bound=%d corrected=%d unbound=%d\n'
+    out.write('RECEIPT_BIND: receipts=%d bound=%d corrected=%d design=%d '
+              'unbound=%d\n'
               % (len(receipts), counts['bound'], counts['corrected'],
-                 counts['unbound']))
+                 counts['design'], counts['unbound']))
     return 0 if counts['unbound'] == 0 else 1
 
 
@@ -297,6 +360,20 @@ def selftest(out=sys.stdout):
                 fh.write('\n'.join(lines) + '\n' + extra)
             return path
 
+        def design_receipt(name, base, sha, tool='tools/toy.py',
+                           marker=True):
+            path = os.path.join(work, name)
+            lines = ['# receipt: %s' % name,
+                     '# design_base: %s' % base,
+                     '# design_tool: %s' % tool,
+                     '# design_tool_sha256: %s' % sha]
+            if marker:
+                lines.append('# measured_bytes: worktree '
+                             '(uncommitted at design_base)')
+            with open(path, 'w', newline='\n') as fh:
+                fh.write('\n'.join(lines) + '\n')
+            return path
+
         def run(root):
             import io
             buf = io.StringIO()
@@ -313,7 +390,8 @@ def selftest(out=sys.stdout):
         receipt(os.path.join(root, 'bound.txt'), rev1, sha1)
         rc, txt, err = run(root)
         arm('ARM1_bound', rc == 0 and 'state=bound' in txt
-            and 'RECEIPT_BIND: receipts=1 bound=1 corrected=0 unbound=0' in txt,
+            and 'RECEIPT_BIND: receipts=1 bound=1 corrected=0 design=0 '
+                'unbound=0' in txt,
             'rc=%r %r %r' % (rc, txt, err))
 
         # arm 2: the measured rev's bytes differ, no correction -> unbound
@@ -333,7 +411,7 @@ def selftest(out=sys.stdout):
         rc, txt, err = run(root)
         arm('ARM3_corrected', rc == 0 and 'state=corrected' in txt
             and 'detail=bytes-rev-carries' in txt
-            and 'corrected=1 unbound=0' in txt,
+            and 'corrected=1 design=0 unbound=0' in txt,
             'rc=%r %r %r' % (rc, txt, err))
 
         # arm 4: a correction that names the wrong revision -> unbound
@@ -431,6 +509,45 @@ def selftest(out=sys.stdout):
             and 'tool-path-not-repo-relative' in err10b,
             'rc=%r %r %r | absolute rc=%r %r %r'
             % (rc, txt, err, rc10b, txt10b, err10b))
+
+        # arm 11 (round 80): a declared design receipt is MEASURED as
+        # `design`, not invisible. Round-79's control receipts carried the
+        # design block while the instrument recognised only the measured one,
+        # so the class it targets (a sha that exists in no blob) swept clean
+        # by being outside the population (closure defect 4).
+        root = os.path.join(work, 'pop11')
+        os.makedirs(root)
+        design_receipt(os.path.join(root, 'design.txt'), rev1, sha1)
+        rc, txt, err = run(root)
+        arm('ARM11_design_receipt_measured', rc == 0
+            and 'state=design' in txt
+            and 'detail=uncommitted-design-candidate' in txt
+            and 'RECEIPT_BIND: receipts=1 bound=0 corrected=0 design=1 '
+                'unbound=0' in txt,
+            'rc=%r %r %r' % (rc, txt, err))
+
+        # arm 12 (round 80): a design block without the uncommitted marker is
+        # an unbound declaration, never a design pass
+        root = os.path.join(work, 'pop12')
+        os.makedirs(root)
+        design_receipt(os.path.join(root, 'naked.txt'), rev1, sha1,
+                       marker=False)
+        rc, txt, err = run(root)
+        arm('ARM12_design_marker_absent_refused', rc == 2
+            and 'RECEIPT_BIND:' not in txt
+            and 'design-marker-absent' in err,
+            'rc=%r %r %r' % (rc, txt, err))
+
+        # arm 13 (round 80): a design base the repo does not carry is unbound
+        # by name, never design
+        root = os.path.join(work, 'pop13')
+        os.makedirs(root)
+        design_receipt(os.path.join(root, 'ghostbase.txt'), '0' * 40, sha1)
+        rc, txt, err = run(root)
+        arm('ARM13_design_base_unresolvable', rc == 1
+            and 'state=unbound' in txt
+            and 'detail=design-base-unresolvable' in txt,
+            'rc=%r %r %r' % (rc, txt, err))
     finally:
         shutil.rmtree(work, ignore_errors=True)
 

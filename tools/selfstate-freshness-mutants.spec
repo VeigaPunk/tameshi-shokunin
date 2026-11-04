@@ -1,11 +1,27 @@
-# round 79 mutant battery for tools/selfstate-freshness.py (R79-C3).
-# The one defect is the round-78 wave's surviving `s3-python-isolation-dropped`
-# mutant (T78W1M1): the python tuple loses `-I`, so every python-defaulted row
-# runs without isolated mode and no arm noticed (13/13 survived). arm14
-# (ARM14_python_isolation_tuple) must kill it and no other arm may change.
+# mutant battery for tools/selfstate-freshness.py.
+# Defect 1 (round 79): the round-78 wave's `s3-python-isolation-dropped`
+# survivor (T78W1M1) — the python tuple loses `-I` (killed by arm14; arm17
+# also sees it, because a tuple without `-I` cannot reach UTF-8 mode under a
+# UTF-8 locale either — disclosed round 80).
+# Defects 2-4 (round 80, R80-C2): the three survivors the round-79 wave named
+# for this tool — `ss-bom-strip` (T79W1SC2 S1), `ss-cache-key-drops-argv`
+# (T79W1SC2 S4) and `python-utf8-dropped` (T79W1M1) — each killed by exactly
+# one new arm: arm15, arm16, arm17.
 # Run: bash tools/mutate-and-run.sh --target tools/selfstate-freshness.py \
 #        --defects tools/selfstate-freshness-mutants.spec \
 #        --suite 'python3 -I -X utf8 "$MUTANT" --selftest' --workdir <dir>
+
+@defect ss-bom-strip | the BOM guard is deleted, so a BOM-prefixed doc is decoded as text (round-79 scout T79W1SC2 S1 `ss-bom-strip` survived 14/14); arm15-ARM15_decode_refusals must kill it
+@old     if raw.startswith(BOM):\n        raise SetupError('bom-present:%s' % label)
+@new     pass
+
+@defect ss-cache-key-drops-argv | the row cache key loses argv, so two rows on one path/rev with different argv share the first row's stdout (round-79 scout T79W1SC2 S4 `ss-cache-key-drops-argv` survived 14/14); arm16-ARM16_cache_key_keeps_argv must kill it
+@old     key = (rev, path, argv, interp)
+@new     key = (rev, path, interp)
+
+@defect python-utf8-dropped | the python tuple loses `-X utf8`, so python rows run in the locale encoding instead of UTF-8 mode (round-79 mutation-tester T79W1M1 `python-utf8-dropped` survived 14/14); arm17-ARM17_python_utf8_mode_tuple must kill it
+@old     'python': ('python3', '-I', '-X', 'utf8'),
+@new     'python': ('python3', '-I'),
 
 @defect python-isolation-dropped | the python tuple loses `-I`, so python rows run without isolated mode (round-78 wave seat T78W1M1 `s3-python-isolation-dropped` survived 13/13); arm14-ARM14_python_isolation_tuple must kill it
 @old     'python': ('python3', '-I', '-X', 'utf8'),

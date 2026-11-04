@@ -22,7 +22,7 @@ Four row kinds. Each binds a RECORD claim to an ARTIFACT re-derivation:
   attack_share   the share of seats whose agent is in the row's named attack
                  set, measured against the row's floor percentage.
 
-Binding rules (twenty-three arms: seats-meet/mismatch, seat_reports-drift,
+Binding rules (twenty-four arms: seats-meet/mismatch, seat_reports-drift,
 roles-spec/text-drift, attack-below-floor/at-floor, five setup refusals, - from
 round 74 - arm13 delimited-token, arm14 record-span-substring and arm15
 seat_reports-top-level-only, the three rules round 73 carried as arm gaps and
@@ -78,7 +78,7 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 23
+SELFTEST_ARMS = 24
 BOM = b'\xef\xbb\xbf'
 ATTACK_NOTE = ('named attack roles are the row\'s own declaration; the policy '
                'floor is the row\'s floor_pct')
@@ -764,6 +764,29 @@ def selftest():
             finally:
                 shutil.rmtree(fix, ignore_errors=True)
         arm('arm23-head-equals-rev-refused', 'meet', _head_guard_arm)
+
+        # arm24 (round 80): a row whose artifact names an undeclared reader
+        # root is refused BY NAME. The round-79 scout's
+        # `wr-record-unknown-root-check-removed` mutant (the guard deleted)
+        # survived 23/23 because no fixture ever set `record.root`; the
+        # diagnostic is the assertion, not any SetupError.
+        def _unknown_root_arm():
+            # arm_raises' semantics, widened so a DELETED guard (KeyError from
+            # an undeclared reader) fails the arm instead of crashing the suite
+            try:
+                state = measure_row(
+                    kind='seats',
+                    record={'path': 'report.md', 'rev': REV,
+                            'span': '12 seats', 'printed': 12,
+                            'root': 'ghost'})
+            except SetupError as exc:
+                state = 'setup:' + str(exc)
+            except Exception as exc:
+                state = 'raised:%s' % type(exc).__name__
+            results.append(('arm24-record-unknown-root-refused',
+                            state.startswith('setup:unknown-root:'), state,
+                            'setup:unknown-root:'))
+        _unknown_root_arm()
     finally:
         shutil.rmtree(work, ignore_errors=True)
 

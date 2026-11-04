@@ -1,0 +1,89 @@
+{
+ "schema": "tameshi-registry-figure-bind-v1",
+ "rows": [
+  {
+   "id": "skill-wave-reconcile",
+   "surface": "doc",
+   "doc": "SKILL.md",
+   "row_name": "wave-record reconciliation",
+   "figure": "WAVE_RECONCILE_SELFTEST: [0-9]+/[0-9]+ pass",
+   "instrument": {
+    "argv": ["python3", "-I", "-X", "utf8", "tools/wave-reconcile.py", "--selftest"],
+    "timeout_s": 300
+   },
+   "expect": "match"
+  },
+  {
+   "id": "skill-selfstate",
+   "surface": "doc",
+   "doc": "SKILL.md",
+   "row_name": "self-state freshness check",
+   "figure": "SELFSTATE_SELFTEST: [0-9]+/[0-9]+ pass",
+   "instrument": {
+    "argv": ["python3", "-I", "-X", "utf8", "tools/selfstate-freshness.py", "--selftest"],
+    "timeout_s": 300
+   },
+   "expect": "match"
+  },
+  {
+   "id": "skill-receipt-bind",
+   "surface": "doc",
+   "doc": "SKILL.md",
+   "row_name": "receipt-bytes binding sweep",
+   "figure": "RECEIPT_BIND_SELFTEST: [0-9]+/[0-9]+ pass",
+   "instrument": {
+    "argv": ["python3", "-I", "-X", "utf8", "tools/receipt-bytes-bind.py", "--selftest"],
+    "timeout_s": 300
+   },
+   "expect": "match"
+  },
+  {
+   "id": "registry-wave-reconcile",
+   "surface": "registry-json",
+   "registry": "tools/registry.json",
+   "row_name": "wave-reconcile-selftest",
+   "figure": "WAVE_RECONCILE_SELFTEST: [0-9]+/[0-9]+ pass",
+   "instrument": {
+    "argv": ["python3", "-I", "-X", "utf8", "tools/wave-reconcile.py", "--selftest"],
+    "timeout_s": 300
+   },
+   "expect": "match"
+  },
+  {
+   "id": "registry-selfstate",
+   "surface": "registry-json",
+   "registry": "tools/registry.json",
+   "row_name": "selfstate-freshness-selftest",
+   "figure": "SELFSTATE_SELFTEST: [0-9]+/[0-9]+ pass",
+   "instrument": {
+    "argv": ["python3", "-I", "-X", "utf8", "tools/selfstate-freshness.py", "--selftest"],
+    "timeout_s": 300
+   },
+   "expect": "match"
+  },
+  {
+   "id": "registry-selfstate-sweep",
+   "surface": "registry-json",
+   "registry": "tools/registry.json",
+   "row_name": "selfstate-freshness-sweep",
+   "figure": "SELFSTATE: rows=[0-9]+ match=[0-9]+ stale=[0-9]+ unexpected=[0-9]+",
+   "instrument": {
+    "argv": ["python3", "-I", "-X", "utf8", "tools/selfstate-freshness.py", "--repo", ".", "--manifest", "tools/selfstate-freshness.json"],
+    "timeout_s": 600
+   },
+   "expect": "match"
+  },
+  {
+   "id": "registry-receipt-bind",
+   "surface": "registry-json",
+   "registry": "tools/registry.json",
+   "row_name": "receipt-bytes-selftest",
+   "figure": "RECEIPT_BIND_SELFTEST: [0-9]+/[0-9]+ pass",
+   "instrument": {
+    "argv": ["python3", "-I", "-X", "utf8", "tools/receipt-bytes-bind.py", "--selftest"],
+    "timeout_s": 300
+   },
+   "expect": "match"
+  }
+ ]
+}
