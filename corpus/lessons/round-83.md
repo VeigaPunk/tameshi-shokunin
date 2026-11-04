@@ -48,3 +48,43 @@ C1: the bound live sweep reads26/24/2/0; narrowed monitor deletion refused witho
 C2: live9/9, drift9/8/1 exit1 versus base7/7 exit0. New arms are A12 drift with matching sibling and A13 registry-name absent, not the duplicate-name description the plan mistakenly repeats (duplicate remains A5). The predicate's measured figures remain the same.
 
 C3: real symlink refusal improvement, but frozen numerical target missed (actual population2). No retrospective target change. lstat/open race, parent aliases and symlink directories remain explicit limits.
+
+## Historical replay receipt (round83 execution)
+
+`.ufo/evidence/round-83/final/r82-regular-file-full-replay.txt` replays
+`db-regular-file-check-removed` against the exact b37860b7 tool. Exit1;
+the full observed FAIL set is A2_tree_paths_open,
+A7_expect_open_standing_arm, A10_multi_row_summary,
+A12_regular_file_boundary, A13_manifest_rev_binding. This supplies the
+previously omitted arms as a new run, not as invented round82 output.
+
+## Settled wave findings
+
+WAVE-DONE received from Main:13 seats settled,8 substantive reports,5
+empty outputs without reports/status/error metadata (SC1,SC2,S1,R1,CN1).
+These five earn no verification credit and are not replaced. The connector
+was dispatched but delivered no overlap scan; no sibling knowledge absorbed.
+
+E1/E2 reproduced C1/C2; E3 confirms C3's two-entry mismatch and parent aliases.
+E4 ran eight bounded no-harm sweeps at bf5e0e01, all exit0 after supplying the
+missing fleet root for wave-reconcile (initial setup exit2 is retained).
+M1 killed four guard mutants on pristine/restored passing detectors, with
+full singleton FAIL sets. Its first overstrict fixture harness was
+inconclusive, not a kill. Old battery compatibility was static, not replayed.
+Critic C1 correctly separates C2's added manifest coverage from detection
+code: the old engine with the new9-row manifest catches drift too. No claim
+that newly written Python is necessary for that detection is retained.
+
+Sentinel SN1 demonstrates the final-newline and cwd-decoy gaps at the candidate.
+The final-newline gap was repaired with fullmatch plus ARM24 extension
+(579cbe82). Cwd-decoy repair c374699c binds the worktree read to the repo root
+and refuses non-relative manifest spellings. Neither changes a frozen target.
+Reviewer R2 deterministically schedules a path swap between lstat and open:
+both receipt tools can still read a symlink target under that schedule.
+C3 is therefore also unsupported as an unconditional never-follow claim,
+independently of the numerical miss. This is a demonstrated remaining defect,
+not merely an inferred limitation; no race-safe boundary is claimed.
+SN1 confirms defect-bind array/object ids still traceback exit1; that existing
+debt is not fixed by selfstate's separate id guard. Record it for next round.
+
+Independent non-author discernment remains pending, not supplied by these seats.

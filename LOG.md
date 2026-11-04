@@ -4541,3 +4541,40 @@ unbound=0`, `ADDRANGE: rows=11 met=11`, `ARM_LIVENESS: rows=9 live=9`,
 `MUTATE_SELFTEST: 107/107`). The two declared limits stand and are named in the
 SCORECARD: the binding proves bytes at a caller-named revision, not authorship;
 and a deleted self-state row is not caught by the two C2 commands (round 83).
+
+## Round 83 (2026-11-04) — bound self-state population, measured registry copies, receipt symlink boundary
+
+Trigger: round82 non-author closure §6 and SCORECARD planned round83.
+Declaration a150a50c33dc45627f49309eb6d719a08edd1092 freezes three distinct-axis
+claims and measured do-nothing controls. Base c63467bb: removing the
+population-monitor row certifies25 rows; newline id forges a green summary;
+registry drift remains invisible in7 rows; symlink and regular receipts both
+certify. See `.ufo/evidence/round-83/controls/` and
+`plans/round-83.plan.md`.
+
+Action: b654c009 lands selfstate manifest-rev binding/id alphabet, two new
+registry binding rows, and named receipt symlink refusal. bf5e0e01 settles
+three instrument pins. 579cbe82 fixes final-newline acceptance (fullmatch)
+and the receipt registry's copied CASE token. 05d9c136 settles the changed
+selfstate pin, curates S289/S291, and lands sourced knowledge, criteria84–86,
+round82 corrections and mistake lesson.
+
+Outcome measured at05d9c136: selfstate26/24/2/0 exit0, pin audit26 settled
+exit0, registry9/9 exit0; narrowing/idforge each refused exit2 without
+verdict lines, drift exit1 with one stale row. Suites24/24,13/13,14/14,20/20.
+Receipts `.ufo/evidence/round-83/final/{c1-bound,c1-narrow,c1-idforge,c2-live,c2-drift,c3-fixture,c3-gate-fixture}.txt`.
+The real symlink improvement misses C3's frozen count: actual2 entries
+(bound1/unbound1), not declared1. Honest stop retained; no retrospective
+target change, no promotion or new capability. The wave's bounded checks
+are additional lane-owned evidence, not outside admission.
+
+Sources: S289/S291 reopened; only used-by extended. Reader snapshots and
+lesson Gate hold located quotes. Census170 rows, exit0; no assimilation.
+Round82 corrections: lesson `Round-82 corrections of record`; full historical
+mutant replay at b37860b7 now observes A2/A7/A10/A12/A13, exit1
+(`final/r82-regular-file-full-replay.txt`). Duplicate census replay isolates
+E04/exit1 (`final/census-duplicate-replay.txt`); never backdated.
+
+Falsifiable next work remains: directory-alias/race boundaries in receipts,
+defect-bind unhashable-id debt, object-only conversion comparison, and the
+design-orphan alarm. These are named limits, not this round's unlanded claims.

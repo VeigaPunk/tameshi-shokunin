@@ -5297,3 +5297,30 @@ connector); refuse an unhashable/line-breaking row `id` (the wave's sentinel S2)
 and needs an object-only comparison before it is claimed; the C3 limits
 (module-level edits, the two-edit rewrite) stay declared and unclosed; the
 design-orphan alarm remains unbuilt and named.
+
+## Round 83 — frozen claims and measured verdicts
+
+Declaration a150a50c33dc45627f49309eb6d719a08edd1092; base
+c63467bb5f5842fb63f2b24e6361ab6666a29cab. One v1 wave13 seats planned;
+L1 planner,4 executor,2 scout,scribe,2 reviewer,critic,mutation-tester,
+sentinel,connector. Attack4/13=30.8%, excluding sentinel. Calibration8 is the
+lowest scored non-retired axis; worked by C1. No capability entered.
+
+| Claim / axis | Before → after | Verdict / evidence | Command | Measured commit |
+|---|---|---|---|---|
+| R83-C1 calibration | monitor-row deletion certifies25 rows, newline id forges summary → binding refuses narrowing and alphabet refuses forge, each exit2/no verdict; full manifest26/24/2/0 exit0 | verifies measured predicate; `final/c1-bound.txt`, `c1-narrow.txt`, `c1-idforge.txt`; suite24/24 | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --manifest-rev HEAD`; fixture c1/run.sh | 05d9c136a3664db9a07689822bf011ddbdb4c95b |
+| R83-C2 freshness | registry7/7 ignores defect-bind drift → live9/9 and planted drift9/8/1 exit1 | verifies measured predicate; `final/c2-live.txt`, `c2-drift.txt`; suite13/13 | `python3 -I -X utf8 tools/registry-figure-bind.py --repo .`; fixture c2/run.sh | 05d9c136a3664db9a07689822bf011ddbdb4c95b |
+| R83-C3 coverage | link+regular both certify (2 bound) → link unbound, regular bound; gate NOT_REGULAR+regular PASS | honest-stop: frozen count1 missed; actual receipts2 bound1 unbound1. Real boundary improvement not admission. `final/c3-fixture.txt`, `c3-gate-fixture.txt`; suites14/14 and20/20 | `python3 -I -X utf8 tools/receipt-bytes-bind.py --repo . --root .ufo/fixtures/round-83/c3/root`; revision-gate at fixture rev c63467bb with both receipt args | 05d9c136a3664db9a07689822bf011ddbdb4c95b |
+
+Evidence paths above are under `.ufo/evidence/round-83/`. Scores remain depth10,
+calibration8,freshness9: no numeric increment claimed; no new saturation or
+retirement. Calibration/freshness mismatch counts improve within their existing
+rubrics. Round admission is not claimed because C3 misses the frozen target.
+The plan's arm descriptions also contain drafting mistakes: actual A23 is the
+manifest-mode refusal, A24 alphabet; registry A13 is absent-name, not duplicate.
+No declaration bytes rewritten.
+
+**Planned:** next steered round should choose at most two independently
+measured claims; reconcile committed fixture populations before freeze,
+preserve directory-alias/race and conversion limits, and assess the
+defect-bind unhashable-id debt. Design-orphan alarm remains unbuilt.
