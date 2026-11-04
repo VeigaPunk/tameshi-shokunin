@@ -283,3 +283,7 @@ report is append-only history.
 `.ufo/evidence/round-73/wave-selftest-r73.txt`;
 `ORACLE_CMP rows=6 equal=6` — `.ufo/waves/round-73/w1/T73W1S01.md`;
 `KILLING_ARMS=0/6` — `.ufo/evidence/round-73/reh/reh-c2-m3-six-arms.txt`.
+
+`tameshi E01 S066 fields=8` and the row's `NF=10` —
+`.ufo/evidence/round-73/mistake-s066-field-count-r73.txt` (measured at the
+commit that carried the broken row).

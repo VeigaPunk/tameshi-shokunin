@@ -3834,3 +3834,15 @@ none. Assimilation: none this round — `shokuknow/merge/tameshi/` is
 readable (seat S13 `ASSIMILATION=readable`) but the round's claim set carried
 no theme slot; considerthese 2026-10-28 proposal 4 remains the only
 unimplemented proposal.
+
+Quote-backing pointers for the spans above (full paths; the standing
+quoted-line sweep resolves quotes only against receipts the record cites):
+`WAVE_RECONCILE_SELFTEST: 12/12 pass` —
+`.ufo/evidence/round-73/wave-selftest-r73.txt`; `printed=11 files=12` and
+`WAVE_RECONCILE: rows=6 met=6 unexpected=0` —
+`.ufo/evidence/round-73/wave-reconcile-live-r73.txt`; `REKEY_ARMS: arms=7 meet=7 unexpected=0` —
+`.ufo/evidence/round-73/rekey-arms-r73.txt`; `REKEY_COST sections=64 planned=2 at_risk=13 predicted_lost=13` —
+`.ufo/evidence/round-73/cost-forecast-r73.txt`; `ORACLE_CMP rows=6 equal=6` and `AGREE rows=6/6` —
+`.ufo/waves/round-73/w1/T73W1S01.md` and `.ufo/waves/round-73/w1/T73W1S08.md`;
+`ASSIMILATION=readable` — `.ufo/waves/round-73/w1/T73W1S13.md`;
+`KILLING_ARMS=0/6` — `.ufo/evidence/round-73/reh/reh-c2-m3-six-arms.txt`.
