@@ -3,6 +3,9 @@
 # defects 4-6 are the three mutants measured as survivors at the round-74 base
 # (plans/round-75.plan.md R75-C1): each is the exact single edit its named
 # round-75 arm kills and no other round-75 arm covers.
+# Defect 14 (round 81, R81-C3): `wr-prefix`, the round-80 test-text survivor —
+# arm24's expected-prefix assertion weakened; killed by arm25, the round-81
+# selftest-text pin. Population after this round: 14 defects (13 + this one).
 # Run: bash tools/mutate-and-run.sh --target tools/wave-reconcile.py \
 #        --defects tools/wave-reconcile-mutants.spec \
 #        --suite 'python3 -I -X utf8 "$MUTANT" --selftest' --workdir <dir>

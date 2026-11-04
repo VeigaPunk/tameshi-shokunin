@@ -7,6 +7,9 @@
 # for this tool — `ss-bom-strip` (T79W1SC2 S1), `ss-cache-key-drops-argv`
 # (T79W1SC2 S4) and `python-utf8-dropped` (T79W1M1) — each killed by exactly
 # one new arm: arm15, arm16, arm17.
+# Defect 5 (round 81, R81-C3): `ss-bom-only`, the round-80 test-text survivor —
+# arm15's non-UTF-8 assertion conjuncts deleted; killed by arm21, the round-81
+# selftest-text pin. Population after this round: 5 defects (4 + this one).
 # Run: bash tools/mutate-and-run.sh --target tools/selfstate-freshness.py \
 #        --defects tools/selfstate-freshness-mutants.spec \
 #        --suite 'python3 -I -X utf8 "$MUTANT" --selftest' --workdir <dir>

@@ -4389,9 +4389,11 @@ capability, so the nudge does not fire and C1 works calibration.
   receipt's true `24/24` / `17/17` tokens (D2), S289's `used-by` cell (D4),
   the S289 fetch receipt at `.ufo/evidence/round-81/sources/` (D5), and the
   Round 80 + Round 81 bounded-search notes in `## Search log` (D6).
-  Upstream cause of D1: the round-80 commit named a directory, and new files
-  over 1 MiB inside a named directory are skipped by the commit helper — the
-  0-byte blob is that skip. After: `rows=6 closed=6 open=0 unexpected=0`
+  Cause of D1 not established: the two cited-but-absent receipts were
+  untracked (`??`, consistent with a commit that dropped them), while
+  `coldread-before.txt` is a tracked path carrying a 0-byte blob — a skip does
+  not explain a tracked empty blob, so the record names the symptom and not a
+  mechanism. After: `rows=6 closed=6 open=0 unexpected=0`
   exit 0; `DEFECT_BIND_SELFTEST: 11/11 pass`.
 - **R81-C2 (freshness):** `--pin-audit` / `--pin-rev` in
   `tools/selfstate-freshness.py` measures, per row, whether the instrument's
@@ -4417,8 +4419,9 @@ capability, so the nudge does not fire and C1 works calibration.
   arm20's fixture cleanup inside the selftest function) now also fails
   `arm25` beside its own arm20 — still killed. Sourced on S310.
 - **Registry coupling:** `SELFTEST_ARMS` 17 → 21 and 24 → 25 moved two live
-  figures; `tools/registry.json` (both selftest rows, the mutants row with
-  `defects=14` and label `wave-reconcile-arms-r81`) and the new SKILL.md
+  figures; `tools/registry.json` (both selftest rows and the wave-reconcile mutants row,
+  `defects=14`, label `wave-reconcile-arms-r81`; the selfstate battery has no
+  registry row) and the new SKILL.md
   round-81 registry section were refreshed, and `tools/registry-figure-bind.py`
   re-read `rows=7 match=7 stale=0 absent=0 error=0 unexpected=0` exit 0.
   Three new registry rows (`defect-bind-selftest`, `defect-bind-sweep`,

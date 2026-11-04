@@ -2307,3 +2307,20 @@ on the landed bytes (`c2-landed-battery.txt`).
     and a file naming a prefix without a complete block is refused by name.
     (`lessons/round-80.md` `## Mistakes` 2; `lessons/round-79-verifier-spotcheck.md`
     §6.4)
+
+## Criteria appended — round 81
+
+78. A non-author closure's routed-defect register is a measured population, not
+    prose: every defect the next round owns is one declared row whose state is
+    read from committed bytes, the row set is frozen at the declaration commit,
+    and the verdict is the count of rows that do not meet their declared
+    expectation. A row whose input cannot be read is a refusal (exit 2), never
+    an open verdict; a register that cannot name its own bytes is bound by a
+    manifest digest beside the count, never by the count alone.
+    (`lessons/round-81.md` `## Mistakes` 1; `lessons/round-80-verifier-spotcheck.md` §6)
+79. A standing row's pin is a claim about BYTES, not recency: a row is settled
+    only when its instrument's blob at the pinned revision is byte-identical to
+    the blob the sweep runs at, and the audit measures the whole declared
+    population (a single-row audit is refused as evidence for the others). A
+    figure that happens to match says nothing about the pin.
+    (`lessons/round-81.md` `## Mistakes` 2; round-80 closure defect D3)

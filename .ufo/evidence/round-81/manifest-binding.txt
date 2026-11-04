@@ -1,0 +1,48 @@
+# receipt: manifest-binding (round 81; CN1 finding D-CN3 — the population must not be narrowed between declaration and tip)
+# at_utc: 2026-11-04T08:56:20Z
+# declaration: 1b115ba038e3d3bffc1432e62bbe5eb422c81266
+# measured tip: e27f28e8271062c3a1217f85cf51620735bb4e99
+
+$ git rev-parse 1b115ba0:tools/defect-bind.json
+c8372447aa83d8f4ef6c677d1dacf5d5ac5cd5c2
+$ git rev-parse e27f28e8:tools/defect-bind.json
+c8372447aa83d8f4ef6c677d1dacf5d5ac5cd5c2
+# equal -> the C1 population bytes are unchanged between declaration and measured tip
+
+$ git diff --numstat 1b115ba0..e27f28e8 -- tools/selfstate-freshness.json
+3	3	tools/selfstate-freshness.json
+$ git diff 1b115ba0..e27f28e8 -- tools/selfstate-freshness.json
+diff --git a/tools/selfstate-freshness.json b/tools/selfstate-freshness.json
+index f38c3b72..1215fbdd 100644
+--- a/tools/selfstate-freshness.json
++++ b/tools/selfstate-freshness.json
+@@ -192,7 +192,7 @@
+    "figure": "RECEIPT_EXISTS_SELFTEST: \\d+/\\d+ pass",
+    "instrument": {
+     "path": "tools/receipt-exists.py",
+-    "rev": "21ef81e99966198cf8cdb2c6d8e56aa3c482da56",
++    "rev": "4af6695fa526f4252cb6d8ceee24725d5b1cac6b",
+     "argv": [
+      "--selftest"
+     ]
+@@ -325,7 +325,7 @@
+    "figure": "RECEIPT_BIND_SELFTEST: \\d+/\\d+ pass",
+    "instrument": {
+     "path": "tools/receipt-bytes-bind.py",
+-    "rev": "ae591d5a2cf5d08cafad68a4c6ffaa62e0d3f608",
++    "rev": "01ca77cd1bdac3d991e0319644146ace3970b30d",
+     "argv": [
+      "--selftest"
+     ]
+@@ -339,7 +339,7 @@
+    "figure": "REGISTRY_BIND_SELFTEST: \\d+/\\d+ pass",
+    "instrument": {
+     "path": "tools/registry-figure-bind.py",
+-    "rev": "ae591d5a2cf5d08cafad68a4c6ffaa62e0d3f608",
++    "rev": "01ca77cd1bdac3d991e0319644146ace3970b30d",
+     "argv": [
+      "--selftest"
+     ]
+# three changed lines, all instrument.rev pins; no row removed, no expect relaxed, no row added
+$ git diff --numstat 1b115ba0..e27f28e8 -- tools/defect-bind.json
+(empty -> no change)

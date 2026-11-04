@@ -36,7 +36,10 @@ expectation is `unexpected` and fails the sweep. An empty manifest is refused
 exit 2 (a gate that measures nothing must not exit 0). Unresolvable inputs are
 setup exit 2 *before* any row effect: a non-manifest JSON, an unknown kind, a
 duplicate id, an absolute or `..` path, an empty token/span/path list, an
-unresolvable revision.
+unresolvable revision. A row's own input that cannot be read at its declared
+rev (a blob path that is a tree, a rev that resolves to no object) is a setup
+refusal too, but it fires at that row's measurement, so earlier rows may
+already have printed: the summary line is the verdict, never the row prefix.
 
 Usage:
   python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json
@@ -163,13 +166,18 @@ def check_receipt_tokens(repo, rev, row):
     receipt = repo_relative(row.get("receipt"), "receipt")
     doc_bytes = blob_bytes(repo, rev, doc)
     receipt_bytes = blob_bytes(repo, rev, receipt)
-    if span.encode("utf-8") not in doc_bytes:
+    span_bytes = span.encode("utf-8")
+    if span_bytes not in doc_bytes:
         return "open", "span-absent:%s" % doc
+    missing_span = [t for t in row_tokens(row)
+                    if t.encode("utf-8") not in span_bytes]
+    if missing_span:
+        return "open", "token-absent-in-span:" + ",".join(missing_span)
     missing = [t for t in row_tokens(row)
                if t.encode("utf-8") not in receipt_bytes]
     if missing:
-        return "open", "token-absent:" + ",".join(missing)
-    return "closed", "tokens-in-receipt"
+        return "open", "token-absent-in-receipt:" + ",".join(missing)
+    return "closed", "tokens-in-span-and-receipt"
 
 
 def _sources_cell(text, source_id):
@@ -498,16 +506,24 @@ def selftest(out=sys.stdout):
         # arm 4: receipt-tokens closed, then open on a token the receipt
         # does not carry (the red arm the instrument exists for).
         row = {"id": "t4", "kind": "receipt-tokens", "rev": rev3,
-               "doc": "doc.md", "span": "The before row reads",
+               "doc": "doc.md",
+               "span": "The before row reads ALPHA 24/24 and BETA 17/17.",
                "receipt": "receipt.txt", "tokens": ["24/24", "17/17"]}
         code_ok, _ = f.run([row])
-        row_bad = dict(row, id="t4b", tokens=["24/24", "23/23"])
+        # the receipt half is exercised with a token the span carries and the
+        # receipt does not; the span half with a span that carries neither.
+        row_bad = dict(row, id="t4b", tokens=["ALPHA"])
         code_bad, text_bad = f.run([row_bad])
         row_span = dict(row, id="t4c", span="a span the doc does not carry")
         code_span, text_span = f.run([row_span])
+        row_nospan = dict(row, id="t4d",
+                          span="The before row reads")
+        code_nospan, text_nospan = f.run([row_nospan])
         arm("A4_receipt_tokens", code_ok == 0 and code_bad == 1
-            and "token-absent:23/23" in text_bad and code_span == 1
-            and "span-absent" in text_span, "")
+            and "token-absent-in-receipt:ALPHA" in text_bad
+            and code_span == 1 and "span-absent" in text_span
+            and code_nospan == 1
+            and "token-absent-in-span:24/24,17/17" in text_nospan, "")
 
         # arm 5: sources-cell reads the used-by cell of the named row.
         row = {"id": "t5", "kind": "sources-cell", "rev": rev3,
