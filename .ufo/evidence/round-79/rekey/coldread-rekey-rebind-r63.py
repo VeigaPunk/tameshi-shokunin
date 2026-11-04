@@ -134,7 +134,7 @@ def main(argv=None):
         if m is None:
             failures.append('manifest-missing:%s' % heading)
             continue
-        trace_rel = '.ufo/evidence/round-78/rekey/traces/section-%02d.json' % sec_idx
+        trace_rel = str(Path(a.traces_dir) / ('section-%02d.json' % sec_idx))
         trace_abs = repo / trace_rel
         if a.resume and trace_abs.exists():
             summary.append({'heading': heading, 'skipped': 'resume'})
@@ -251,7 +251,7 @@ def main(argv=None):
             'traces': [trace_rel],
             'carried_from': 'round-63 rekey of ledger entries %s' % (
                 json.dumps(sec['src_entries'])),
-            'rekey_round': 61,
+            'rekey_round': 79,
         }
         if m.get('minor_gap_note'):
             entry['minor_gap_note'] = m['minor_gap_note']
