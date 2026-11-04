@@ -2324,3 +2324,21 @@ on the landed bytes (`c2-landed-battery.txt`).
     population (a single-row audit is refused as evidence for the others). A
     figure that happens to match says nothing about the pin.
     (`lessons/round-81.md` `## Mistakes` 2; round-80 closure defect D3)
+
+## Criteria appended — round 82
+
+80. A counter's population is part of its verdict, not an input beside it: a
+    register read from a path can be narrowed (a row deleted, an `expect`
+    relaxed) and every remaining row still measures green. Bind the manifest
+    bytes to a declared revision, refuse a mismatch before any row effect, and
+    name the conversion-attribute limit of a worktree-vs-blob comparison
+    (`lessons/round-82.md` `## Mistakes` 1; `knowledge/counter-population-binding.md`).
+81. Presence is not identity for a path row: a row that means "a regular file
+    is committed here" must read the object's type and mode, because an
+    existence check accepts a directory and a symlink — and a symlink's blob
+    is its target string (`lessons/round-82.md` `## Mistakes` 2;
+    round-81 spot-check §6.5).
+82. A capability in the repertoire table with no live self-state row has an
+    unmeasured figure: entering or holding a capability binds its figure to the
+    instrument's current output and to a pin the audit can settle
+    (`lessons/round-82.md` `## Mistakes` 3; round-81 spot-check §6.6).

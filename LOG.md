@@ -4455,3 +4455,64 @@ stale=0` exit 0, `SELFSTATE: rows=23 match=21 stale=2 unexpected=0`, selftest
 `.ufo/evidence/round-81/final/` (`c1-*`, `c2-*`, `c3-*`, `noharm-*`,
 `census-after.txt`). The base readings under the corrected instrument stay
 `open=6` exit 1 (`controls/c1-before-instrument-v2.txt`).
+
+## Round 82 (2026-11-04) — the register bound to bytes, the capabilities monitored, the newest suite's text pinned
+
+Base `4dfc3181` (= `origin/master`, the round-81 closure and spot-check tip),
+declaration `4005a48a`, landing `b6658e7a`. Round shape: one v1 wave, 13 seats
+(4 executor · 2 scout · 1 scribe · 2 reviewer · 1 critic · 1 mutation-tester ·
+1 sentinel · 1 connector; attack 5 = 38.5 %). Saturation: depth 10,
+calibration 8, freshness 9; round 82 enters no new capability row, so the
+nudge does not fire and C1 works calibration, the lowest scored axis.
+
+- **R82-C1 (calibration):** the routed-defect register is content-bound.
+  `tools/defect-bind.py` gains `--manifest-rev REV` (the manifest's bytes must
+  equal `REV:<manifest path>`, mismatch refused exit 2 before any row effect)
+  and reads every path row as an object **type and mode** via `git ls-tree -z`
+  (a directory or symlink is `state=open detail=not-regular-file:<path>=<mode>`).
+  Before (base bytes): the flag is unrecognized (exit 2), a register with one
+  row deleted reads `rows=5 closed=5 open=0 unexpected=0` exit 0, and a
+  directory row reads `state=closed` — `.ufo/evidence/round-82/controls/`.
+  After: `DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0 manifest=bound`
+  exit 0; the narrowed manifest is refused `manifest-rev-mismatch` exit 2; the
+  directory row reads `not-regular-file:…=040000`; selftest `14/14`.
+- **R82-C2 (freshness):** the three round-81 capabilities are live self-state
+  rows (`closure-defect-bind`, `standing-pin-audit`, `selftest-text-pin`) and
+  the three repertoire rows moved into the live `## Capabilities` table. Before
+  `SELFSTATE: rows=23 match=21 stale=2 unexpected=0`; after `rows=26 match=24
+  stale=2 unexpected=0` and `SELFSTATE_PINS: rows=26 settled=26 stale=0` at the
+  tip.
+- **R82-C3 (coverage):** `tools/defect-bind.py` carries a selftest-text pin
+  (`SELFTEST_TEXT_SHA256`, arm `A14_selftest_text_pin`). At the base bytes the
+  test-text mutant survives (`defects=1 killed=0 survived=1`, suite `11/11`);
+  the landed 5-defect battery reads `defects=5 killed=5 survived=0
+  inconclusive=0 kill-rate=100 %`, `CONTROL: GREEN`, byte-identical restore, and
+  `db-a1-assertion-weakened`'s FAIL set is `A14_selftest_text_pin` only.
+
+**Records.** The round-81 closure's §6 items 1, 2, 3 and 6 are closed:
+`.ufo/evidence/round-82/manifest-binding.txt` reissues the manifest-binding
+receipt at the round-81 measured commit (blob `c8372447…` → `d92d6bea…`, the
+D2 span extension, rows unchanged), the SCORECARD carries the append-only
+correction paragraph pointing at `final/c1-sweep.txt` and `final/c2-pins.txt`,
+`.ufo/evidence/round-82/tip-rederivation.txt` re-runs the round-81 counters at
+the tip, and the capabilities sit in the live table. `tools/defect-bind-r82.json`
+holds the four rows so the closure is a count, not prose.
+
+**No-harm** at `b6658e7a` (`final/noharm-*.txt`): `WAVE_RECONCILE: rows=6
+met=6 unexpected=0`, `RECEIPT_BIND: receipts=29 bound=14 corrected=8 design=7
+unbound=0`, `ADDRANGE: rows=11 met=11 unexpected=0`, `ARM_LIVENESS: rows=9
+live=9 dead=0`, `COUNT_RECHECK: rows=7 met=7 unexpected=0`, `POINTER_RECHECK:
+rows=12 met=12 unexpected=0`, `FIGURE_ATTRIBUTION: rows=3 met=3 unexpected=0`,
+`ANCHOR_DRIFT: rows=16 met=16 unexpected=0`, `REGISTRY_BIND: rows=7 match=7
+stale=0 absent=0 error=0 unexpected=0`, `MUTATE_SELFTEST: 107/107 pass`,
+`DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0` — every one exit 0.
+
+**Sources.** No new row: the drafted S311 (Git gitattributes) was REFUSED by
+the census as a within-scope duplicate of S294 (the page has been held since
+round 63) and never committed; the round's sourced claim rests on the
+re-opened S294 (fetch 2026-11-04 13:12:12 GMT, page furniture moved, contract
+unchanged), S289 and S305 re-opened with committed comparisons, and the
+git-ls-files candidate REFUSED (index listing, not tree objects). Registry
+rows 170 → 170; census exit 0, verdict `tameshi ok`.
+Census: `sources-census.sh validate --root … tameshi` → exit 0, verdict
+`tameshi	ok	…/corpus/SOURCES.md`.
