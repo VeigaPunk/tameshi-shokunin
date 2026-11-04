@@ -13,12 +13,20 @@ state.
 Row kinds (all paths repo-relative; every input read from git objects, never a
 worktree — S289: `git cat-file blob <rev>:<path>` binds committed bytes):
 
-  tree-paths     every listed path must exist in the tree at `rev`
-                 (`git cat-file -e REV:PATH`, blob or tree).
-  tree-bytes     every listed path exists at `rev` and its blob length is at
-                 least `min_bytes` (an empty committed blob is not evidence:
-                 the round-80 D1 case committed a 0-byte file for a 7.1 MB
-                 receipt).
+  tree-paths     every listed path must exist in the tree at `rev` AND be a
+                 REGULAR BLOB (`git ls-tree -z` mode 100644 or 100755; S305's
+                 listing form, S291's mode field). A directory (040000 tree)
+                 or a symlink (120000 blob) is not the artifact a path row
+                 means: round 81 measured `git cat-file -e` accepting both, so
+                 a directory or a symlink target satisfied a row it never
+                 represented. The row then measures `open`, detail
+                 `not-regular-file:<path>=<mode>`.
+  tree-bytes     every listed path is a regular blob at `rev` (same mode/type
+                 boundary — a symlink's blob is its target string, so a
+                 mode-blind `min_bytes` reads the link, not the artifact) and
+                 its blob length is at least `min_bytes` (an empty committed
+                 blob is not evidence: the round-80 D1 case committed a 0-byte
+                 file for a 7.1 MB receipt).
   receipt-tokens one `span` must be a byte substring of the `doc` blob at
                  `rev`, and every token must be a byte substring of the
                  `receipt` blob at `rev` (the red arm: a token the record
@@ -41,16 +49,28 @@ rev (a blob path that is a tree, a rev that resolves to no object) is a setup
 refusal too, but it fires at that row's measurement, so earlier rows may
 already have printed: the summary line is the verdict, never the row prefix.
 
+The population is bound, not assumed: `--manifest-rev REV` requires the
+manifest's bytes on disk to be byte-identical to the blob committed at
+`REV:<manifest path>` (S103: the object id names the bytes; S289 reads them),
+so a caller cannot delete a row or relax an `expect` and still measure every
+remaining row green. A mismatch is `manifest-rev-mismatch`, exit 2, before any
+row effect. Declared limit (S311): with `text`/`eol`/filter attributes on the
+manifest path the worktree bytes may legitimately differ from the blob, so the
+binding is exact only where no conversion attribute applies.
+
 Usage:
   python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json
+  python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json --manifest-rev REV
   python3 -I -X utf8 tools/defect-bind.py --selftest
 
-Summary line: DEFECT_BIND: rows=N closed=C open=O unexpected=U
+Summary line: DEFECT_BIND: rows=N closed=C open=O unexpected=U manifest=<bound|unbound>
 Row line:     DEFECT_BIND_ROW <id> kind=<kind> expect=<e> state=<s> detail=<d>
 Exit: 0 every row matches its expectation; 1 any mismatch; 2 setup refusal.
 """
 
 import argparse
+import hashlib
+import inspect
 import json
 import os
 import re
@@ -63,6 +83,13 @@ SCHEMA = "tameshi-defect-bind-v1"
 KINDS = ("tree-paths", "tree-bytes", "receipt-tokens", "sources-cell",
          "doc-contains")
 SOURCES_PATH = "corpus/SOURCES.md"
+REGULAR_MODES = ("100644", "100755")
+SELFTEST_ARMS = 14
+# sha256 of inspect.getsource(selftest) at the landing commit. The pin covers
+# the function's own text only: a module-level edit, a vacuous comment inside
+# the function (over-kill) or a two-edit rewrite (weaken an arm and recompute
+# this constant) stay outside the class, exactly the round-81 declared limits.
+SELFTEST_TEXT_SHA256 = ("f74f2d4e3dc4ebe91da91aa7b2cf515af6ee217e6deddc8c7ac52011fa2dbb85")
 
 
 class SetupError(Exception):
@@ -135,12 +162,56 @@ def row_tokens(row):
     return tokens
 
 
+def tree_entry(repo, rev, path):
+    """Return (mode, type) for `path` at `rev`, or None when absent.
+
+    Presence alone is not identity: `git cat-file -e REV:PATH` accepts a tree
+    and a symlink as readily as a file (round-81 reviewer), so the row kinds
+    that mean "a regular file is committed here" read the entry's mode and
+    type from `git ls-tree -z` (S305's listing form; S291's mode field, where
+    only 0755/0644 are regular files and symlinks are a distinct type).
+    """
+    proc = run_git(repo, "ls-tree", "-z", rev, "--", path, check=False)
+    if proc.returncode != 0:
+        raise SetupError("ls-tree-failed:%s:%s" % (rev, path))
+    for record in proc.stdout.split(b"\x00"):
+        if not record:
+            continue
+        meta, _, name = record.partition(b"\t")
+        fields = meta.split(b" ")
+        if len(fields) < 3:
+            continue
+        if name.decode("utf-8", "replace") == path:
+            return fields[0].decode("ascii"), fields[1].decode("ascii")
+    return None
+
+
+def regular_file_state(repo, rev, path):
+    """None when `path` is a regular blob at `rev`; else a state token."""
+    entry = tree_entry(repo, rev, path)
+    if entry is None:
+        return "missing"
+    mode, kind = entry
+    if kind != "blob" or mode not in REGULAR_MODES:
+        return "not-regular-file:%s=%s" % (path, mode)
+    return None
+
+
 def check_tree_paths(repo, rev, row):
-    missing = [p for p in row_paths(row)
-               if run_git(repo, "cat-file", "-e", "%s:%s" % (rev, p),
-                          check=False).returncode != 0]
+    missing, not_regular = [], []
+    for path in row_paths(row):
+        state = regular_file_state(repo, rev, path)
+        if state == "missing":
+            missing.append(path)
+        elif state is not None:
+            not_regular.append(state)
+    detail = []
     if missing:
-        return "open", "missing:" + ",".join(missing)
+        detail.append("missing:" + ",".join(missing))
+    if not_regular:
+        detail.append(",".join(not_regular))
+    if detail:
+        return "open", ";".join(detail)
     return "closed", "paths-present"
 
 
@@ -148,11 +219,21 @@ def check_tree_bytes(repo, rev, row):
     minimum = row.get("min_bytes")
     if not isinstance(minimum, int) or minimum < 0:
         raise SetupError("invalid-min-bytes:%s" % row.get("id"))
-    short = []
+    short, wrong_kind = [], []
     for path in row_paths(row):
+        state = regular_file_state(repo, rev, path)
+        if state == "missing":
+            # the round-81 contract: an unresolvable blob is a setup refusal,
+            # never a verdict
+            raise SetupError("blob-unresolvable:%s:%s" % (rev, path))
+        if state is not None:
+            wrong_kind.append(state)
+            continue
         size = len(blob_bytes(repo, rev, path))
         if size < minimum:
             short.append("%s=%d<%d" % (path, size, minimum))
+    if wrong_kind:
+        return "open", ",".join(wrong_kind)
     if short:
         return "open", "short:" + ",".join(short)
     return "closed", "min-bytes-met"
@@ -329,10 +410,49 @@ def _validate_payload(row):
     raise SetupError("unknown-kind:%s" % kind)
 
 
-def sweep(repo, manifest_path, out=sys.stdout):
+def bind_manifest(repo, manifest_path, rev):
+    """Refuse a manifest whose bytes are not the blob committed at `rev`.
+
+    A sweep's denominator is its manifest; read from a path, a caller can
+    delete a row or relax an `expect` and every remaining row still measures
+    green (the round-81 carried defect D-CN3). S103: the object id names the
+    bytes, not the path; S289 reads them. The declared limit is S311: on a
+    path carrying `text`/`eol`/filter attributes the worktree bytes may
+    legitimately differ from the blob.
+    """
+    path = manifest_path
+    if os.path.isabs(path):
+        try:
+            path = os.path.relpath(os.path.realpath(path),
+                                   os.path.realpath(repo))
+        except ValueError as exc:
+            raise SetupError("invalid-path:manifest:%s" % exc)
+        if path == ".." or path.startswith(".." + os.sep):
+            raise SetupError("invalid-path:manifest:escaping-repo")
+        path = path.replace(os.sep, "/")
+    path = repo_relative(path, "manifest")
+    resolved = resolve_rev(repo, rev)
+    proc = run_git(repo, "cat-file", "blob", "%s:%s" % (resolved, path),
+                   check=False)
+    if proc.returncode != 0:
+        raise SetupError("manifest-rev-unreadable:%s:%s" % (rev, path))
+    try:
+        with open(manifest_path, "rb") as fh:
+            disk = fh.read()
+    except OSError as exc:
+        raise SetupError("manifest-unreadable:%s" % exc)
+    if disk != proc.stdout:
+        raise SetupError("manifest-rev-mismatch:%s:%s" % (rev, path))
+    return resolved
+
+
+def sweep(repo, manifest_path, out=sys.stdout, manifest_rev=None):
     """Measure every declared row; each row reads its own `rev` (never a
     caller-supplied default, so a caller cannot silently re-point the whole
     population at a different revision than the one it declared)."""
+    bound = None
+    if manifest_rev:
+        bound = bind_manifest(repo, manifest_path, manifest_rev)
     rows = load_manifest(manifest_path)
     resolved = {}
     for row in rows:
@@ -350,9 +470,10 @@ def sweep(repo, manifest_path, out=sys.stdout):
         out.write("DEFECT_BIND_ROW %s kind=%s expect=%s state=%s detail=%s\n"
                   % (row["id"], row["kind"], expect, state,
                      detail.replace(" ", "_")))
-    out.write("DEFECT_BIND: rows=%d closed=%d open=%d unexpected=%d\n"
+    out.write("DEFECT_BIND: rows=%d closed=%d open=%d unexpected=%d "
+              "manifest=%s\n"
               % (len(rows), counts["closed"], counts["open"],
-                 counts["unexpected"]))
+                 counts["unexpected"], "bound" if bound else "unbound"))
     return 0 if counts["unexpected"] == 0 else 1
 
 
@@ -420,6 +541,10 @@ class Fixture:
         self.put(SOURCES_PATH, SOURCES)
         self.put("tools/toy.py", "print('rev1')\n")
         self.put("big.txt", "x" * 64 + "\n")
+        self.put("sub/inner.txt", "inner\n")
+        link = os.path.join(self.root, "link.txt")
+        if not os.path.lexists(link):
+            os.symlink("doc.md", link)
         self.git("-c", "user.name=t", "-c", "user.email=t@t", "add", "-A")
         self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit",
                  "-qm", "rev1")
@@ -625,11 +750,86 @@ def selftest(out=sys.stdout):
                 {"id": "u", "kind": "tree-bytes", "rev": base,
                  "paths": ["late.txt"], "min_bytes": 1}]), "blob-unresolvable"),
             "")
+
+        # arm 12: a path row reads the object's TYPE and MODE. A directory and
+        # a symlink are not the regular file a row means (round-81 reviewer
+        # D1a/D5 + executor cheat register: `cat-file -e` accepts both; a
+        # symlink's target string satisfies a mode-blind min_bytes).
+        code_dir, text_dir = f.run([{"id": "r1", "kind": "tree-paths",
+                                     "rev": rev3, "paths": ["sub"]}])
+        code_link, text_link = f.run([{"id": "r2", "kind": "tree-paths",
+                                       "rev": rev3, "paths": ["link.txt"]}])
+        code_link_bytes, text_link_bytes = f.run([
+            {"id": "r3", "kind": "tree-bytes", "rev": rev3,
+             "paths": ["link.txt"], "min_bytes": 1}])
+        code_regular, _ = f.run([{"id": "r4", "kind": "tree-bytes",
+                                  "rev": rev3, "paths": ["doc.md"],
+                                  "min_bytes": 1}])
+        arm("A12_regular_file_boundary",
+            code_dir == 1 and "not-regular-file:sub=040000" in text_dir
+            and code_link == 1
+            and "not-regular-file:link.txt=120000" in text_link
+            and code_link_bytes == 1
+            and "not-regular-file:link.txt=120000" in text_link_bytes
+            and code_regular == 0, text_dir.strip().splitlines()[-1])
+
+        # arm 13: the manifest is bound to the bytes committed at a declared
+        # revision. A narrowed manifest measures green UNBOUND, and is
+        # refused BOUND — that is the whole difference the flag buys.
+        import io as _io
+        wide = [{"id": "b1", "kind": "tree-paths", "rev": rev3,
+                 "paths": ["doc.md"]},
+                {"id": "b2", "kind": "tree-paths", "rev": rev3,
+                 "paths": ["absent-here.txt"], "expect": "open"}]
+        mpath = f.manifest(wide, name="bound.json")
+        f.git("-c", "user.name=t", "-c", "user.email=t@t", "add", "bound.json")
+        f.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm",
+              "bound manifest")
+        rev4 = f._head()
+        probe = _io.StringIO()
+        code_before = sweep(f.root, mpath, out=probe)
+        bound_text = probe.getvalue()
+        probe = _io.StringIO()
+        code_bound = sweep(f.root, mpath, out=probe, manifest_rev=rev4)
+        bound_tokens = "manifest=bound" in probe.getvalue()
+        # the cheat: delete one row from the same path, keep the declared rev
+        f.manifest([wide[0]], name="bound.json")
+        narrowed_refused = _expect_setup(
+            lambda: sweep(f.root, mpath, out=_io.StringIO(),
+                          manifest_rev=rev4), "manifest-rev-mismatch")
+        probe = _io.StringIO()
+        code_narrowed = sweep(f.root, mpath, out=probe)
+        narrowed_unbound = "manifest=unbound" in probe.getvalue()
+        outside_refused = _expect_setup(
+            lambda: sweep(f.root, os.path.join(f.root, "..", "outside.json"),
+                          out=_io.StringIO(), manifest_rev=rev4),
+            "escaping-repo")
+        absent_refused = _expect_setup(
+            lambda: sweep(f.root, "no-such-manifest.json",
+                          out=_io.StringIO(), manifest_rev=rev4),
+            "manifest-rev-unreadable")
+        arm("A13_manifest_rev_binding",
+            code_before == 0 and bound_tokens and code_bound == 0
+            and narrowed_refused and narrowed_unbound and outside_refused
+            and absent_refused, bound_text.strip().splitlines()[-1])
+
+        # arm 14: the selftest's own assertion text is pinned, so an edit that
+        # weakens an arm (keeping its name and fixtures) fails THIS arm
+        # instead of passing vacuously (round-81 mutation-tester's named gap:
+        # the round's newest instrument carried no text pin).
+        try:
+            self_text = inspect.getsource(selftest)
+            measured = hashlib.sha256(self_text.encode("utf-8")).hexdigest()
+            arm("A14_selftest_text_pin", measured == SELFTEST_TEXT_SHA256,
+                "measured=%s pinned=%s" % (measured[:12],
+                                           SELFTEST_TEXT_SHA256[:12]))
+        except OSError as exc:
+            arm("A14_selftest_text_pin", False, "source-unreadable:%s" % exc)
     finally:
         shutil.rmtree(fx, ignore_errors=True)
 
     out.write("DEFECT_BIND_SELFTEST: %d/%d pass\n" % (passed, total))
-    return 0 if passed == total == 11 else 1
+    return 0 if (passed == total == SELFTEST_ARMS) else 1
 
 
 def _bad_schema(f):
@@ -652,6 +852,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(add_help=True)
     ap.add_argument("--repo", default=".")
     ap.add_argument("--manifest")
+    ap.add_argument("--manifest-rev")
     ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args(argv)
     try:
@@ -660,7 +861,10 @@ def main(argv=None):
         if not args.manifest:
             sys.stderr.write("defect-bind: --manifest is required\n")
             return 2
-        return sweep(args.repo, args.manifest)
+        if args.manifest_rev is not None and not args.manifest_rev:
+            sys.stderr.write("defect-bind: --manifest-rev needs a revision\n")
+            return 2
+        return sweep(args.repo, args.manifest, manifest_rev=args.manifest_rev)
     except SetupError as exc:
         sys.stderr.write("defect-bind: %s\n" % exc)
         return 2
