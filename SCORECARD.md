@@ -5264,3 +5264,32 @@ the lowest scored axis.
   (`defects=1 killed=0 survived=1`, suite `11/11`) is killed by
   `A14_selftest_text_pin`; the 5-defect battery reads `defects=5 killed=5
   survived=0`, FAIL set = A14 only.
+
+## Round 82 — measured claims (appended at the records commit, 2026-11-04)
+
+| Claim | Verdict | After (measured) | Counting commands | Measured commit |
+|---|---|---|---|---|
+| R82-C1 | verifies (measured) | `DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0 manifest=bound` exit 0 at the measured revision; the same register with one row deleted, bound to that revision, is refused `manifest-rev-mismatch` exit 2 with no row effect; a `tree-paths` row naming a directory reads `state=open detail=not-regular-file:.ufo/evidence/round-81=040000` exit 1; `DEFECT_BIND_SELFTEST: 14/14 pass`; the round's own register reads `rows=4 closed=4 open=0 unexpected=0 manifest=bound` (`.ufo/evidence/round-82/final/c1-bound.txt`, `c1-narrowed-refused.txt`, `c1-directory-open.txt`, `c1-selftest.txt`, `c-r82-register.txt`) | `python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json --manifest-rev HEAD`; the narrowed clone with the same flag; `--selftest` | `72832c94c4d0ae2489d5964efaa72b9de688d792` |
+| R82-C2 | verifies (measured) | `SELFSTATE: rows=26 match=24 stale=2 unexpected=0` exit 0 (the two `stale` rows are the declared red arms) and `SELFSTATE_PINS: rows=26 settled=26 stale=0` exit 0 at the tip; the three new rows each print `measured=match` with doc and measured figures identical (`.ufo/evidence/round-82/final/c2-landed.txt`, `c2-pins.txt`) | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json`; the same with `--pin-audit --pin-rev HEAD` | `72832c94c4d0ae2489d5964efaa72b9de688d792` |
+| R82-C3 | verifies (measured) | `MUTATE: DONE (target=defect-bind-arms-r82 defects=5 killed=5 survived=0 inconclusive=0 kill-rate=100%)`, `CONTROL: GREEN`, byte-identical `MUTATE_RESTORE: OK`; FAIL sets singletons — `db-a1-assertion-weakened` → `A14_selftest_text_pin` only, the manifest pair → `A13_manifest_rev_binding`, the type pair → `A12_regular_file_boundary`; at the base bytes the same text mutant survives (`defects=1 killed=0 survived=1`, suite `11/11`); the wave's two custom survivors (a non-commit `--manifest-rev`, the empty `--manifest-rev` guard) are pinned by the extended A13/A8 and their re-run reads `defects=2 killed=2 survived=0` (`.ufo/evidence/round-82/final/c3-battery.txt`, `c3-survivors.txt`, `controls/c3-before-mutant.txt`) | the battery command of the plan; the base control spec | `72832c94c4d0ae2489d5964efaa72b9de688d792` |
+
+**No axis harmed.** depth 10, calibration 8 and freshness 9 are unchanged as
+numbers; the registry figures were refreshed and re-measured
+(`REGISTRY_BIND: rows=7 match=7 stale=0 absent=0 error=0 unexpected=0`, exit 0,
+7-row population unchanged — the `defect-bind-*` registry rows are NOT yet
+monitored: named for round 83), the standing sweeps all exit 0
+(`WAVE_RECONCILE: rows=6 met=6 unexpected=0`; `RECEIPT_BIND: receipts=29
+bound=14 corrected=8 design=7 unbound=0`; `ADDRANGE: rows=11 met=11
+unexpected=0`; `ARM_LIVENESS: rows=9 live=9 dead=0`; `COUNT_RECHECK: rows=7
+met=7 unexpected=0`; `POINTER_RECHECK: rows=12 met=12 unexpected=0`;
+`FIGURE_ATTRIBUTION: rows=3 met=3 unexpected=0`; `ANCHOR_DRIFT: rows=16 met=16
+unexpected=0`; `MUTATE_SELFTEST: 107/107 pass`), and no SCORECARD score was
+lowered.
+
+**Planned (round 83):** bind the `defect-bind-selftest`/`defect-bind-sweep`
+registry rows in `registry-figure-bind` (population 7 → 9) so the second copy
+of the figures this round refreshed is measured, not trusted; the
+`--manifest-rev` limit on a conversion-attribute path stays unmeasured (S294)
+and needs an object-only comparison before it is claimed; the C3 limits
+(module-level edits, the two-edit rewrite) stay declared and unclosed; the
+design-orphan alarm remains unbuilt and named.

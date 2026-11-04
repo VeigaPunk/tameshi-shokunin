@@ -1,20 +1,11 @@
-# round-81 closure defect 3 — tip re-derivation receipt (round 82, at b6658e7a90472d9c8c783067f2e5d16a98fc02c7)
-# Each round-81 final receipt is re-run at this tip; the verdict-bearing figures are compared.
-
-## R81-C1 (round-81 final/c1-sweep.txt)
+# round-81 closure defect 3 — tip re-derivation receipt (round 82, at 72832c94c4d0ae2489d5964efaa72b9de688d792)
 $ python3 -I -X utf8 tools/defect-bind.py --repo . --manifest tools/defect-bind.json
 DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0 manifest=unbound
 exit=0
-round-81 receipt: DEFECT_BIND: rows=6 closed=6 open=0 unexpected=0   -> the verdict-bearing prefix is identical; the round-82 instrument appends ' manifest=unbound' (instrument change, disclosed).
-
-## R81-C2 (round-81 final/c2-pins.txt)
 $ python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --pin-audit --pin-rev HEAD
 SELFSTATE_PINS: rows=26 settled=26 stale=0
 exit=0
-round-81 receipt: SELFSTATE_PINS: rows=23 settled=23 stale=0   -> now rows=26 because R82-C2 added the three rows; settled=26 stale=0 preserves the verdict for the current population.
-
-## R81-C3 (round-81 final/c3-battery-*.txt)
-$ python3 -I -X utf8 tools/selfstate-freshness.py --selftest | tail -1 ; python3 -I -X utf8 tools/wave-reconcile.py --selftest | tail -1
+$ python3 -I -X utf8 tools/selfstate-freshness.py --selftest | tail -1; ... wave-reconcile
 SELFSTATE_SELFTEST: 21/21 pass
 WAVE_RECONCILE_SELFTEST: 25/25 pass
-round-81 receipts: SELFSTATE_SELFTEST: 21/21 pass; WAVE_RECONCILE_SELFTEST: 25/25 pass   -> identical.
+round-81 verdicts: C1 rows=6 closed=6 open=0 unexpected=0 (prefix identical; the round-82 instrument appends manifest=<state>); C2 rows 23->26 because R82-C2 added the three rows, settled=26 stale=0 preserves the verdict; C3 21/21 and 25/25 identical.
