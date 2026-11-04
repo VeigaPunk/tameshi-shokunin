@@ -5392,3 +5392,54 @@ Round84 terminal-status addendum: T84R1 is failed, not merely
 status-unavailable: Main delivered the actual final402/insufficient_balance
 error retained in `.ufo/waves/round-84/failure-events.json`. Counts stay
 nine settled/eight completed/one failed, no replacement.
+
+## Round 85 — frozen capability and certification honest stop
+
+Base45fa68046b0ce8c285ce161f3c6e164e6e721f06; freeze
+118dbc805d595d9de23a23adf036cec22df6436a. ONE claim R85-C1,
+operability capability acquisition: finite committed design-receipt blob
+audit. Nudge applies to scored axes10/8/9 >= saturation8 and no capability
+entered rounds83/84 (window2); lowest-axis obligation waived. This is not
+calibration and does not relabel round84's rejected claim.
+
+| Claim | Before → after | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|
+| R85-C1 design-receipt blob audit / operability capability | frozen cases8: passed0/mismatches8/exit1 → passed8/mismatches0/exit0 | literal predicate verifies; capability certification honest-stop: basename oracle also8/8, criterion111 missed before freeze | `python3 -I .ufo/evidence/round-85/measure.py --repo . --rev REV --work /fast/scratch/hyaku/tameshi-r85/L1/EMPTY` | before45fa6804; afterecb61d56c6ac347b79792dc6343756df3a002c21; frozen counter118dbc80 |
+
+Exact receipts `.ufo/evidence/round-85/before.txt`,
+`accept-control.txt`, `final/after.txt`; counterfeit source/complete8/8
+receipt `.ufo/waves/round-85/w1/T85C1.md`. The constant-accept control
+also scored0/8, not the predicted1/8; the target was never changed.
+No capability enters `## Capabilities`, no score increment, retirement or
+saturation change. Scores remain depth10/calibration8/freshness9, delta0.
+Only canonical non-author closure may decide admission.
+
+Operational work retained at ecb61d56: new gate's public-CLI selftest21/21,
+supplemental3/3, and actual whole-round79 committed population7/carried3/
+orphan4, exit1 as expected. Receipt and candidate revisions for that real
+task are both45fa6804; orphan means different at a named path in that
+candidate, not missing from all history or absent runtime execution.
+Old receipts are unchanged. Source S289 reopened; used-by adds lesson85,
+rows171->171. No knowledge/frontier-Core increment or assimilation.
+
+No-harm at measured ecb61d56: selfstate26/24match/2declared-stale/
+0unexpected, pins26settled, registry9/9, defects6closed; standing wave6,
+ranges11, arms9, counts7, pointers12, attribution3, anchors16 all meet
+their expectations. Receipt sweep measured48=33bound+8corrected+7design,
+0unbound before writing its own receipt; this is a run-time population,
+not a fixed whole-tree total. Coldread47->47/lost0; equivalence20/0
+per side. Exact commands/exits `final/checks.json` and individual receipts.
+
+One v1 wave9 settled/nine reports/no reported dead seats; executor3,
+scribe/scout/connector/reviewer/critic/mutation-tester each1; attack3/9,
+L1 planner. No residual dispatch or replacement. Reviewer catches initial
+64KiB-header omission; repair and red-before receipts retained, not
+relabelled as final-byte tests. Initial-proposal four-mutant kills also
+remain version-bounded.
+
+**Planned:** before any successor certification freeze, actually execute
+criterion111's fingerprint/sequence/pinned-hash/always-accept cheat family
+and use data-derived, root-label-independent expected rows with complete
+anchored output. Preserve this counter and its rejected verdict unchanged.
+No future claim is pre-approved. Existing malformed-kind/source-id,
+revision authority, conversion and receipt race/parent-alias debts remain.

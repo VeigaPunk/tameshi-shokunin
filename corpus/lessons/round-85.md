@@ -89,3 +89,38 @@ Mutation evidence T85M1 kills4/4 single-edit faults on initial proposal
 with pristine/restored controls. These are not final-byte mutation receipts.
 Connector reports concrete kaidoku/kumitate mode/digest patterns; product
 and sibling code remain read-only. No scope or assimilation absorption.
+
+## Mistake rows — continued
+
+| id | class | evidence | captured-by | fix/disposition |
+|---|---|---|---|---|
+| M4 | cheat-passable certification | T85C1 no-git basename oracle8/8 | existing criterion111, missed before freeze | retain counterfeit and reject current certification; no counter amendment; successor must show cheat family below target before freeze |
+| M5 | inherited fixture Git environment | frozen measure.py env copy; git-environment-names.json observes[] | existing criteria27/28 | preserve limitation; production tool scrubs environment/canary, frozen counter deliberately unchanged |
+| M6 | late-header population omission | T85R1 same-fixture padded sibling exit0 before, exit1 or2 after | whole-population declaration | full bounded-blob scan and public-CLI arms20/21; final owner selftest21/21 includes both |
+
+## Final owner measurement and Gate decisions
+
+Measured implementation/content revision:
+ecb61d56c6ac347b79792dc6343756df3a002c21.
+Owner `final/after.txt`: frozen8/8 true/exit0; `final/selftest.txt`:
+21/21/exit0; `final/supplemental.txt`:3/3/exit0. Real committed round79
+task, `final/real-demo.txt`:7 receipts,3 carried,4 orphan,exit1.
+Both source and candidate revisions are base45fa6804; this is the entire
+declared round79 population, not a cherry-picked passing subset.
+
+Admit the bounded operational implementation and repairs to retained
+lane-owned tools. Reject R85-C1 capability certification because a no-git
+oracle also satisfies its frozen predicate. No entry in the repertoire,
+numeric change or admission claim follows. A green selftest is capability
+evidence, not a replacement frozen claim. Independent non-author
+admit/reject spot-check remains pending canonical closure; wave seats are
+still lane authors.
+
+`final/checks.json` and individual receipts retain exact commands/exits.
+Standing selfstate26/24match/2declared-stale/0unexpected, pins26settled,
+registry9/9 and seven further sweeps remain clean; coldread actual47->47,
+lost0,20/0 equivalence each side. Source census before/after exit0 with
+171 rows, A153/B14/C4, mined138/queued22/rejected11. No warning removed.
+No round85 misroot found; operator scratch/state, kama report and the
+pre-existing after file left untouched. No tools installed by L1 or
+reported by seats. Scratch is removed after durable landing.

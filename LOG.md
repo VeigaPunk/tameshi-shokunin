@@ -4689,3 +4689,42 @@ Object inspection does not establish execution provenance. Census before
 exit0 with171 rows and existing warnings, retained in `sources-before.txt`.
 Settlement, actual demonstration and no-harm results follow execution;
 no capability is pre-entered here.
+
+**Round85 settlement and landing.** WAVE-DONE received:9 settled,
+9 named reports, no dead seats reported; role counts and exact handoff in
+`.ufo/waves/round-85/settlement.json`. No replacements or residual calls.
+Real implementation, source curation and all advisory receipts landed
+ecb61d56c6ac347b79792dc6343756df3a002c21. Main integrated the final
+proposal with only an ASCII-control comment clarification.
+
+Owner verification at that committed revision, `.ufo/evidence/round-85/final/`:
+counter8/8 exit0; new public-CLI selftest21/21 exit0; supplemental3/3 exit0.
+End-to-end domain task: historical design receipts triggered a complete
+committed round79 population read at receipt/candidate base45fa6804;
+audit reports7/carried3/orphan4 exit1, matching the scout's independent
+committed-byte classification. Handoff is the real-demo receipt and bounded
+SKILL registry entry; no external publication or sibling edit occurred.
+
+Critic T85C1's no-git basename oracle also reaches8/8. Existing
+QUALITY criterion111 required that cheat family before freeze, and L1
+missed it. R85-C1 therefore retains its literal green but certification
+honest-stop. No counter amendment, certified capability, score increment,
+frontier-Core move or retrospective round84 rescue. `SCORECARD.md` round85
+and lesson85 record this repeated failure rather than inventing a new rule.
+
+Reviewer T85R1 finds initial64KiB-header population omission; E1 repairs
+it with full bounded-blob scan and arms20/21. Red-before and same-fixture
+green-after receipts carry their actual proposal hashes. New path/scratch
+refusals and GIT canary run under the final21-arm suite. T85M1's4/4
+mutation kills apply only to the initial proposal, not final bytes.
+
+Bounded preservation: selfstate26/24match/2stale/0unexpected; pins26settled;
+registry9/9; defects6closed; wave6, range11, arms9, counts7, pointers12,
+attribution3, anchors16 all exit0. Receipt sweep48/33bound/8corrected/
+7design/0unbound exit0 precedes creation of its own receipt. Coldread
+actual47->47/lost0 and20/0 equivalence probes per side, not full-page credit.
+Census171->171, A153/B14/C4, mined138/queued22/rejected11, exit0 both
+sides; S289 used-by adds lesson85, all other cells unchanged. Existing
+warnings retained. Misroot sweep sees operator .scratch state, kama84
+report and pre-existing after only; no round85 seat file relocated/deleted.
+No tool installs reported. Assimilation none; separate debts remain open.
