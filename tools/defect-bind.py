@@ -103,6 +103,10 @@ def _git_env():
     the caller's repository (the lane's standing fixture discipline)."""
     env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
     env.setdefault("LC_ALL", "C")
+    # A replacement ref (`git replace`) makes a revision resolve to OTHER bytes;
+    # the binding must read the committed object, not a substituted one (round-82
+    # executor E1 proved a narrowed register binds under a replace ref).
+    env["GIT_NO_REPLACE_OBJECTS"] = "1"
     return env
 
 
