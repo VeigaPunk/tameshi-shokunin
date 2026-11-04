@@ -3691,3 +3691,21 @@ next (all pushed). Assimilation: considerthese 2026-10-28 proposal 5
 (stale-closure-pointer sweep) adopted this round as C1 (at most one per
 round; proposals 3-4 remain unadopted, none fits the routed work) -
 shokuknow unreachable.
+
+## Round 72 — declared (2026-11-03), before data
+
+Frozen in `plans/round-72.plan.md`: predicates, counters, kill rules and
+arms. R72-C1 (capability, operability) — `tools/rekey-cost.py` forecasts
+the cold-read re-read debt of a planned edit set from the ledger's own
+input pins; frozen arms SOURCES 13 · PROVINCE 6 · QUALITY 6 · SCORECARD 0 ·
+pointer-recheck 0 · both 17 · empty set exit 2, each non-structural arm
+re-driven on the guard itself in scratch clones before the freeze
+(`.ufo/evidence/round-72/reh/`, five receipts). R72-C2 (calibration — the
+lowest scored axis at 8) — S302's §-label superseded by S303 (§4.2), the
+PROVINCE `:85-91` span corrected by append (`:88-94` seven-leg cut, `:88-97`
+ten-leg ledger), three new pointer rows hit at tip and miss on the base
+control, census exit 0, and the rekey paid (forecast 17 = the guard's
+measured loss at the edit commit). Controls: the do-nothing control manifest
+reads miss; an always-13, always-0 or sum-not-union forecast fails a frozen
+arm. Round shape: one v1 wave, 12 seats (3 executor · 2 scribe · scout ·
+reviewer · critic · mutation-tester · sentinel · revenger · connector).

@@ -4322,3 +4322,26 @@ receipts commit (`additivity-logscorecard-r71.txt`), the round-range
 self-sweep (`tip-self-sweep-r71.txt` - forecast findings zero exit 0),
 and the census end receipts (`census-end-r71.txt` at the fleet root,
 exit 0; `census-end-lanetip-r71.txt` at the lane-tip shape, 162 rows).
+
+## Round 72 — declared claims (2026-11-03), frozen before data
+
+Plan: `plans/round-72.plan.md` (predicates, counters, kill rules, arms).
+
+- **R72-C1 — operability (capability acquisition): planning-time rekey-cost
+  forecast.** Before: no instrument prices a planned monitored-file edit
+  (`git ls-tree -r f20ba48 tools/ | grep -c rekey-cost` → 0). After:
+  `python3 -I tools/rekey-cost.py --edit corpus/SOURCES.md --edit
+  PROVINCE.md` → `REKEY_COST sections=64 planned=2 at_risk=17
+  predicted_lost=17`, selftest 8/8, arms 13/6/6/0/0/exit-2 each equal to a
+  guard-measured counterfactual, and the round's 17 equal to the guard's
+  measured lost at the edit commit.
+- **R72-C2 — calibration (lowest scored axis, 8).** Before: S302 cites §4.3
+  where the snapshot's heading is §4.2; `PROVINCE.md:57` carries `:85-91`
+  where the ledger sits at 88–97. After: S303 supersedes S302 with the §4.2
+  anchor, the PROVINCE append names `:88-94` and `:88-97`, three pointer
+  rows read hit at the tip and miss at base, census exit 0, and the rekey
+  paid (17 sections) so the monitor reads 64/64 at both floors and in rev
+  mode.
+
+Verdicts and measurements are appended at the receipts commit; nothing above
+is a measured result.
