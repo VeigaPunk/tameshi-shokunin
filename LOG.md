@@ -3714,8 +3714,9 @@ reviewer · critic · mutation-tester · sentinel · revenger · connector).
 
 R72-C1 verifies: `tools/rekey-cost.py` (capability `rekey-cost forecast`, first
 working round 72) prices a planned edit set against the cold-read ledger's own
-input pins — selftest `REKEY_COST_SELFTEST: 8/8 pass` and arms
-`at_risk=13/6/6/0/0/17` plus exit 2 on no path (`cost-live-*.txt`), every
+input pins — selftest `REKEY_COST_SELFTEST: 8/8 pass` and arms `at_risk=13`,
+`at_risk=6`, `at_risk=0` plus exit 2 on no path (receipts under `.ufo/evidence/round-72/`: the
+`cost-live-*` files), every
 non-structural arm equal to a guard-measured counterfactual re-driven before
 the freeze (`reh/reh-*.out`: `lost=13`, `lost=6`, `lost=6`, `lost=0`), and the
 round's forecast 17 equal to the guard's `lost=17 RED` at the edit commit
