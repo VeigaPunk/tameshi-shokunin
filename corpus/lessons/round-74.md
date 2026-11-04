@@ -206,3 +206,114 @@ tameshi	ok	/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
 Start: exit 0, 163 rows (`.ufo/waves/round-74/census-start-r74.txt`). After the
 round's append: 164 rows plus S294's in-place `used-by` change, exit 0
 (`.ufo/waves/round-74/census-end-r74.txt`).
+
+## Appended — corrections (wave seats S1 and R2, append-only)
+
+1. **Quote 2's line numbers.** The Gate block above cites S294 Quote 2 at page
+   lines `2678–2679`; seat T74W1S1 re-fetched the page (byte-identical sha256)
+   and measured the 9-word string "Line endings are normalized to LF in the
+   index" at **lines 2679–2680**. The quote, its scope and its use are
+   unchanged; the page line numbers are corrected here, not in the block above
+   (append-only discipline).
+2. **The plan's arm15 illustration.** `plans/round-74.plan.md` describes the
+   nested fixture as `x/nested/deep.md`; the landed fixture constant puts every
+   seat path under `wave/` (the artifact dir key), so the nested file is
+   `wave/nested/deep.md`. With the `x/` prefix the listing filter matches
+   nothing and the arm would measure a zero population — the round's own
+   `## Mistakes` row records that failure and the repair.
+3. **The plan's control-4 wording.** It says "the same eight-row manifest" for
+   a six-row manifest; the number is a typo, the class-control procedure is the
+   one measured in `## What was measured — R74-C2` (controls 1) — and its
+   clause (iv) is the frozen-text defect recorded above.
+
+## Appended — arm hardening (wave seat T74W1R1) and the final measured bytes
+
+Seat T74W1R1 measured that arms 13 and 14 asserted only "some SetupError": a
+mutant that renamed either diagnostic to an unrelated refusal kept the suite at
+15/15. The arms now assert their **named** refusal
+(`printed-not-in-span` / `span-not-in-record`) through `arm_raises()`, which
+prints `got=setup:<reason> want=setup:<reason>`; the arm count is unchanged and
+`arm_raises()` cannot make a passing suite easier (it compares the reason the
+tool already produced). Re-run on the hardened bytes (tool sha256
+`97bb9272afb6c243cf7fb2dfde7bd34b90b4bcd769974d112ca574fccafd21fa`; the block
+above cites the pre-hardening `9532c12b…`, 23,238 B, as measured before the
+seat returned):
+
+```
+$ python3 -I -X utf8 tools/wave-reconcile.py --selftest | tail -3
+SELFTEST arm13-printed-undelimited-refused    ok (got=setup:printed-not-in-span want=setup:printed-not-in-span)
+SELFTEST arm14-span-not-in-record-refused     ok (got=setup:span-not-in-record want=setup:span-not-in-record)
+SELFTEST arm15-seatreports-top-level-only     ok (got=meet want=meet)
+WAVE_RECONCILE_SELFTEST: 15/15 pass                       exit 0
+$ bash tools/mutate-and-run.sh … (the frozen spec)
+CONTROL: GREEN (exit=0 …)
+DEFECT m2-delimited-tautology: KILLED (exit=1 …)
+DEFECT span-rule-removed: KILLED (exit=1 …)
+DEFECT seat-reports-any-depth: KILLED (exit=1 …)
+MUTATE: DONE (target=wave-reconcile-arms defects=3 killed=3 survived=0 inconclusive=0 kill-rate=100%)
+```
+
+Seat T74W1R1 also measured that removing `_record_claim` from only the
+`roles`/`attack_share` branches leaves 15/15: arm14 therefore must not be
+described as covering the round-73 every-kind binding hardening. This lesson
+does not claim that; the hardening's own arms are T73W1S03's and the round-73
+record stands.
+
+## Appended — Gate: wave attacks (adopted, refuted, carried)
+
+- **T74W1R1 (reviewer) — `[adopted]` named-refusal assertions for arms 13/14.**
+  Landed (see above); the frozen kill rule's clause (iii) (pre-existing arms
+  unchanged) and the arm count are untouched.
+- **T74W1R1 — `[disclosed]` arm3's population moved.** The fixture repair
+  changes arm3's hidden detail from `files=0` to `files=12` (and `13` under
+  W2) while its exposed `got=drift`/`ok` stay unchanged. The round does not
+  claim the old population was unchanged; it claims the outcome was.
+- **T74W1R1 — `[carried]` arm14 is not exhaustive kind coverage.** A selective
+  bypass of `_record_claim` on roles/attack_share alone survives; the next
+  round's arm.
+- **T74W1R2 (reviewer) — `[adopted]` the echo stub is rejected by the totals
+  line.** It measured that an expect-only stub prints the frozen summary with
+  zero git reads, and that it cannot print `ADDRANGE_TOTALS raw_old_only=8561
+  norm_cr_old_only=5` (the independently confirmed sums 3484 + 1593 + 3484 and
+  0 + 5 + 0). The round states the summary line is a receipt, never an
+  authenticator; the totals line is the derived-population field that makes the
+  echo stub insufficient for THIS frozen line.
+- **T74W1R2 — `[confirmed]` the frozen normalized/content clauses are
+  unattainable for the QUALITY row** (norm 5, not 0). Frozen-text defect,
+  reported above; the operative predicate (the six-row line) stands.
+- **T74W1M1 (mutation-tester) — `[measured]` independent arm liveness.** Its
+  four self-designed mutants (plus the three named) were scored against the
+  three new arms; the kill matrix in `T74W1M1.md` names which arm catches which
+  and which new arm catches nothing. The 12 pre-existing arms still pass on its
+  arm-added copy.
+- **T74W1S1 (scribe) — `[confirmed]` the fetch and locators** (byte-identical
+  sha256, no credential headers, 4/5 quotes exact, one line-number correction
+  above) and an independent plain-git re-derivation of the two rewrite rows
+  under its own line-counting predicate (raw 3801/3759 and 1925/1920 across the
+  range, CR-blind 42/0 and 10/5 at the same commits): different predicates,
+  same defect class, and the direction of every number agrees with the
+  instrument's set-based 3484/1593.
+- **T74W1SN1 (sentinel) — `SECRETS=0`, `TMPDIR` honoured** by
+  `tools/mutate-and-run.sh` in all three modes, `SCOPE` 0/12, and no hardcoded
+  `/tmp` root in the round's design (`plans/round-74.plan.md:172` is the line
+  that requires honouring it).
+- **T74W1SC1 (scout) — `[adopted as evidence]` the registry's `source` anchor
+  is format-only** (never opened or compared to `argv`) and `scratch_root` is
+  documentation prose nothing reads. The four rows this round added are honest
+  under that contract; the round does not claim the anchors are verified by the
+  monitor.
+- **T74W1CN1 (connector) — `[reported]` cross-lane census** (`rev-list` 598
+  files, `append-only` 3159, `ignore-cr-at-eol` 4, `norm_cr` 6): the mechanism
+  is not claimed general on this census; PROVINCE's two-lane bar is unmet until
+  a sibling gate ships a range-additivity sweep of its own.
+
+Correction to the T74W1M1 bullet above (measured, append-only): no new arm is
+dead — M-A, M-B and M-D are each killed by the arm they target (arm13, arm14,
+arm15) — but a **fourth independent mutant survives all fifteen**:
+`M-C` binds the printed integer to the whole RECORD text instead of the row's
+span and reads `15/15 pass`. The fixture population has no row whose number is
+delimited in the record but not inside its span, so arm13 cannot distinguish
+span-bound from record-bound delimitedness; that arm is the named next-round
+carry (`T74W1M1.md` §4–§5). The claim is unaffected — the three frozen mutants
+die on their named arms — but this lesson does not present the suite as
+covering the rule's binding scope.

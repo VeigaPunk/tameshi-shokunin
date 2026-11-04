@@ -412,6 +412,20 @@ def selftest():
                                   {'lane': FixtureReader(b, listings)})
             return unexpected
 
+        def arm_raises(name, prefix, fn):
+            """Arm that must fail with the NAMED refusal, not any SetupError
+            (round-74 seat T74W1R1: `arm()` collapsed the reason, so changing
+            a diagnostic to an unrelated SetupError kept the suite green)."""
+            try:
+                fn()
+            except SetupError as exc:
+                got = str(exc)
+                ok = got.startswith(prefix)
+                results.append((name, ok, 'setup:' + got.split(':')[0],
+                                'setup:' + prefix))
+                return
+            results.append((name, False, 'no-refusal', 'setup:' + prefix))
+
         def arm(name, want, fn):
             try:
                 got = fn()
@@ -470,14 +484,14 @@ def selftest():
         # round 74: the three rules the round-73 wave measured as unguarded.
         # Each arm is moved by exactly one mutant in
         # tools/wave-reconcile-mutants.spec; the arm names that mutant.
-        arm('arm13-printed-undelimited-refused', 'setup',
-            lambda: measure_row(kind='seats',
-                                record={'path': 'report.md', 'rev': REV,
-                                        'span': '11 reports', 'printed': 1}))
-        arm('arm14-span-not-in-record-refused', 'setup',
-            lambda: measure_row(kind='seats',
-                                record={'path': 'report.md', 'rev': REV,
-                                        'span': '13 seats', 'printed': 13}))
+        arm_raises('arm13-printed-undelimited-refused', 'printed-not-in-span',
+                   lambda: measure_row(kind='seats',
+                                       record={'path': 'report.md', 'rev': REV,
+                                               'span': '11 reports', 'printed': 1}))
+        arm_raises('arm14-span-not-in-record-refused', 'span-not-in-record',
+                   lambda: measure_row(kind='seats',
+                                       record={'path': 'report.md', 'rev': REV,
+                                               'span': '13 seats', 'printed': 13}))
         arm('arm15-seatreports-top-level-only', 'meet',
             lambda: measure_row(kind='seat_reports',
                                 record={'path': 'report.md', 'rev': REV,
