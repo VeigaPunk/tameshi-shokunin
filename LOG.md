@@ -4355,3 +4355,17 @@ design class included).
 - Sources: S308 opened (PEP 540), S309 appended as the round-79 refused row
   (`docs.python.org/3/library/sys.html`), S289 re-opened. Census exit 0 before
   and after (167 → 169 rows).
+
+### Round 80 — appended: the cold-read rekey (2026-11-04)
+
+The forecast priced 17 lost sections; the pre-rekey read at the records tip
+`f45c1332` measured `sections_covered=48/66` (one more than predicted, because
+the round's own registry section is new) with score 6 and box3 false. The
+round-79 run-book batch re-read and rebound 18 sections at that pin
+(`REBIND OK sections=18 entries_added=18 ledger_before=990`, commit
+`3e310e2b`). The new section's empty input union still read
+`inputs-unrecorded` (65/66), so an appended entry with its 7-file input union
+and `rekey_round: 80` landed at `93991f1a` (ledger 1009); the copied tool's
+round-79 label and its accepted-but-unwritten `--entries-out` are recorded as
+`corpus/lessons/round-80.md` `## Mistakes` 3. Post-rekey monitor:
+`.ufo/evidence/round-80/coldread-after-rekey.json`.

@@ -140,6 +140,8 @@ Census: `scripts/sources-census.sh validate --root … tameshi` exit 0 before
    without the marker is refused, and an all-malformed block is now
    `receipt-header-incomplete` instead of invisible.
 
+3. **A copied rekey run-book carried the round-79 label and an accepted-but-unwritten argument.** Class: frozen-copy drift (the round-79 `## Mistakes` 4 recurrence — the trace path was fixed then, the round label was not). Evidence pointer: the 18 entries the batch appended at `3e310e2b` carry `"rekey_round": 79`, and `--entries-out` is accepted by the copied tool but never written, so no `entries.json` exists (`.ufo/evidence/round-80/rekey/summary.json` is the real record). Captured-by: none — the run-book's "REBIND OK" summary is the producer's own evidence and nothing re-read the entry labels. Fix: an appended entry for the one section the monitor still refused (`inputs-unrecorded`, because a new section's union is empty) carries its 7-file input union and `rekey_round: 80` (`93991f1a`, ledger 1008 → 1009); the label drift is recorded here, not rewritten in the committed entries.
+
 ## Wave findings
 
 Thirteen seats settled, none died; every finding cites its committed seat
