@@ -4775,3 +4775,60 @@ the union-plan generator reads; the flat trace numbering that let b2
 overwrite b1 receipts) and a third (`cp` over an edited plan) are recorded
 in `corpus/lessons/round-76.md`; the corrected per-batch rebind script
 (`--batch-tag`, `traces-<tag>/`, `rekey_round: 76` labels) is committed.
+
+## Round 77 — declared claims and measured record (2026-11-04)
+
+Plan: `plans/round-77.plan.md` (frozen at `d39be4b0`, predicates, counters,
+kill matrix, control and `coldread_forecast` in that commit). Base
+`ac6baf7a46df613b171b4c1ab834c888cd6321b9` (= `origin/master`, the round-76
+non-author closure verdict commit). Round shape: one v1 wave, 12 seats
+(4 executor · 1 scribe · 1 scout · 2 reviewer · 1 critic · 1 mutation-tester ·
+1 connector · 1 sentinel; attack seats 4 = 33.3 %), policy
+`scripts/hyaku/ufo-wave-policy.json`, band 8–16. `labrat` is a frozen-topology
+seat the validator rejects, so no labrat item exists; the planner seat stays
+with the L1 per the orchestrator ruling.
+
+- **R77-C1 — operability (verdict-only; sourced on S305, opened this round).**
+  The round-76 wave's recursion survivor becomes arm20 of
+  `tools/wave-reconcile.py`. Before (base): `WAVE_RECONCILE_SELFTEST: 19/19
+  pass` and the `git-listing-recursion-removed` mutant survives 19/19
+  (`.ufo/evidence/round-77/base-survivor-r77.txt`). After:
+  `WAVE_RECONCILE_SELFTEST: 20/20 pass` exit 0 and the battery
+  `MUTATE: DONE (target=wave-reconcile-arms-r77 defects=8 killed=8
+  survived=0 inconclusive=0 kill-rate=100%)` with `CONTROL: GREEN` and
+  `MUTATE_RESTORE: OK` byte-identical (tool sha256 `67d3a4cc2e75…`),
+  `.ufo/evidence/round-77/c1-landed-selftest-wr.txt` and
+  `c1-landed-battery.txt`; every mutant dies on its frozen arm(s), the new
+  defect on arm20 only, with `seat-reports-any-depth` → arm15 + arm20 as the
+  plan's disclosed intrinsic collateral.
+- **R77-C2 — calibration (the lowest scored axis at 8).** The cold-read credit
+  the record claims is the monitor's reading at the revision the record names.
+  Before (base): `COLDREAD_PORTABLE rev=ac6baf7a46df credited=63/65`,
+  `sections_covered=63 sections_total=65 box3_full_page=false`, two
+  uncredited headings (`## Standing rules`, `## Mutation-sweep recipe —
+  numbered steps; bounded cold-read evidence`)
+  (`.ufo/evidence/round-77/coldread-base-r77.json`). After: one settlement
+  batch at the content tip `1d91c384` covering exactly the monitor's 14
+  uncredited sections (ledger 930 → 944, `REBIND OK sections=14
+  entries_added=14`), measured at the settlement commit `29a1a7d0`:
+  `credited=65/65`, `sections_covered=65 sections_total=65
+  box3_full_page=true` (`coldread-after-r77.json`). The round-76 sentence
+  that named `b2b0f82a` as the landing tip is corrected append-only below.
+
+**No axis harmed.** depth 10, calibration 8 and freshness 9 are unchanged as
+numbers (the round records axis moves, not new scores). Standing instruments
+at the content tip: `WAVE_RECONCILE: rows=6 met=6 unexpected=0` and
+`SELFSTATE: rows=20 match=18 stale=2 unexpected=0`
+(`.ufo/evidence/round-77/standing-sweep-wr-r77.txt`,
+`standing-sweep-ss-r77.txt`). Round 77 enters no capability row (C1 is an arm
+on an existing capability, C2 a settlement on an existing run-book), so the
+stagnation nudge fires for round 78: that round should be a capability round.
+
+**Correction of record for round 76 (append-only).** The round-76 blocks above
+say `credited=65/65` "at the landing tip (`b2b0f82a`)"; `b2b0f82a` is the last
+rekey batch of that round and the true tip is `ac6baf7a`, two record commits
+later, where the monitor reads `63/65` with `box3_full_page=false`
+(`.ufo/evidence/round-77/coldread-base-r77.json`). The round-76 `REBIND OK`
+was true at its own pin; the record named that pin as the tip. Criterion 128
+(`corpus/QUALITY.md`) captures the class, and the round-77 C2 settlement is
+measured at the settlement commit it names.

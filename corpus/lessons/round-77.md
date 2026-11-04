@@ -49,10 +49,15 @@ record claims is the monitor's reading at the revision the record names).
 - The record it corrects: the round-76 block says `credited=65/65` "at the
   landing tip (`b2b0f82a`)"; `b2b0f82a` is the last rekey batch, the tip is
   two record commits later, and the tip reading is `63/65`.
-- After: measured at the settlement commit (see the records commit and
-  `.ufo/evidence/round-77/coldread-after-r77.json`); the plan's kill rule
-  requires `credited=65/65` with `box3_full_page=true` at the revision the
-  record names.
+- After: one settlement batch at the content tip `1d91c384` covering exactly
+  the monitor's 14 uncredited sections (`REBIND OK sections=14
+  entries_added=14`, ledger 930 → 944), measured at the settlement commit
+  `29a1a7d0`: `COLDREAD_PORTABLE rev=29a1a7d0a198 credited=65/65` with
+  `sections_covered=65 sections_total=65 box3_full_page=true`
+  (`.ufo/evidence/round-77/coldread-after-r77.json`). The records commit that
+  follows this paragraph appends `SCORECARD.md`/`LOG.md` — two pinned inputs —
+  so a second, small settlement batch re-settles the sections it stales, and
+  that second batch is the round's last lane commit.
 
 ## Gate
 

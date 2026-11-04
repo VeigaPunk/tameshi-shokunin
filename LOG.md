@@ -4158,3 +4158,45 @@ Monitor `credited=65/65` at the landing tip `b2b0f82a`
 (`.ufo/evidence/round-76/coldread-green-r76.txt`; red-before 48/65 at the
 records commit). Full narrative: `corpus/lessons/round-76.md` settlement
 section.
+
+## Round 77 — measured (appended at the records commit, 2026-11-04)
+
+Declaration `d39be4b0` (plan frozen with the design-phase candidate, the
+8-defect spec and the base survivor control); content commit `1d91c384`
+(C1 tool + spec, S305 row, QUALITY criterion 128, round lesson); settlement
+batch-1 commit `29a1a7d0` (ledger 930 → 944, `traces-b1`). Receipts under
+`.ufo/evidence/round-77/`; the round's report cites the tip.
+
+- **R77-C1 verifies (measured).** `WAVE_RECONCILE_SELFTEST: 20/20 pass` exit 0
+  on the landed bytes (tool sha256 `67d3a4cc2e75ef7211a8588e43dcaf3874aaec66c3eea1d59a2b43b5a35e4e84`,
+  receipt header carries the measured rev and sha —
+  round-76 closure §6.2 paid); battery `MUTATE: DONE
+  (target=wave-reconcile-arms-r77 defects=8 killed=8 survived=0
+  inconclusive=0 kill-rate=100%)`, `CONTROL: GREEN`, `MUTATE_RESTORE: OK`
+  byte-identical; the new defect `git-listing-recursion-removed` dies on
+  arm20 only; the frozen matrix reproduces exactly (`seat-reports-any-depth`
+  → arm15 + arm20, disclosed intrinsic collateral). Sourced on S305 (the
+  `git-ls-tree` page opened this round: `-r` "Recurse into sub-trees.").
+- **R77-C2 verifies (measured).** Before at base `credited=63/65`,
+  `box3_full_page=false`, two uncredited headings
+  (`.ufo/evidence/round-77/coldread-base-r77.json`); after the settlement
+  batch at `29a1a7d0`: `COLDREAD_PORTABLE rev=29a1a7d0a198 credited=65/65`
+  with `sections_covered=65 sections_total=65 box3_full_page=true`
+  (`coldread-after-r77.json`). The rekey's section set equals the monitor's
+  measured uncredited set at `1d91c384` (14 sections, one batch; no section
+  added or dropped).
+- **Routed payments landed.** Round-76 closure §6.1 → C2 plus the append-only
+  correction above; §6.4 → the report writes the base revision explicitly;
+  §6.3 → the lesson carries one combined tip receipt per standing sweep
+  (`.ufo/evidence/round-77/standing-sweep-wr-r77.txt`,
+  `standing-sweep-ss-r77.txt`); §6.2 → every selftest receipt in this round
+  names the measured rev and tool sha256. Carried with a written reason
+  (lesson `## Findings and carries`): the two bash-instrument gaps
+  (`MUTATE_SELFTEST: 107/107`, `REGRESSION: PASS (cases=10 …)`) need a
+  selfstate runner widening plus a frozen tuple table, and the 17-of-44
+  registry gap; neither fits this round's claim cap.
+- **Ledger note.** `measure.py`'s default ledger is the round-18 historical
+  copy (1.2 MB) while the live ledger is
+  `.ufo/evidence/round-21/coldread/ledger.json` (51.7 MB): the historical
+  default reads `11/65`. The round's counter uses
+  `tools/coldread-precheck-portable.py`, which reads the live ledger.
