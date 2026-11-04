@@ -2342,3 +2342,14 @@ on the landed bytes (`c2-landed-battery.txt`).
     unmeasured figure: entering or holding a capability binds its figure to the
     instrument's current output and to a pin the audit can settle
     (`lessons/round-82.md` `## Mistakes` 3; round-81 spot-check §6.6).
+
+## Criteria appended — round 82 (second pass, the wave's repairs)
+
+83. A byte binding is a claim about the path MEASURED, not the path named: the
+    bound file must be read once and the same bytes measured, the path must not
+    be normalised through a symlink, and the bound object must be a regular
+    blob at the declared revision (a directory, a symlink or a replace-ref
+    substitute is a refusal). A binding that reads twice, resolves links, or
+    accepts a non-regular entry can certify bytes no measurement ever parsed.
+    (`lessons/round-82.md` `## Mistakes` 5–6; the wave's critic C1 and
+    sentinel S1)

@@ -183,7 +183,7 @@ rows only, and a row is a claim opened in the round that writes it.
 
 | S308 | Add a new UTF-8 Mode (PEP 540) — https://peps.python.org/pep-0540/ | spec | A | the `-X utf8` ground behind `tools/selfstate-freshness.py`'s frozen python tuple and the round-80 arm17 fixture: the tuple runs `python3 -I -X utf8` and arm17 prints `sys.flags.utf8_mode`, so a tuple without `-X utf8` measures stale under a UTF-8 locale | §Proposal @ fetched 2026-11-04 (HTTP date Wed, 04 Nov 2026 07:14:40 GMT; 32969 B; sha256 c6ed71515dd2ba0c74eeccf94aa5f4097aed460c2c1cb291417ccb790a8ad7a2; snapshot .ufo/evidence/round-80/sources/pep540.html, headers pep540.headers) | "This mode is disabled by default and enabled by the POSIX locale." (12 words, page line 220) — so `-X utf8` is load-bearing where the locale is not POSIX, and arm17 must pin a UTF-8 locale | mined | 2026-11-04 | on-release | corpus/lessons/round-80.md |
 | S309 | Python 3.15, sys (docs.python.org) — https://docs.python.org/3.15/library/sys.html | docs | A | the `-I` isolated-mode ground (rejected row; S307 carries it) | §flags.isolated @ fetched 2026-11-04 (HTTP date Wed, 04 Nov 2026 07:24:55 GMT; 280617 B; sha256 68094f11447531e5d7a4391ebcd4329f9a03434280013ffb2554f6d944671348; snapshot .ufo/evidence/round-80/sources/sys315.html, headers sys.headers) | REJECTED: the `flags.isolated` row only maps the attribute to `-I` ("Changed in version 3.4: Added isolated attribute for -I isolated flag.", 11 words, page line 999) and states no isolation semantics; flip: the page gains prose defining isolated mode | rejected | 2026-11-04 | 180d | corpus/lessons/round-80.md |
-| S310 | Python 3.15, inspect (docs.python.org) — https://docs.python.org/3.15/library/inspect.html | docs | A | the `inspect.getsource` ground behind the R81-C3 text pins (`ARM21_selftest_text_pin`, `arm25-selftest-text-pin`): the pin digests the selftest function's source text, so the ground must say what `getsource` returns, not what an AST or a bytecode view would | §inspect.getsource @ fetched 2026-11-04 (HTTP date Wed, 04 Nov 2026 08:40:02 GMT; 221837 B; sha256 7570b79d9d6211df9b796e0e19d454fce2b44c0de471f99b9bb9b106735dfdcc; snapshot .ufo/evidence/round-81/sources/inspect315.html, headers inspect315.headers) | "Return the text of the source code for an object." (10 words, page line 1193) — `getsource` returns TEXT, so a digest over it binds the assertion bytes an arm carries; the page's `getsourcelines` sibling returns (lines, lineno), a shape the pin does not need | mined | 2026-11-04 | 365d | corpus/lessons/round-81.md |
+| S310 | Python 3.15, inspect (docs.python.org) — https://docs.python.org/3.15/library/inspect.html | docs | A | the `inspect.getsource` ground behind the R81-C3 text pins (`ARM21_selftest_text_pin`, `arm25-selftest-text-pin`): the pin digests the selftest function's source text, so the ground must say what `getsource` returns, not what an AST or a bytecode view would | §inspect.getsource @ fetched 2026-11-04 (HTTP date Wed, 04 Nov 2026 08:40:02 GMT; 221837 B; sha256 7570b79d9d6211df9b796e0e19d454fce2b44c0de471f99b9bb9b106735dfdcc; snapshot .ufo/evidence/round-81/sources/inspect315.html, headers inspect315.headers) | "Return the text of the source code for an object." (10 words, page line 1193) — `getsource` returns TEXT, so a digest over it binds the assertion bytes an arm carries; the page's `getsourcelines` sibling returns (lines, lineno), a shape the pin does not need | mined | 2026-11-04 | 365d | corpus/lessons/round-81.md, corpus/lessons/round-82.md |
 
 ## Paths
 
@@ -367,7 +367,11 @@ rows only, and a row is a claim opened in the round that writes it.
   (no new row this round). `used-by` old -> new: S294 gains
   `corpus/knowledge/counter-population-binding.md, corpus/lessons/round-82.md`;
   S289 and S305 each gain `corpus/lessons/round-82.md` (logged in the round-82
-  lesson Gate).
+  lesson Gate). S310 (Python 3.15 inspect) was **RE-OPENED** for the A14 pin's ground: fetch
+  2026-11-04 13:31 GMT, 221837 B, sha256 `76d96171fb85…` — the page differs from the round-81
+  snapshot (`7570b79d9d62…`) at identical length, and the located quote is still at raw line
+  1193, so the row's anchor survives the page's furniture move; S310 `used-by` gains
+  `corpus/lessons/round-82.md`.
 
 ## Leads (unopened)
 
