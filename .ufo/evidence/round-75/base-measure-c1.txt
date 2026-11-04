@@ -11,3 +11,18 @@ m-attack-bypass.py       WAVE_RECONCILE_SELFTEST: 15/15 pass
 
 verdict: the 15-arm suite reads 15/15 on pristine and on all three mutants -> M-C, roles-bypass and attack-bypass SURVIVE.
 do-nothing control: installing no arms leaves the suite at 15/15 and every named mutant alive -> the C1 target (18/18 + 3 named-arm kills) is unreachable by doing nothing.
+
+## exact mutant edits (byte-pinned; count==1 asserted before writing)
+M-C record-bound OLD='    _, rec = _record_span(row, readers)'
+                 NEW='    raw_text, rec = _record_span(row, readers)'
+M-C record-bound OLD="    if not delimited(printed, rec['span']):"
+                 NEW='    if not delimited(printed, raw_text):'
+roles-bypass     OLD="    if kind == 'roles':\n        _record_claim(row, readers)\n        _, records = _results(row, readers)"
+                 NEW="    if kind == 'roles':\n        _, records = _results(row, readers)"
+attack-bypass    OLD="    if kind == 'attack_share':\n        _record_claim(row, readers)\n        seats, records = _results(row, readers)"
+                 NEW="    if kind == 'attack_share':\n        seats, records = _results(row, readers)"
+
+## base mutant sha256 (from /fast/scratch/hyaku/tameshi-r75/l1/control-c1/ at freeze time)
+f0202ba00f877bd49fb6a5a59b42e96d331d52268bf2bf20d15400b9ba6df1ea  /fast/scratch/hyaku/tameshi-r75/l1/c1-candidate/../control-c1/m-attack-bypass.py
+99ab53f3ab3bacef3f64fc665a84c7aab45467aec4a49cf2605673f1210637c9  /fast/scratch/hyaku/tameshi-r75/l1/c1-candidate/../control-c1/m-mc-record-bound.py
+55d8836a477343976951d5cb2eaf07eeefb6a3a5d5122a40f2ab2b3221778216  /fast/scratch/hyaku/tameshi-r75/l1/c1-candidate/../control-c1/m-roles-bypass.py

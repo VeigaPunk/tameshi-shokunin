@@ -1,0 +1,26 @@
+# control 4 (R75-C2, non-figure token cheat) — measured at base 21ef81e9
+# Each live row's regex is a token COMMON to doc and instrument but NOT the figure
+# (the verdict prefix, or 'dead=0'). Every stale row reads match with ZERO repairs;
+# only Correction 2's tuple freeze (the committed prototype SPECS) makes the counter
+# the 16 frozen figures rather than any manifest the writer chooses.
+$ python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest loose3.json --doc-rev 21ef81e9
+SELFSTATE_ROW r75-receipt-exists-selftest receipt-existence sweep expect=match measured=match doc=RECEIPT_EXISTS_SELFTEST: instrument=RECEIPT_EXISTS_SELFTEST: ok
+SELFSTATE_ROW r75-commit-bind-selftest commit-message receipt binding sweep expect=match measured=match doc=RECEIPT_COMMIT_BIND_SELFTEST: instrument=RECEIPT_COMMIT_BIND_SELFTEST: ok
+SELFSTATE_ROW r75-quoted-line-selftest quoted-line receipt backability expect=match measured=match doc=QUOTED_LINE_EXISTS_SELFTEST: instrument=QUOTED_LINE_EXISTS_SELFTEST: ok
+SELFSTATE_ROW r75-arm-selftest counter-arm liveness check expect=match measured=match doc=ARM_LIVENESS_SELFTEST: instrument=ARM_LIVENESS_SELFTEST: ok
+SELFSTATE_ROW r75-arm-rows counter-arm liveness check expect=match measured=match doc=dead=0 instrument=dead=0 ok
+SELFSTATE_ROW r75-figure-selftest figure-attribution check expect=match measured=match doc=FIGURE_ATTRIBUTION_SELFTEST: instrument=FIGURE_ATTRIBUTION_SELFTEST: ok
+SELFSTATE_ROW r75-figure-rows figure-attribution check expect=match measured=match doc=FIGURE_ATTRIBUTION: instrument=FIGURE_ATTRIBUTION: ok
+SELFSTATE_ROW r75-anchor-selftest anchor-drift sweep expect=match measured=match doc=ANCHOR_DRIFT_SELFTEST: instrument=ANCHOR_DRIFT_SELFTEST: ok
+SELFSTATE_ROW r75-anchor-rows anchor-drift sweep expect=match measured=match doc=ANCHOR_DRIFT: instrument=ANCHOR_DRIFT: ok
+SELFSTATE_ROW r75-count-selftest printed-count recheck expect=match measured=match doc=COUNT_RECHECK_SELFTEST: instrument=COUNT_RECHECK_SELFTEST: ok
+SELFSTATE_ROW r75-count-rows printed-count recheck expect=match measured=match doc=COUNT_RECHECK: instrument=COUNT_RECHECK: ok
+SELFSTATE_ROW r75-pointer-selftest line-pointer recheck expect=match measured=match doc=POINTER_RECHECK_SELFTEST: instrument=POINTER_RECHECK_SELFTEST: ok
+SELFSTATE_ROW r75-pointer-rows line-pointer recheck expect=match measured=match doc=POINTER_RECHECK: instrument=POINTER_RECHECK: ok
+SELFSTATE_ROW r75-rekey-selftest rekey-cost forecast expect=match measured=match doc=REKEY_COST_SELFTEST: instrument=REKEY_COST_SELFTEST: ok
+SELFSTATE_ROW r75-addrange-rows round-range additivity sweep expect=match measured=match doc=ADDRANGE: instrument=ADDRANGE: ok
+SELFSTATE_ROW r75-addrange-selftest round-range additivity sweep expect=match measured=match doc=ADDITIVITY_RANGE_SELFTEST: instrument=ADDITIVITY_RANGE_SELFTEST: ok
+SELFSTATE_ROW r74-frozen-addr-six The frozen six-row line re-runs at `2e0ac486`:
+  `ADDRANGE: rows=6 met=6 unexpected=0` expect=stale measured=stale doc=ADDRANGE: rows=6 met=6 unexpected=0 instrument=ADDRANGE: rows=11 met=11 unexpected=0 ok
+SELFSTATE: rows=17 match=16 stale=1 unexpected=0
+exit=0

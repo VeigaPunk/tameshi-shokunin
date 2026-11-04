@@ -3985,3 +3985,13 @@ each R75 mutant to die on its own named arm and on no other, while a
 pre-existing mutant must keep its named-arm kill. Target unchanged (`18/18
 pass`; six defects killed). Evidence: `.ufo/evidence/round-75/l1-c1-battery.txt`
 (the L1's own candidate, `killed=6 survived=0`) and the plan's Correction 1.
+
+Round 75 pre-measurement correction 2 (2026-11-04): the C2 population is frozen
+to the committed prototype's 16 (capability, figure, instrument, argv) tuples
+plus the frozen span row, so a manifest that differs from that table is not the
+counter (control 4: a non-figure token manifest reads `unexpected=0` at base
+with zero repairs, `.ufo/evidence/round-75/controls-c75b.txt`); the C1 kill-rule
+(ii) matrix and the rule (iii) baseline diff are disclosed in
+`.ufo/evidence/round-75/` (`c1-arms1-15-diff.txt`, `base-measure-c1.txt`); the
+population wording is "the 16 declared live figures on 10 capability rows"; the
+out-of-population repairs and the round-76 routed defect are named in the plan.

@@ -205,3 +205,55 @@ the three round-75 mutants each fail only their own named arm. Corrected rule
 arm; a pre-existing mutant must keep its named-arm kill, and collateral
 failures on the new arms are expected, not disqualifying. The after-state
 target (`18/18 pass`; six defects killed on their named arms) is unchanged.
+
+### Correction 2 (appended before the C2 after-state is measured, 2026-11-04)
+
+The wave's critic (T75W1C1) measured a control that reaches C2's target without
+the claimed work and a wording/sizing defect; both are adopted here as a
+control freeze, not a target change. The predicate (`SELFSTATE: rows=17
+match=16 stale=1 unexpected=0`) and the seven repair cells are unchanged.
+
+1. **The population is the frozen tuple table, not any manifest.** The 16 live
+   rows are exactly the (capability, figure regex, instrument path, argv)
+   tuples listed in SPECS of the committed pre-freeze prototype
+   `.ufo/evidence/round-75/selfstate-control-scan.py`, each instrument pinned at
+   `21ef81e9`; the 17th row is the frozen span row `r74-frozen-addr-six`
+   (`expect: stale`) exactly as declared. The landed
+   `tools/selfstate-freshness.json` must equal that table (id, mode, capability,
+   figure, instrument path/rev/argv, expect). A manifest that differs — a
+   laxer regex, a foreign instrument, a dropped row — is not this claim's
+   counter, whatever its summary prints.
+   *Control 4 measured* (`.ufo/evidence/round-75/controls-c75b.txt`): with each
+   live regex replaced by a token common to doc and instrument but not the
+   figure (the verdict prefix, or `dead=0`), the same instrument prints
+   `SELFSTATE: rows=17 match=16 stale=1 unexpected=0` exit 0 at base with zero
+   repairs. The tuple freeze is what fails that manifest; the count alone is
+   not self-authenticating.
+2. **Population wording.** "The live capability rows re-derive" reads, from
+   here on, as **the 16 declared live figures on 10 capability rows** (the
+   prototype's population). The `## Capabilities` table holds 24 rows; rows
+   outside the population are named in the report. The `mutation sweep runner`
+   (`80/80` → `107/107`) and `wave-record reconciliation` (`12/12` → `18/18`)
+   cells are superseded with C1's landing as out-of-population record repairs;
+   `six-leg content-disposition probe` (`18/18` → `19/19`) and
+   `effective expectation reconciliation` (`34/34` → `66/66`) stay as written
+   under the round-17 dated-literal disclosure (`SCORECARD.md:655-659`) and are
+   routed to round 76 as a named defect (the disclosure's own superseding
+   figures are themselves stale: `95/95` and `56/56`).
+3. **C1 kill rule (ii) matrix disclosed.** The measured six-defect matrix is
+   `m2` → 16/18 (arm13 + arm16), span-rule → 15/18 (arm14 + arm17 + arm18),
+   seat-reports → 17/18 (arm15), and each of the three R75 mutants → 17/18 on
+   its named arm only. The earlier sentence "the suite at `17/18` under each
+   mutation" is superseded by this matrix; the after-state target (`18/18`;
+   `killed=6`) is unchanged. Correction 1's rule (ii) scope stands.
+4. **Rule (iii) baseline and mutant pins in the receipts.** The pristine →
+   candidate arms 1–15 line diff is `c1-arms1-15-diff.txt` (no output: PASS);
+   the three base mutants' exact `@old`/`@new` edits and sha256 are appended to
+   `base-measure-c1.txt`, and the landed spec's first three `@defect` blocks are
+   byte-identical to `21ef81e9:tools/wave-reconcile-mutants.spec` (three
+   appended blocks only), checked in the C1 battery receipt.
+5. **Sourced-claim quote location.** The S006 re-open carries the 14-word
+   located quote "A harness that only checks for \"red\" banks three very
+   different outcomes as passes." (`§The three verdicts`, extract line 24) in
+   the lesson Gate and the SOURCES note, plus the raw URL and the snapshot
+   sha256 (`960577288ed5c5eb80f42669fcb30bf254b9a917ae2bde3a117888056ef354e2`).
