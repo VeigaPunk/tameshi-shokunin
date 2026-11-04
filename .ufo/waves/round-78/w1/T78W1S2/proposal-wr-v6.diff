@@ -1,0 +1,144 @@
+--- design/wave-reconcile.py	2026-11-04 02:50:41.140501973 -0300
++++ v6/tools/wave-reconcile.py	2026-11-04 02:58:15.411288910 -0300
+@@ -568,32 +568,36 @@
+         # single-commit fixture made HEAD == rev).
+         GIT_FIXTURE_PREFIX = 'wave-reconcile-git-'
+ 
+-        def _fixture_entries():
+-            try:
+-                return set(p for p in os.listdir(tempfile.gettempdir())
+-                           if p.startswith(GIT_FIXTURE_PREFIX))
+-            except OSError:
+-                return set()
++        def _fixture_git(fix):
++            # One git closure per fixture: `-C fix` always, a non-zero exit is
++            # a setup refusal, and the toplevel is asserted equal to the fixture
++            # root before any content is written (the lane's git-fixture rule).
++            def g(*args):
++                proc = subprocess.run(['git', '-C', fix] + list(args),
++                                      stdout=subprocess.PIPE,
++                                      stderr=subprocess.PIPE)
++                if proc.returncode != 0:
++                    raise SetupError('git-fixture-failed:%s'
++                                     % proc.stderr.decode('utf-8',
++                                                          'replace')[:120])
++                return proc.stdout
++            g('init', '-q')
++            top = g('rev-parse', '--show-toplevel').decode().strip()
++            if os.path.realpath(top) != os.path.realpath(fix):
++                raise SetupError('git-fixture-misroot:%s' % top)
++
++            def commit(message):
++                g('-c', 'user.name=tameshi-fixture',
++                  '-c', 'user.email=tameshi@shokunin.local',
++                  '-c', 'commit.gpgsign=false',
++                  'commit', '-q', '-m', message)
++            return g, commit
+ 
+         def _nested_listing_arm():
+-            before = _fixture_entries()
+             fix = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
+                                    dir=os.environ.get('TMPDIR') or None)
+-            got = 'setup'
+             try:
+-                def g(*args):
+-                    proc = subprocess.run(['git', '-C', fix] + list(args),
+-                                          stdout=subprocess.PIPE,
+-                                          stderr=subprocess.PIPE)
+-                    if proc.returncode != 0:
+-                        raise SetupError('git-fixture-failed:%s'
+-                                         % proc.stderr.decode('utf-8',
+-                                                              'replace')[:120])
+-                    return proc.stdout
+-                g('init', '-q')
+-                top = g('rev-parse', '--show-toplevel').decode().strip()
+-                if os.path.realpath(top) != os.path.realpath(fix):
+-                    raise SetupError('git-fixture-misroot:%s' % top)
++                g, commit = _fixture_git(fix)
+                 os.makedirs(os.path.join(fix, 'wave', 'nested'))
+                 with open(os.path.join(fix, 'wave', 'one.md'), 'w',
+                           encoding='utf-8') as fh:
+@@ -605,10 +609,7 @@
+                           encoding='utf-8') as fh:
+                     fh.write('1 seat report\n')
+                 g('add', '-A')
+-                g('-c', 'user.name=tameshi-fixture',
+-                  '-c', 'user.email=tameshi@shokunin.local',
+-                  '-c', 'commit.gpgsign=false',
+-                  'commit', '-q', '-m', 'fixture')
++                commit('fixture')
+                 rev = g('rev-parse', 'HEAD').decode().strip()
+                 got = measure({'id': 'nested-listing',
+                                'kind': 'seat_reports',
+@@ -620,9 +621,8 @@
+                               {'lane': GitReader(fix)})[0]
+             finally:
+                 shutil.rmtree(fix, ignore_errors=True)
+-            leaked = _fixture_entries() - before
+-            if leaked:
+-                return 'leak:%d' % len(leaked)
++            if os.path.exists(fix):
++                return 'leak:1'
+             return got
+         arm('arm20-nested-listing-recursion', 'meet', _nested_listing_arm)
+ 
+@@ -633,24 +633,10 @@
+         # names the commit on which you based the changes in the working tree"
+         # — a revision argument, never the argument's substitute.
+         def _pinned_rev_listing_arm():
+-            before = _fixture_entries()
+             fix = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
+                                    dir=os.environ.get('TMPDIR') or None)
+-            got = 'setup'
+             try:
+-                def g(*args):
+-                    proc = subprocess.run(['git', '-C', fix] + list(args),
+-                                          stdout=subprocess.PIPE,
+-                                          stderr=subprocess.PIPE)
+-                    if proc.returncode != 0:
+-                        raise SetupError('git-fixture-failed:%s'
+-                                         % proc.stderr.decode('utf-8',
+-                                                              'replace')[:120])
+-                    return proc.stdout
+-                g('init', '-q')
+-                top = g('rev-parse', '--show-toplevel').decode().strip()
+-                if os.path.realpath(top) != os.path.realpath(fix):
+-                    raise SetupError('git-fixture-misroot:%s' % top)
++                g, commit = _fixture_git(fix)
+                 os.makedirs(os.path.join(fix, 'wave'))
+                 with open(os.path.join(fix, 'wave', 'one.md'), 'w',
+                           encoding='utf-8') as fh:
+@@ -659,19 +645,13 @@
+                           encoding='utf-8') as fh:
+                     fh.write('1 seat report\n')
+                 g('add', '-A')
+-                g('-c', 'user.name=tameshi-fixture',
+-                  '-c', 'user.email=tameshi@shokunin.local',
+-                  '-c', 'commit.gpgsign=false',
+-                  'commit', '-q', '-m', 'rev1')
++                commit('rev1')
+                 rev = g('rev-parse', 'HEAD').decode().strip()
+                 with open(os.path.join(fix, 'wave', 'two.md'), 'w',
+                           encoding='utf-8') as fh:
+                     fh.write('two\n')
+                 g('add', '-A')
+-                g('-c', 'user.name=tameshi-fixture',
+-                  '-c', 'user.email=tameshi@shokunin.local',
+-                  '-c', 'commit.gpgsign=false',
+-                  'commit', '-q', '-m', 'rev2')
++                commit('rev2')
+                 head = g('rev-parse', 'HEAD').decode().strip()
+                 if head == rev:
+                     raise SetupError('git-fixture-head-equals-rev')
+@@ -685,9 +665,8 @@
+                               {'lane': GitReader(fix)})[0]
+             finally:
+                 shutil.rmtree(fix)
+-            leaked = _fixture_entries() - before
+-            if leaked:
+-                return 'leak:%d' % len(leaked)
++            if os.path.exists(fix):
++                return 'leak:1'
+             return got
+         arm('arm21-pinned-rev-listing-at-head-drift', 'meet',
+             _pinned_rev_listing_arm)

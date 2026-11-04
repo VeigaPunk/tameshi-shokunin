@@ -1,0 +1,49 @@
+--- cur/tools/selfstate-freshness.py	2026-11-04 03:02:01.802172373 -0300
++++ x1/tools/selfstate-freshness.py	2026-11-04 03:02:01.808893582 -0300
+@@ -62,8 +62,10 @@
+ instrument whose stdout carries no token for the row's figure regex; an
+ instrument timeout. Nothing is certified from an unreadable input.
+ 
+-Selftest (`--selftest`): hermetic — a fixture doc string and a canned
+-instrument stdout per row, no git, no lane subprocess. Nine arms: match,
++Selftest (`--selftest`): arms 1-10 and 12 are hermetic — a fixture doc
++string and a canned instrument stdout per row, no git, no subprocess;
++arms 11 and 13 run the real CLI as a subprocess against a one-commit
++git fixture. Thirteen arms: match,
+ stale measured, frozen-span stale, absent capability refused, absent figure
+ refused, zero rows refused, unknown expect refused, unknown mode refused, and
+ an instrument whose stdout lacks the figure refused (a setup refusal, never
+@@ -648,16 +650,6 @@
+ 
+         _put2("SCORECARD.md", DOC_REV1)
+         _put2("tools/toy.sh", "#!/bin/bash\nprintf 'TOY_FIGURE: 4/4 pass\\n'\n")
+-        mpath2 = os.path.join(fx2, "manifest.json")
+-        with open(mpath2, "w", newline="\n") as fh:
+-            json.dump({"schema": "tameshi-selfstate-freshness-v1",
+-                       "rows": [{"id": "toy-bash", "mode": "capability",
+-                                 "capability": "toy capture",
+-                                 "expect": "match", "figure": fig,
+-                                 "instrument": {"path": "tools/toy.sh",
+-                                                "rev": None, "argv": [],
+-                                                "interpreter": "bash"}}]},
+-                      fh)
+         _git2("init", "-q")
+         _git2("-c", "user.name=t", "-c", "user.email=t@t", "add",
+               "SCORECARD.md", "tools/toy.sh")
+@@ -666,8 +658,14 @@
+         rev2 = subprocess.run(["git", "-C", fx2, "rev-parse", "HEAD"],
+                               check=True,
+                               stdout=subprocess.PIPE).stdout.decode().strip()
+-        rows_manifest2 = json.load(open(mpath2))
+-        rows_manifest2["rows"][0]["instrument"]["rev"] = rev2
++        rows_manifest2 = {"schema": "tameshi-selfstate-freshness-v1",
++                          "rows": [{"id": "toy-bash", "mode": "capability",
++                                    "capability": "toy capture",
++                                    "expect": "match", "figure": fig,
++                                    "instrument": {"path": "tools/toy.sh",
++                                                   "rev": rev2, "argv": [],
++                                                   "interpreter": "bash"}}]}
++        mpath2 = os.path.join(fx2, "manifest.json")
+         with open(mpath2, "w", newline="\n") as fh:
+             json.dump(rows_manifest2, fh)
+         proc2 = subprocess.run(

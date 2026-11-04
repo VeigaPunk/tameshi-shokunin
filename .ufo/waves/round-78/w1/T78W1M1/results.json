@@ -1,0 +1,428 @@
+[
+  {
+    "mutant": "s1-python-prefix",
+    "instrument": "selfstate-freshness.py",
+    "old": "prefix = INTERPRETERS[inst.get('interpreter', DEFAULT_INTERPRETER)]",
+    "new": "prefix = INTERPRETERS['python']",
+    "expected_detector": "ARM13_bash_interpreter_row",
+    "interpretation": "Real defect: explicit bash rows run as Python and refuse instead of measuring.",
+    "verdict": "KILLED",
+    "phases": [
+      {
+        "phase": "pristine",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s1-python-prefix/selfstate-freshness.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s1-python-prefix",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s1-python-prefix/tmp",
+        "exit": 0,
+        "sha256": "cb8911734a2a99ad3d79636d3a145e939e39c4662e8aed4915d7d8da133ef8da",
+        "terminal": [
+          "SELFSTATE_SELFTEST: 13/13 pass"
+        ],
+        "failing_arms": []
+      },
+      {
+        "phase": "mutated",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s1-python-prefix/selfstate-freshness.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s1-python-prefix",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s1-python-prefix/tmp",
+        "exit": 1,
+        "sha256": "69caa0d087fd1af64b9191e6f960f1c9b96c89031a850d68b044af9815ea625a",
+        "terminal": [
+          "SELFSTATE_SELFTEST: 12/13 pass"
+        ],
+        "failing_arms": [
+          "SELFTEST_ARM13_bash_interpreter_row: FAIL rc=2 tail='' err='SELFSTATE error=setup figure-absent:toy-bash\\n'"
+        ]
+      },
+      {
+        "phase": "restored",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s1-python-prefix/selfstate-freshness.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s1-python-prefix",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s1-python-prefix/tmp",
+        "exit": 0,
+        "sha256": "cb8911734a2a99ad3d79636d3a145e939e39c4662e8aed4915d7d8da133ef8da",
+        "terminal": [
+          "SELFSTATE_SELFTEST: 13/13 pass"
+        ],
+        "failing_arms": []
+      }
+    ],
+    "restoration_sha256": "cb8911734a2a99ad3d79636d3a145e939e39c4662e8aed4915d7d8da133ef8da",
+    "byte_identical_restore": true
+  },
+  {
+    "mutant": "s2-default-bash",
+    "instrument": "selfstate-freshness.py",
+    "old": "DEFAULT_INTERPRETER = 'python'",
+    "new": "DEFAULT_INTERPRETER = 'bash'",
+    "expected_detector": "ARM11_doc_rev_cli_binding",
+    "interpretation": "Real defect: rows without interpreter run as bash instead of the frozen Python default.",
+    "verdict": "KILLED",
+    "phases": [
+      {
+        "phase": "pristine",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s2-default-bash/selfstate-freshness.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s2-default-bash",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s2-default-bash/tmp",
+        "exit": 0,
+        "sha256": "cb8911734a2a99ad3d79636d3a145e939e39c4662e8aed4915d7d8da133ef8da",
+        "terminal": [
+          "SELFSTATE_SELFTEST: 13/13 pass"
+        ],
+        "failing_arms": []
+      },
+      {
+        "phase": "mutated",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s2-default-bash/selfstate-freshness.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s2-default-bash",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s2-default-bash/tmp",
+        "exit": 1,
+        "sha256": "2527abf49f508cce5bb46293ec76ed26b3b306c58cfc68a2a8bd689e8e425cc2",
+        "terminal": [
+          "SELFSTATE_SELFTEST: 12/13 pass"
+        ],
+        "failing_arms": [
+          "SELFTEST_ARM11_doc_rev_cli_binding: FAIL rc=2 tail='' err='SELFSTATE error=setup figure-absent:toy-cli\\n'"
+        ]
+      },
+      {
+        "phase": "restored",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s2-default-bash/selfstate-freshness.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s2-default-bash",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s2-default-bash/tmp",
+        "exit": 0,
+        "sha256": "cb8911734a2a99ad3d79636d3a145e939e39c4662e8aed4915d7d8da133ef8da",
+        "terminal": [
+          "SELFSTATE_SELFTEST: 13/13 pass"
+        ],
+        "failing_arms": []
+      }
+    ],
+    "restoration_sha256": "cb8911734a2a99ad3d79636d3a145e939e39c4662e8aed4915d7d8da133ef8da",
+    "byte_identical_restore": true
+  },
+  {
+    "mutant": "s3-python-isolation-dropped",
+    "instrument": "selfstate-freshness.py",
+    "old": "'python': ('python3', '-I', '-X', 'utf8'),",
+    "new": "'python': ('python3',),",
+    "expected_detector": "No existing arm predicted; the Python tuple changes",
+    "interpretation": "Real coverage hole if survived: real Python instruments can import cwd/PYTHONPATH packages, and encoding flags differ; the fixed interpreter tuple is not enforced by a distinguishing fixture. This changes execution, not just fixture assurance.",
+    "verdict": "SURVIVED",
+    "phases": [
+      {
+        "phase": "pristine",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s3-python-isolation-dropped/selfstate-freshness.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s3-python-isolation-dropped",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s3-python-isolation-dropped/tmp",
+        "exit": 0,
+        "sha256": "cb8911734a2a99ad3d79636d3a145e939e39c4662e8aed4915d7d8da133ef8da",
+        "terminal": [
+          "SELFSTATE_SELFTEST: 13/13 pass"
+        ],
+        "failing_arms": []
+      },
+      {
+        "phase": "mutated",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s3-python-isolation-dropped/selfstate-freshness.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s3-python-isolation-dropped",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s3-python-isolation-dropped/tmp",
+        "exit": 0,
+        "sha256": "96293c6825bb2c56af79d7d79839c302c0026926a1cb5b0f27336cde5271943e",
+        "terminal": [
+          "SELFSTATE_SELFTEST: 13/13 pass"
+        ],
+        "failing_arms": []
+      },
+      {
+        "phase": "restored",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s3-python-isolation-dropped/selfstate-freshness.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s3-python-isolation-dropped",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/s3-python-isolation-dropped/tmp",
+        "exit": 0,
+        "sha256": "cb8911734a2a99ad3d79636d3a145e939e39c4662e8aed4915d7d8da133ef8da",
+        "terminal": [
+          "SELFSTATE_SELFTEST: 13/13 pass"
+        ],
+        "failing_arms": []
+      }
+    ],
+    "restoration_sha256": "cb8911734a2a99ad3d79636d3a145e939e39c4662e8aed4915d7d8da133ef8da",
+    "byte_identical_restore": true
+  },
+  {
+    "mutant": "w1-leak-scan-empty",
+    "instrument": "wave-reconcile.py",
+    "old": "return set(p for p in os.listdir(tempfile.gettempdir())\n                           if p.startswith(GIT_FIXTURE_PREFIX))",
+    "new": "return set()",
+    "expected_detector": "No existing arm predicted without a cleanup fault",
+    "interpretation": "Real detector coverage hole if survived: a leftover fixture is never reported. Healthy cleanup produces no leak and therefore cannot positively exercise the leak post-condition; not equivalent under a cleanup failure.",
+    "verdict": "SURVIVED",
+    "phases": [
+      {
+        "phase": "pristine",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w1-leak-scan-empty/wave-reconcile.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w1-leak-scan-empty",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w1-leak-scan-empty/tmp",
+        "exit": 0,
+        "sha256": "f534225f0cbd21c47f372f46e0ae0d69648e862b4c1bfb0a68c60c91a47cfeb1",
+        "terminal": [
+          "WAVE_RECONCILE_SELFTEST: 21/21 pass"
+        ],
+        "failing_arms": []
+      },
+      {
+        "phase": "mutated",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w1-leak-scan-empty/wave-reconcile.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w1-leak-scan-empty",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w1-leak-scan-empty/tmp",
+        "exit": 0,
+        "sha256": "f1d312b9f447dbb2d9bea8511d7ed6404fd8afc81501805a6bd5f555ea4a2976",
+        "terminal": [
+          "WAVE_RECONCILE_SELFTEST: 21/21 pass"
+        ],
+        "failing_arms": []
+      },
+      {
+        "phase": "restored",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w1-leak-scan-empty/wave-reconcile.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w1-leak-scan-empty",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w1-leak-scan-empty/tmp",
+        "exit": 0,
+        "sha256": "f534225f0cbd21c47f372f46e0ae0d69648e862b4c1bfb0a68c60c91a47cfeb1",
+        "terminal": [
+          "WAVE_RECONCILE_SELFTEST: 21/21 pass"
+        ],
+        "failing_arms": []
+      }
+    ],
+    "restoration_sha256": "f534225f0cbd21c47f372f46e0ae0d69648e862b4c1bfb0a68c60c91a47cfeb1",
+    "byte_identical_restore": true
+  },
+  {
+    "mutant": "w2-head-guard-removed",
+    "instrument": "wave-reconcile.py",
+    "old": "if head == rev:\n                    raise SetupError('git-fixture-head-equals-rev')",
+    "new": "if False:\n                    pass",
+    "expected_detector": "No existing arm predicted",
+    "interpretation": "Equivalent for healthy git fixture execution: rev2 successfully adds a tracked file and commits, so HEAD necessarily differs from rev1. This removes defensive fixture assurance, not production pinned-revision behavior.",
+    "verdict": "SURVIVED",
+    "phases": [
+      {
+        "phase": "pristine",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w2-head-guard-removed/wave-reconcile.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w2-head-guard-removed",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w2-head-guard-removed/tmp",
+        "exit": 0,
+        "sha256": "f534225f0cbd21c47f372f46e0ae0d69648e862b4c1bfb0a68c60c91a47cfeb1",
+        "terminal": [
+          "WAVE_RECONCILE_SELFTEST: 21/21 pass"
+        ],
+        "failing_arms": []
+      },
+      {
+        "phase": "mutated",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w2-head-guard-removed/wave-reconcile.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w2-head-guard-removed",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w2-head-guard-removed/tmp",
+        "exit": 0,
+        "sha256": "eca89e193364adc25202ad8085ae4ae22ed058e1f9119d930a04edafb68fdf66",
+        "terminal": [
+          "WAVE_RECONCILE_SELFTEST: 21/21 pass"
+        ],
+        "failing_arms": []
+      },
+      {
+        "phase": "restored",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w2-head-guard-removed/wave-reconcile.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w2-head-guard-removed",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w2-head-guard-removed/tmp",
+        "exit": 0,
+        "sha256": "f534225f0cbd21c47f372f46e0ae0d69648e862b4c1bfb0a68c60c91a47cfeb1",
+        "terminal": [
+          "WAVE_RECONCILE_SELFTEST: 21/21 pass"
+        ],
+        "failing_arms": []
+      }
+    ],
+    "restoration_sha256": "f534225f0cbd21c47f372f46e0ae0d69648e862b4c1bfb0a68c60c91a47cfeb1",
+    "byte_identical_restore": true
+  },
+  {
+    "mutant": "w3-arm21-cleanup-removed",
+    "instrument": "wave-reconcile.py",
+    "old": "                shutil.rmtree(fix)\n",
+    "new": "                pass\n",
+    "expected_detector": "arm21-pinned-rev-listing-at-head-drift",
+    "interpretation": "Real fixture defect: arm21 leaves its git fixture behind; the new leftover post-condition should kill it.",
+    "verdict": "KILLED",
+    "phases": [
+      {
+        "phase": "pristine",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w3-arm21-cleanup-removed/wave-reconcile.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w3-arm21-cleanup-removed",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w3-arm21-cleanup-removed/tmp",
+        "exit": 0,
+        "sha256": "f534225f0cbd21c47f372f46e0ae0d69648e862b4c1bfb0a68c60c91a47cfeb1",
+        "terminal": [
+          "WAVE_RECONCILE_SELFTEST: 21/21 pass"
+        ],
+        "failing_arms": []
+      },
+      {
+        "phase": "mutated",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w3-arm21-cleanup-removed/wave-reconcile.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w3-arm21-cleanup-removed",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w3-arm21-cleanup-removed/tmp",
+        "exit": 1,
+        "sha256": "38e2ebfc2fb2bca1a9351f349b2cdb012f30a726cf532e75ddde9f22d8fb4030",
+        "terminal": [
+          "WAVE_RECONCILE_SELFTEST: 20/21 pass"
+        ],
+        "failing_arms": [
+          "SELFTEST arm21-pinned-rev-listing-at-head-drift FAIL (got=leak:1 want=meet)"
+        ]
+      },
+      {
+        "phase": "restored",
+        "command": [
+          "python3",
+          "-I",
+          "-X",
+          "utf8",
+          "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w3-arm21-cleanup-removed/wave-reconcile.py",
+          "--selftest"
+        ],
+        "cwd": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w3-arm21-cleanup-removed",
+        "TMPDIR": "/fast/scratch/hyaku/tameshi-r78/T78W1M1/w3-arm21-cleanup-removed/tmp",
+        "exit": 0,
+        "sha256": "f534225f0cbd21c47f372f46e0ae0d69648e862b4c1bfb0a68c60c91a47cfeb1",
+        "terminal": [
+          "WAVE_RECONCILE_SELFTEST: 21/21 pass"
+        ],
+        "failing_arms": []
+      }
+    ],
+    "restoration_sha256": "f534225f0cbd21c47f372f46e0ae0d69648e862b4c1bfb0a68c60c91a47cfeb1",
+    "byte_identical_restore": true
+  }
+]

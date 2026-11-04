@@ -62,15 +62,19 @@ absent from the doc; an unresolvable instrument revision or blob; an
 instrument whose stdout carries no token for the row's figure regex; an
 instrument timeout. Nothing is certified from an unreadable input.
 
-Selftest (`--selftest`): hermetic — a fixture doc string and a canned
-instrument stdout per row, no git, no lane subprocess. Nine arms: match,
-stale measured, frozen-span stale, absent capability refused, absent figure
-refused, zero rows refused, unknown expect refused, unknown mode refused, and
-an instrument whose stdout lacks the figure refused (a setup refusal, never
-a match), a figure regex matching more than once refused, the `--doc-rev` CLI
-binding against a two-state fixture, an unknown interpreter refused, and a
-`bash` row executed from extracted bytes through the frozen tuple table
-(round 78: the arms list had fallen behind the count).
+Selftest (`--selftest`): thirteen arms. Arms 1-10 are hermetic — a fixture
+doc string and a canned instrument stdout per row; arms 11 and 13 drive the
+real CLI as a subprocess against a real git fixture (arm 11: the `--doc-rev`
+binding; arm 13: a `bash` row executed from extracted bytes through the frozen
+tuple table, then a python-defaulted row on the same path/rev/argv refused
+because the row cache is keyed by the interpreter). Arm 12 refuses an unknown
+interpreter. The rest, in order: match, stale measured, frozen-span stale,
+absent capability refused, absent figure refused, zero rows refused, unknown
+expect refused, unknown mode refused, an instrument whose stdout lacks the
+figure refused (a setup refusal, never a match), and a figure regex matching
+more than once refused. `SELFTEST_ARMS` and the arm calls are asserted equal by
+the suite's own exit binding — the round-78 docstring had said "Nine arms"
+against a suite of eleven; this list is the count's source of truth.
 
 Usage:
 
@@ -252,7 +256,7 @@ def validate_manifest(manifest):
         if not isinstance(argv, list) or not all(isinstance(a, str) for a in argv):
             raise SetupError('instrument-argv-invalid:%s' % rid)
         interp = inst.get('interpreter', DEFAULT_INTERPRETER)
-        if interp not in INTERPRETERS:
+        if not isinstance(interp, str) or interp not in INTERPRETERS:
             raise SetupError('interpreter-unknown:%s:%s' % (rid, interp))
     return rows
 
@@ -302,13 +306,14 @@ class GitInstrumentRunner(object):
         inst = row['instrument']
         rev, path = inst['rev'], inst['path']
         argv = tuple(inst['argv'])
-        key = (rev, path, argv)
+        interp = inst.get('interpreter', DEFAULT_INTERPRETER)
+        key = (rev, path, argv, interp)
         if key in self.cache:
             return self.cache[key]
         dest = self._extract(rev, path)
         self._support(rev)
         try:
-            prefix = INTERPRETERS[inst.get('interpreter', DEFAULT_INTERPRETER)]
+            prefix = INTERPRETERS[interp]
             proc = subprocess.run(
                 list(prefix) + [dest] + list(argv),
                 cwd=self.repo, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -675,12 +680,35 @@ def selftest(out=sys.stdout):
              "--repo", fx2, "--doc-rev", rev2, "--manifest", mpath2],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=120)
         out_text2 = proc2.stdout.decode("utf-8", "replace")
-        arm("ARM13_bash_interpreter_row",
+        # second invocation, same fixture bytes: the row cache must be keyed by
+        # the interpreter too. A python-defaulted row on the SAME path/rev/argv
+        # must not be served the bash row's stdout; the run refuses
+        # figure-absent before any match (round-78 reviewer R1 measured the
+        # cache-key bypass on the declared design bytes).
+        rows_manifest2["rows"].append({"id": "toy-python", "mode": "capability",
+                                       "capability": "toy capture",
+                                       "expect": "match", "figure": fig,
+                                       "instrument": {"path": "tools/toy.sh",
+                                                      "rev": rev2,
+                                                      "argv": []}})
+        with open(mpath2, "w", newline="\n") as fh:
+            json.dump(rows_manifest2, fh)
+        proc2b = subprocess.run(
+            [sys.executable, "-I", "-X", "utf8",
+             os.path.abspath(__file__),
+             "--repo", fx2, "--doc-rev", rev2, "--manifest", mpath2],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=120)
+        err2b = proc2b.stderr.decode("utf-8", "replace")
+        arm("ARM13_bash_interpreter_row_and_cache",
             proc2.returncode == 0
-            and "SELFSTATE: rows=1 match=1 stale=0 unexpected=0" in out_text2,
-            "rc=%r tail=%r err=%r" % (
+            and "SELFSTATE: rows=1 match=1 stale=0 unexpected=0" in out_text2
+            and proc2b.returncode == 2
+            and "figure-absent:toy-python" in err2b
+            and "measured=match" not in proc2b.stdout.decode("utf-8", "replace"),
+            "rc=%r tail=%r err=%r | cache rc=%r err=%r" % (
                 proc2.returncode, out_text2[-160:],
-                proc2.stderr.decode("utf-8", "replace")[-160:]))
+                proc2.stderr.decode("utf-8", "replace")[-160:],
+                proc2b.returncode, err2b[-160:]))
     finally:
         shutil.rmtree(fx2, ignore_errors=True)
 

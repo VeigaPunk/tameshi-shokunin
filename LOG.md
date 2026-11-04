@@ -4246,3 +4246,22 @@ capability-less), so C1 acquires a capability.
   (above); the 17-of-44 registry-row gap and the bash-instrument `--regression`
   row stay carried, unchanged in scope.
 
+### Round 78 — appended: wave close (2026-11-04)
+
+Twelve seats settled, none died. The wave's attacks changed the landed bytes in
+three places (all disclosed in `SCORECARD.md` and `corpus/lessons/round-78.md`):
+the declared C1 cache key omitted the interpreter (reviewer and critic
+reproduced the bypass; the fix's first shape was a 14th arm, which the frozen
+kill rule (iii) rejects, so the assertion was folded into arm13 and the reviewer
+re-voted PASS on the final bytes); the leak post-condition scanned the shared
+temp dir and flaked under concurrent `--selftest` runs (simplifier measured
+4/4 failures pre-fix; the per-fixture `os.path.exists(fix)` check passes 4/4,
+battery matrix unchanged); and the manifest note's "17 declared rows" count was
+stale against 21 rows (criterion 122; the count is removed). The plan also cited
+a control receipt its declaration commit did not carry (critic; the control was
+re-run by an executor on base bytes). Named survivors for round 79: the leak
+detector's behavioural guard (the scan mechanism was replaced, and a positive
+control is still owed), the unguarded `isinstance(interp, str)` clause, the
+dropped-`-I` python-tuple mutant, arm21's `HEAD != rev` self-guard, and the
+scout's 20-row unprotected-rule table.
+

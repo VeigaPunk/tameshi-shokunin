@@ -1,0 +1,149 @@
+T78W1SC1 mutation receipt — round 78 / w1
+Source bytes: .ufo/evidence/round-78/design/{selfstate-freshness.py,wave-reconcile.py}
+sha256 selfstate cb8911734a2a99ad3d79636d3a145e939e39c4662e8aed4915d7d8da133ef8da
+sha256 wave      f534225f0cbd21c47f372f46e0ae0d69648e862b4c1bfb0a68c60c91a47cfeb1
+(tools/ copies hash identically — sha256sum run 2026-11-04)
+
+Method: each edit applied to a scratch copy under
+/fast/scratch/hyaku/tameshi-r78/T78W1SC1/copies/ (single exact replacement,
+count asserted == 1), then
+
+  TMPDIR=/fast/scratch/hyaku/tameshi-r78/T78W1SC1/tmp \
+  python3 -I -X utf8 <copy> --selftest
+
+Baselines (same command, unmutated copies):
+  SELFSTATE_SELFTEST: 13/13 pass          rc 0
+  WAVE_RECONCILE_SELFTEST: 21/21 pass     rc 0
+
+Survivor table (all measured; rc 0 and full pass count):
+  ss-bom-strip                          SELFSTATE_SELFTEST: 13/13 pass
+  ss-support-call-removed               SELFSTATE_SELFTEST: 13/13 pass
+  ss-safe-relpath-tail-tautology        SELFSTATE_SELFTEST: 13/13 pass
+  ss-span-absent-check-removed          SELFSTATE_SELFTEST: 13/13 pass
+  ss-cache-key-drops-argv               SELFSTATE_SELFTEST: 13/13 pass
+  ss-parse-caps-heading-break-removed   SELFSTATE_SELFTEST: 13/13 pass
+  ss-main-except-narrowed               SELFSTATE_SELFTEST: 13/13 pass
+  ss-root-collapsed                     SELFSTATE_SELFTEST: 13/13 pass
+  wr-fixture-entries-neutered           WAVE_RECONCILE_SELFTEST: 21/21 pass
+  wr-attack-total-from-seats            WAVE_RECONCILE_SELFTEST: 21/21 pass
+  wr-attack-zero-guard-removed          WAVE_RECONCILE_SELFTEST: 21/21 pass
+  wr-bom-diagnostic-swapped             WAVE_RECONCILE_SELFTEST: 21/21 pass
+  wr-record-span-decode-removed         WAVE_RECONCILE_SELFTEST: 21/21 pass
+  wr-record-unknown-root-check-removed  WAVE_RECONCILE_SELFTEST: 21/21 pass
+  wr-row-expect-check-removed           WAVE_RECONCILE_SELFTEST: 21/21 pass
+  wr-gitreader-rev-regex-removed        WAVE_RECONCILE_SELFTEST: 21/21 pass
+  wr-extra-root-malformed-check-removed WAVE_RECONCILE_SELFTEST: 21/21 pass
+  wr-named-substring-match              WAVE_RECONCILE_SELFTEST: 21/21 pass
+  wr-manifest-open-uncaught             WAVE_RECONCILE_SELFTEST: 21/21 pass
+Survivors: 19 / 19.
+
+Edit definitions (old -> new; file := selfstate-freshness.py | wave-reconcile.py):
+  ss-bom-strip
+    "    if raw.startswith(BOM):\n        raise SetupError('bom-present:%s' % label)"
+    -> "    if raw.startswith(BOM):\n        raw = raw[len(BOM):]"
+  ss-support-call-removed
+    "        self._support(rev)\n        try:" -> "        try:"
+  ss-safe-relpath-tail-tautology
+    "    parts = path.split('/')\n    return all(part not in ('', '.', '..') for part in parts)"
+    -> "    return True"
+  ss-span-absent-check-removed
+    "            if span.encode('utf-8') not in doc_bytes:\n                raise SetupError('span-absent:%s' % rid)\n" -> ""
+  ss-cache-key-drops-argv
+    "        key = (rev, path, argv)" -> "        key = (rev, path)"
+  ss-parse-caps-heading-break-removed
+    "        if line.startswith('## '):\n            break\n" -> ""
+  ss-main-except-narrowed
+    "    except (SetupError, OSError, ValueError) as exc:" -> "    except SetupError as exc:"
+  ss-root-collapsed
+    "        return os.path.join(self.workdir, rev)" -> "        return os.path.join(self.workdir, 'x')"
+  wr-fixture-entries-neutered
+    "            try:\n                return set(p for p in os.listdir(tempfile.gettempdir())\n                           if p.startswith(GIT_FIXTURE_PREFIX))\n            except OSError:\n                return set()"
+    -> "            return set()"
+  wr-attack-total-from-seats
+    "        total = len(records)" -> "        total = seats"
+  wr-attack-zero-guard-removed
+    "        pct = (100.0 * counted / total) if total else 0.0"
+    -> "        pct = 100.0 * counted / total"
+  wr-bom-diagnostic-swapped
+    "        raise SetupError('bom-present:%s' % label)" -> "        raise SetupError('not-utf8:%s' % label)"
+  wr-record-span-decode-removed
+    "    return raw.decode('utf-8'), rec" -> "    return '', rec"
+  wr-record-unknown-root-check-removed
+    "    root = rec.get('root', 'lane')\n    if root not in readers:\n        raise SetupError('unknown-root:%s:%s' % (root, row.get('id')))\n"
+    -> "    root = rec.get('root', 'lane')\n"
+  wr-row-expect-check-removed
+    "        if row.get('expect') not in ('meet', 'drift'):\n            raise SetupError('row-expect-invalid:%s' % row['id'])\n" -> ""
+  wr-gitreader-rev-regex-removed
+    "        if not re.fullmatch(r'[0-9a-f]{6,40}', rev or ''):\n            raise SetupError('rev-unresolvable:%s' % (rev,))\n" -> ""
+  wr-extra-root-malformed-check-removed
+    "        if '=' not in item:\n            raise SetupError('extra-root-malformed:%s' % item)\n" -> ""
+  wr-named-substring-match
+    "        counted = sum(c for a, c in _agents(records).items() if a in named)"
+    -> "        counted = sum(c for a, c in _agents(records).items()\n                      if any(a.startswith(n) for n in named))"
+  wr-manifest-open-uncaught
+    "    try:\n        with open(manifest_path, 'rb') as fh:\n            manifest = decode_json(fh.read(), manifest_path)\n    except OSError as exc:\n        raise SetupError('manifest-unreadable:%s:%s' % (manifest_path, exc))"
+    -> "    with open(manifest_path, 'rb') as fh:\n        manifest = decode_json(fh.read(), manifest_path)"
+
+Proposed-arm kill checks (same scratch, in-process module load):
+  decode_text(BOM+b'{}','m'):
+    base  -> SetupError bom-present:m
+    ss-bom-strip -> '{}' (no refusal)
+  attack_share fixture seats=99, 12 records, named=3, floor=25:
+    base  -> ('meet', 'attack=3/12=25.0% floor=25.0%')
+    wr-attack-total-from-seats -> ('drift', 'attack=3/99=3.0% floor=25.0%')
+  attack_share fixture seats=0, results=[] , floor=0:
+    base  -> ('meet', 'attack=0/0=0.0% floor=0.0%')
+    wr-attack-zero-guard-removed -> ZeroDivisionError division by zero
+  record blob b'12 seats \xff\n', span '12 seats':
+    base  -> UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff (uncaught)
+    wr-record-span-decode-removed -> returns span (text '')
+  record.root='ghost':
+    base  -> SetupError unknown-root:ghost:u
+    wr-record-unknown-root-check-removed -> KeyError 'ghost'
+  run_manifest(parseable manifest, '.', ['noequals']):
+    base  -> SetupError extra-root-malformed:noequals
+    wr-extra-root-malformed-check-removed -> ValueError not enough values to unpack
+  span row whose span is NOT in the doc (evaluate -> run_measurement):
+    base  -> rc 2, stderr 'SELFSTATE error=setup span-absent:s', no stdout
+    ss-span-absent-check-removed -> rc 0, 'SELFSTATE_ROW s ... measured=match ok', no stderr
+  support arm (fixture repo, tools/toy.py reads ../.ufo/evidence/round-18/measure.py;
+  prints 'TOY_FIGURE: 4/4 pass' only if present):
+    base GitInstrumentRunner -> stdout 'TOY_FIGURE: 4/4 pass' rc 0
+    ss-support-call-removed  -> stdout '' rc 0  (under evaluate: figure-absent, exit 2)
+  cache arm (fixture repo, tools/arg.py prints sys.argv[1]):
+    base -> rc 0, row a match, row b match
+    ss-cache-key-drops-argv -> rc 1, row b measured=stale measured_figure=TOY_ARG: A
+  interpreter collision (base bytes, tools/toy.sh bash-only):
+    rows [bashrow(interpreter=bash), pyrow(interpreter=python)] same rev/path/argv
+    -> rc 0, rows=2 match=2: pyrow certified by the bash execution, never run under python
+  main exit mapping (CLI --manifest /nonexistent.json):
+    base selfstate -> rc 2 'SELFSTATE error=setup [Errno 2] ...'
+    ss-main-except-narrowed -> rc 1 FileNotFoundError traceback
+    base wave -> rc 2 'WAVE_RECONCILE error=setup:manifest-unreadable:...'
+    wr-manifest-open-uncaught -> rc 1 FileNotFoundError traceback
+  nested closure reachability:
+    hasattr(wave_module, '_fixture_entries') -> False (defined inside selftest)
+
+--- landed re-check (post 02:56 landing, HEAD 6f53275) ---
+landed selfstate sha256 c6b5b519f5524244e92bb28295097e1920479bf578719e1453c5fc884cb0a873
+landed wave      sha256 f534225f0cbd21c47f372f46e0ae0d69648e862b4c1bfb0a68c60c91a47cfeb1 (unchanged)
+landed baseline: SELFSTATE_SELFTEST: 14/14 pass rc 0
+
+Re-run single edits against landed selfstate (same method):
+  landed-bom-strip                 SELFSTATE_SELFTEST: 14/14 pass
+  landed-support-removed           SELFSTATE_SELFTEST: 14/14 pass
+  landed-relpath-tautology         SELFSTATE_SELFTEST: 14/14 pass
+  landed-span-absent-removed       SELFSTATE_SELFTEST: 14/14 pass
+  landed-cache-drops-argv          SELFSTATE_SELFTEST: 14/14 pass
+  landed-caps-break-removed        SELFSTATE_SELFTEST: 14/14 pass
+  landed-main-narrowed             SELFSTATE_SELFTEST: 14/14 pass
+  landed-root-collapsed            SELFSTATE_SELFTEST: 14/14 pass
+  (8/8 survive; only the interpreter key was closed by landed arm14, :688-754)
+
+Landed delta vs frozen candidate (c1c220d design bytes):
+  SELFTEST_ARMS 13 -> 14
+  validate_manifest: interp must be a str (:255)
+  cache key (rev, path, argv) -> (rev, path, argv, interp) (:305-306)
+  new arm14 interpreter-in-cache-key (:688-754)
+  main shifted: decode_text calls :780/:793, workdir :795-796, except :802
+Landed missing-manifest CLI: rc 2 (setup mapping intact)

@@ -568,18 +568,9 @@ def selftest():
         # single-commit fixture made HEAD == rev).
         GIT_FIXTURE_PREFIX = 'wave-reconcile-git-'
 
-        def _fixture_entries():
-            try:
-                return set(p for p in os.listdir(tempfile.gettempdir())
-                           if p.startswith(GIT_FIXTURE_PREFIX))
-            except OSError:
-                return set()
-
         def _nested_listing_arm():
-            before = _fixture_entries()
             fix = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
                                    dir=os.environ.get('TMPDIR') or None)
-            got = 'setup'
             try:
                 def g(*args):
                     proc = subprocess.run(['git', '-C', fix] + list(args),
@@ -620,9 +611,12 @@ def selftest():
                               {'lane': GitReader(fix)})[0]
             finally:
                 shutil.rmtree(fix, ignore_errors=True)
-            leaked = _fixture_entries() - before
-            if leaked:
-                return 'leak:%d' % len(leaked)
+            # The post-condition asks whether THIS fixture survived its
+            # cleanup, never whether the shared temp dir gained an entry: a
+            # directory scan is not concurrency-safe (round-78 simplifier
+            # measured a spurious leak:1 in 12/12 concurrent trials).
+            if os.path.exists(fix):
+                return 'leak:1'
             return got
         arm('arm20-nested-listing-recursion', 'meet', _nested_listing_arm)
 
@@ -633,10 +627,8 @@ def selftest():
         # names the commit on which you based the changes in the working tree"
         # — a revision argument, never the argument's substitute.
         def _pinned_rev_listing_arm():
-            before = _fixture_entries()
             fix = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
                                    dir=os.environ.get('TMPDIR') or None)
-            got = 'setup'
             try:
                 def g(*args):
                     proc = subprocess.run(['git', '-C', fix] + list(args),
@@ -685,9 +677,8 @@ def selftest():
                               {'lane': GitReader(fix)})[0]
             finally:
                 shutil.rmtree(fix)
-            leaked = _fixture_entries() - before
-            if leaked:
-                return 'leak:%d' % len(leaked)
+            if os.path.exists(fix):
+                return 'leak:1'
             return got
         arm('arm21-pinned-rev-listing-at-head-drift', 'meet',
             _pinned_rev_listing_arm)

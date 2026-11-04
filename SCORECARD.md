@@ -4936,3 +4936,73 @@ instrument unchanged (`MUTATE_SELFTEST: 107/107 pass` before and after).
 assimilation verdict; the carried 17-of-44 registry rows and the bash-instrument
 row widening for `selfstate`'s support-blob path stay carried unless a claim
 slots them.
+
+### Round 78 — appended: wave disclosures and record corrections (2026-11-04)
+
+Appended after the wave returned; the measured block above stands as written and
+no frozen predicate is amended. Seven disclosures, each from a committed seat
+report under `.ufo/waves/round-78/w1/`:
+
+1. **The declared C1 design carried a cache-key defect, and the fix's first
+   shape violated the frozen count.** The row cache was keyed
+   `(rev, path, argv)`; a `bash` row's stdout could satisfy a python-defaulted
+   row on the same path/rev/argv (`T78W1R1` reproduced the bypass with an
+   execution trace; `T78W1C1`, `T78W1E2` and `T78W1CN1` found it
+   independently). The L1 fixed the key and first added a 14th arm; the
+   reviewer voted FAIL because kill rule (iii) names `13/13` while the suite
+   printed `14/14`. The L1 then folded the assertion into arm13
+   (`ARM13_bash_interpreter_row_and_cache`) — same coverage, count unchanged —
+   and the reviewer re-measured the final bytes and voted PASS. The pre-fold
+   `14/14` state and the pre-fold FAIL vote are retained in the seat reports,
+   not hidden. Receipts: `c1-cache-kill.txt` (mutant → `12/13`, arm13 FAIL),
+   `c1-cache-kill-mutant.py`, `c1-landed-selftest.txt` (`13/13`); landed tool
+   sha256 `ae53ac68fc6743edf36d7fc71d811fcb3c4d4776d1c17e3265ca4977b596c9f4`.
+2. **The plan cited a receipt its declaration commit did not carry.** The
+   `c2-base-control-battery.txt` path resolves only from the records commit
+   (`git cat-file -e c1c220d4:…` exits 128, `T78W1C1`). The control was run
+   before the freeze; its stdout landed later. `T78W1E3` re-ran the control on
+   base bytes in a clone and reproduced `survived=2`, survivors exactly the two
+   round-78 defects. Lesson `## Mistakes` 3.
+3. **No-harm monitor coverage, restated.** The documented selftest diff covers
+   arms 1–19; arm20's `meet` at base and landed is asserted separately; arm21 is
+   new. The restated monitor is narrower and more exact than the plan's
+   sentence, and it is stated as a correction, not as a widened rule.
+4. **The separability sentence is too strong, corrected.** Neither counter reads
+   the other claim's files, but both depend on `tools/mutate-and-run.sh`: C1's
+   row reads its `MUTATE_SELFTEST` figure and C2's battery uses it as the
+   harness. C1's sweep runs no `wave-reconcile.py` byte and C2's battery runs no
+   `selfstate-freshness.py` byte.
+5. **The nudge sentence contradicted itself.** The plan said "the lowest-axis
+   obligation is not waived" while the nudge was ACTIVE. The nudge waives that
+   obligation this round; C2 works coverage anyway because two axes were wanted.
+6. **Both after-states are guard sets, with the natural scalar named.** C1:
+   registered counter-defects surviving the interpreter/cache surface 1 → 0
+   (the cache mutant survives the declared design `13/13`, dies `12/13` after
+   the fold). C2: surviving registered defects 2 → 0. The remaining guards stay
+   as frozen; the multi-value sentence is the plan's admission defect, as in
+   round 77.
+7. **Named survivors for round 79.** The leak detector is a nested closure and
+   `return set()` survives 21/21 (`T78W1M1`, `T78W1SC1`) — the round's own new
+   guard is unguarded; dropping `-I` from the python tuple survives; arm21's
+   `HEAD != rev` self-guard removal survives. The scout's table adds 9
+   selfstate and 11 wave-reconcile unprotected rules with a measured single-edit
+   mutant each (`.ufo/waves/round-78/w1/T78W1SC1.md` §1) and a bounded 3-item
+   data-walk; the connector reads the staged package as `Assimilation: none`
+   with 8 id collisions between the registry and the staged set.
+
+**No axis is harmed.** Arms 1–19 byte-identical between base and landed
+selftests, arm20 `meet` on both, the base 20 selfstate rows identical, and the
+bash instrument unchanged (`MUTATE_SELFTEST: 107/107 pass` at its pinned rev).
+
+**Appended at the wave close (2026-11-04).** Two more wave findings changed the
+landed bytes after the block above was written, and both are disclosed here:
+the leak post-condition's shared-temp-dir scan was not concurrency-safe
+(four concurrent `--selftest` runs on the pre-fix bytes fail 4/4 with a spurious
+`leak:2`/`leak:3`; the per-fixture `os.path.exists(fix)` check passes 4/4,
+receipt `c2-concurrency-prepost.txt`, battery matrix unchanged), and the
+manifest note's "17 declared rows" count was stale against its 21 rows
+(criterion 122; the count is removed). The simplifier's builder de-duplication
+and the unguarded `isinstance(interp, str)` clause are named for round 79. No
+frozen predicate is amended; the battery was re-run on the final bytes
+(`defects=10 killed=10 survived=0`, `CONTROL: GREEN`, byte-identical restore).
+
