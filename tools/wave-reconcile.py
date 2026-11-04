@@ -71,7 +71,7 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 19
+SELFTEST_ARMS = 20
 BOM = b'\xef\xbb\xbf'
 ATTACK_NOTE = ('named attack roles are the row\'s own declaration; the policy '
                'floor is the row\'s floor_pct')
@@ -547,6 +547,59 @@ def selftest():
                 return 'printed-none-reached-comparison'
         arm('arm19-seatreports-printed-required',
             'setup:record-printed-absent', _seatreports_printed_required)
+        # round 77: the production git reader's recursion is unprotected by the
+        # dictionary-backed fixture readers (round-76 wave seat M1 measured a
+        # `git-listing-recursion-removed` mutant surviving every arm). This arm
+        # builds a REAL git fixture (mkdtemp + `git -C init`, toplevel verified
+        # equal to the fixture root per the lane's git-fixture rule, removed in
+        # finally) whose `wave/` dir holds one top-level report and one nested
+        # report: a recursive listing yields the top-level file and excludes the
+        # nested one, while `ls-tree` without -r yields the tree entry itself
+        # and counts zero. S305: `-r` recurses into sub-trees.
+        def _nested_listing_arm():
+            fix = tempfile.mkdtemp(prefix='wave-reconcile-git-',
+                                   dir=os.environ.get('TMPDIR') or None)
+            try:
+                def g(*args):
+                    proc = subprocess.run(['git', '-C', fix] + list(args),
+                                          stdout=subprocess.PIPE,
+                                          stderr=subprocess.PIPE)
+                    if proc.returncode != 0:
+                        raise SetupError('git-fixture-failed:%s'
+                                         % proc.stderr.decode('utf-8',
+                                                              'replace')[:120])
+                    return proc.stdout
+                g('init', '-q')
+                top = g('rev-parse', '--show-toplevel').decode().strip()
+                if os.path.realpath(top) != os.path.realpath(fix):
+                    raise SetupError('git-fixture-misroot:%s' % top)
+                os.makedirs(os.path.join(fix, 'wave', 'nested'))
+                with open(os.path.join(fix, 'wave', 'one.md'), 'w',
+                          encoding='utf-8') as fh:
+                    fh.write('one\n')
+                with open(os.path.join(fix, 'wave', 'nested', 'two.md'), 'w',
+                          encoding='utf-8') as fh:
+                    fh.write('two\n')
+                with open(os.path.join(fix, 'report.md'), 'w',
+                          encoding='utf-8') as fh:
+                    fh.write('1 seat report\n')
+                g('add', '-A')
+                g('-c', 'user.name=tameshi-fixture',
+                  '-c', 'user.email=tameshi@shokunin.local',
+                  '-c', 'commit.gpgsign=false',
+                  'commit', '-q', '-m', 'fixture')
+                rev = g('rev-parse', 'HEAD').decode().strip()
+                return measure({'id': 'nested-listing',
+                                'kind': 'seat_reports',
+                                'record': {'path': 'report.md', 'rev': rev,
+                                           'span': '1 seat report',
+                                           'printed': 1},
+                                'wave': {'dir': 'wave',
+                                         'results': 'report.md', 'rev': rev}},
+                               {'lane': GitReader(fix)})[0]
+            finally:
+                shutil.rmtree(fix, ignore_errors=True)
+        arm('arm20-nested-listing-recursion', 'meet', _nested_listing_arm)
     finally:
         shutil.rmtree(work, ignore_errors=True)
 

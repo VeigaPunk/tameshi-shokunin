@@ -34,3 +34,7 @@
 @defect adv-seatreports-require-printed-bypass | require_printed is dropped in the seat_reports branch only (r75 carry T75W1R1); arm19-seatreports-printed-required must kill it
 @old     if kind == 'seat_reports':\n        printed = _record_claim(row, readers, require_printed=True)
 @new     if kind == 'seat_reports':\n        printed = _record_claim(row, readers)
+
+@defect git-listing-recursion-removed | GitReader.listing drops -r, so a directory path yields the tree entry instead of its descendants (round-76 wave seat M1 survivor); arm20-nested-listing-recursion must kill it
+@old     out = self._git('ls-tree', '-r', '--name-only', rev, '--', path)
+@new     out = self._git('ls-tree', '--name-only', rev, '--', path)

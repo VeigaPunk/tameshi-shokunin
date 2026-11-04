@@ -2186,3 +2186,39 @@ capability tuples pin `\d+/\d+` figures unique in the instruments' stdout
 (the plan's token-uniqueness pre-check: pin-disposition exactly one match
 `19/19`; evidence-disposition exactly one, `66/66`), so no loose-token
 manifest satisfies the frozen tuples.
+
+### Criterion 128 — a settlement's restored credit is measured at the settlement commit, and a record never names a pre-settlement revision as the tip
+
+When a round closes by re-reading or re-keying to restore a monitor's credit
+(a settlement), the receipt that certifies it is measured at the revision
+that carries the settlement, and the record's sentence names that revision.
+A sentence that names an earlier revision while later record commits exist is
+a calibration defect of the record-runs-ahead-of-artifacts class: the claim
+("credit restored") is false at the revision the record calls the tip, and a
+reader who re-runs the monitor there reads the pre-settlement value. The
+ordering that satisfies the criterion is mechanical: land every monitored
+(content) edit first, then the settlement batch, then only edits that add
+new evidence files (a blob-level input pin is unchanged by a new path, so new
+evidence never stales credit). When the record must be appended after the
+settlement, the record says which revision it measured and the following
+settlement batch re-settles the sections the record's own append staled.
+
+Lesson: `corpus/lessons/round-77.md` `## Mistakes` (class
+record-runs-ahead-of-artifacts, captured-by: this criterion) and the round-76
+non-author closure's routed defect 1
+(`corpus/lessons/round-76-verifier-spotcheck.md` §6.1: the round-76 record
+claimed `credited=65/65` "at the landing tip (`b2b0f82a`)" while `b2b0f82a`
+is the last rekey batch and the true tip `d2d00e3f` is two record commits
+later).
+
+Falsifier that must fail: at the round-76 tip the record names `b2b0f82a` as
+the landing tip while the monitor, run at the true tip, does not read the
+claimed credit — `python3 -I -X utf8 tools/coldread-precheck-portable.py
+--repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev d2d00e3f --work
+<scratch>` prints a credited count below `65/65` (round 77 measured `63/65`
+at `ac6baf7a`, the base immediately after the closure commit, with
+`box3_full_page=false` and the two sections `## Standing rules` and
+`## Mutation-sweep recipe — numbered steps; bounded cold-read evidence`
+uncredited; receipt `.ufo/evidence/round-77/coldread-base-r77.json`). Under
+this criterion the round-77 record names its settlement revision, and the
+monitor at that revision reads the claimed `65/65` with `box3_full_page=true`.
