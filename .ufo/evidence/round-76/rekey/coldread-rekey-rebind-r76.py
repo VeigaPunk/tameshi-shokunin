@@ -93,6 +93,8 @@ def main(argv=None):
     ap.add_argument('--summary-out')
     ap.add_argument('--merge-ledger', action='store_true',
                     help='append the entries to the round-21 ledger in place')
+    ap.add_argument('--batch-tag', default='b3',
+                    help='batch tag: names traces-<tag>/ and the entry labels')
     ap.add_argument('--resume', action='store_true',
                     help='skip sections whose receipt file already exists')
     a = ap.parse_args(argv)
@@ -131,6 +133,7 @@ def main(argv=None):
 
     new_entries = []
     failures = []
+    BATCH_TAG = a.batch_tag
     summary = []
     for sec_idx, sec in enumerate(plan['sections'], start=1):
         heading = sec['heading']
@@ -138,7 +141,7 @@ def main(argv=None):
         if m is None:
             failures.append('manifest-missing:%s' % heading)
             continue
-        trace_rel = '.ufo/evidence/round-76/rekey/traces/section-%02d.json' % sec_idx
+        trace_rel = '.ufo/evidence/round-76/rekey/traces-%s/section-%02d.json' % (BATCH_TAG, sec_idx)
         trace_abs = repo / trace_rel
         if a.resume and trace_abs.exists():
             summary.append({'heading': heading, 'skipped': 'resume'})
@@ -201,7 +204,7 @@ def main(argv=None):
                      '--repo', str(repo), '--pin', pin,
                      '--plan', 'PLAN', '--manifest', 'MANIFEST',
                      '--traces-dir', 'TRACES', '--merge-ledger'],
-            'argv_note': 'one tool invocation produced every round-75 '
+            'argv_note': 'one tool invocation produced every round-76 '
                          'receipt; this file covers the section named in '
                          'rekey.section; PLAN/MANIFEST/TRACES are the '
                          'invocation paths recorded in the round report',
@@ -219,8 +222,8 @@ def main(argv=None):
             'live_lane_reads': {},
             'dropped_home_count': 0,
             'rekey': {
-                'round': 75,
-                'batch': 'r75-batch-1',
+                'round': 76,
+                'batch': BATCH_TAG,
                 'section': heading,
                 'reader': 'L1 tameshi round 73 (linux host); single-process '
                           'batched git object reads (cat-file --batch), '
@@ -254,10 +257,10 @@ def main(argv=None):
             'read_rev': pin,
             'inputs': inputs,
             'traces': [trace_rel],
-            'carried_from': 'round-75 batch-1 rekey of ledger entries %s' % (
+            'carried_from': 'round-76 batch-%s rekey of ledger entries %s' % (BATCH_TAG,
                 json.dumps(sec['src_entries'])),
-            'rekey_batch': 'r75-batch-1',
-            'rekey_round': 61,
+            'rekey_batch': BATCH_TAG,
+            'rekey_round': 76,
         }
         if m.get('minor_gap_note'):
             entry['minor_gap_note'] = m['minor_gap_note']
