@@ -5046,3 +5046,31 @@ axis).
   one-defect spec): `defects=1 killed=0 survived=1`. After:
   `SELFSTATE_SELFTEST: 14/14 pass`; battery `defects=1 killed=1 survived=0`,
   the mutant dying on arm14 only.
+
+## Round 79 — measured claims (appended at the records commit, 2026-11-04)
+
+Declaration `92c00705`; work commit `1f6709d0` (tools, specs, the eight receipt
+corrections, the capability row; final receipts regenerated at the work commit
+by `.ufo/evidence/round-79/gen-receipts-r79.py`). Round shape: one v1 wave,
+12 seats (3 executor · 1 scribe · 2 scout · 2 reviewer · 1 critic · 1
+mutation-tester · 1 connector · 1 sentinel; attack seats 4 = 33.3 %), policy
+`scripts/hyaku/ufo-wave-policy.json`, band 8–16; 12 results, 0 dead seats.
+
+| Claim | Verdict | After (measured) | Counting commands (live outputs in the receipts) | Measured commit |
+|---|---|---|---|---|
+| R79-C1 | verifies (measured) | `RECEIPT_BIND: receipts=12 bound=4 corrected=8 unbound=0` exit 0 at the work commit; `RECEIPT_BIND_SELFTEST: 10/10 pass` exit 0; the eight corrections are one inserted `# measured_bytes_rev: 091d50e4…` line each (`git diff --numstat` = `1 0` per file, zero deletions, every `# tool_sha256:` byte-identical); the false-correction control reads `unbound=1` `detail=bytes-rev-mismatch` exit 1; the capability row `receipt-bytes binding sweep` is in `## Capabilities` and its figure is a live selfstate row (`rows=22 match=20 stale=2 unexpected=0`) | `python3 -I -X utf8 tools/receipt-bytes-bind.py --repo . --root .ufo/evidence/round-78`; `python3 -I -X utf8 tools/receipt-bytes-bind.py --selftest` | `1f6709d0a00401658c2bff0a2f6818c810575fdf` |
+| R79-C2 | verifies (measured) | `WAVE_RECONCILE_SELFTEST: 23/23 pass` exit 0; battery `MUTATE: DONE (target=wave-reconcile-arms-r79 defects=12 killed=12 survived=0 inconclusive=0 kill-rate=100%)` with `CONTROL: GREEN` and byte-identical restore; the do-nothing control (landed tool minus the two arm registrations) reads `killed=10 survived=2` with exactly `leak-detector-blind` and `head-guard-removed`; kill matrix as frozen (the ten base defects keep their arms; the two new mutants die on arm22 only and arm23 only) | `python3 -I -X utf8 tools/wave-reconcile.py --selftest`; battery command in `c2-landed-battery.txt` | `1f6709d0a00401658c2bff0a2f6818c810575fdf` |
+| R79-C3 | verifies (measured) | `SELFSTATE_SELFTEST: 14/14 pass` exit 0; battery `MUTATE: DONE (target=selfstate-arms-r79 defects=1 killed=1 survived=0 inconclusive=0 kill-rate=100%)` with byte-identical restore; the mutant's FAIL set is exactly `ARM14_python_isolation_tuple`; the base-byte control reads `killed=0 survived=1` | `python3 -I -X utf8 tools/selfstate-freshness.py --selftest`; battery command in `c3-landed-battery.txt` | `1f6709d0a00401658c2bff0a2f6818c810575fdf` |
+
+**No axis harmed.** Arms 1–21 (`wave-reconcile`) and arms 1–13
+(`selfstate`) are byte-identical between the base and landed selftests; the
+first ten spec defects keep their frozen kill sets; the standing sweeps read
+`WAVE_RECONCILE: rows=6 met=6 unexpected=0` and `SELFSTATE: rows=22 match=20
+stale=2 unexpected=0` (the base 21 rows identical plus the new
+`receipt-bind-selftest` row); `MUTATE_SELFTEST: 107/107 pass` is unchanged.
+The wave changed the landed bytes in six disclosed places (see
+`corpus/lessons/round-79.md` §Wave findings) and every change was re-measured.
+
+**Planned (round 80):** the wave-named survivors (`python-utf8-dropped`, the
+scout's 18-row survivor shortlist) and the connector's assimilation verdict; the
+carried 17-of-44 registry rows stay carried unless a claim slots them.

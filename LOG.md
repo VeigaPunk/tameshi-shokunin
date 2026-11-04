@@ -4302,3 +4302,30 @@ axes; one v1 wave of 12 seats.
   Census `validate --root … tameshi` exit 0 before (`.ufo/evidence/round-79/`
   `census-before.txt` at the round start, 166 rows) and after
   (`census-after-append.txt`, 167 rows).
+
+### Round 79 — appended: wave close (2026-11-04)
+
+Twelve seats settled, none died. The wave changed the landed bytes in six
+disclosed places, all re-measured after the change: the sentinel's two probes
+found a malformed duplicate `# tool:` line escaping the new tool's setup
+refusal (`receipt-header-malformed`, folded into ARM6; falsified at `9/10`
+without the guard) and an unguarded absolute-path form (folded into ARM10);
+the selfstate fixture builders lacked `rev-parse --show-toplevel` assertions
+and every fixture/production git call inherited `GIT_DIR`/`GIT_WORK_TREE`
+(under a decoy environment the suites read the wrong repository — selfstate
+crashed, wave-reconcile read `21/23`; with the isolated env `14/14` and
+`23/23`); the mutation-tester's two survivors were folded into arm23/ARM10 and
+now die, with `python-utf8-dropped` named for round 80; the reviewers
+re-derived every frozen clause (C1 (i)–(v) PASS with (vi) landed; all eleven
+C2/C3 clauses PASS, vacuousness proven by deleting each new arm); the scout
+contradicted two premises (the carrying commit postdates the receipt and is not
+unique; the C3 landed receipt had been measured on pre-hardening bytes — the
+final receipts are regenerated at the work commit); the critic returned two
+static counterexamples without a report; the connector confirmed
+`Assimilation: none` and its one documentation proposal is adopted. Two stale
+capability figures were repaired as calibration work (`wave-record
+reconciliation` 19/19 → 23/23; `non-Python instrument freshness row` 13/13 →
+14/14, rows 21 → 22) with no claim credit. Standing sweeps at the work commit
+`1f6709d0`: `WAVE_RECONCILE: rows=6 met=6 unexpected=0`, `SELFSTATE: rows=22
+match=20 stale=2 unexpected=0`, `RECEIPT_BIND: receipts=14 bound=6 corrected=8
+unbound=0`.
