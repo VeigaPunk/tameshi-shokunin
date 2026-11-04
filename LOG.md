@@ -4663,3 +4663,29 @@ insufficient; reset2026-11-06T22:28:24Z does not replenish wallet.
 Exact message `.ufo/waves/round-84/failure-events.json`. This names only
 the failing final provider/model, not its prior route sequence. Eight
 completed reports and one failed seat remain the accounting; no retry.
+
+## Round 85 (2026-11-04) — finite design-receipt blob audit
+
+Motivation: round81–84 leave the design-blob alarm unbuilt
+(`SCORECARD.md` round81 planned, `corpus/lessons/round-84-verifier-spotcheck.md`
+routed3). This round freezes ONE operability capability acquisition, not a
+calibration claim: scored axes10/8/9 exceed saturation8 and rounds83/84
+added no capability, so window2's stagnation nudge applies.
+Round84's wrong-axis rejection and criterion87 remain unchanged.
+
+Base45fa68046b0ce8c285ce161f3c6e164e6e721f06; declaration
+118dbc805d595d9de23a23adf036cec22df6436a contains the exact eight-case
+predicate, immutable counter and kill rule in `plans/round-85.plan.md`
+and `.ufo/evidence/round-85/measure.py`. Controls committed
+5a3cba2055f791d4c7c2110a14efedecd93b3e60: base missing-tool and
+constant-accept both cases8/passed0/mismatches8/false, exit1.
+The plan's seven-failure prediction for constant accept was wrong because
+that control omits a required carried-row token; the actual receipt is kept.
+No counter, case population or target was changed after scoring.
+
+S289 reopened at official git-cat-file OPTIONS -t, 2026-11-04; located
+11-word quote retained in `.ufo/evidence/round-85/source-cat-file.txt`.
+Object inspection does not establish execution provenance. Census before
+exit0 with171 rows and existing warnings, retained in `sources-before.txt`.
+Settlement, actual demonstration and no-harm results follow execution;
+no capability is pre-entered here.
