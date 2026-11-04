@@ -3755,3 +3755,5 @@ disclosed: the frozen C2 control line is unattainable as written (the
 instrument refuses a base-rev record), replaced after the freeze by the
 two-row stale-span control plus the seat's MISMATCH measurement; C2's claim
 is unaffected.
+
+Floor-id correction (round 72, appended): the round floor in `live-green-r72.out` is `f20ba482c744`; `4ed9ce1c` 64 -> 64 was measured separately at the tip (`live-green-floor4ed9-r72.txt`), and `8b0042bd` 46 -> 64 stands. All three read `lost=0 ok`.

@@ -180,3 +180,15 @@ reads MISSING against the base line), which is the discriminating base
 measurement. C2's *claim* is unaffected — the three (now four) tip rows read
 hit, the census exits 0 and the monitor is green — but the frozen control
 sentence was wrong and is reported as wrong rather than silently replaced.
+
+## Citation erratum, appended (seat T72W1S05's reading)
+
+The "What was measured" section attributes the floor pair `4ed9ce1c` 64 → 64 to
+`live-green-r72.out`. That receipt's floor is the **round's base
+`f20ba482c744`** (also 64 → 64); the r71 round floor `4ed9ce1c` was measured
+separately at the round tip and reads `floor=4ed9ce1c52e2 floor_credited=64
+cand=d8e7f33724b4 cand_credited=64 lost=0 ok` (`live-green-floor4ed9-r72.txt`,
+exit 0). Both pairs are 64 → 64; the wrong id was named in the first sentence,
+and the historical floor `8b0042bd` reading 46 → 64 is unchanged
+(`live-green-hist-r72.out`). Caught by the seat reading the receipt bytes rather
+than the claim — the class this lane's instruments exist for, one more time.

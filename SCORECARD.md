@@ -4401,3 +4401,5 @@ Appended after the wave's attacks; the rows above stand as written.
   `IGNORED` filter: mutant M3 (drop it) survives every arm and is killed only by
   the selftest (seat T72W1S09). The arm table gains an ignored-path arm in the
   next round that re-prices the instrument.
+
+Floor-id correction (round 72, appended): the round floor in `live-green-r72.out` is `f20ba482c744`; `4ed9ce1c` 64 -> 64 was measured separately at the tip (`live-green-floor4ed9-r72.txt`), and `8b0042bd` 46 -> 64 stands. All three read `lost=0 ok`.
