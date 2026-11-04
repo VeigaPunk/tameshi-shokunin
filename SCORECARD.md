@@ -261,6 +261,8 @@ written and are superseded here:
 | rekey-cost forecast | price a planned edit set against the cold-read ledger's own input pins before any byte changes: which SKILL.md sections lose credit and how many re-read sections the rekey will owe | `python3 -I tools/rekey-cost.py --selftest` → `REKEY_COST_SELFTEST: 8/8 pass`; `python3 -I tools/rekey-cost.py --edit corpus/SOURCES.md --edit PROVINCE.md` → `REKEY_COST sections=64 planned=2 at_risk=17 predicted_lost=17`, equal to the guard's measured `lost=17 RED` at `d618518a`; arms 13/6/6/0/0 each equal to a guard-measured counterfactual (`.ufo/evidence/round-72/reh/`, five receipts); the rekey paid it (`REBIND OK sections=17 entries_added=17 ledger_before=797`, monitor back to 64/64 at both floors) | round 72 |
 | wave-record reconciliation | re-derive a round record's own execution claims (seat count, committed seat-report count, role multiset, attack share) from the committed wave artifacts: four row kinds, each binding a record span by byte substring at the record revision with the printed integer a delimited token, artifacts read from git objects at their own revision, `expect` is meet or drift so a standing red arm MEASURES the drift on every sweep, a UTF-8 BOM refused as setup exit 2 (S066 §8.1) | `python3 -I -X utf8 tools/wave-reconcile.py --selftest` → `WAVE_RECONCILE_SELFTEST: 12/12 pass`; `python3 -I -X utf8 tools/wave-reconcile.py --repo . --extra-root fleet=/home/vgpnk/Projects/shokunin --manifest tools/wave-reconcile.json` → `WAVE_RECONCILE: rows=6 met=6 unexpected=0` with both r72-closure red arms measured (`printed=11 files=12`; plan `labrat` vs executed `revenger`); independent oracle `ORACLE_CMP rows=6 equal=6` (seat T73W1S01); `.ufo/evidence/round-73/`: `wave-selftest-r73.txt`, `wave-reconcile-live-r73.txt`, `hardening-r73.txt` | round 73 |
 
+| round-range additivity sweep | measure a round's append-only / content-preservation claims over a declared commit range with a declared claim class per row, naming the worst commit and the class-specific counts | `python3 -I tools/additivity-range.py --repo . --manifest tools/additivity-range.json` → `ADDRANGE: rows=6 met=6 unexpected=0` exit 0; `--selftest` → `ADDITIVITY_RANGE_SELFTEST: 8/8 pass`; `.ufo/evidence/round-74/addr-r74.txt` | round 74 |
+
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
 ## Saturation
@@ -4519,3 +4521,46 @@ validator rejects, so no labrat item exists; the planner seat stays with the L1.
 
 Capability to enter (if it verifies): **round-range additivity sweep** —
 first-working round 74.
+
+## Round 74 — measured claims (appended at the receipts commit, 2026-11-03)
+
+Declaration `a7cd78ae4cbfc0cdd9656a203268087b6fbd589a`; work commits C1 tool
+`2bbf9796`, C1 hardening `ee395675`, C2 tool `2e0ac486`, sourced Gate
+`9fe58b40`, criterion-124/registry `607b96d8`, rekey batch-1 `9d9ab7d3`.
+Receipts under `.ufo/evidence/round-74/`; the round's report cites the tip.
+
+| Claim | Verdict | After (measured) | Counting commands (live outputs in the receipts) | Measured commit |
+|---|---|---|---|---|
+| R74-C1 | verifies (measured) | `WAVE_RECONCILE_SELFTEST: 15/15 pass` exit 0; battery `MUTATE: DONE (target=wave-reconcile-arms defects=3 killed=3 survived=0 inconclusive=0 kill-rate=100%)`; each named mutant dies on its named arm only (m2 → arm13, span rule → arm14, W2 → arm15); control GREEN; restore proof byte-identical; the standing six-row sweep unchanged (`rows=6 met=6 unexpected=0`) | `python3 -I -X utf8 tools/wave-reconcile.py --selftest`; `bash tools/mutate-and-run.sh --target tools/wave-reconcile.py --defects tools/wave-reconcile-mutants.spec --suite 'python3 -I -X utf8 "$MUTANT" --selftest' --label wave-reconcile-arms` | `2bbf9796` (tool bytes); hardened + re-run at `ee395675` |
+| R74-C2 | verifies (measured) | `ADDRANGE: rows=6 met=6 unexpected=0` exit 0 with `ADDRANGE_TOTALS raw_old_only=8561 norm_cr_old_only=5`; the two round-73 routed EOL rewrites measure `violated` at their own commits (LOG.md `862e8844` raw 3484 / norm 0; QUALITY.md `21a7332f` raw 1593 / norm 5); selftest `ADDITIVITY_RANGE_SELFTEST: 8/8 pass`; the class control, the expect flip (`unexpected=1` exit 1) and the echo stub are in the controls receipt | `python3 -I tools/additivity-range.py --repo . --manifest tools/additivity-range.json`; `python3 -I tools/additivity-range.py --selftest` | `2e0ac486` |
+
+Capability entered (see `## Capabilities`): **round-range additivity sweep** —
+first working round 74. Gate-registry rows for both round-74 instruments (4
+rows, `held=4/4`) land in the same round: r73 closure defect 5 paid for these
+two instruments; the six older standing instruments still carry no row and are
+named as an open carry.
+
+**No axis harmed.** depth 10, calibration 8, freshness 9 unchanged as numbers
+(the round records axis moves, not new scores). Monitored bytes: the two
+monitored edits (`corpus/SOURCES.md`, `corpus/QUALITY.md`) plus
+`tools/registry.json` staled 16 SKILL.md sections — measured RED at `607b96d8`
+(`credited=48/64`, `.ufo/evidence/round-74/live-red-r74.out`) and rekeyed as
+`r74-batch-1` (16 sections, ledger 852 → 868, EOL-preserving merge); the guard
+then reads `credited=64/64` at `9d9ab7d3`
+(`.ufo/evidence/round-74/live-green-r74.out`). The first rekey run used the
+round-73 script copy and wrote its traces to the round-73 path; the ledger and
+traces were restored byte-exactly from `607b96d8` and the corrected round-74
+script re-ran (`141dead0` carries the superseded merge; `9d9ab7d3` the
+corrected one).
+
+**Named carries to round 75** (measured by wave seats, not this round's
+counters): `M-C` (printed integer bound to the whole record instead of the
+span) survives all fifteen arms — the next arm needs a fixture whose number is
+delimited in the record but not in the span (T74W1M1); a selective
+`_record_claim` bypass on roles/attack_share alone survives (T74W1R1); the
+frozen plan's control-4 clause and its `eight-row` wording are frozen-text
+defects (T74W1R2); the echo stub prints the summary line and is rejected only by
+the totals line (T74W1R2); the range sweep's raw counts are predicate-dependent
+(set-based 3484/1593 vs S1's line-counting 3801/3759 across the range) and the
+`ADDRANGE` line is a receipt, never an authenticator; the six older standing
+instruments still lack registry rows (T74W1SC1).

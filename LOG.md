@@ -3891,3 +3891,42 @@ Pre-data before-state receipts: `.ufo/evidence/round-74/base-measure-r74.txt`
 LOG pair with `raw_old_only=3484 norm_cr_old_only=0`) and
 `.ufo/evidence/round-74/range-scan-r74.txt` (the round-73 range scanned per
 commit per file with the existing tool).
+
+## Round 74 — measured (appended after the wave, 2026-11-03)
+
+Two claims, frozen pre-data in `plans/round-74.plan.md` (declaration
+`a7cd78ae`), both verify measured; no axis harmed.
+
+- **R74-C1 (operability)** — `tools/wave-reconcile.py` gains arms 13/14/15 for
+  the three rules the round-73 wave measured as unguarded; `WAVE_RECONCILE_SELFTEST:
+  12/12` → `15/15 pass`, and the committed runner spec
+  `tools/wave-reconcile-mutants.spec` kills all three named mutants
+  (`MUTATE: DONE (target=wave-reconcile-arms defects=3 killed=3 survived=0
+  inconclusive=0 kill-rate=100%)`), each on its named arm. Work commits
+  `2bbf9796` (arms + spec) and `ee395675` (seat T74W1R1 hardening: the arms
+  assert their named refusal). Receipts `.ufo/evidence/round-74/battery-r74.txt`,
+  `sweep-after-arms-r74.txt`.
+- **R74-C2 (calibration)** — `tools/additivity-range.py` +
+  `tools/additivity-range.json`: six standing rows over the round-73 range,
+  `ADDRANGE: rows=6 met=6 unexpected=0`, with the closure's two routed EOL
+  rewrites measured as declared violations at their own commits (LOG.md
+  `862e8844` 3484 raw / 0 normalized; QUALITY.md `21a7332f` 1593 / 5) and
+  `ADDITIVITY_RANGE_SELFTEST: 8/8 pass`. Commit `2e0ac486`; receipts
+  `.ufo/evidence/round-74/addr-r74.txt`, `controls-r74.txt`.
+
+Sourced half: `corpus/SOURCES.md` gains S304 (git-diff `--ignore-cr-at-eol`,
+tier A) and re-opens S294 (gitattributes conversion layer) with fresh locates
+(Gate block in `corpus/lessons/round-74.md`; one line-number correction
+appended). `corpus/QUALITY.md` gains criterion 124. Gate-registry rows for the
+two round-74 instruments (`held=4/4`) pay the round-73 closure's registry defect
+for them. The monitored bytes were rekeyed (`r74-batch-1`, 16 sections, ledger
+852 → 868; guard `credited=64/64` at `9d9ab7d3` after the red receipt at
+`607b96d8`).
+
+Wave: one v1 wave, 12 seats (4 executor · 1 scribe · 1 scout · 2 reviewer ·
+1 critic · 1 mutation-tester · 1 connector · 1 sentinel; attack seats 4 =
+33.3 %); seat reports and the settlement land in `.ufo/waves/round-74/`. Seat
+findings adopted as work: the named-refusal hardening (T74W1R1), the totals
+line that rejects the echo stub (T74W1R2), and the lesson corrections; carries
+to round 75 are named in `SCORECARD.md`. Assimilation: none — the claim set
+carried no `shokuknow/merge/tameshi/` theme slot.
