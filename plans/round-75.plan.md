@@ -189,3 +189,19 @@ seven SCORECARD cell supersessions, the round-75 SCORECARD block, the lesson
 (Gate + Mistakes), the S006 `used-by` append and Round-75 SOURCES note, the
 QUALITY criterion; (6) the rekey batch; (7) the report (cites the pushed lane
 tip) and the fleet commit.
+
+### Correction 1 (appended before any claim data, 2026-11-04)
+
+Kill rule (ii) as first written — "any mutant is killed by an arm other than
+the one it is named against" — cannot hold for the pre-existing round-74
+mutants once the new arms land: arm16 exercises `delimited()` (m2's rule) and
+arms 17/18 exercise the record-span guard (the span-rule mutant's rule), so
+both pre-existing mutants fail those new arms as collateral. Measured
+pre-freeze on the L1's own 18-arm candidate (identical target: `18/18 pass`,
+six defects killed), receipt `.ufo/evidence/round-75/l1-c1-battery.txt`:
+`m2` fails arm13 AND arm16; the span-rule mutant fails arm14, arm17 and arm18;
+the three round-75 mutants each fail only their own named arm. Corrected rule
+(ii): each of the three R75 mutants dies on its own named arm and on no other
+arm; a pre-existing mutant must keep its named-arm kill, and collateral
+failures on the new arms are expected, not disqualifying. The after-state
+target (`18/18 pass`; six defects killed on their named arms) is unchanged.

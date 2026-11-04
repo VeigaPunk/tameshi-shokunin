@@ -3976,3 +3976,12 @@ target; an always-fail arm is not a kill (each new arm passes unmutated); an
 echo stub that copies the doc figure reads `stale=0`, so the receipt carries
 the per-row `measured=` tokens and the frozen red row must read `stale`; a
 manifest row whose capability no longer resolves is a setup refusal.
+
+Round 75 pre-freeze correction (2026-11-04, before any claim data): R75-C1's
+kill rule (ii) is corrected append-only — the pre-existing round-74 mutants
+necessarily fail the new shared-code arms as collateral (m2 fails arm13 and
+arm16; the span-rule mutant fails arm14, arm17 and arm18), so (ii) now requires
+each R75 mutant to die on its own named arm and on no other, while a
+pre-existing mutant must keep its named-arm kill. Target unchanged (`18/18
+pass`; six defects killed). Evidence: `.ufo/evidence/round-75/l1-c1-battery.txt`
+(the L1's own candidate, `killed=6 survived=0`) and the plan's Correction 1.
