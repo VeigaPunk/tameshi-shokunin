@@ -1,0 +1,62 @@
+{
+ "schema": "tameshi-round-contract-v1",
+ "round": 86,
+ "lane": "tameshi",
+ "l1": "TameshiR86",
+ "date": "2026-11-04",
+ "base": "d10a9c66d6181cddcad52cdbffd672beb886ff6c",
+ "axes_at_base": {"depth": 10, "calibration": 8, "freshness": 9},
+ "claims": {
+  "R86-C1": {
+   "axis": "operability",
+   "type": "capability acquisition",
+   "predicate": "C1_R86 rev=<rev> passed=8/8 C1_R86_PASS=true",
+   "command": "python3 -I .ufo/evidence/round-86/measure.py --repo LANE --rev REV --work EMPTY_DIR",
+   "instrument": ".ufo/evidence/round-86/measure.py",
+   "instrument_sha256": "20bd8e78be064bf42d6517c6e74fd5034587ab02934243611a6bc5eb8c2b4c16",
+   "controls_committed_before_freeze": {
+    "ctl-fingerprint.py": "passed=0/8",
+    "ctl-sequence.py": "passed=4/8",
+    "ctl-pinned-hash.py": "passed=0/8",
+    "ctl-always-accept.py": "passed=0/8",
+    "ctl-r85-forgery.py": "passed=6/8"
+   },
+   "kill_rule": "any control printing passed=8/8, or the real instrument printing passed<8/8 at the measured revision"
+  },
+  "R86-C2": {
+   "axis": "calibration",
+   "type": "axis move",
+   "predicate": "CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0",
+   "command": "python3 -I -X utf8 tools/capability-census.py --repo . --rev REV",
+   "instrument": "tools/capability-census.py",
+   "before": "CAP_CENSUS: rows=30 bound=18 unbound=12 mismatches=0 (c2-before.txt, exit 1)",
+   "relabel_control": "CAP_CENSUS: rows=30 bound=0 unbound=30 mismatches=0 (c2-relabel-control.txt, exit 1)",
+   "kill_rule": "any unbound row, any manifest defect, or a relabel control that binds a row"
+  }
+ },
+ "separability": "C1 changes only the certification counter and its controls; C2 changes only the repertoire census tool, its manifest and the capability table's dispositions. Either verifies with the other's files absent.",
+ "controls": {
+  "do_nothing_c1": "tool-absent arm prints passed=0/8 C1_R86_PASS=false",
+  "do_nothing_c2": "live-only manifest reads unbound=12",
+  "cheat_family_c1": "five controls, each below the 8/8 target, executed and committed before the freeze",
+  "relabel_c2": "all-historical manifest with uncited pins reads bound=0"
+ },
+ "no_harm": "no existing tool modified; round-85 counter, witness and rejected verdict unchanged; standing sweeps must read clean at the records commit",
+ "deciding": "canonical non-author closure decides admission; this lane reports verdicts",
+ "frontier_step": {
+  "source": "S305 re-opened 2026-11-04",
+  "quotes": ["page line 1807: The mode of the object.", "page line 1811: The type of the object (commit, blob or tree)."],
+  "new_rows": 0,
+  "assimilation": "none"
+ },
+ "coldread_forecast": {
+  "corpus/SOURCES.md": {
+   "planned_edits": 1,
+   "at_risk_sections": 13,
+   "predicted_lost": 13,
+   "measurement": "REKEY_COST sections=71 planned=1 at_risk=13 predicted_lost=13",
+   "command": "python3 -I tools/rekey-cost.py --edit corpus/SOURCES.md"
+  }
+ },
+ "amendments": []
+}
