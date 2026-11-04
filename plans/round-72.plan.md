@@ -134,3 +134,27 @@ both are rekeyed; `LOG.md`/`SCORECARD.md` appends are free (forecast 0, guard
 - Planner seat: held by the L1 (validator rejects `planner`); the bounded
   planning data-walk rides the scout item.
 - Residual call: none planned (≤4 allowed if a wave-2 attack item appears).
+
+## Erratum, appended 2026-11-03 (round 73)
+
+This plan is frozen text and stands as written; two lines are superseded by
+measurement, and the mismatch is recorded here rather than rewritten (the
+round-72 non-author closure's routed defect 1: "append an erratum to the plan
+naming the superseded line").
+
+- Lines 132–133 declare `Wave w1: 12 seats — 3 executor, 2 scribe, 1 scout,
+  1 connector, 1 reviewer, 1 critic, 1 mutation-tester, 1 sentinel, 1 labrat.`
+  The executed wave carries 12 records in `.ufo/waves/round-72/w1-results.json`
+  with agents 3 executor, 2 scribe, 1 scout, 1 reviewer, 1 critic, 1
+  mutation-tester, 1 sentinel, 1 **revenger**, 1 connector — the `labrat` slot
+  ran as a `revenger` seat. The validator rejects `labrat` as a swarm role
+  (`~/Projects/ufo-fsd-alpha/scripts/ufo-swarm-wave.mjs:263` names
+  planner/distiller/labrat/Main as frozen-topology seats), so the plan's
+  `1 labrat` could never execute as written; line 6's "attack roles
+  reviewer/critic/mutation-tester/labrat = 4 = 33 %" therefore describes an
+  unexecutable composition too — the executed share is 3/12 = 25 %.
+- Measured on the committed bytes at `a3dd3574` by
+  `tools/wave-reconcile.py`: row `r72-plan-roles` reads `expect=drift
+  measured=drift` and row `r72-attack-share` reads `attack=3/12=25.0%
+  floor=25.0%`. The row set is `tools/wave-reconcile.json`; the sweep line is
+  `WAVE_RECONCILE: rows=6 met=6 unexpected=0`.
