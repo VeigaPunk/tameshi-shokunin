@@ -4630,3 +4630,28 @@ remain explicit. That correction is not substituted for R84-C1.
 S311 grounds full-string matching (L1-opened official re.fullmatch page,
 2026-11-04; located excerpt in `.ufo/evidence/round-84/sources/`).
 Assimilation none; no frontier or repertoire increment claimed.
+
+**Round84 settlement and re-verification.** WAVE-DONE received for9 seats,
+8 substantive reports,1 unfinished reviewer/no report; no replacement.
+Selftest implementation156d6783f880f4ecfa7ded131750b61f3fef7a10;
+source/registry/pin/record integration49ba65efbafe6ab7740cac325592b0701d60a081;
+append-only baseline metadata043c73e50ce6dd223471b6d1b4147b98ea436887.
+The last revision is the deciding measured commit: `final/after.txt` reads
+cases9/invalid_refused8/valid_accepted1/mismatches0/R84_C1_PASS=true, exit0;
+`final/selftest.txt`15/15, defects6closed, selfstate26/24/2/0, pins26settled,
+registry9/9 and receipts30/15bound/8corrected/7design/0unbound all exit0.
+Files above are under `.ufo/evidence/round-84/`.
+
+Seven bounded standing sweeps also exit0; `final/coldread.txt` preserves
+47->47 credited with lost0 against the actual base floor, not a fabricated
+69/69. Census command exits0 before/after; source rows170->171 (S311 added
+tierA/mined). Exact census outputs and pinned population parser results
+are in final/. Fleet misroot sweep found only operator state plus the
+pre-existing `after`, no round84 seat misroot; nothing deleted. No tools
+installed. Scribe/scout process exceptions remain in their reports.
+
+R84-C1 is an honest-stop on calibration attribution, not renamed to a
+successful quality claim. Scores10/8/9 unchanged, no capability/frontier
+increment. Next work remains actual self-assessment discrepancy measurement,
+unhashable-kind/source-id boundaries, descriptor race/parent aliases,
+conversion comparison and design-orphan alarm, all unclaimed here.

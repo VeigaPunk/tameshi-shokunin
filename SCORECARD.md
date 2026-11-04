@@ -5372,3 +5372,18 @@ the axis counter has read the actual surface it calls an assessment. Preserve
 unhashable-kind/source-id-injection debts, receipt race/parent aliases,
 caller-selected revision authority and object conversion limits; the
 design-orphan alarm remains unbuilt. No claim is pre-approved here.
+
+### Round84 integrated remeasurement
+
+Measured commit043c73e50ce6dd223471b6d1b4147b98ea436887; exact
+commands/exits `.ufo/evidence/round-84/final/`. Frozen counter9/8/1/0 true
+exit0; selftest15/15, defects6closed, selfstate26/24match/2declared-stale/
+0unexpected, pins26settled, registry9/9, receipt30/15bound/8corrected/
+7design/0unbound, all exit0. Seven standing sweep receipts exit0.
+Coldread floor47->47/lost0, equivalence20/0 each side; existing22
+uncredited base sections are not retrospectively credited.
+
+Literal behavioral predicate verifies at this revision; declared calibration
+claim remains honest-stop for missing self-assessment input. Numeric axis
+delta0; no capability addition. Independent non-author admission remains
+outside this lane's authority.

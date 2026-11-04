@@ -31,3 +31,56 @@ Assimilation: none. Latest `considerthese/2026-10-28.md` was opened; proposals1/
 ## Measurements and outside judgment
 
 Before exact command/output and exit1: `.ufo/evidence/round-84/before.txt`. Frozen program `.ufo/evidence/round-84/measure.py`, declaration `plans/round-84.plan.md`. Deciding results, bounded no-harm, wave settlement and measured commit are appended after integration, not invented in advance.
+
+## Settled delivery and deciding measurement
+
+WAVE-DONE from Main:9 seats settled,8 substantive reports. T84R1's final
+output is an interrupted narrative and no report exists; no completion or
+control credit is inferred. No replacement. E1 supplies the integrated A15
+patch, eight malformed ids plus a valid first sibling and valid-only control;
+E2 reproduces the frozen9-case before/after and late-invalid no-output case.
+E3 measures base coldread47/69 and shows the18 forecast-risk headings were
+already uncredited. Scout reopens fullmatch and decoder sources, correcting
+its own initial quote count to13. Connector supplies substantive own/souji/
+tabi staging comparisons, without importing product behavior. M1's four
+single-edit mutants are killed by the behavioral counter with pristine and
+restored controls; this is bounded detector evidence, not calibration proof.
+
+Final integrated revision043c73e50ce6dd223471b6d1b4147b98ea436887:
+`.ufo/evidence/round-84/final/` records exact commands/exits. Nine-case
+predicate true/mismatches0 exit0; selftest15/15; bound defects6/6; selfstate
+26/24match/2declared-stale/0unexpected; pins26settled; registry9/9;
+receipt population30=15bound+8corrected+7design,0unbound. Wave6/6,
+range11/11, arms9/9, counts7/7, pointers12/12, attribution3/3, anchors16/16
+all exit0. Coldread floor47 -> candidate47, lost0, exit0; equivalence probes
+20 per side,0mismatch. This preserves the actual floor, not full69 credit.
+
+Census before exit0 and after exit0, outputs retained verbatim. Registry
+170->171; tiersA152/B14/C4 -> A153/B14/C4; mined137->138, queued22 and
+rejected11 unchanged. Parser and pinned revisions are in
+final/sources-population.json. No frontier row advanced. The before receipt's
+original measured_rev header lacked tool/digest companions; append-only
+metadata completion at043c73e5 supplies the actual base instrument path and
+sha without altering observed control output.
+
+R84-C1 remains calibration honest-stop despite literal predicate success.
+No new score/capability or retroactive claim. Tool/binding fields are
+current; SCORECARD's standing boundary summary is qualified. The fleet
+misroot sweep found only operator .scratch state and the pre-existing
+`after` file (content `== SCORECARD diff base-`), no named round84 seat
+misroot; nothing outside lane scope was deleted.
+
+Procedural exceptions: T84S1 discloses extra unassigned counter previews
+and shell/bare-git spelling deviations; T84SC1 discloses clone spelling
+and initial shell search deviations. Initial L1 discovery also used shell
+listing/grep/tail before switching to specialized reads. These are process
+defects, not independent review credit; no observed production/sibling
+mutation by those seats. No installed/updated tools.
+
+Self-evaluation (not a learning score): accuracy3, because wrong-axis claim
+selection required an honest stop; completeness4, delivered artifacts but
+reviewer report missing; clarity4, explicit result/axis split; actionability4,
+re-runnable frozen command; conciseness3, necessary duplicated historical
+limits. Overall3.6/5. Highest-impact change next round: test axis-to-counter
+data flow before freeze, rather than merely counting behavioral cases.
+The user should agree that preserved failure is preferable to relabelled success.
