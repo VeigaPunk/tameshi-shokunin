@@ -4728,3 +4728,10 @@ sides; S289 used-by adds lesson85, all other cells unchanged. Existing
 warnings retained. Misroot sweep sees operator .scratch state, kama84
 report and pre-existing after only; no round85 seat file relocated/deleted.
 No tool installs reported. Assimilation none; separate debts remain open.
+
+**Round85 record-commit preservation.** Records/evidence landed
+288f826d5fe126617349437ff09b9682423142d2. The additional
+`final/settled-coldread.txt` compares that actual record commit with base:
+47->47/lost0,20/0 equivalence each side, exit0. Its counter code is still
+the unchanged instrument pinned at ecb61d56; input revision is explicit in
+the recorded command. This is not a rerun or repair of the frozen claim.
