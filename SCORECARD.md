@@ -4488,3 +4488,34 @@ quoted-line sweep can back them).** `printed=11 files=12` and the six
 `.ufo/waves/round-73/w1/T73W1S07.md`; `TMPDIR_VIOLATIONS=0` and
 `SECRETS=1` in `.ufo/waves/round-73/w1/T73W1S11.md`; `tameshi E01 S066
 fields=8` in `.ufo/waves/round-73/w1/T73W1S05.md`.
+
+## Round 74 — declared claims (2026-11-03), frozen before data
+
+Plan: `plans/round-74.plan.md` (predicates, counters, kill rules, arms,
+controls). Base `3d6ea1ee8e551e3baf94904384890e3a112088f0` (= `origin/master`,
+the admitted round-73 closure). Round shape: one v1 wave, 12 seats (4 executor ·
+1 scribe · 1 scout · 2 reviewer · 1 critic · 1 mutation-tester · 1 connector ·
+1 sentinel; attack seats 4 = 33.3 %). `labrat` is a frozen-topology seat the
+validator rejects, so no labrat item exists; the planner seat stays with the L1.
+
+- **R74-C1 — operability (verdict-only).** The three arm gaps the round-73 wave
+  named become measured arms of `tools/wave-reconcile.py`: the delimited-token
+  rule, the record-span-substring rule, and `seat_reports` top-level-only
+  counting. Before: `WAVE_RECONCILE_SELFTEST: 12/12 pass` and the three named
+  mutants (`m2` `delimited := True`, the span-rule removal, `W2` any-depth)
+  each survive all twelve arms. After: `15/15 pass` and a committed runner
+  spec (`tools/wave-reconcile-mutants.spec`) that kills all three on their
+  named arms.
+- **R74-C2 — calibration (the lowest scored numeric axis at 8; sourced on the
+  re-opened S294).** Append-only / content-preservation claims become a
+  measured range sweep: `tools/additivity-range.py` +
+  `tools/additivity-range.json` measure every commit of a declared range per
+  file with a declared claim class and `expect: hold|violated`. Before: the
+  per-pair tool has no range mode (`grep -c rev-list` → 0) and its default
+  judgement on the round-73 `LOG.md` rewrite pair exits **0**; the round-73
+  closure's two routed EOL rewrites have no standing measurement. After:
+  `ADDRANGE: rows=6 met=6 unexpected=0` with both rewrites measured as declared
+  violations at their own commits.
+
+Capability to enter (if it verifies): **round-range additivity sweep** —
+first-working round 74.

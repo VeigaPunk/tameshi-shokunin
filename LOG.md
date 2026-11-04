@@ -3868,3 +3868,26 @@ carried to round 74 (recorded in `corpus/lessons/round-73.md` and
 any-depth `seat_reports` arm (S10), the IGNORED over-filtering arm (S09's
 M3c), the `population` field proposal (S12), the counter-cheat disclosure
 (S07), and the 11 unpinnable rounds 61–71 (S06).
+
+## Round 74 — declared (frozen before data, 2026-11-03)
+
+Base `3d6ea1ee` (admitted round-73 closure). Two claims, frozen with their
+predicates, counters, kill rules and controls in `plans/round-74.plan.md`
+before any data:
+
+- **R74-C1 (operability)** — the three wave-reconcile arm gaps round 73 named
+  (`delimited` token, record-span substring, `seat_reports` top-level only)
+  become measured arms: `WAVE_RECONCILE_SELFTEST: 12/12` → `15/15`, and the
+  three named mutants die on their named arms under the lane's runner
+  (`tools/mutate-and-run.sh` + `tools/wave-reconcile-mutants.spec`).
+- **R74-C2 (calibration, lowest scored axis)** — `tools/additivity-range.py` +
+  `tools/additivity-range.json`: every commit of a declared range is measured
+  per file against a declared claim class, so the round-73 closure's two routed
+  EOL rewrites (LOG.md `862e8844`, QUALITY.md `21a7332f`) stand as MEASURED
+  declared violations instead of unmeasured prose.
+
+Pre-data before-state receipts: `.ufo/evidence/round-74/base-measure-r74.txt`
+(selftest 12/12; `grep -c rev-list` → 0; the default judgement exits 0 on the
+LOG pair with `raw_old_only=3484 norm_cr_old_only=0`) and
+`.ufo/evidence/round-74/range-scan-r74.txt` (the round-73 range scanned per
+commit per file with the existing tool).
