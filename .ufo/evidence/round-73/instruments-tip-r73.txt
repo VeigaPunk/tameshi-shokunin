@@ -1,0 +1,34 @@
+# standing instruments at the round-73 worktree (bytes == tip 3e0ef1c8390fcf262bc54f4428b208684b7ad710; git status -- tools/ empty)
+$ git status --porcelain -- tools/
+(end)
+
+$ python3 -I tools/figure-attribution.py --selftest
+exit=0
+SELFTEST_ARM7 usage: PASS
+FIGURE_ATTRIBUTION_SELFTEST: 7/7 pass
+
+$ python3 -I tools/count-recheck.py --repo . --manifest tools/count-recheck.json
+exit=0
+COUNT_ROW lesson-r69-anchored-r68tip expect=match printed=1 measured=1 ok
+COUNT_RECHECK: rows=7 met=7 unexpected=0
+
+$ python3 -I -X utf8 tools/anchor-drift-sweep.py --repo . --manifest tools/anchor-drift-sweep.json
+exit=0
+ANCHOR_ROW s298-anchor-heading expect=present measured=present ok
+ANCHOR_DRIFT: rows=16 met=16 unexpected=0
+
+$ python3 -I tools/arm-liveness.py --repo . --manifest tools/arm-liveness.json
+exit=0
+ARM_LIVE bind-r70-repair1-red tally=findings=39 exit=1
+ARM_LIVENESS: rows=9 live=9 dead=0
+
+$ python3 -I tools/pointer-recheck.py --repo . --manifest tools/pointer-recheck.json
+exit=0
+POINTER_ROW province-r72-sixleg-cut-88-93 expect=hit measured=hit ok
+POINTER_RECHECK: rows=12 met=12 unexpected=0
+
+$ python3 -I tools/receipt-commit-bind.py --selftest
+exit=0
+SELFTEST_ARM7 suffix-collision-green: PASS
+RECEIPT_COMMIT_BIND_SELFTEST: 7/7 pass
+

@@ -1,0 +1,11 @@
+# Mistake 2 (class: piped-exit-capture). The first base-measure receipt read exit=0
+# next to an argparse error, because $? after a pipe is tail's status. Shown able to fail:
+$ python3 -I <base rekey-cost bytes> --arms | tail -2 ; echo "exit=$?"
+                          [--json-out JSON_OUT] [--selftest]
+rekey-cost-base.py: error: unrecognized arguments: --arms
+exit=0
+
+$ python3 -I <base rekey-cost bytes> --arms ; echo "exit=$?"
+exit=2
+                          [--json-out JSON_OUT] [--selftest]
+rekey-cost-base.py: error: unrecognized arguments: --arms
