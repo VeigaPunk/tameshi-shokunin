@@ -69,8 +69,10 @@ Exit: 0 every row matches its expectation; 1 any mismatch; 2 setup refusal.
 """
 
 import argparse
+import contextlib
 import hashlib
 import inspect
+import io
 import json
 import os
 import re
@@ -89,7 +91,7 @@ SELFTEST_ARMS = 14
 # the function's own text only: a module-level edit, a vacuous comment inside
 # the function (over-kill) or a two-edit rewrite (weaken an arm and recompute
 # this constant) stay outside the class, exactly the round-81 declared limits.
-SELFTEST_TEXT_SHA256 = ("f74f2d4e3dc4ebe91da91aa7b2cf515af6ee217e6deddc8c7ac52011fa2dbb85")
+SELFTEST_TEXT_SHA256 = ("86ba963bd3449287a425cd6b0bc643654d3ff0487e9378e9d4acc722bc072dbd")
 
 
 class SetupError(Exception):
@@ -723,7 +725,7 @@ def selftest(out=sys.stdout):
             _expect_setup(lambda: load_manifest(_bad_schema(f)), "schema"),
             _expect_setup(lambda: load_manifest(_bad_json(f)),
                           "manifest-unreadable"),
-        ]), "")
+        ]) and _cli_guards(f, base), "")
 
         # arm 9: a row missing its required key is refused.
         arm("A9_missing_rev_refused",
@@ -808,10 +810,17 @@ def selftest(out=sys.stdout):
             lambda: sweep(f.root, "no-such-manifest.json",
                           out=_io.StringIO(), manifest_rev=rev4),
             "manifest-rev-unreadable")
+        unresolvable_refused = _expect_setup(
+            lambda: sweep(f.root, mpath, out=_io.StringIO(),
+                          manifest_rev="deadbeef"), "rev-unresolvable")
+        noncommit_refused = _expect_setup(
+            lambda: sweep(f.root, mpath, out=_io.StringIO(),
+                          manifest_rev=rev4 + "^{tree}"), "rev-unresolvable")
         arm("A13_manifest_rev_binding",
             code_before == 0 and bound_tokens and code_bound == 0
             and narrowed_refused and narrowed_unbound and outside_refused
-            and absent_refused, bound_text.strip().splitlines()[-1])
+            and absent_refused and unresolvable_refused and noncommit_refused,
+            bound_text.strip().splitlines()[-1])
 
         # arm 14: the selftest's own assertion text is pinned, so an edit that
         # weakens an arm (keeping its name and fixtures) fails THIS arm
@@ -830,6 +839,22 @@ def selftest(out=sys.stdout):
 
     out.write("DEFECT_BIND_SELFTEST: %d/%d pass\n" % (passed, total))
     return 0 if (passed == total == SELFTEST_ARMS) else 1
+
+
+def _cli_guards(fixture, rev):
+    """Drive main() itself: every arm above calls sweep()/load_manifest()
+    directly, so the CLI guards were outside the suite's reach (round-82
+    mutation-tester survivors r2/r3)."""
+    err = io.StringIO()
+    out = io.StringIO()
+    path = fixture.manifest([{"id": "g1", "kind": "tree-paths", "rev": rev,
+                              "paths": ["doc.md"]}], name="guard.json")
+    with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
+        empty_rev = main(["--repo", fixture.root, "--manifest", path,
+                          "--manifest-rev", ""])
+        no_manifest = main(["--repo", fixture.root])
+    return (empty_rev == 2 and "needs a revision" in err.getvalue()
+            and no_manifest == 2)
 
 
 def _bad_schema(f):
