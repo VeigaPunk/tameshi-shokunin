@@ -31,10 +31,27 @@ Usage:
 
   python3 -I tools/rekey-cost.py --edit corpus/SOURCES.md --edit PROVINCE.md
   python3 -I tools/rekey-cost.py --edit-file planned-paths.txt --json-out cost.json
+  python3 -I tools/rekey-cost.py --arms
   python3 -I tools/rekey-cost.py --selftest
 
-Exit 0 on a completed forecast; 2 on setup errors (no planned path, missing
-ledger/skill, unreadable edit file, fixture failure).
+The arm battery (round 73). `--arms` re-runs the recorded live arms in-process
+against the committed ledger and compares each forecast with its recorded
+value: sources 13, province 6, quality 6, scorecard 0, pointer-recheck 0, the
+union of the round's two edits 17, and the ignored-path arm (a `SKILL.md` edit
+forecasts 0 because SKILL.md is in IGNORED). Before round 73 those six values
+existed only as static receipts (`cost-live-arm-*.txt`) that nothing re-ran,
+and the round-72 wave's coverage finding was the consequence: the IGNORED-
+filter mutant M3 survived every recorded arm and was killed only by the
+selftest. The battery is therefore the re-runnable form of the arm table: the
+same bytes that print `arms=7 meet=7 unexpected=0` print `unexpected=1`
+naming `ignored-skill` under M3. The values are the ledger's current pins, so
+a legitimate rekey that moves one is a recorded amendment of this table, never
+a silent pass: the battery names the arm, the expected value and the measured
+one.
+
+Exit 0 on a completed forecast or a green battery; 1 on any unexpected arm;
+2 on setup errors (no planned path, missing ledger/skill, unreadable edit
+file, fixture failure).
 """
 
 import argparse
@@ -144,6 +161,53 @@ def run_forecast(repo, edits, ledger_path=None, skill_path=None, as_json=False):
     return 0
 
 
+# --- arm battery ----------------------------------------------------------
+# Each arm is one recorded live forecast: (name, planned edit set, expected
+# at_risk). Values recorded from the round-72 receipts at the round-73 base
+# (`.ufo/evidence/round-72/cost-live-arm-*.txt`), re-measured in-process at the
+# round-73 C2 commit and at the round-73 tip. `ignored-skill` is the round-73
+# addition: the round-72 wave's coverage finding (seat T72W1S09) named the
+# IGNORED filter as the only class no recorded arm exercised.
+ARM_TABLE = (
+    ('sources', ('corpus/SOURCES.md',), 13),
+    ('province', ('PROVINCE.md',), 6),
+    ('quality', ('corpus/QUALITY.md',), 6),
+    ('scorecard', ('SCORECARD.md',), 0),
+    ('pointer', ('tools/pointer-recheck.json',), 0),
+    ('union', ('corpus/SOURCES.md', 'PROVINCE.md'), 17),
+    ('ignored-skill', ('SKILL.md',), 0),
+)
+
+
+def run_arms(repo, as_json=False):
+    rows = []
+    unexpected = 0
+    for name, edits, want in ARM_TABLE:
+        try:
+            got = forecast(repo, list(edits))['at_risk']
+        except SetupError as exc:
+            got = 'setup:%s' % exc
+        ok = got == want
+        if not ok:
+            unexpected += 1
+        rows.append({'arm': name, 'edits': list(edits), 'expected': want,
+                     'measured': got, 'ok': ok})
+    for row in rows:
+        print('REKEY_ARM %-14s expected=%s measured=%s %s'
+              % (row['arm'], row['expected'], row['measured'],
+                 'ok' if row['ok'] else 'UNEXPECTED'))
+        if not row['ok']:
+            print('ARM_UNEXPECTED %s expected=%s measured=%s'
+                  % (row['arm'], row['expected'], row['measured']))
+    print('REKEY_ARMS: arms=%d meet=%d unexpected=%d'
+          % (len(rows), len(rows) - unexpected, unexpected))
+    if as_json:
+        print(json.dumps({'schema': 'tameshi-rekey-arms-v1', 'arms': rows,
+                          'unexpected': unexpected}, indent=1,
+                         ensure_ascii=True))
+    return 0 if unexpected == 0 else 1
+
+
 # --- selftest -------------------------------------------------------------
 FIXTURE_SKILL = (
     '# Fixture skill\n\nintro\n\n## Alpha section\n\n' + 'alpha body\n' * 3 +
@@ -245,8 +309,16 @@ def main(argv=None):
     ap.add_argument('--edit-file', default=None,
                     help='file with one planned path per line (# comments)')
     ap.add_argument('--json-out', default=None)
+    ap.add_argument('--arms', action='store_true',
+                    help='re-run the recorded arm battery in-process')
     ap.add_argument('--selftest', action='store_true')
     a = ap.parse_args(argv)
+    if a.arms:
+        try:
+            return run_arms(a.repo)
+        except (OSError, SetupError) as exc:
+            print('REKEY_ARMS error=setup:%s' % exc, file=sys.stderr)
+            return 2
     if a.selftest:
         try:
             return selftest()
