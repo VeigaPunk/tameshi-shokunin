@@ -133,6 +133,16 @@ def parse_receipt(path):
                          ('tool_sha256', shas), ('measured_bytes_rev', brevs)):
         if len(values) > 1:
             raise SetupError('receipt-header-duplicate:%s:%s' % (path, name))
+    # A recognised header prefix whose value does not parse (a space in the
+    # tool path, a short sha) must be refused, never silently ignored: a
+    # receipt with one valid and one malformed `# tool:` line would otherwise
+    # bind against the valid one while a reader sees two declarations
+    # (round-79 sentinel probe).
+    for name, values in (('measured_rev', revs), ('tool', tools),
+                         ('tool_sha256', shas), ('measured_bytes_rev', brevs)):
+        raw = len(re.findall(r'^# %s:' % name, text, re.M))
+        if raw != len(values):
+            raise SetupError('receipt-header-malformed:%s:%s' % (path, name))
     tool = tools[0]
     if tool.startswith('/') or '..' in tool.split('/'):
         raise SetupError('tool-path-not-repo-relative:%s:%s' % (path, tool))
@@ -345,16 +355,28 @@ def selftest(out=sys.stdout):
             and 'detail=bytes-rev-unresolvable' in txt,
             'rc=%r %r %r' % (rc, txt, err))
 
-        # arm 6: a duplicate header block is refused before any row effect
+        # arm 6: a duplicate header block, and a recognised prefix whose value
+        # does not parse (a space in the tool path), are both refused before
+        # any row effect — one valid plus one malformed `# tool:` line must
+        # never bind against the valid one.
         root = os.path.join(work, 'pop6')
         os.makedirs(root)
         receipt(os.path.join(root, 'dup.txt'), rev1, sha1,
                 extra='# measured_rev: %s\n' % rev2)
         rc, txt, err = run(root)
+        root6b = os.path.join(work, 'pop6b')
+        os.makedirs(root6b)
+        receipt(os.path.join(root6b, 'malformed.txt'), rev1, sha1,
+                extra='# tool: tools/path with spaces.py\n')
+        rc6b, txt6b, err6b = run(root6b)
         arm('ARM6_duplicate_header_refused', rc == 2
             and 'RECEIPT_BIND:' not in txt
-            and 'receipt-header-duplicate' in err,
-            'rc=%r %r %r' % (rc, txt, err))
+            and 'receipt-header-duplicate' in err
+            and rc6b == 2
+            and 'RECEIPT_BIND:' not in txt6b
+            and 'receipt-header-malformed' in err6b,
+            'rc=%r %r %r | malformed rc=%r %r %r'
+            % (rc, txt, err, rc6b, txt6b, err6b))
 
         # arm 7: an empty population is a setup refusal, never a vacuous pass
         root = os.path.join(work, 'pop7')
@@ -387,16 +409,28 @@ def selftest(out=sys.stdout):
         arm('ARM9_non_repo_refused', rc9 == 2 and 'repo-unusable' in err9,
             'rc=%r err=%r' % (rc9, err9))
 
-        # arm 10: a tool path outside the repo is a setup refusal
+        # arm 10: a tool path outside the repo is a setup refusal — both the
+        # parent-traversal and the absolute-path forms (round-79 wave seat
+        # T79W1M1 measured `absolute-tool-path-accepted` surviving a
+        # traversal-only arm).
         root = os.path.join(work, 'pop10')
         os.makedirs(root)
         receipt(os.path.join(root, 'escape.txt'), rev1, sha1,
                 tool='../outside.py')
         rc, txt, err = run(root)
+        root10b = os.path.join(work, 'pop10b')
+        os.makedirs(root10b)
+        receipt(os.path.join(root10b, 'absolute.txt'), rev1, sha1,
+                tool='/etc/passwd')
+        rc10b, txt10b, err10b = run(root10b)
         arm('ARM10_tool_path_escape_refused', rc == 2
             and 'RECEIPT_BIND:' not in txt
-            and 'tool-path-not-repo-relative' in err,
-            'rc=%r %r %r' % (rc, txt, err))
+            and 'tool-path-not-repo-relative' in err
+            and rc10b == 2
+            and 'RECEIPT_BIND:' not in txt10b
+            and 'tool-path-not-repo-relative' in err10b,
+            'rc=%r %r %r | absolute rc=%r %r %r'
+            % (rc, txt, err, rc10b, txt10b, err10b))
     finally:
         shutil.rmtree(work, ignore_errors=True)
 

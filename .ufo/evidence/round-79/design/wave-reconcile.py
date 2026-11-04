@@ -114,7 +114,8 @@ class GitReader(object):
 
     def _git(self, *args):
         proc = subprocess.run(['git', '-C', self.root] + list(args),
-                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                              env=_git_env())
         if proc.returncode != 0:
             raise SetupError('git-failed:%s:%s' % (
                 self.root, proc.stderr.decode('utf-8', 'replace').strip()[:200]))
@@ -396,6 +397,16 @@ def fixture_rows():
 GIT_FIXTURE_PREFIX = 'wave-reconcile-git-'
 
 
+def _git_env():
+    """Isolated environment for fixture git calls (round-79 sentinel): an
+    inherited GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE would redirect `git init`
+    before any post-init assertion could run, so the fixture helpers strip
+    every GIT_* variable and disable global/system configuration."""
+    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1')
+    return env
+
+
 def _leftover(path):
     """1 when a fixture path survived its cleanup, else None.
 
@@ -411,7 +422,8 @@ def _leftover(path):
 def _fixture_git(fix):
     def g(*args):
         proc = subprocess.run(['git', '-C', fix] + list(args),
-                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                              env=_git_env())
         if proc.returncode != 0:
             raise SetupError('git-fixture-failed:%s'
                              % proc.stderr.decode('utf-8', 'replace')[:120])
@@ -729,10 +741,26 @@ def selftest():
                 try:
                     _build_listing_fixture(fix, 'pinned', second_commit=False)
                 except SetupError as exc:
-                    if str(exc).startswith('git-fixture-head-equals-rev'):
-                        return 'meet'
-                    raise
-                return 'guard-absent'
+                    if not str(exc).startswith('git-fixture-head-equals-rev'):
+                        raise
+                else:
+                    return 'guard-absent'
+                # the builder's unknown-mode refusal is a guard too (round-79
+                # wave seat T79W1M1 measured `mode-unknown-refusal-deleted`
+                # surviving every arm); a fresh dir, since `fix` already holds
+                # the degenerate fixture.
+                fix2 = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
+                                        dir=os.environ.get('TMPDIR') or None)
+                try:
+                    try:
+                        _build_listing_fixture(fix2, 'bogus')
+                    except SetupError as exc:
+                        if str(exc).startswith('git-fixture-mode-unknown'):
+                            return 'meet'
+                        raise
+                    return 'mode-guard-absent'
+                finally:
+                    shutil.rmtree(fix2, ignore_errors=True)
             finally:
                 shutil.rmtree(fix, ignore_errors=True)
         arm('arm23-head-equals-rev-refused', 'meet', _head_guard_arm)

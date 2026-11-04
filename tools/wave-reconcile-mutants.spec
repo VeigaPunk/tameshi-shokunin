@@ -44,5 +44,13 @@
 @new out = self._git('ls-tree', '-r', '--name-only', 'HEAD', '--', path)
 
 @defect arm20-cleanup-removed | the arm20 fixture cleanup is deleted, leaking one scratch dir per run with the suite green (round-77 wave seat T77W1M1 survivor); arm20-nested-listing-recursion's leftover post-condition must kill it
-@old                 shutil.rmtree(fix, ignore_errors=True)
+@old                 # arm20 cleanup (anchored: the mutant spec deletes THIS line)\n                shutil.rmtree(fix, ignore_errors=True)
 @new                 pass
+
+@defect leak-detector-blind | the leftover post-condition always reports clean (round-78 wave seat T78W1M1 `w1-leak-scan-empty` survived 21/21: a healthy cleanup never leaks, so no arm exercised the detector); arm22-leftover-detector-positive must kill it
+@old     return 1 if os.path.exists(path) else None
+@new     return None
+
+@defect head-guard-removed | the pinned fixture's HEAD != rev precondition is deleted, so a degenerate fixture is measured silently (round-78 wave seat T78W1M1 `w2-head-guard-removed` survived 21/21); arm23-head-equals-rev-refused must kill it
+@old     if head == rev:\n        raise SetupError('git-fixture-head-equals-rev')
+@new

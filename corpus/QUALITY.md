@@ -2246,3 +2246,48 @@ tameshi` still exits 0 (`.ufo/evidence/round-78/census-before.txt`). Under this
 criterion the round-78 commit carries the append-only round-77 correction entry,
 and the round-78 entry carries both its new row and its re-open.
 
+
+### Criterion 130 — a receipt that records a measured tool sha names a revision whose committed blob carries it; a receipt naming a revision that does not is a calibration defect
+
+A receipt is evidence only for the content it measured. When a run grades a
+worktree and the bytes land in a later commit, a receipt that copies the
+pre-landing `measured_rev` records a revision that does not carry the sha it
+certifies — and no gate in the lane compared the pair (round 78: eight receipts
+naming `6f532752…` whose recorded `tool_sha256` first exists at `091d50e4…`).
+The rule is mechanical: every receipt carrying the `# measured_rev:` / `# tool:`
+/ `# tool_sha256:` header triple must resolve its recorded sha at the named
+revision, or carry exactly one append-only `# measured_bytes_rev:` naming a
+revision that does; a false correction is unbound, never a pass.
+`tools/receipt-bytes-bind.py` is the standing counter (`--root .ufo/evidence`,
+exit 0 iff `unbound=0`), and the round's own receipts are inside its population.
+
+Lesson: `corpus/lessons/round-79.md` `## Mistakes` 1 (class
+record-to-bytes misattribution, captured-by: criterion 128 for record sentences
+only; this criterion extends it to receipt headers).
+
+Falsifier that must fail: on the base population
+`python3 -I -X utf8 tools/receipt-bytes-bind.py --repo . --root
+.ufo/evidence/round-78` prints `RECEIPT_BIND: receipts=12 bound=4 corrected=0
+unbound=8` exit 1 (`.ufo/evidence/round-79/c1-base-sweep.txt`), and a correction
+naming `6f532752…` prints `unbound=1` `detail=bytes-rev-mismatch`
+(`c1-false-correction.txt`).
+
+### Criterion 131 — a guard a round adds is positively exercised on its failing branch before the round closes
+
+A guard that only ever measures its passing branch is unguarded: a healthy
+cleanup never leaks, so an always-clean leak detector passed 21/21 (round 78
+`w1-leak-scan-empty`); a healthy two-commit fixture never has `HEAD == rev`, so
+a deleted fixture precondition passed 21/21 (`w2-head-guard-removed`). The rule
+is mechanical: the round that adds or extracts a guard also adds an arm that
+reaches the guard's failing branch (a live path for a leftover detector, a
+degenerate fixture for a precondition refusal), and the guard's own mutant dies
+on that arm.
+
+Lesson: `corpus/lessons/round-79.md` `## Mistakes` 2 (class unguarded guard,
+captured-by: none before this criterion).
+
+Falsifier that must fail: the `leak-detector-blind` and `head-guard-removed`
+mutants survive the 21-arm control (`MUTATE: DONE
+(target=wave-reconcile-control-r79 defects=12 killed=10 survived=2 …)`,
+`.ufo/evidence/round-79/c2-control-battery.txt`) and die on arm22 / arm23 only
+on the landed bytes (`c2-landed-battery.txt`).

@@ -4265,3 +4265,40 @@ control is still owed), the unguarded `isinstance(interp, str)` clause, the
 dropped-`-I` python-tuple mutant, arm21's `HEAD != rev` self-guard, and the
 scout's 20-row unprotected-rule table.
 
+
+## Round 79 (2026-11-04) — calibration by receipt bytes, and the two round-78 survivors as arms
+
+Base `0cac8e4604e01ff2e2bc0813c745c99d928b5dd5`; frozen plan
+`plans/round-79.plan.md` (declaration `92c00705`). Three claims on distinct
+axes; one v1 wave of 12 seats.
+
+- **R79-C1 (calibration + capability):** `tools/receipt-bytes-bind.py` binds a
+  receipt's recorded `# tool_sha256:` to the committed blob at a revision it
+  names (or an append-only `# measured_bytes_rev:`), and the eight round-78
+  receipts get one inserted correction line each (naming `091d50e4…`, the
+  earliest carrier of `7edecba8…` / `f8071c8a…`). Before: `receipts=12 bound=4
+  corrected=0 unbound=8` exit 1; after: `receipts=12 bound=4 corrected=8
+  unbound=0` exit 0 and `RECEIPT_BIND_SELFTEST: 10/10 pass`. Capability row
+  `receipt-bytes binding sweep` enters `SCORECARD.md`. Sourced on S289
+  (git-cat-file, re-opened).
+- **R79-C2 (coverage):** `tools/wave-reconcile.py` arms 22/23 — the leftover
+  detector is extracted and measured on both branches, the pinned fixture's
+  `HEAD != rev` precondition is measured by a degenerate fixture;
+  `SELFTEST_ARMS` 21 → 23, spec 10 → 12 defects. Before (do-nothing control:
+  landed tool minus the two arm registrations): `killed=10 survived=2`, the two
+  survivors exactly `leak-detector-blind` and `head-guard-removed`; after:
+  `WAVE_RECONCILE_SELFTEST: 23/23 pass` and `defects=12 killed=12 survived=0`
+  with `CONTROL: GREEN` and byte-identical restore. Sourced on S305 (re-opened).
+- **R79-C3 (operability):** `tools/selfstate-freshness.py` arm14 measures the
+  python tuple's `-I` through a `sys.flags.isolated` instrument;
+  `SELFTEST_ARMS` 13 → 14 and `tools/selfstate-freshness-mutants.spec` (new).
+  Before (base bytes + the one-defect spec): `killed=0 survived=1`; after:
+  `SELFSTATE_SELFTEST: 14/14 pass` and `defects=1 killed=1 survived=0`, the
+  mutant dying on arm14 only. Sourced on S307 (new, Python 3.15 cmdline `-I`).
+- **Registry:** S307 appended (Python 3.15 *Command line and environment*);
+  S289 and S305 re-opened for this round's grounds (`used-by` old → new in the
+  rows and the lesson Gate). Criterion 130 (receipt bytes bind to a named
+  revision) and criterion 131 (a new guard is positively exercised) written.
+  Census `validate --root … tameshi` exit 0 before (`.ufo/evidence/round-79/`
+  `census-before.txt` at the round start, 166 rows) and after
+  (`census-after-append.txt`, 167 rows).

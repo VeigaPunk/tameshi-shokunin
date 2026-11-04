@@ -22,7 +22,7 @@ Four row kinds. Each binds a RECORD claim to an ARTIFACT re-derivation:
   attack_share   the share of seats whose agent is in the row's named attack
                  set, measured against the row's floor percentage.
 
-Binding rules (twenty-one arms: seats-meet/mismatch, seat_reports-drift,
+Binding rules (twenty-three arms: seats-meet/mismatch, seat_reports-drift,
 roles-spec/text-drift, attack-below-floor/at-floor, five setup refusals, - from
 round 74 - arm13 delimited-token, arm14 record-span-substring and arm15
 seat_reports-top-level-only, the three rules round 73 carried as arm gaps and
@@ -36,7 +36,10 @@ names its mutant in `tools/wave-reconcile-mutants.spec`; from round 76
 arm19 seat_reports-printed-required and arm20 nested-listing-recursion - the
 first REAL git fixture, S305 - and from round 78 arm20's leftover
 post-condition plus arm21 pinned-rev-listing-at-head-drift, the two survivors
-the round-77 wave named):
+the round-77 wave named; from round 79 arm22 leftover-detector-positive and
+arm23 head-equals-rev-refused, the two survivors the round-78 wave named -
+the leak detector had no positive-branch exercise and the pinned fixture's own
+HEAD != rev guard had none):
 
   * the record span must be a byte substring of the record at the record rev;
   * the printed integer must occur in the span as a delimited token;
@@ -75,7 +78,7 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 21
+SELFTEST_ARMS = 23
 BOM = b'\xef\xbb\xbf'
 ATTACK_NOTE = ('named attack roles are the row\'s own declaration; the policy '
                'floor is the row\'s floor_pct')
@@ -111,7 +114,8 @@ class GitReader(object):
 
     def _git(self, *args):
         proc = subprocess.run(['git', '-C', self.root] + list(args),
-                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                              env=_git_env())
         if proc.returncode != 0:
             raise SetupError('git-failed:%s:%s' % (
                 self.root, proc.stderr.decode('utf-8', 'replace').strip()[:200]))
@@ -390,6 +394,107 @@ def fixture_rows():
     return blobs, listings
 
 
+GIT_FIXTURE_PREFIX = 'wave-reconcile-git-'
+
+
+def _git_env():
+    """Isolated environment for fixture git calls (round-79 sentinel): an
+    inherited GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE would redirect `git init`
+    before any post-init assertion could run, so the fixture helpers strip
+    every GIT_* variable and disable global/system configuration."""
+    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1')
+    return env
+
+
+def _leftover(path):
+    """1 when a fixture path survived its cleanup, else None.
+
+    Round 79: the round-78 wave's `w1-leak-scan-empty` mutant (a detector that
+    always reports clean) survived 21/21 because no arm positively exercised
+    the leak branch — a healthy cleanup produces no leak, so arms 20/21 only
+    ever measured the clean branch. arm22 calls this function on a live path
+    and on a removed path, so the detector's two branches are both measured.
+    """
+    return 1 if os.path.exists(path) else None
+
+
+def _fixture_git(fix):
+    def g(*args):
+        proc = subprocess.run(['git', '-C', fix] + list(args),
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                              env=_git_env())
+        if proc.returncode != 0:
+            raise SetupError('git-fixture-failed:%s'
+                             % proc.stderr.decode('utf-8', 'replace')[:120])
+        return proc.stdout
+    return g
+
+
+def _build_listing_fixture(fix, mode, second_commit=True):
+    """Build a wave-reconcile git fixture in `fix`; return the pinned rev.
+
+    mode='nested': one commit; `wave/one.md` plus `wave/nested/two.md` and the
+                   record `report.md`.
+    mode='pinned': rev1 carries the record and `wave/one.md`; rev2 (HEAD) adds
+                   `wave/two.md`, so a pinned listing differs from a HEAD
+                   listing. `second_commit=False` leaves HEAD == rev ON
+                   PURPOSE: the builder then refuses the degenerate fixture
+                   (`git-fixture-head-equals-rev`), and arm23 measures that
+                   refusal (round-78 wave seat M1's `w2-head-guard-removed`
+                   mutant survived because nothing exercised the guard).
+    """
+    g = _fixture_git(fix)
+    g('init', '-q')
+    top = g('rev-parse', '--show-toplevel').decode().strip()
+    if os.path.realpath(top) != os.path.realpath(fix):
+        raise SetupError('git-fixture-misroot:%s' % top)
+    os.makedirs(os.path.join(fix, 'wave'))
+    with open(os.path.join(fix, 'wave', 'one.md'), 'w',
+              encoding='utf-8') as fh:
+        fh.write('one\n')
+    if mode == 'nested':
+        os.makedirs(os.path.join(fix, 'wave', 'nested'))
+        with open(os.path.join(fix, 'wave', 'nested', 'two.md'), 'w',
+                  encoding='utf-8') as fh:
+            fh.write('two\n')
+    elif mode != 'pinned':
+        raise SetupError('git-fixture-mode-unknown:%s' % mode)
+    with open(os.path.join(fix, 'report.md'), 'w', encoding='utf-8') as fh:
+        fh.write('1 seat report\n')
+    g('add', '-A')
+    g('-c', 'user.name=tameshi-fixture',
+      '-c', 'user.email=tameshi@shokunin.local',
+      '-c', 'commit.gpgsign=false', 'commit', '-q', '-m', 'rev1')
+    rev = g('rev-parse', 'HEAD').decode().strip()
+    if mode == 'nested':
+        return rev
+    if second_commit:
+        with open(os.path.join(fix, 'wave', 'two.md'), 'w',
+                  encoding='utf-8') as fh:
+            fh.write('two\n')
+        g('add', '-A')
+        g('-c', 'user.name=tameshi-fixture',
+          '-c', 'user.email=tameshi@shokunin.local',
+          '-c', 'commit.gpgsign=false', 'commit', '-q', '-m', 'rev2')
+        head = g('rev-parse', 'HEAD').decode().strip()
+    else:
+        head = rev
+    if head == rev:
+        raise SetupError('git-fixture-head-equals-rev')
+    return rev
+
+
+def _listing_measure(fix, rev):
+    return measure({'id': 'pinned-rev-listing',
+                    'kind': 'seat_reports',
+                    'record': {'path': 'report.md', 'rev': rev,
+                               'span': '1 seat report', 'printed': 1},
+                    'wave': {'dir': 'wave', 'results': 'report.md',
+                             'rev': rev}},
+                   {'lane': GitReader(fix)})[0]
+
+
 def selftest():
     work = tempfile.mkdtemp(prefix='wave-reconcile-selftest-',
                             dir=os.environ.get('TMPDIR') or None)
@@ -566,56 +671,20 @@ def selftest():
         # TWO-commit fixture so the pinned rev differs from HEAD (a
         # `git-listing-uses-head` mutant stayed green 20/20 because the
         # single-commit fixture made HEAD == rev).
-        GIT_FIXTURE_PREFIX = 'wave-reconcile-git-'
-
         def _nested_listing_arm():
             fix = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
                                    dir=os.environ.get('TMPDIR') or None)
             try:
-                def g(*args):
-                    proc = subprocess.run(['git', '-C', fix] + list(args),
-                                          stdout=subprocess.PIPE,
-                                          stderr=subprocess.PIPE)
-                    if proc.returncode != 0:
-                        raise SetupError('git-fixture-failed:%s'
-                                         % proc.stderr.decode('utf-8',
-                                                              'replace')[:120])
-                    return proc.stdout
-                g('init', '-q')
-                top = g('rev-parse', '--show-toplevel').decode().strip()
-                if os.path.realpath(top) != os.path.realpath(fix):
-                    raise SetupError('git-fixture-misroot:%s' % top)
-                os.makedirs(os.path.join(fix, 'wave', 'nested'))
-                with open(os.path.join(fix, 'wave', 'one.md'), 'w',
-                          encoding='utf-8') as fh:
-                    fh.write('one\n')
-                with open(os.path.join(fix, 'wave', 'nested', 'two.md'), 'w',
-                          encoding='utf-8') as fh:
-                    fh.write('two\n')
-                with open(os.path.join(fix, 'report.md'), 'w',
-                          encoding='utf-8') as fh:
-                    fh.write('1 seat report\n')
-                g('add', '-A')
-                g('-c', 'user.name=tameshi-fixture',
-                  '-c', 'user.email=tameshi@shokunin.local',
-                  '-c', 'commit.gpgsign=false',
-                  'commit', '-q', '-m', 'fixture')
-                rev = g('rev-parse', 'HEAD').decode().strip()
-                got = measure({'id': 'nested-listing',
-                               'kind': 'seat_reports',
-                               'record': {'path': 'report.md', 'rev': rev,
-                                          'span': '1 seat report',
-                                          'printed': 1},
-                               'wave': {'dir': 'wave',
-                                        'results': 'report.md', 'rev': rev}},
-                              {'lane': GitReader(fix)})[0]
+                rev = _build_listing_fixture(fix, 'nested')
+                got = _listing_measure(fix, rev)
             finally:
+                # arm20 cleanup (anchored: the mutant spec deletes THIS line)
                 shutil.rmtree(fix, ignore_errors=True)
             # The post-condition asks whether THIS fixture survived its
             # cleanup, never whether the shared temp dir gained an entry: a
             # directory scan is not concurrency-safe (round-78 simplifier
             # measured a spurious leak:1 in 12/12 concurrent trials).
-            if os.path.exists(fix):
+            if _leftover(fix) is not None:
                 return 'leak:1'
             return got
         arm('arm20-nested-listing-recursion', 'meet', _nested_listing_arm)
@@ -630,58 +699,71 @@ def selftest():
             fix = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
                                    dir=os.environ.get('TMPDIR') or None)
             try:
-                def g(*args):
-                    proc = subprocess.run(['git', '-C', fix] + list(args),
-                                          stdout=subprocess.PIPE,
-                                          stderr=subprocess.PIPE)
-                    if proc.returncode != 0:
-                        raise SetupError('git-fixture-failed:%s'
-                                         % proc.stderr.decode('utf-8',
-                                                              'replace')[:120])
-                    return proc.stdout
-                g('init', '-q')
-                top = g('rev-parse', '--show-toplevel').decode().strip()
-                if os.path.realpath(top) != os.path.realpath(fix):
-                    raise SetupError('git-fixture-misroot:%s' % top)
-                os.makedirs(os.path.join(fix, 'wave'))
-                with open(os.path.join(fix, 'wave', 'one.md'), 'w',
-                          encoding='utf-8') as fh:
-                    fh.write('one\n')
-                with open(os.path.join(fix, 'report.md'), 'w',
-                          encoding='utf-8') as fh:
-                    fh.write('1 seat report\n')
-                g('add', '-A')
-                g('-c', 'user.name=tameshi-fixture',
-                  '-c', 'user.email=tameshi@shokunin.local',
-                  '-c', 'commit.gpgsign=false',
-                  'commit', '-q', '-m', 'rev1')
-                rev = g('rev-parse', 'HEAD').decode().strip()
-                with open(os.path.join(fix, 'wave', 'two.md'), 'w',
-                          encoding='utf-8') as fh:
-                    fh.write('two\n')
-                g('add', '-A')
-                g('-c', 'user.name=tameshi-fixture',
-                  '-c', 'user.email=tameshi@shokunin.local',
-                  '-c', 'commit.gpgsign=false',
-                  'commit', '-q', '-m', 'rev2')
-                head = g('rev-parse', 'HEAD').decode().strip()
-                if head == rev:
-                    raise SetupError('git-fixture-head-equals-rev')
-                got = measure({'id': 'pinned-rev-listing',
-                               'kind': 'seat_reports',
-                               'record': {'path': 'report.md', 'rev': rev,
-                                          'span': '1 seat report',
-                                          'printed': 1},
-                               'wave': {'dir': 'wave',
-                                        'results': 'report.md', 'rev': rev}},
-                              {'lane': GitReader(fix)})[0]
+                rev = _build_listing_fixture(fix, 'pinned')
+                got = _listing_measure(fix, rev)
             finally:
-                shutil.rmtree(fix)
-            if os.path.exists(fix):
+                shutil.rmtree(fix, ignore_errors=True)
+            if _leftover(fix) is not None:
                 return 'leak:1'
             return got
         arm('arm21-pinned-rev-listing-at-head-drift', 'meet',
             _pinned_rev_listing_arm)
+
+        # arm22 (round 79): the leftover detector is measured on BOTH branches.
+        # A healthy cleanup never leaks, so arms 20/21 cannot positively
+        # exercise the detector: the round-78 wave's `w1-leak-scan-empty`
+        # mutant (always clean) survived 21/21. This arm calls the detector on
+        # a live fixture path (must report 1) and on the same path after its
+        # removal (must report None).
+        def _leftover_positive_arm():
+            fix = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
+                                   dir=os.environ.get('TMPDIR') or None)
+            try:
+                if _leftover(fix) != 1:
+                    return 'detector-blind:live'
+            finally:
+                shutil.rmtree(fix, ignore_errors=True)
+            if _leftover(fix) is not None:
+                return 'detector-blind:clean'
+            return 'meet'
+        arm('arm22-leftover-detector-positive', 'meet',
+            _leftover_positive_arm)
+
+        # arm23 (round 79): the pinned fixture's own HEAD != rev precondition
+        # is measured. `second_commit=False` builds the degenerate fixture on
+        # purpose; the builder must refuse it (round-78 wave seat M1's
+        # `w2-head-guard-removed` mutant survived because no arm reached the
+        # guard, so a deleted guard left the fixture silently vacuous).
+        def _head_guard_arm():
+            fix = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
+                                   dir=os.environ.get('TMPDIR') or None)
+            try:
+                try:
+                    _build_listing_fixture(fix, 'pinned', second_commit=False)
+                except SetupError as exc:
+                    if not str(exc).startswith('git-fixture-head-equals-rev'):
+                        raise
+                else:
+                    return 'guard-absent'
+                # the builder's unknown-mode refusal is a guard too (round-79
+                # wave seat T79W1M1 measured `mode-unknown-refusal-deleted`
+                # surviving every arm); a fresh dir, since `fix` already holds
+                # the degenerate fixture.
+                fix2 = tempfile.mkdtemp(prefix=GIT_FIXTURE_PREFIX,
+                                        dir=os.environ.get('TMPDIR') or None)
+                try:
+                    try:
+                        _build_listing_fixture(fix2, 'bogus')
+                    except SetupError as exc:
+                        if str(exc).startswith('git-fixture-mode-unknown'):
+                            return 'meet'
+                        raise
+                    return 'mode-guard-absent'
+                finally:
+                    shutil.rmtree(fix2, ignore_errors=True)
+            finally:
+                shutil.rmtree(fix, ignore_errors=True)
+        arm('arm23-head-equals-rev-refused', 'meet', _head_guard_arm)
     finally:
         shutil.rmtree(work, ignore_errors=True)
 

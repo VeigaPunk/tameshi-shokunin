@@ -62,13 +62,15 @@ absent from the doc; an unresolvable instrument revision or blob; an
 instrument whose stdout carries no token for the row's figure regex; an
 instrument timeout. Nothing is certified from an unreadable input.
 
-Selftest (`--selftest`): thirteen arms. Arms 1-10 are hermetic — a fixture
-doc string and a canned instrument stdout per row; arms 11 and 13 drive the
-real CLI as a subprocess against a real git fixture (arm 11: the `--doc-rev`
-binding; arm 13: a `bash` row executed from extracted bytes through the frozen
-tuple table, then a python-defaulted row on the same path/rev/argv refused
-because the row cache is keyed by the interpreter). Arm 12 refuses an unknown
-interpreter. The rest, in order: match, stale measured, frozen-span stale,
+Selftest (`--selftest`): fourteen arms. Arms 1-10 are hermetic — a fixture
+doc string and a canned instrument stdout per row; arms 11, 13 and 14 drive
+the real CLI as a subprocess against a real git fixture (arm 11: the
+`--doc-rev` binding; arm 13: a `bash` row executed from extracted bytes through
+the frozen tuple table, then a python-defaulted row on the same path/rev/argv
+refused because the row cache is keyed by the interpreter; arm 14: the python
+tuple's `-I` measured through an instrument that prints `sys.flags.isolated`,
+the round-78 wave's `s3-python-isolation-dropped` survivor). Arm 12 refuses an
+unknown interpreter. The rest, in order: match, stale measured, frozen-span stale,
 absent capability refused, absent figure refused, zero rows refused, unknown
 expect refused, unknown mode refused, an instrument whose stdout lacks the
 figure refused (a setup refusal, never a match), and a figure regex matching
@@ -93,7 +95,7 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 13
+SELFTEST_ARMS = 14
 MODES = ('capability', 'span')
 EXPECTS = ('match', 'stale')
 BOM = b'\xef\xbb\xbf'
@@ -152,7 +154,8 @@ class GitReader(object):
 
     def _git(self, *args):
         proc = subprocess.run(['git', '-C', self.root] + list(args),
-                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                              env=_fixture_env())
         return proc
 
     def blob(self, rev, path):
@@ -444,6 +447,15 @@ DOC_REV1 = (
 )
 DOC_WT = DOC_REV1.replace('4/4', '9/9')
 
+def _fixture_env():
+    """Isolated environment for fixture git calls (round-79 sentinel): an
+    inherited GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE would redirect `git init`
+    before any post-init assertion could run."""
+    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1')
+    return env
+
+
 def selftest(out=sys.stdout):
     doc_bytes = TOY_DOC.encode('utf-8')
     ok = 0
@@ -573,7 +585,8 @@ def selftest(out=sys.stdout):
     try:
         def _git(*args):
             subprocess.run(["git", "-C", fx] + list(args), check=True,
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                           env=_fixture_env())
 
         def _put(rel, text):
             path = os.path.join(fx, rel)
@@ -595,13 +608,20 @@ def selftest(out=sys.stdout):
                                                 "rev": None, "argv": []}}]},
                       fh)
         _git("init", "-q")
+        _top = subprocess.run(["git", "-C", fx, "rev-parse",
+                                "--show-toplevel"], check=True,
+                               stdout=subprocess.PIPE,
+                               env=_fixture_env()).stdout.decode().strip()
+        if os.path.realpath(_top) != os.path.realpath(fx):
+            raise SetupError("git-fixture-misroot:%s" % _top)
         _git("-c", "user.name=t", "-c", "user.email=t@t", "add",
              "SCORECARD.md", "tools/toy.py")
         _git("-c", "user.name=t", "-c", "user.email=t@t", "commit",
              "-qm", "rev1")
         rev1 = subprocess.run(["git", "-C", fx, "rev-parse", "HEAD"],
                               check=True,
-                              stdout=subprocess.PIPE).stdout.decode().strip()
+                              stdout=subprocess.PIPE,
+                              env=_fixture_env()).stdout.decode().strip()
         rows_manifest = json.load(open(mpath))
         rows_manifest["rows"][0]["instrument"]["rev"] = rev1
         with open(mpath, "w", newline="\n") as fh:
@@ -640,7 +660,8 @@ def selftest(out=sys.stdout):
     try:
         def _git2(*args):
             subprocess.run(["git", "-C", fx2] + list(args), check=True,
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                           env=_fixture_env())
 
         def _put2(rel, text):
             path = os.path.join(fx2, rel)
@@ -663,13 +684,20 @@ def selftest(out=sys.stdout):
                                                 "interpreter": "bash"}}]},
                       fh)
         _git2("init", "-q")
+        _top = subprocess.run(["git", "-C", fx2, "rev-parse",
+                                "--show-toplevel"], check=True,
+                               stdout=subprocess.PIPE,
+                               env=_fixture_env()).stdout.decode().strip()
+        if os.path.realpath(_top) != os.path.realpath(fx2):
+            raise SetupError("git-fixture-misroot:%s" % _top)
         _git2("-c", "user.name=t", "-c", "user.email=t@t", "add",
               "SCORECARD.md", "tools/toy.sh")
         _git2("-c", "user.name=t", "-c", "user.email=t@t", "commit",
               "-qm", "rev1")
         rev2 = subprocess.run(["git", "-C", fx2, "rev-parse", "HEAD"],
                               check=True,
-                              stdout=subprocess.PIPE).stdout.decode().strip()
+                              stdout=subprocess.PIPE,
+                              env=_fixture_env()).stdout.decode().strip()
         rows_manifest2 = json.load(open(mpath2))
         rows_manifest2["rows"][0]["instrument"]["rev"] = rev2
         with open(mpath2, "w", newline="\n") as fh:
@@ -711,6 +739,82 @@ def selftest(out=sys.stdout):
                 proc2b.returncode, err2b[-160:]))
     finally:
         shutil.rmtree(fx2, ignore_errors=True)
+
+    # arm 14 (round 79): the python tuple's `-I` is load-bearing. The round-78
+    # wave's `s3-python-isolation-dropped` mutant (a python tuple without `-I`)
+    # survived 13/13 because no fixture distinguished isolated mode. The real
+    # CLI runs an instrument whose printed figure depends on
+    # `sys.flags.isolated`: under the frozen tuple it prints 1/1 (match); a
+    # runner without `-I` prints 0/1 and the row measures stale, so the arm
+    # fails. The python docs (S307) state `-I` "Run Python in isolated mode.
+    # This also implies -E, -P and -s options."
+    DOC_ISO = DOC_REV1.replace('TOY_FIGURE: 4/4 pass', 'TOY_ISO: 1/1 pass')
+    fig_iso = r'TOY_ISO: \d+/\d+ pass'
+    fx3 = tempfile.mkdtemp(prefix="selfstate-arm14-",
+                           dir=os.environ.get("TMPDIR") or None)
+    try:
+        def _git3(*args):
+            subprocess.run(["git", "-C", fx3] + list(args), check=True,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                           env=_fixture_env())
+
+        def _put3(rel, text):
+            path = os.path.join(fx3, rel)
+            parent = os.path.dirname(path)
+            if parent:
+                os.makedirs(parent, exist_ok=True)
+            with open(path, "w", newline="\n") as fh:
+                fh.write(text)
+
+        _put3("SCORECARD.md", DOC_ISO)
+        _put3("tools/toy_iso.py",
+              "import sys\n"
+              "print('TOY_ISO: 1/1 pass' if sys.flags.isolated"
+              " else 'TOY_ISO: 0/1 pass')\n")
+        mpath3 = os.path.join(fx3, "manifest.json")
+        with open(mpath3, "w", newline="\n") as fh:
+            json.dump({"schema": "tameshi-selfstate-freshness-v1",
+                       "rows": [{"id": "toy-iso", "mode": "capability",
+                                 "capability": "toy capture",
+                                 "expect": "match", "figure": fig_iso,
+                                 "instrument": {"path": "tools/toy_iso.py",
+                                                "rev": None, "argv": []}}]},
+                      fh)
+        _git3("init", "-q")
+        _top = subprocess.run(["git", "-C", fx3, "rev-parse",
+                                "--show-toplevel"], check=True,
+                               stdout=subprocess.PIPE,
+                               env=_fixture_env()).stdout.decode().strip()
+        if os.path.realpath(_top) != os.path.realpath(fx3):
+            raise SetupError("git-fixture-misroot:%s" % _top)
+        _git3("-c", "user.name=t", "-c", "user.email=t@t", "add",
+              "SCORECARD.md", "tools/toy_iso.py")
+        _git3("-c", "user.name=t", "-c", "user.email=t@t", "commit",
+              "-qm", "rev1")
+        rev3 = subprocess.run(["git", "-C", fx3, "rev-parse", "HEAD"],
+                              check=True,
+                              stdout=subprocess.PIPE,
+                              env=_fixture_env()).stdout.decode().strip()
+        rows_manifest3 = json.load(open(mpath3))
+        rows_manifest3["rows"][0]["instrument"]["rev"] = rev3
+        with open(mpath3, "w", newline="\n") as fh:
+            json.dump(rows_manifest3, fh)
+        proc3 = subprocess.run(
+            [sys.executable, "-I", "-X", "utf8",
+             os.path.abspath(__file__),
+             "--repo", fx3, "--doc-rev", rev3, "--manifest", mpath3],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=120)
+        out_text3 = proc3.stdout.decode("utf-8", "replace")
+        arm("ARM14_python_isolation_tuple",
+            proc3.returncode == 0
+            and "SELFSTATE_ROW toy-iso capability=toy capture expect=match "
+                "measured=match ok" in out_text3
+            and "SELFSTATE: rows=1 match=1 stale=0 unexpected=0" in out_text3,
+            "rc=%r tail=%r err=%r" % (
+                proc3.returncode, out_text3[-200:],
+                proc3.stderr.decode("utf-8", "replace")[-200:]))
+    finally:
+        shutil.rmtree(fx3, ignore_errors=True)
 
     out.write('SELFSTATE_SELFTEST: %d/%d pass\n' % (ok, total))
     return 0 if (ok == total == SELFTEST_ARMS) else 1

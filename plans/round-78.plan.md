@@ -185,3 +185,14 @@ round lesson's `## Gate`.
 Every claim is judged on the counter, kill rule and predicate above. A claim
 that misses is an honest stop, never a narrowed target. The round is admitted
 only if both claims verify and no axis is harmed.
+
+## Plan note — arm20's landed mechanism (appended 2026-11-04, round-79 payment of routed defect 4)
+
+The frozen R78-C2 sentence above says arm20 "scans the scratch parent for
+`wave-reconcile-git-*` entries before and after the fixture". The landed arm
+checks its own fixture (`if os.path.exists(fix): return 'leak:1'`) because a
+shared-dir scan is not concurrency-safe (the round-78 simplifier measured 4/4
+spurious `leak:1` under concurrent `--selftest` runs; receipt
+`.ufo/evidence/round-78/c2-concurrency-prepost.txt`). The superseded sentence
+stays above; this note is the record. The frozen predicate (a cleanup-deleted
+mutant must fail the arm) is unchanged and the mutant dies on the landed arm.

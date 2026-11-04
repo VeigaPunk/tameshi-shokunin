@@ -154,7 +154,8 @@ class GitReader(object):
 
     def _git(self, *args):
         proc = subprocess.run(['git', '-C', self.root] + list(args),
-                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                              env=_fixture_env())
         return proc
 
     def blob(self, rev, path):
@@ -446,6 +447,15 @@ DOC_REV1 = (
 )
 DOC_WT = DOC_REV1.replace('4/4', '9/9')
 
+def _fixture_env():
+    """Isolated environment for fixture git calls (round-79 sentinel): an
+    inherited GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE would redirect `git init`
+    before any post-init assertion could run."""
+    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1')
+    return env
+
+
 def selftest(out=sys.stdout):
     doc_bytes = TOY_DOC.encode('utf-8')
     ok = 0
@@ -575,7 +585,8 @@ def selftest(out=sys.stdout):
     try:
         def _git(*args):
             subprocess.run(["git", "-C", fx] + list(args), check=True,
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                           env=_fixture_env())
 
         def _put(rel, text):
             path = os.path.join(fx, rel)
@@ -597,13 +608,20 @@ def selftest(out=sys.stdout):
                                                 "rev": None, "argv": []}}]},
                       fh)
         _git("init", "-q")
+        _top = subprocess.run(["git", "-C", fx, "rev-parse",
+                                "--show-toplevel"], check=True,
+                               stdout=subprocess.PIPE,
+                               env=_fixture_env()).stdout.decode().strip()
+        if os.path.realpath(_top) != os.path.realpath(fx):
+            raise SetupError("git-fixture-misroot:%s" % _top)
         _git("-c", "user.name=t", "-c", "user.email=t@t", "add",
              "SCORECARD.md", "tools/toy.py")
         _git("-c", "user.name=t", "-c", "user.email=t@t", "commit",
              "-qm", "rev1")
         rev1 = subprocess.run(["git", "-C", fx, "rev-parse", "HEAD"],
                               check=True,
-                              stdout=subprocess.PIPE).stdout.decode().strip()
+                              stdout=subprocess.PIPE,
+                              env=_fixture_env()).stdout.decode().strip()
         rows_manifest = json.load(open(mpath))
         rows_manifest["rows"][0]["instrument"]["rev"] = rev1
         with open(mpath, "w", newline="\n") as fh:
@@ -642,7 +660,8 @@ def selftest(out=sys.stdout):
     try:
         def _git2(*args):
             subprocess.run(["git", "-C", fx2] + list(args), check=True,
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                           env=_fixture_env())
 
         def _put2(rel, text):
             path = os.path.join(fx2, rel)
@@ -665,13 +684,20 @@ def selftest(out=sys.stdout):
                                                 "interpreter": "bash"}}]},
                       fh)
         _git2("init", "-q")
+        _top = subprocess.run(["git", "-C", fx2, "rev-parse",
+                                "--show-toplevel"], check=True,
+                               stdout=subprocess.PIPE,
+                               env=_fixture_env()).stdout.decode().strip()
+        if os.path.realpath(_top) != os.path.realpath(fx2):
+            raise SetupError("git-fixture-misroot:%s" % _top)
         _git2("-c", "user.name=t", "-c", "user.email=t@t", "add",
               "SCORECARD.md", "tools/toy.sh")
         _git2("-c", "user.name=t", "-c", "user.email=t@t", "commit",
               "-qm", "rev1")
         rev2 = subprocess.run(["git", "-C", fx2, "rev-parse", "HEAD"],
                               check=True,
-                              stdout=subprocess.PIPE).stdout.decode().strip()
+                              stdout=subprocess.PIPE,
+                              env=_fixture_env()).stdout.decode().strip()
         rows_manifest2 = json.load(open(mpath2))
         rows_manifest2["rows"][0]["instrument"]["rev"] = rev2
         with open(mpath2, "w", newline="\n") as fh:
@@ -729,7 +755,8 @@ def selftest(out=sys.stdout):
     try:
         def _git3(*args):
             subprocess.run(["git", "-C", fx3] + list(args), check=True,
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                           env=_fixture_env())
 
         def _put3(rel, text):
             path = os.path.join(fx3, rel)
@@ -754,13 +781,20 @@ def selftest(out=sys.stdout):
                                                 "rev": None, "argv": []}}]},
                       fh)
         _git3("init", "-q")
+        _top = subprocess.run(["git", "-C", fx3, "rev-parse",
+                                "--show-toplevel"], check=True,
+                               stdout=subprocess.PIPE,
+                               env=_fixture_env()).stdout.decode().strip()
+        if os.path.realpath(_top) != os.path.realpath(fx3):
+            raise SetupError("git-fixture-misroot:%s" % _top)
         _git3("-c", "user.name=t", "-c", "user.email=t@t", "add",
               "SCORECARD.md", "tools/toy_iso.py")
         _git3("-c", "user.name=t", "-c", "user.email=t@t", "commit",
               "-qm", "rev1")
         rev3 = subprocess.run(["git", "-C", fx3, "rev-parse", "HEAD"],
                               check=True,
-                              stdout=subprocess.PIPE).stdout.decode().strip()
+                              stdout=subprocess.PIPE,
+                              env=_fixture_env()).stdout.decode().strip()
         rows_manifest3 = json.load(open(mpath3))
         rows_manifest3["rows"][0]["instrument"]["rev"] = rev3
         with open(mpath3, "w", newline="\n") as fh:
