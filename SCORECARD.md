@@ -4761,3 +4761,17 @@ stay routed until the selfstate runner widens beyond `python3 -I` scripts;
 (`T76W1E4/registry-gaps.txt` names them); C1 wording notes (verify the adv
 defect by its frozen matrix row, and C2's full summary line, not exit counts)
 are recorded for the closure.
+
+### Round 76 — appended: the rekey settlement (2026-11-04)
+
+The block above's "one rekey batch" line measured out as **four** batches
+(`r76-batch-1` 13 sections at `826d2fae`, `r76-batch-2` 4 at `beb0599b`
+(after trace-restore `18cdc29f`), `r76-batch-3` 11 at `881ded79`,
+`r76-batch-4` 3 at `b2b0f82a`; ledger 899 → 930). Monitor
+`credited=65/65` at the landing tip `b2b0f82a`
+(`.ufo/evidence/round-76/coldread-green-r76.txt`; red-before 48/65 at the
+records commit). Two mined defects (the stale 2026-11-01 `rekey-plan.json`
+the union-plan generator reads; the flat trace numbering that let b2
+overwrite b1 receipts) and a third (`cp` over an edited plan) are recorded
+in `corpus/lessons/round-76.md`; the corrected per-batch rebind script
+(`--batch-tag`, `traces-<tag>/`, `rekey_round: 76` labels) is committed.
