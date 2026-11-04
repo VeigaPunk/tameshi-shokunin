@@ -14,7 +14,10 @@ this instrument generalizes it to every receipt that records a measured tool.
 
 The population is declared, never inferred:
 
-  * a regular file under `--root` (default `.ufo/evidence`) whose text carries
+  * a regular file under `--root` (default `.ufo/evidence`) — a symlink is
+    not a receipt: it enters the population as a declared `unbound` row
+    (`not-regular-file`) and its target's bytes are never read (round 83);
+    whose text carries
     exactly one `# measured_rev: <rev>`, one `# tool: <repo-relative path>`
     and one `# tool_sha256: <64 hex>` header line — the lane's receipt-header
     convention, first used in round 78;
@@ -38,7 +41,7 @@ A receipt measures one of:
   design     a declared design-phase candidate; `design_base` resolves
   unbound    neither, with the reason in `detail` (tool-absent,
              rev-unresolvable, bytes-rev-absent, bytes-rev-unresolvable,
-             bytes-rev-mismatch, design-base-unresolvable)
+             bytes-rev-mismatch, design-base-unresolvable, not-regular-file)
 
 A `measured_bytes_rev` that does not carry the recorded sha makes the receipt
 unbound even when `measured_rev` happens to match: a false correction line is
@@ -66,12 +69,13 @@ import argparse
 import hashlib
 import os
 import re
+import stat
 import shutil
 import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 13
+SELFTEST_ARMS = 14
 REV_RE = re.compile(r'^# measured_rev:[ \t]*([0-9a-f]{7,40})[ \t]*$', re.M)
 BYTES_REV_RE = re.compile(r'^# measured_bytes_rev:[ \t]*([0-9a-f]{7,40})[ \t]*$',
                           re.M)
@@ -245,6 +249,8 @@ def parse_receipt(path):
 
 def measure_receipt(repo, rec):
     """Return (state, carrying_rev, detail) for one parsed receipt."""
+    if rec.get('kind') == 'non-regular':
+        return 'unbound', None, 'not-regular-file'
     if rec.get('design'):
         if resolve_commit(repo, rec['measured_rev']) is None:
             return 'unbound', None, 'design-base-unresolvable'
@@ -290,7 +296,20 @@ def collect(root):
         dirnames.sort()
         for name in sorted(filenames):
             path = os.path.join(dirpath, name)
-            if not os.path.isfile(path):
+            # R83-C3: the population is the tree's REGULAR files. `isfile`
+            # follows a symlink, so a link's target's bytes certified a
+            # receipt that is not in the tree (the round-83 control
+            # c3-before-symlink-bound.txt reads bound=2 over two entries, one
+            # of them a link). lstat states the type; a non-regular entry is a
+            # declared row that measures `unbound`, never a silent skip.
+            try:
+                mode = os.lstat(path).st_mode
+            except OSError as exc:
+                raise SetupError('receipt-unreadable:%s:%s' % (path, exc))
+            if not stat.S_ISREG(mode):
+                receipts.append({'path': path, 'kind': 'non-regular',
+                                 'measured_rev': '', 'tool': '',
+                                 'tool_sha256': '', 'design': False})
                 continue
             rec = parse_receipt(path)
             if rec is not None:
@@ -313,8 +332,9 @@ def sweep(repo, root, out=sys.stdout):
         out.write(
             'RECEIPT_BIND_ROW %s measured_rev=%s tool=%s recorded=%s '
             'carrying=%s state=%s detail=%s\n'
-            % (rec['path'], rec['measured_rev'][:12], rec['tool'],
-               rec['tool_sha256'][:12],
+            % (rec['path'], (rec.get('measured_rev') or '-')[:12],
+               rec.get('tool') or '-',
+               (rec.get('tool_sha256') or '-')[:12],
                (carrying or '-')[:12], state, detail))
     out.write('RECEIPT_BIND: receipts=%d bound=%d corrected=%d design=%d '
               'unbound=%d\n'
@@ -641,11 +661,33 @@ def selftest(out=sys.stdout):
             and 'detail=design-base-unresolvable' in txt,
             'rc=%r %r %r' % (rc, txt, err))
 
+        # arm 14 (round 83): a symlink is not a receipt. The link's target
+        # carries a valid header and binds, which is exactly the cheat: the
+        # base instrument read through the link and certified bytes that are
+        # not in the tree. The regular sibling in the same population must
+        # still bind (no over-kill).
+        root = os.path.join(work, 'pop14')
+        os.makedirs(root)
+        target = receipt(os.path.join(work, 'pop14-target.txt'), rev1, sha1)
+        os.symlink(target, os.path.join(root, 'link.txt'))
+        receipt(os.path.join(root, 'regular.txt'), rev1, sha1)
+        rc, txt, err = run(root)
+        arm('ARM14_symlink_not_a_receipt', rc == 1
+            and 'RECEIPT_BIND_ROW %s' % os.path.join(root, 'link.txt') in txt
+            and 'state=unbound detail=not-regular-file' in txt
+            and 'RECEIPT_BIND_ROW %s' % os.path.join(root, 'regular.txt') in txt
+            and 'state=bound' in txt
+            and 'RECEIPT_BIND: receipts=2 bound=1 corrected=0 design=0 '
+                'unbound=1' in txt,
+            'rc=%r %r %r' % (rc, txt, err))
+
     finally:
         shutil.rmtree(work, ignore_errors=True)
 
     out.write('RECEIPT_BIND_SELFTEST: %d/%d pass\n' % (ok, total))
-    return 0 if ok == total else 1
+    # round 83: the declared arm count is asserted, not just printed — a suite
+    # that loses an arm call must not report a smaller perfect total
+    return 0 if (ok == total == SELFTEST_ARMS) else 1
 
 
 def main(argv=None):

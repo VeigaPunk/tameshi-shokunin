@@ -66,7 +66,7 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 11
+SELFTEST_ARMS = 13
 SURFACES = ('doc', 'registry-json')
 EXPECTS = ('match', 'stale')
 MAX_DOC_BYTES = 8 * 1024 * 1024
@@ -555,6 +555,46 @@ def selftest(out=sys.stdout):
             and 'REGISTRY_BIND_ROW toy-red surface=doc expect=stale '
                 'measured=stale' in txt
             and 'unexpected=0' in txt,
+            'rc=%r %r %r' % (rc, txt, err))
+
+        # arm 12 (round 83): a registry-json row whose declared figure differs
+        # from the instrument's live figure measures stale AND unexpected, while
+        # its sibling row in the same run still matches: the drift is caught per
+        # row, never as an all-or-nothing refusal. This is the arm the round-83
+        # fixture (c2-before-drift-invisible.txt) shows missing at the base.
+        fx12 = fixture('a12')
+        with open(os.path.join(fx12, 'tools/registry.json'), 'w',
+                  newline='\n') as fh:
+            json.dump({'schema': 'toy', 'rows': [
+                {'name': 'toy-selftest',
+                 'expect': {'exit': 0, 'stdout_contains': ['TOY: 2/2 pass']}},
+                {'name': 'toy-selftest-live',
+                 'expect': {'exit': 0,
+                            'stdout_contains': ['TOY: 1/1 pass']}}]}, fh)
+        rc, txt, err = cli(fx12, manifest_for(
+            fx12, [_row('toy-drift', 'registry-json', 'toy-selftest'),
+                   _row('toy-sibling', 'registry-json',
+                        'toy-selftest-live')], 'm12'))
+        arm('ARM12_registry_json_drift', rc == 1
+            and 'REGISTRY_BIND_ROW toy-drift surface=registry-json expect=match '
+                'measured=stale' in txt
+            and 'REGISTRY_BIND_ROW toy-sibling surface=registry-json '
+                'expect=match measured=match' in txt
+            and 'REGISTRY_BIND: rows=2 match=1 stale=1 absent=0 error=0 '
+                'unexpected=1' in txt,
+            'rc=%r %r %r' % (rc, txt, err))
+
+        # arm 13 (round 83): a registry-json row naming a registry entry that
+        # does not exist measures absent, never a vacuous match — the doc
+        # surface's absent branch (arm 4) is not evidence for this one.
+        rc, txt, err = cli(fx1, manifest_for(
+            fx1, [_row('toy-reg-missing', 'registry-json', 'no-such-row')],
+            'm13'))
+        arm('ARM13_registry_row_absent', rc == 1
+            and 'REGISTRY_BIND_ROW toy-reg-missing surface=registry-json '
+                'expect=match measured=absent' in txt
+            and 'REGISTRY_BIND: rows=1 match=0 stale=0 absent=1 error=0 '
+                'unexpected=1' in txt,
             'rc=%r %r %r' % (rc, txt, err))
 
     finally:

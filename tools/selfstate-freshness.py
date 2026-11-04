@@ -100,7 +100,7 @@ import subprocess
 import sys
 import tempfile
 
-SELFTEST_ARMS = 21
+SELFTEST_ARMS = 24
 # R81-C3: the selftest's own assertion text is pinned. The round-80 battery's
 # `ss-bom-only` mutant deleted arm15's non-UTF-8 conjuncts and survived 17/17:
 # a weakened test text is invisible to the suite it weakens. The digest below
@@ -109,9 +109,19 @@ SELFTEST_ARMS = 21
 # two-edit mutant that also recomputes the constant is out of the declared
 # single-edit class; the battery's control measures the pin's own do-nothing
 # state.
-SELFTEST_TEXT_SHA256 = ('a9feb3c49068f981cef513ae62a35f1f7810f0511be76cfbf603475ddd2eaf40')
+SELFTEST_TEXT_SHA256 = ('891d3acc844977a1b7e7365a743f49ee7e585550522e42608eac8012514fafd3')
 MODES = ('capability', 'span')
 EXPECTS = ('match', 'stale')
+# R83-C1: a row id is printed into a `SELFSTATE_ROW` line, so it is an output
+# token, not free text; a newline in it forges a verdict line (the round-83
+# control `c1-before-id-forge.txt` prints a green `SELFSTATE:` summary the
+# measurement never produced). The alphabet is closed to what a line-safe
+# identity needs.
+ROW_ID_RE = re.compile(r'^[A-Za-z0-9._-]{1,64}$')
+# R83-C1: a manifest path is a *tree entry*, and only its mode says whether the
+# entry is a regular file; `cat-file blob` returns a symlink's target string
+# without complaint (S291).
+REGULAR_MODES = ('100644', '100755')
 BOM = b'\xef\xbb\xbf'
 CAPS_HEADING = '## Capabilities'
 INSTRUMENT_TIMEOUT = 600
@@ -187,6 +197,31 @@ class GitReader(object):
             return False
         return self._git('cat-file', '-e', '%s:%s' % (rev, path)).returncode == 0
 
+    def tree_mode(self, rev, path):
+        """The mode of the tree entry `rev:path`, or None when it is absent.
+
+        A symlink is a blob too: `cat-file blob` returns the link target's
+        text and nothing in the read tells it apart from a regular file's
+        bytes. The mode is where git states the difference (S291: the 9-bit
+        permission field, with symlinks a distinct type), so a binding that
+        reads "the object at this path" must read the mode as well."""
+        if not _rev_ok(rev):
+            return None
+        proc = self._git('ls-tree', '-z', '--full-tree', rev, '--', path)
+        if proc.returncode != 0:
+            return None
+        for record in proc.stdout.split(b'\x00'):
+            if not record:
+                continue
+            meta, _, name = record.partition(b'\t')
+            fields = meta.split()
+            if len(fields) != 3:
+                continue
+            if name.decode('utf-8', 'surrogateescape') != path:
+                continue
+            return fields[0].decode('ascii', 'replace')
+        return None
+
 
 def parse_capabilities(doc_text):
     """Map first-cell name -> the row's whole line, inside the section only."""
@@ -239,6 +274,10 @@ def validate_manifest(manifest):
         rid = row.get('id')
         if not isinstance(rid, str) or not rid:
             raise SetupError('row-id-missing')
+        if not ROW_ID_RE.match(rid):
+            # the repr keeps a newline escaped: the refusal itself must be one
+            # line, or the refusal forges the same output line it refuses
+            raise SetupError('row-id-alphabet:%r' % rid)
         if rid in seen:
             raise SetupError('row-id-duplicate:%s' % rid)
         seen.add(rid)
@@ -466,7 +505,12 @@ def _fixture_env():
     inherited GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE would redirect `git init`
     before any post-init assertion could run."""
     env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
-    env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1')
+    env.update(GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1',
+               # R83-C1: a replacement ref substitutes the bytes every reader
+               # sees, so an object-bound check that honours `git replace`
+               # reads the substitute's identity, not the declared revision's
+               # (round-82 repair 4, carried to this instrument).
+               GIT_NO_REPLACE_OBJECTS='1')
     return env
 
 
@@ -1199,6 +1243,177 @@ def selftest(out=sys.stdout):
     except OSError as exc:
         arm('ARM21_selftest_text_pin', False, 'source-unreadable:%s' % exc)
 
+    # arm 22 (round 83): the manifest is bound to its declared revision. A
+    # worktree manifest that differs from `REV:<manifest>` is refused before any
+    # row effect; the same narrowed bytes still certify when the binding is not
+    # asked for, which is what makes the binding the fix and not the narrowing.
+    fx8 = tempfile.mkdtemp(prefix="selfstate-arm22-",
+                           dir=os.environ.get("TMPDIR") or None)
+    try:
+        def _git8(*args):
+            subprocess.run(["git", "-C", fx8] + list(args), check=True,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                           env=_fixture_env())
+
+        def _put8(rel, text):
+            path = os.path.join(fx8, rel)
+            parent = os.path.dirname(path)
+            if parent:
+                os.makedirs(parent, exist_ok=True)
+            with open(path, "w", newline="\n") as fh:
+                fh.write(text)
+
+        def _rows8():
+            return {"schema": "tameshi-selfstate-freshness-v1",
+                    "rows": [
+                        {"id": "toy-a", "mode": "capability",
+                         "capability": "toy capture", "expect": "match",
+                         "figure": fig,
+                         "instrument": {"path": "tools/toy.py",
+                                        "rev": None, "argv": []}},
+                        {"id": "toy-b", "mode": "capability",
+                         "capability": "toy capture", "expect": "match",
+                         "figure": fig,
+                         "instrument": {"path": "tools/toy.py",
+                                        "rev": None, "argv": []}}]}
+
+        def _commit8(message):
+            _git8("-c", "user.name=t", "-c", "user.email=t@t", "add",
+                  "SCORECARD.md", "tools/toy.py", "manifest.json")
+            _git8("-c", "user.name=t", "-c", "user.email=t@t", "commit",
+                  "-qm", message)
+            return subprocess.run(["git", "-C", fx8, "rev-parse", "HEAD"],
+                                  check=True, stdout=subprocess.PIPE,
+                                  env=_fixture_env()).stdout.decode().strip()
+
+        def _write_manifest8(rows):
+            with open(os.path.join(fx8, "manifest.json"), "w",
+                      newline="\n") as fh:
+                json.dump({"schema": "tameshi-selfstate-freshness-v1",
+                           "rows": rows}, fh)
+
+        def _cli8(*extra):
+            return subprocess.run(
+                [sys.executable, "-I", "-X", "utf8",
+                 os.path.abspath(__file__), "--repo", fx8,
+                 "--manifest", "manifest.json"] + list(extra),
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180,
+                cwd=fx8)
+
+        _put8("SCORECARD.md", DOC_REV1)
+        _put8("tools/toy.py", "print('TOY_FIGURE: 4/4 pass')\n")
+        _write_manifest8(_rows8()["rows"])
+        _git8("init", "-q")
+        _top8 = subprocess.run(["git", "-C", fx8, "rev-parse",
+                                "--show-toplevel"], check=True,
+                               stdout=subprocess.PIPE,
+                               env=_fixture_env()).stdout.decode().strip()
+        if os.path.realpath(_top8) != os.path.realpath(fx8):
+            raise SetupError("git-fixture-misroot:%s" % _top8)
+        rev8a = _commit8("rev1 (pins unset)")
+        rows8 = _rows8()["rows"]
+        for row in rows8:
+            row["instrument"]["rev"] = rev8a
+        _write_manifest8(rows8)
+        rev8 = _commit8("rev2 (pins set)")
+
+        bound = _cli8("--manifest-rev", rev8)
+        bound_ok = (bound.returncode == 0
+                    and b"SELFSTATE: rows=2 match=2 stale=0 unexpected=0"
+                    in bound.stdout)
+        narrowed = [dict(row) for row in rows8 if row["id"] != "toy-b"]
+        _write_manifest8(narrowed)
+        refused = _cli8("--manifest-rev", rev8)
+        free = _cli8()
+        refused_ok = (refused.returncode == 2
+                      and b"manifest-rev-mismatch:" in refused.stderr
+                      and b"SELFSTATE:" not in refused.stdout)
+        free_ok = (free.returncode == 0
+                   and b"SELFSTATE: rows=1 match=1 stale=0 unexpected=0"
+                   in free.stdout)
+
+        # a symlink manifest at the declared revision: the mode is the refusal
+        os.remove(os.path.join(fx8, "manifest.json"))
+        _put8("real.json", json.dumps({"schema": "x", "rows": rows8}))
+        os.symlink("real.json", os.path.join(fx8, "manifest.json"))
+        rev8link = _commit8("rev3 (manifest is a symlink)")
+        link = _cli8("--manifest-rev", rev8link)
+        link_ok = (link.returncode == 2
+                   and b"manifest-rev-unreadable:mode:120000" in link.stderr
+                   and b"SELFSTATE:" not in link.stdout)
+        absent = _cli8("--manifest", "tools/ghost.json",
+                       "--manifest-rev", rev8)
+        absent_ok = (absent.returncode == 2
+                     and b"manifest-rev-unreadable:absent" in absent.stderr
+                     and b"SELFSTATE:" not in absent.stdout)
+        arm('ARM22_manifest_rev_binding',
+            bound_ok and refused_ok and free_ok,
+            'bound=%r refused=%r free=%r' % (
+                (bound.returncode, bound.stdout[-80:], bound.stderr[-80:]),
+                (refused.returncode, refused.stdout[-80:],
+                 refused.stderr[-80:]),
+                (free.returncode, free.stdout[-80:], free.stderr[-80:])))
+        arm('ARM23_manifest_rev_regular_file',
+            link_ok and absent_ok,
+            'link=%r absent=%r' % (
+                (link.returncode, link.stderr[-90:]),
+                (absent.returncode, absent.stderr[-90:])))
+    finally:
+        shutil.rmtree(fx8, ignore_errors=True)
+
+    # arm 24 (round 83): a row id outside the line-safe alphabet is refused
+    # before any instrument runs; the refusal itself is one line, so it cannot
+    # forge the verdict line it refuses. The control (c1-before-id-forge.txt)
+    # prints a green summary the measurement never produced.
+    fx9 = tempfile.mkdtemp(prefix="selfstate-arm24-",
+                           dir=os.environ.get("TMPDIR") or None)
+    try:
+        def _put9(rel, text):
+            path = os.path.join(fx9, rel)
+            parent = os.path.dirname(path)
+            if parent:
+                os.makedirs(parent, exist_ok=True)
+            with open(path, "w", newline="\n") as fh:
+                fh.write(text)
+
+        def _git9(*args):
+            subprocess.run(["git", "-C", fx9] + list(args), check=True,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                           env=_fixture_env())
+
+        _put9("SCORECARD.md", DOC_REV1)
+        _put9("tools/toy.py", "print('TOY_FIGURE: 4/4 pass')\n")
+        _git9("init", "-q")
+        _git9("-c", "user.name=t", "-c", "user.email=t@t", "add",
+              "SCORECARD.md", "tools/toy.py")
+        _git9("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm",
+              "rev1")
+        rev9 = subprocess.run(["git", "-C", fx9, "rev-parse", "HEAD"],
+                              check=True, stdout=subprocess.PIPE,
+                              env=_fixture_env()).stdout.decode().strip()
+        forged = ("forged\nSELFSTATE: rows=99 match=99 stale=0 "
+                  "unexpected=0")
+        _put9("manifest.json", json.dumps(
+            {"schema": "tameshi-selfstate-freshness-v1", "rows": [
+                {"id": forged, "mode": "capability",
+                 "capability": "toy capture", "expect": "match",
+                 "figure": fig,
+                 "instrument": {"path": "tools/toy.py", "rev": rev9,
+                                "argv": []}}]}))
+        proc9 = subprocess.run(
+            [sys.executable, "-I", "-X", "utf8", os.path.abspath(__file__),
+             "--repo", fx9, "--manifest", "manifest.json"],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180,
+            cwd=fx9)
+        arm('ARM24_row_id_alphabet',
+            proc9.returncode == 2
+            and b"row-id-alphabet:" in proc9.stderr
+            and b"SELFSTATE:" not in proc9.stdout
+            and proc9.stderr.count(b"\n") == 1,
+            'rc=%r err=%r' % (proc9.returncode, proc9.stderr[-160:]))
+    finally:
+        shutil.rmtree(fx9, ignore_errors=True)
+
     out.write('SELFSTATE_SELFTEST: %d/%d pass\n' % (ok, total))
     return 0 if (ok == total == SELFTEST_ARMS) else 1
 
@@ -1245,12 +1460,25 @@ def pin_audit(repo, rows, pin_rev, out=sys.stdout):
     return 0 if counts['stale'] == 0 else 1
 
 
+def _resolve_manifest_rev(repo, rev):
+    """Resolve `--manifest-rev` with its own refusal token: a caller who asked
+    for a manifest binding must not read a pin-audit refusal for it."""
+    proc = subprocess.run(['git', '-C', repo, 'rev-parse', '--verify',
+                           '%s^{commit}' % rev],
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                          env=_fixture_env())
+    if proc.returncode != 0:
+        raise SetupError('manifest-rev-unresolvable:%s' % rev)
+    return proc.stdout.decode('ascii', 'replace').strip()
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(add_help=True)
     ap.add_argument('--repo')
     ap.add_argument('--doc', default='SCORECARD.md')
     ap.add_argument('--doc-rev')
     ap.add_argument('--manifest', default='tools/selfstate-freshness.json')
+    ap.add_argument('--manifest-rev')
     ap.add_argument('--selftest', action='store_true')
     ap.add_argument('--pin-audit', action='store_true')
     ap.add_argument('--pin-rev', default='HEAD')
@@ -1267,8 +1495,35 @@ def main(argv=None):
 
     repo = os.path.abspath(a.repo)
     try:
-        with open(a.manifest, 'rb') as fh:
-            raw = fh.read()
+        if a.manifest_rev:
+            # R83-C1: the manifest the sweep measures must be the object at the
+            # declared revision. The object's checks run FIRST (mode, then
+            # bytes), because the worktree copy is what may be lying: a
+            # symlink is a blob too, and an absent worktree path must not mask
+            # what the revision actually carries. Nothing is measured and no
+            # instrument runs before the bytes agree.
+            reader = GitReader(repo)
+            rev = _resolve_manifest_rev(repo, a.manifest_rev)
+            mode = reader.tree_mode(rev, a.manifest)
+            if mode is None:
+                raise SetupError('manifest-rev-unreadable:absent:%s'
+                                 % a.manifest)
+            if mode not in REGULAR_MODES:
+                raise SetupError('manifest-rev-unreadable:mode:%s:%s'
+                                 % (mode, a.manifest))
+            bound = reader.blob(rev, a.manifest)
+        try:
+            with open(a.manifest, 'rb') as fh:
+                raw = fh.read()
+        except OSError as exc:
+            raise SetupError('manifest-unreadable:%s:%s' % (a.manifest, exc))
+        if a.manifest_rev:
+            if raw != bound:
+                raise SetupError('manifest-rev-mismatch:%s:%s'
+                                 % (rev[:12], a.manifest))
+            # one read serves both the binding and the parse: the bytes that
+            # were compared are the bytes that are measured
+            raw = bound
         text = decode_text(raw, a.manifest)
         try:
             manifest = json.loads(text)

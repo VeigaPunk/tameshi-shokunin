@@ -23,7 +23,8 @@ ROLE is one of:
             the certified revision.
 
 Codes (each a named refusal, exit 3):
-  RECEIPT_MISSING · RECEIPT_EMPTY · RECEIPT_NOT_BLOB · RECEIPT_REV_ABSENT
+  RECEIPT_MISSING · RECEIPT_EMPTY · RECEIPT_NOT_BLOB · RECEIPT_NOT_REGULAR
+  RECEIPT_REV_ABSENT
   RECEIPT_REV_AMBIGUOUS · RECEIPT_REV_UNRESOLVABLE · RECEIPT_REV_MISMATCH
   RECEIPT_REV_CONTENT_DRIFT · RECEIPT_CONTROL_NOT_ANCESTOR
   RECEIPT_DIGEST_MISMATCH · RECEIPT_REQUIRED_LINE_MISSING
@@ -35,6 +36,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 import tempfile
@@ -43,7 +45,8 @@ from pathlib import Path
 REV_RE = re.compile(r'\brev=([0-9a-f]{7,40})\b')
 JSON_REV_RE = re.compile(r'"rev"\s*:\s*"([0-9a-f]{7,40})"')
 CODES = (
-    'RECEIPT_MISSING', 'RECEIPT_EMPTY', 'RECEIPT_NOT_BLOB', 'RECEIPT_REV_ABSENT',
+    'RECEIPT_MISSING', 'RECEIPT_EMPTY', 'RECEIPT_NOT_BLOB', 'RECEIPT_NOT_REGULAR',
+    'RECEIPT_REV_ABSENT',
     'RECEIPT_REV_AMBIGUOUS', 'RECEIPT_REV_UNRESOLVABLE', 'RECEIPT_REV_MISMATCH',
     'RECEIPT_REV_CONTENT_DRIFT', 'RECEIPT_CONTROL_NOT_ANCESTOR',
     'RECEIPT_DIGEST_MISMATCH', 'RECEIPT_REQUIRED_LINE_MISSING',
@@ -99,9 +102,20 @@ def check(lane, certified, paths, receipt, role):
     codes = []
     detail = ''
     p = Path(path)
-    if not p.exists():
+    # R83-C3: `exists()`/`is_file()` follow a symlink, so a link to a regular
+    # file was read as the receipt and passed on its target's bytes (the
+    # round-83 control c3-before-gate-passes.txt). lstat states the path's own
+    # type; a link is refused by name, and a link to nothing is NOT_REGULAR
+    # rather than MISSING.
+    try:
+        st = p.lstat()
+    except FileNotFoundError:
         return ['RECEIPT_MISSING'], 'path=%s' % path, None
-    if not p.is_file():
+    except OSError as exc:
+        return ['RECEIPT_NOT_BLOB'], 'path=%s err=%s' % (path, exc), None
+    if stat.S_ISLNK(st.st_mode):
+        return ['RECEIPT_NOT_REGULAR'], 'path=%s symlink' % path, None
+    if not stat.S_ISREG(st.st_mode):
         return ['RECEIPT_NOT_BLOB'], 'path=%s' % path, None
     data = p.read_bytes()
     if not data.strip():
@@ -325,7 +339,7 @@ def selftest():
         r = call(write_receipt('empty.txt', '\n') + ':positive')
         cases.append(('empty-refused', r.returncode == 3 and b'RECEIPT_EMPTY' in r.stdout))
         # 14 the codes list is closed
-        cases.append(('codes-closed', len(CODES) == len(set(CODES)) == 11))
+        cases.append(('codes-closed', len(CODES) == len(set(CODES)) == 12))
         # 15 a non-regular-file receipt is a named refusal, not a traceback
         r = call(str(Path(tmp)) + ':positive')
         cases.append(('not-blob-refused',
@@ -346,6 +360,18 @@ def selftest():
                  certified='deadbeefdeaddead')
         cases.append(('unresolvable-certified-refused',
                       r.returncode == 2 and b'RECEIPT_REV_UNRESOLVABLE' in r.stdout))
+        # 20 (round 83): a symlink is not a receipt. The link's target is a
+        # valid positive receipt and would pass on its bytes; the path's own
+        # type refuses it by name, and the regular sibling in the same call
+        # still passes (no over-kill).
+        regular83 = write_receipt('regular83.txt', SELFTEST_RECEIPT_OK % c2)
+        link83 = str(Path(tmp) / 'link83.txt')
+        os.symlink(regular83, link83)
+        r = call(link83 + ':positive', regular83 + ':positive', certified=c2)
+        cases.append(('symlink-not-a-receipt-refused',
+                      r.returncode == 3
+                      and b'RECEIPT_NOT_REGULAR' in r.stdout
+                      and b'ok=1 refused=1' in r.stdout))
     passed = sum(1 for _, ok in cases if ok)
     for name, ok in cases:
         print('CASE %s %s' % (name, 'PASS' if ok else 'FAIL'))
