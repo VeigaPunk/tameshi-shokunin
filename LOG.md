@@ -4200,3 +4200,15 @@ batch-1 commit `29a1a7d0` (ledger 930 → 944, `traces-b1`). Receipts under
   `.ufo/evidence/round-21/coldread/ledger.json` (51.7 MB): the historical
   default reads `11/65`. The round's counter uses
   `tools/coldread-precheck-portable.py`, which reads the live ledger.
+
+### Round 77 — appended: wave disclosures (2026-11-04)
+
+The measured block above is unchanged; the wave's falsifiers are adopted, not
+argued away (`SCORECARD.md` "Round 77 — appended: wave disclosures"):
+stagnation nudge active at round-77 start (not "for 78"), C1's multi-value
+after-state named with its scalar (surviving registered defects 1 → 0), C2's
+counter scoped to the monitor state with the record half measured by a separate
+grep, the false separability sentence corrected (C2's `needed_paths` pins
+`tools/wave-reconcile.py`), and two named survivors carried to round 78
+(arm20's `finally` cleanup, `git-listing-uses-head`). Provenance limitation:
+the monitor does not authenticate `read_rev`.

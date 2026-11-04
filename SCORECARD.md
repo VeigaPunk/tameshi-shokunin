@@ -4832,3 +4832,50 @@ later, where the monitor reads `63/65` with `box3_full_page=false`
 was true at its own pin; the record named that pin as the tip. Criterion 128
 (`corpus/QUALITY.md`) captures the class, and the round-77 C2 settlement is
 measured at the settlement commit it names.
+
+### Round 77 — appended: wave disclosures and record corrections (2026-11-04)
+
+Appended after the wave returned; the measured block above stands as written and
+no frozen predicate is amended. Six disclosures, each from a committed seat
+report under `.ufo/waves/round-77/w1/`:
+
+1. **Stagnation nudge — off by one in the block above.** The block says "the
+   stagnation nudge fires for round 78". Read against `AXES.md` §The stagnation
+   nudge and `## Saturation` (line 8/10, window N = 2): rounds 75 and 76 are two
+   capability-less completed rounds, so the window was already full at round-77
+   start and the nudge was ACTIVE for this round (the lowest-axis obligation was
+   waived; this round worked calibration anyway). It stays active for round 78,
+   which should be the capability round. Wave critic `T77W1C1` raised it; the
+   sentence above is superseded by this paragraph, append-only.
+2. **C1's after-state is a set of guards, not one scalar.** The frozen claim
+   carries 20/20, eight kills, control/restore and kill-set invariance; §9 asks
+   for one re-derivable value. The one value the population yields is the
+   surviving registered defects on the recursion surface: 1 at base (the mutant
+   survives 19/19), 0 at the landing (the battery prints `survived=0`). The
+   guards stay as frozen; the admission defect is the multi-value sentence.
+3. **C2's counter measures the monitor, not the record's sentence.** The
+   frozen counter re-derives `credited` and `box3_full_page` at the named
+   revision; it does not parse `SCORECARD.md`/`LOG.md`, so "the record's claim
+   and the monitor agree" is checked by a separate grep, not by the counter.
+   Both halves are reported: the monitor half verifies (63/65 → 65/65 at
+   `af754b92`), the record half is the correction paragraph above plus this
+   block.
+4. **Separability sentence corrected.** The plan says "Neither claim's counter
+   reads the other's files". False for C2's counter: the cold-read
+   `needed_paths` includes `tools/wave-reconcile.py` through a declared ledger
+   pin (wave critic `T77W1C1` measured it). The claims are still each
+   verifiable without the other's work landing — C2's predicate is attainable
+   at any pre-rekey tip over whatever set the monitor reports — but the byte
+   dependency exists and is disclosed.
+5. **Named survivors for round 78** (wave mutation-tester and executor seats).
+   `arm20`'s cleanup `finally` can be deleted with the suite still green
+   (`T77W1M1`: 20/20 pass, one leaked `wave-reconcile-git-*` fixture per run) —
+   the next arm needs a leftover-count post-condition and that edit as its spec
+   defect. A `git-listing-uses-head` mutant (listing reads `HEAD` instead of
+   the pinned rev) also survives all 20 arms (`T77W1E2`) — the next fixture
+   needs two commits so HEAD ≠ rev.
+6. **Provenance limitation (C2).** The monitor's decision code does not
+   authenticate an entry's `read_rev`; a forged `read_rev` in a hand-edited
+   ledger prints the same state (wave critic `T77W1C1`, in-memory probe). The
+   claim's barrier is the producer receipt (`REBIND OK` + the trace files),
+   which is producer evidence, not independent proof.

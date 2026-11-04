@@ -109,9 +109,12 @@ never wrong — the record named the wrong revision.
   row (re-derived this round; see the executor seat's receipt). Carried for
   the same reason.
 - Round 77 landed no capability row (C1 is an arm on an existing capability,
-  C2 is a settlement on an existing run-book), so a capability-less third
-  round sits at the stagnation window boundary and the nudge fires for round
-  78: round 78 should be a capability round.
+  C2 is a settlement on an existing run-book). Rounds 75 and 76 are already two
+  capability-less completed rounds, so the stagnation window (N = 2) was full
+  at round-77 start: the nudge was ACTIVE for this round and stays active for
+  round 78, which should be the capability round. (The round's own record first
+  wrote "fires for round 78"; the wave critic caught the off-by-one and the
+  record carries an append-only correction.)
 - The cold-read monitor's two ledgers: `measure.py`'s default path resolves
   `.ufo/evidence/round-18/coldread/ledger.json` (a 1.2 MB historical copy),
   while the live ledger is `.ufo/evidence/round-21/coldread/ledger.json`
@@ -119,3 +122,34 @@ never wrong — the record named the wrong revision.
   `tools/coldread-precheck-portable.py` reads the live one. Any counting
   command that names `measure.py` without `--ledger-rev` measures the wrong
   population — the round's counter uses the portable precheck and says so.
+
+## Wave findings (adopted)
+
+The wave's seats re-derived both claims and attacked them; every finding below
+is adopted into the record, not argued away (`.ufo/waves/round-77/w1/`):
+
+- **C1 replicated independently** (`T77W1E1`, `T77W1E2`, `T77W1M1`, `T77W1R1`):
+  20/20, all eight defects killed, every kill set equal to the frozen matrix,
+  restore byte-identical. `T77W1E3` rehearsed the whole settlement in a sandbox
+  clone and reproduced 65/65 plus a negative control (a pinned-input edit after
+  the rekey drops it back to 63/65) — the ordering this round then used for real.
+- **Two survivors named for round 78**: arm20's `finally` cleanup can be deleted
+  with the suite green (one leaked git fixture per run), and a
+  `git-listing-uses-head` mutant survives all 20 arms. Both are fixture-coverage
+  holes in the new arm, not claim failures.
+- **C1's after-state is a guard set, not one scalar**: the scalar the population
+  yields is surviving registered defects 1 → 0; the rest are guards frozen in the
+  plan. Recorded as an admission defect.
+- **C2's counter is scoped to the monitor**: it does not parse the record, so the
+  record half is a separate grep; the plan's "neither counter reads the other's
+  files" sentence is false (C2's `needed_paths` pins
+  `tools/wave-reconcile.py`) and is corrected in the record.
+- **Provenance**: the monitor does not authenticate an entry's `read_rev`
+  (in-memory forgery prints the same state); the barrier is the producer receipt.
+- **Assimilation: none** (`T77W1CN1`) — the staged package's 81 knowledge files
+  contain nothing on Git listing recursion or cold-read settlement, and the
+  nearest candidate (`survivor-classification.md`, staged S166/S156 with
+  unresolved provenance) is already held in substance. The mined
+  `considerthese/2026-10-28.md` proposal 1 (receipts that do not measure what
+  they claim) is grounded in this round's own defect and lands as the criterion
+  128 rule instead of a note.
