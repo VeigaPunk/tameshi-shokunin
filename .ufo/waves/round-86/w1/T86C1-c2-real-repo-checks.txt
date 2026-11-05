@@ -1,0 +1,30 @@
+$ python3 -I -X utf8 tools/capability-census.py --repo . --rev 55d5a5c6002a048337cc511e1712df87b961d364 | tail -2
+CAP_ROW selftest-text pin disposition=live bound=yes reason=selfstate:selftest-text-pin
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0
+
+$ git show 55d5a5c6:SCORECARD.md | grep "| non-Python instrument freshness row"
+| non-Python instrument freshness row | execute a freshness row's instrument under a frozen per-row interpreter tuple (python as the unchanged default, bash added) and bind a non-Python instrument's printed figure to the capability row it demonstrates | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --doc-rev 5bcb13ea7cc08bb0b594fcd0c2bb770cb8fe64a0` -> `SELFSTATE: rows=22 match=20 stale=2 unexpected=0` exit 0 with `SELFSTATE_ROW mutation-runner-selftest capability=mutation sweep runner expect=match measured=match ok`; `--selftest` -> `SELFSTATE_SELFTEST: 14/14 pass`; re-demonstrated round 79 (`receipt-bind-selftest` row added, arm14); `.ufo/evidence/round-78/c1-landed-sweep.txt`, `c1-landed-selftest.txt` | round 78 |
+
+$ git show 55d5a5c6:.ufo/evidence/round-78/c1-landed-sweep.txt | grep -nE "SELFSTATE: rows="
+28:SELFSTATE: rows=21 match=19 stale=2 unexpected=0
+$ git show 55d5a5c6:.ufo/evidence/round-78/c1-landed-selftest.txt | grep -nE "SELFSTATE_SELFTEST"
+20:SELFSTATE_SELFTEST: 13/13 pass
+
+$ git grep -l "SELFSTATE: rows=22 match=20" 55d5a5c6 -- .ufo/evidence
+55d5a5c6002a048337cc511e1712df87b961d364:.ufo/evidence/round-79/standing-sweep-ss-r79.txt
+55d5a5c6002a048337cc511e1712df87b961d364:.ufo/evidence/round-80/design/c1-before-sweep.txt
+
+$ python3 -I -X utf8 tools/selfstate-freshness.py --repo . --doc-rev 5bcb13ea7cc08bb0b594fcd0c2bb770cb8fe64a0   # the row own command, today
+SELFSTATE error=setup capability-absent:receipt-bind-selftest:receipt-bytes binding sweep
+exit=2
+
+$ python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json | tail -1
+SELFSTATE: rows=26 match=24 stale=2 unexpected=0
+exit=0
+
+$ git cat-file -e 55d5a5c6:.ufo/evidence/kaika-round-1 ; echo $?
+0
+$ git cat-file -e 55d5a5c6:tools/ ; echo $?
+0
+$ git cat-file -e 55d5a5c6:. ; echo $?
+fatal: path '.' exists on disk, but not in '55d5a5c6002a048337cc511e1712df87b961d364'

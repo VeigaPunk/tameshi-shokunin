@@ -4735,3 +4735,76 @@ No tool installs reported. Assimilation none; separate debts remain open.
 47->47/lost0,20/0 equivalence each side, exit0. Its counter code is still
 the unchanged instrument pinned at ecb61d56; input revision is explicit in
 the recorded command. This is not a rerun or repair of the frozen claim.
+
+## Round 86 (2026-11-04) — two frozen claims, both killed by construction
+
+Motivation: round-85's closure routed defect 1 — a certification freeze without
+the criterion-111 cheat family — and the lane's own `## Capabilities` table
+carried 12 of 30 rows bound to no repo state. Two claims on distinct axes were
+frozen by attempt 1 at `55d5a5c6002a048337cc511e1712df87b961d364` (base
+`d10a9c66d6181cddcad52cdbffd672beb886ff6c`): R86-C1 operability capability
+acquisition — a NEW discriminating certification counter for
+`tools/design-blob-audit.py` with five committed controls; R86-C2 calibration —
+every capability row bound to repo state. Attempt 1 dispatched wave 1 and died
+before landing (`lane-dead-no-report tameshi round=86`, 21:52:06 -03); attempt 2
+(TameshiR86a2) inherited the freeze and the live wave, re-verified every frozen
+byte, ran the wave to settlement and landed this record.
+
+Freeze bytes: `.ufo/evidence/round-86/contract.json`, `measure.py`
+(sha256 `20bd8e78…`), five controls with receipts (fingerprint 0/8, sequence
+4/8, pinned-hash 0/8, always-accept 0/8, r85-forgery 6/8), `tools/capability-census.py`
++ `tools/capability-census.json` (30-row disposition manifest), the S305
+snapshot. Base→freeze diff is 29 files.
+
+**Settlement: both claims killed by their own kill rules; admission not
+claimed.** R86-C1: `T86E2-att3b-cheat.py` (zero git reads, zero process spawns,
+sha256 `89863caa…`) and `T86CN1-oracle-worktree.py` each print
+`passed=8/8 C1_R86_PASS=true` exit 0 against the frozen counter; L1 reproduced
+both at base and at the landing revision. Root cause: the arm class is disclosed
+by frozen path labels (`ok-`/`mx-`/`rf-…`/`zp-`) and the mixed-arm worktree
+coincides with the candidate tree. R86-C2: a relabel manifest whose pins are
+cited ancestor **trees** prints the exact after-state tuple
+`rows=30 bound=30 unbound=0 mismatches=0` exit 0 binding nothing to a receipt;
+L1 built that manifest independently
+(`.ufo/evidence/round-86/attacks/c2-cited-tree-*`). Reviewer T86R1 adds the
+refusal-by-skip class (four tool mutants at 8/8), the `rstrip` trailing-newline
+tolerance, the uncommitted-before-freeze ordering of the controls, and the
+census's worktree-read manifest, duplicate-row, `Capability`-row, prose-
+attribution and substring-citation bypasses; critic T86C1 and scout T86SC1
+attack the same two surfaces independently.
+
+Landing measurements at `a01293c75193cc343f36daeaf2f611ec7982286f`
+(`.ufo/evidence/round-86/landing/`, each receipt carries `# measured_rev`,
+`# tool`, `# tool_sha256`, `# command`): C1 real instrument `passed=8/8
+C1_R86_PASS=true` exit 0, and the two kill oracles also 8/8 at the same bytes;
+C2 full manifest `CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0` exit 0,
+and the cited-tree relabel also 30/30 exit 0. No-harm: selfstate
+26/24match/2declared-stale/0unexpected, pins26 settled, registry9/9,
+defects6 closed, wave6, ranges11, arms9, counts7, pointers12, attribution3,
+anchors16 all meet their expectations, receipt bind 67=52bound+8corrected+
+7design/0unbound — every sweep exit 0. Coldread floor47→47/lost0, equivalence
+20/0 per side, exit 0; the plan's `predicted_lost=13` was a model forecast and
+the measured floor is 0, recorded as measured.
+
+Corrections landed as amendment A1 (no predicate, instrument, population,
+target or kill rule touched): S305's quotes sit at snapshot lines 1808/1812 (not
+1807/1811), the second quote is 9 whitespace tokens (not 10), and the
+`100644`/`100755` boundary is S291's ground, not S305's. Pointer receipt
+`.ufo/evidence/round-86/pointer-recheck.out` (criterion 116).
+
+No capability row enters — R86-C1 is killed, and C2's frozen predicate counts
+exactly 30 table rows, so a 31st row would break the calibration claim it
+belongs to (mistake M6, routed). Scores remain depth10/calibration8/freshness9,
+delta0; no saturation, retirement or score change. Six mistakes are mined into
+`corpus/lessons/round-86.md` `## Mistakes` (M1 inherited criterion-111 miss, M2
+wrong candidate tree, M3 counter non-discrimination, M4 census
+non-discrimination, M5 pointer/quote-count drafting defects, M6 population
+collision); each fix is routed to round 87 with the observation that would prove
+it.
+
+Sources: rows 171→171, no new row. S305 re-opened 2026-11-04 (HTTP/2 200,
+39083 B, sha256 `ff06fbc8…18267`, byte-identical to the round-77 snapshot);
+`used-by` adds `corpus/lessons/round-86.md`; a second git-ls-tree row was
+refused as a within-scope duplicate. Census before and after exit 0 with the 19
+standing warnings retained. Assimilation: none — `merge/tameshi/MERGE-REPORT.md`
+and `considerthese/2026-10-28.md` were read and serve neither frozen claim.

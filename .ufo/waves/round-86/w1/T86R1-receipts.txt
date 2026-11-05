@@ -1,0 +1,285 @@
+# T86R1 receipts — round-86 w1 review (seat T86R1). Lane /home/vgpnk/Projects/shokunin/tameshi-shokunin; frozen commit 55d5a5c6002a048337cc511e1712df87b961d364; base d10a9c66d6181cddcad52cdbffd672beb886ff6c.
+# Each block: command, then exact output. Mutants are scratch copies of the frozen tools/design-blob-audit.py blob with one replacement each (see mut/make.py below).
+
+## R1 mutant battery against frozen measure.py (python3 -I mut/drive.py mut)
+base(frozen tool)                    rc=0  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=8/8 C1_R86_PASS=true
+M1-absroot-unchecked                 rc=0  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=8/8 C1_R86_PASS=true
+M10-zero-pop-guard-removed           rc=1  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=7/8 C1_R86_PASS=false
+      FAIL case: zero-population(exit=0/want=2,stdout_ok=False)
+M11-base-rev-blob-read               rc=1  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=7/8 C1_R86_PASS=false
+      FAIL case: mixed(exit=1/want=1,stdout_ok=False)
+M2-dotroot-whole-repo                rc=0  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=8/8 C1_R86_PASS=true
+M3-malformedsha-silent-skip          rc=0  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=8/8 C1_R86_PASS=true
+M4-marker-absent-silent-skip         rc=0  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=8/8 C1_R86_PASS=true
+M5-mixed-headers-silent-skip         rc=0  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=8/8 C1_R86_PASS=true
+M6-all-three-silent-skip             rc=0  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=8/8 C1_R86_PASS=true
+M7-unresolvable-cand-unchecked       rc=0  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=8/8 C1_R86_PASS=true
+M8-trailing-blank-line               rc=0  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=8/8 C1_R86_PASS=true
+M9-rows-reversed                     rc=1  C1_R86 rev=55d5a5c6002a048337cc511e1712df87b961d364 passed=6/8 C1_R86_PASS=false
+      FAIL case: mixed(exit=1/want=1,stdout_ok=False)
+      FAIL case: carried(exit=0/want=0,stdout_ok=False)
+
+## R2 sequence control distribution (python3 mut/drive.py seq 25)
+sequence control passed= distribution over 25 runs: ['3/8', '3/8', '3/8', '3/8', '3/8', '3/8', '3/8', '3/8', '3/8', '3/8', '3/8', '3/8', '4/8', '4/8', '4/8', '4/8', '4/8', '4/8', '4/8', '4/8', '4/8', '4/8', '4/8', '5/8', '5/8']
+
+## R3 census fixtures (python3 cen.py)
+== C0-sanity-honest (rev 326b61012d6b) exit=0
+CAP_ROW alpha disposition=live bound=yes reason=selfstate:alpha-live
+CAP_ROW beta disposition=historical bound=yes reason=pin:r/b.txt@326b61012d6b
+CAP_CENSUS: rows=2 bound=2 unbound=0 mismatches=0
+
+== C1-duplicate-table-row-fabricated (rev dbc820384699) exit=0
+CAP_ROW alpha disposition=live bound=yes reason=selfstate:alpha-live
+CAP_ROW beta disposition=historical bound=yes reason=pin:r/b.txt@326b61012d6b
+CAP_ROW alpha disposition=live bound=yes reason=selfstate:alpha-live
+CAP_CENSUS: rows=3 bound=3 unbound=0 mismatches=0
+
+== C2-second-row-named-Capability-hidden (rev 7b250123995e) exit=0
+CAP_ROW alpha disposition=live bound=yes reason=selfstate:alpha-live
+CAP_ROW beta disposition=historical bound=yes reason=pin:r/b.txt@326b61012d6b
+CAP_CENSUS: rows=2 bound=2 unbound=0 mismatches=0
+
+== C3-pin-cited-only-in-prose-after-table (rev b3b53a96de20) exit=0
+CAP_ROW alpha disposition=live bound=yes reason=selfstate:alpha-live
+CAP_ROW beta disposition=historical bound=yes reason=pin:r/b.txt@326b61012d6b
+CAP_CENSUS: rows=2 bound=2 unbound=0 mismatches=0
+
+== C4-pin-prefix-extension-cite (rev 26998b32c18c) exit=0
+CAP_ROW alpha disposition=live bound=yes reason=selfstate:alpha-live
+CAP_ROW beta disposition=historical bound=yes reason=pin:r/b.txt@326b61012d6b
+CAP_CENSUS: rows=2 bound=2 unbound=0 mismatches=0
+
+== C5-zero-rows-real (rev e304ca857a1f) exit=2 stdout='' stderr='capability-census: setup refusal zero-table-rows'
+== C5-zero-rows-MUTANT(guard removed) exit=1 stdout='CAP_ROW alpha disposition=extra bound=no reason=not-in-table\nCAP_ROW beta disposition=extra bound=no reason=not-in-table\nCAP_CENSUS: rows=0 bound=0 unbound=0 mismatches=2' stderr=''
+== selftest on guard-removed MUTANT exit=0
+CAPABILITY_CENSUS_SELFTEST: 10/10 pass
+== selftest on frozen census exit=0 tail=CAPABILITY_CENSUS_SELFTEST: 10/10 pass
+
+## R4 mutant-spec script (mut/make.py)
+import sys, pathlib
+S = pathlib.Path('/fast/scratch/hyaku/tameshi-r86/T86R1/mut')
+base = (S / 'base.py').read_text()
+def rep(src, old, new):
+    n = src.count(old)
+    assert n == 1, (n, old[:70])
+    return src.replace(old, new)
+M = {}
+M['M1-absroot-unchecked'] = rep(base,
+  "    if not _repo_relative(root) or root == '.' or root.endswith('/'):",
+  "    if root == '.' or root.endswith('/'):")
+M['M2-dotroot-whole-repo'] = rep(rep(base,
+  "    if not _repo_relative(root) or root == '.' or root.endswith('/'):",
+  "    if not _repo_relative(root) or root.endswith('/'):"),
+  "    prefix = root + '/'", "    prefix = '' if root == '.' else root + '/'") if False else rep(base,
+  "    if not _repo_relative(root) or root == '.' or root.endswith('/'):",
+  "    if not _repo_relative(root) or root.endswith('/'):")
+M['M3-malformedsha-silent-skip'] = rep(base,
+  "        raise SetupError('design-header-incomplete:%s' % path)",
+  "        return None")
+M['M4-marker-absent-silent-skip'] = rep(base,
+  "        raise SetupError('design-marker-absent:%s' % path)",
+  "        return None")
+M['M5-mixed-headers-silent-skip'] = rep(base,
+  "        raise SetupError('receipt-header-mixed:%s' % path)",
+  "        return None")
+M['M6-all-three-silent-skip'] = rep(rep(rep(base,
+  "        raise SetupError('design-header-incomplete:%s' % path)", "        return None"),
+  "        raise SetupError('design-marker-absent:%s' % path)", "        return None"),
+  "        raise SetupError('receipt-header-mixed:%s' % path)", "        return None")
+M['M7-unresolvable-cand-unchecked'] = rep(base,
+  "    crev = resolve_commit(repo, candidate_rev)\n    if crev is None:\n        raise SetupError('candidate-rev-unresolvable:%s' % candidate_rev)",
+  "    crev = resolve_commit(repo, candidate_rev) or candidate_rev")
+M['M8-trailing-blank-line'] = rep(base,
+  "    return 0 if carried == len(receipts) else 1",
+  "    out.write('\\n')\n    return 0 if carried == len(receipts) else 1")
+M['M9-rows-reversed (positive)'] = rep(base,
+  "    for row in rows:\n        out.write(row + '\\n')",
+  "    for row in reversed(rows):\n        out.write(row + '\\n')")
+M['M10-zero-pop-guard-removed (positive)'] = rep(base,
+  "    if not receipts:\n        raise SetupError('zero-design-receipts:%s' % root)",
+  "    pass")
+M['M11-base-rev-blob-read (positive)'] = rep(base,
+  "        kind, payload = _classify(ctree, rec['tool'])",
+  "        kind, payload = _classify(tree_at(repo, rrev), rec['tool'])")
+for name, src in M.items():
+    (S / (name.split(' ')[0] + '.py')).write_text(src)
+    print('wrote', name.split(' ')[0])
+
+## R5 census fixture script (cen.py)
+import json, os, pathlib, subprocess, sys, shutil
+S = pathlib.Path('/fast/scratch/hyaku/tameshi-r86/T86R1')
+CENSUS = '/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/capability-census.py'
+ID = ['-c', 'user.name=t', '-c', 'user.email=t@x', '-c', 'commit.gpgsign=false']
+W = S / 'cen'
+shutil.rmtree(W, ignore_errors=True); W.mkdir(parents=True)
+D = W / 'repo'; D.mkdir()
+def g(*a):
+    return subprocess.run(['git', '-C', str(D)] + list(a), capture_output=True, text=True)
+g('init', '-q')
+top = g('rev-parse', '--show-toplevel').stdout.strip()
+assert pathlib.Path(top).resolve() == D.resolve(), top
+(D / 'r').mkdir(); (D / 'r/a.txt').write_text('a\n'); (D / 'r/b.txt').write_text('b\n')
+(D / 'r/b.txt.bak').write_text('bak\n')
+HEAD_TABLE = ('| Capability | What | Evidence | Round |\n|---|---|---|---|\n')
+ROWS = ('| alpha | does a | `r/a.txt` | r1 |\n'
+        '| beta | does b | `r/b.txt` | r2 |\n')
+def commit(doc, msg):
+    (D / 'SCORECARD.md').write_text(doc)
+    g(*ID, 'add', '-A'); g(*ID, 'commit', '-q', '-m', msg)
+    return g('rev-parse', 'HEAD').stdout.strip()
+doc_base = '# SC\n\n## Capabilities\n\n' + HEAD_TABLE + ROWS
+base = commit(doc_base, 'base')
+MAN = {'schema': 'tameshi-capability-census-v1', 'rows': [
+    {'capability': 'alpha', 'disposition': 'live', 'selfstate_row': 'alpha-live'},
+    {'capability': 'beta', 'disposition': 'historical', 'receipt': {'path': 'r/b.txt', 'rev': base}}]}
+SS = {'rows': [{'id': 'alpha-live', 'mode': 'capability', 'capability': 'alpha'}]}
+(W / 'manifest.json').write_text(json.dumps(MAN)); (W / 'selfstate.json').write_text(json.dumps(SS))
+def census(rev, census_path=CENSUS, extra=()):
+    p = subprocess.run([sys.executable, '-I', '-X', 'utf8', census_path, '--repo', str(D), '--rev', rev,
+                        '--manifest', str(W / 'manifest.json'), '--selfstate', str(W / 'selfstate.json'), *extra],
+                       capture_output=True, text=True)
+    return p.returncode, p.stdout.strip(), p.stderr.strip()
+cases = {
+ 'C0-sanity-honest': doc_base,
+ 'C1-duplicate-table-row-fabricated': doc_base.replace('\n\n## Capabilities', '\n\n## Capabilities') .replace(ROWS, ROWS + '| alpha | FABRICATED: claims something the repo never shows | (no evidence) | r9 |\n'),
+ 'C2-second-row-named-Capability-hidden': doc_base.replace(ROWS, ROWS + '| Capability | HIDDEN: unverifiable claim | none | r9 |\n'),
+ 'C3-pin-cited-only-in-prose-after-table': ('# SC\n\n## Capabilities\n\n' + HEAD_TABLE +
+   '| alpha | does a | `r/a.txt` | r1 |\n| beta | does b | no pointer here | r2 |\n\n'
+   'Note: the beta receipt lives at `r/b.txt`.\n\n## Next\n\nmore\n'),
+ 'C4-pin-prefix-extension-cite': doc_base.replace('`r/b.txt`', '`r/b.txt.bak`'),
+}
+out = []
+for name, doc in cases.items():
+    rev = commit(doc, name)
+    rc, so, se = census(rev)
+    out.append('== %s (rev %s) exit=%d\n%s%s' % (name, rev[:12], rc, so + '\n', ('stderr: ' + se + '\n') if se else ''))
+# C5: zero table rows -> real refusal
+rev = commit('# SC\n\n## Capabilities\n\n' + HEAD_TABLE, 'C5-zero-rows')
+rc, so, se = census(rev); out.append('== C5-zero-rows-real (rev %s) exit=%d stdout=%r stderr=%r' % (rev[:12], rc, so, se))
+# mutant: zero-table-rows guard removed
+src = pathlib.Path(CENSUS).read_text()
+old = "    if not rows:\n        raise SetupError('zero-table-rows')"
+assert src.count(old) == 1, src.count(old)
+mut = W / 'census-mut-nozero.py'; mut.write_text(src.replace(old, '    pass'))
+rc, so, se = census(rev, str(mut)); out.append('== C5-zero-rows-MUTANT(guard removed) exit=%d stdout=%r stderr=%r' % (rc, so, se))
+st = subprocess.run([sys.executable, '-I', '-X', 'utf8', str(mut), '--selftest'], capture_output=True, text=True)
+out.append('== selftest on guard-removed MUTANT exit=%d\n%s' % (st.returncode, st.stdout.strip().splitlines()[-1]))
+st = subprocess.run([sys.executable, '-I', '-X', 'utf8', CENSUS, '--selftest'], capture_output=True, text=True)
+out.append('== selftest on frozen census exit=%d tail=%s' % (st.returncode, st.stdout.strip().splitlines()[-1]))
+(S / 'cen-results.txt').write_text('\n'.join(out) + '\n')
+print('\n'.join(out))
+
+## R6 controls ordering: history and parent presence
+$ git log --oneline -- .ufo/evidence/round-86/controls/
+55d5a5c6 round-86: freeze — discriminating design-audit counter with the criterion-111 cheat family, and the capability-repertoire census
+$ git cat-file -e 55d5a5c6002a048337cc511e1712df87b961d364^:.ufo/evidence/round-86/controls/ctl-fingerprint.py
+fatal: path '.ufo/evidence/round-86/controls/ctl-fingerprint.py' exists on disk, but not in '55d5a5c6002a048337cc511e1712df87b961d364^'
+exit=128
+
+## R7 S305 pointers in committed snapshot
+$ git show 55d5a5c6002a048337cc511e1712df87b961d364:.ufo/evidence/round-86/sources/s305-ls-tree.html | sed -n 1807p
+<dd>
+$ git show 55d5a5c6002a048337cc511e1712df87b961d364:.ufo/evidence/round-86/sources/s305-ls-tree.html | sed -n 1808p
+<p>The mode of the object.</p>
+$ git show 55d5a5c6002a048337cc511e1712df87b961d364:.ufo/evidence/round-86/sources/s305-ls-tree.html | sed -n 1811p
+<dd>
+$ git show 55d5a5c6002a048337cc511e1712df87b961d364:.ufo/evidence/round-86/sources/s305-ls-tree.html | sed -n 1812p
+<p>The type of the object (<span class='synopsis'><code>commit</code></span>, <span class='synopsis'
+
+## R8 census at freeze and at base
+$ python3 -I -X utf8 tools/capability-census.py --repo . --rev 55d5a5c6002a048337cc511e1712df87b961d364
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0
+exit=0
+$ python3 -I -X utf8 tools/capability-census.py --repo . --rev d10a9c66d6181cddcad52cdbffd672beb886ff6c
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0
+exit=0
+$ git cat-file -e d10a9c66d6181cddcad52cdbffd672beb886ff6c:tools/capability-census.json
+fatal: path 'tools/capability-census.json' exists on disk, but not in 'd10a9c66d6181cddcad52cdbffd672beb886ff6c'
+exit=128
+$ census --rev 55d5a5c6002a048337cc511e1712df87b961d364 vs frozen c2-after.txt
+IDENTICAL
+
+## R9 census selftest (frozen)
+CAPABILITY_CENSUS_SELFTEST: 10/10 pass
+
+## R10 sha256 of frozen instruments
+20bd8e78be064bf42d6517c6e74fd5034587ab02934243611a6bc5eb8c2b4c16  .ufo/evidence/round-86/measure.py
+041c0c123232ac05494a10ffc41ca2cc296177de37abba6dd59cbe351fc0d968  tools/capability-census.py
+6194a30d96287e69932581704b6d1941e3f21af3a7210a6c3d9ed3f1f9869349  -
+
+## R11 receipt-bytes-bind on round-86 (criterion 130 population)
+RECEIPT_BIND error=setup:zero-receipts:.ufo/evidence/round-86
+exit=2
+
+## R12 frozen controls, last line of each frozen receipt
+ctl-fingerprint.out: C1_R86 rev=d10a9c66d6181cddcad52cdbffd672beb886ff6c passed=0/8 C1_R86_PASS=false
+ctl-sequence.out: C1_R86 rev=d10a9c66d6181cddcad52cdbffd672beb886ff6c passed=4/8 C1_R86_PASS=false
+ctl-pinned-hash.out: C1_R86 rev=d10a9c66d6181cddcad52cdbffd672beb886ff6c passed=0/8 C1_R86_PASS=false
+ctl-always-accept.out: C1_R86 rev=d10a9c66d6181cddcad52cdbffd672beb886ff6c passed=0/8 C1_R86_PASS=false
+ctl-r85-forgery.out: C1_R86 rev=d10a9c66d6181cddcad52cdbffd672beb886ff6c passed=6/8 C1_R86_PASS=false
+
+## R13 sibling-receipt and empty-manifest fixtures (verbatim from inline runs)
+EMPTY-MANIFEST+ZERO-ROWS REAL exit=2 stdout='' stderr='capability-census: setup refusal zero-table-rows'
+EMPTY-MANIFEST+ZERO-ROWS MUTANT-nozero exit=0 stdout='CAP_CENSUS: rows=0 bound=0 unbound=0 mismatches=0' stderr=''
+SIBLING-FIXTURE REAL exit=2 stdout='' stderr='design-blob-audit: setup refusal design-header-incomplete:pop/bad.txt'
+SIBLING-FIXTURE MUTANT-M3-silent-skip exit=0 stdout='DESIGN_BLOB_ROW pop/ok.txt state=carried' + 'DESIGN_BLOB: receipts=1 carried=1 orphan=0' stderr=''
+
+## R0 driver used by R1/R2 (mut/drive.py)
+import json, pathlib, re, subprocess, sys, tempfile
+R = pathlib.Path('/home/vgpnk/Projects/shokunin/tameshi-shokunin')
+S = pathlib.Path('/fast/scratch/hyaku/tameshi-r86/T86R1')
+REV = '55d5a5c6002a048337cc511e1712df87b961d364'
+MEAS = R / '.ufo/evidence/round-86/measure.py'
+def run(tool, tag):
+    work = S / 'works' / tag
+    work.mkdir(parents=True, exist_ok=True)
+    for f in list(work.iterdir()):
+        pass
+    cmd = [sys.executable, '-I', str(MEAS), '--repo', str(R), '--rev', REV,
+           '--work', str(work)]
+    if tool:
+        cmd += ['--tool', str(tool)]
+    p = subprocess.run(cmd, capture_output=True, text=True, cwd=str(S))
+    out = p.stdout
+    final = out.strip().splitlines()[-1] if out.strip() else '(no stdout)'
+    failing = []
+    m = re.search(r'\{.*\}', out, re.S)
+    if m:
+        try:
+            data = json.loads(m.group(0))
+            failing = [r['case'] + '(exit=%s/want=%s,stdout_ok=%s)' % (
+                r['exit'], r['expected_exit'], r['stdout'] == r['expected_stdout'].strip())
+                for r in data['results'] if not r['ok']]
+        except Exception as e:
+            failing = ['json-parse-error:%s' % e]
+    return p.returncode, final, failing
+mode = sys.argv[1]
+if mode == 'mut':
+    tools = [('base(frozen tool)', S / 'mut/base.py')] + [
+        (p.stem, p) for p in sorted((S / 'mut').glob('M*.py'))]
+    for label, t in tools:
+        rc, final, failing = run(t, 'm-' + label.split(' ')[0])
+        print('%-36s rc=%d  %s' % (label, rc, final))
+        for f in failing: print('      FAIL case:', f)
+elif mode == 'seq':
+    counts = []
+    for i in range(int(sys.argv[2])):
+        rc, final, failing = run(R / '.ufo/evidence/round-86/controls/ctl-sequence.py', 'seq-%d' % i)
+        counts.append(final.split('passed=')[1].split()[0] if 'passed=' in final else final)
+    print('sequence control passed= distribution over', len(counts), 'runs:', sorted(counts))
+
+## R14 frozen table scan (inline python run at review; output verbatim)
+parsed rows: 30
+sources-registry                         pin=.ufo/evidence/kaika-round-1/sources-census-v2.sh               exact=True  nonexact_tokens=[]
+six-leg regression ledger                pin=tools/mutate-and-run.sh                                        exact=True  nonexact_tokens=[]
+repeated pristine-control gate           pin=tools/repeat-control.py                                        exact=True  nonexact_tokens=[]
+exposed witness provenance correction    pin=.ufo/evidence/round-13/producer-oracle-repair.json             exact=True  nonexact_tokens=[]
+retained invocation-context gate         pin=.ufo/evidence/round-15/verify.py                               exact=True  nonexact_tokens=[]
+hermetic env-differential probe          pin=tools/env-diff.py                                              exact=True  nonexact_tokens=[]
+callback-authoritative wave accounting   pin=.ufo/evidence/round-22/final/verification.json                 exact=True  nonexact_tokens=[]
+executor-source pin gate                 pin=.ufo/evidence/round-59/measure.py                              exact=True  nonexact_tokens=[]
+host-feasible no-harm precheck           pin=tools/coldread-precheck-portable.py                            exact=True  nonexact_tokens=[]
+monitored-record rekey run-book          pin=.ufo/evidence/round-63/win-host/coldread-rekey-rebind-r63.py   exact=True  nonexact_tokens=[]
+wave-record reconciliation               pin=tools/wave-reconcile.py                                        exact=True  nonexact_tokens=[]
+non-Python instrument freshness row      pin=tools/selfstate-freshness.py                                   exact=True  nonexact_tokens=[]
+prose lines attributed to LAST row (selftest-text pin): ['Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter']

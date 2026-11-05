@@ -1,0 +1,46 @@
+# measured_rev: a01293c75193cc343f36daeaf2f611ec7982286f
+# tool: .ufo/evidence/round-86/measure.py
+# tool_sha256: 20bd8e78be064bf42d6517c6e74fd5034587ab02934243611a6bc5eb8c2b4c16
+# command: S=/fast/scratch/hyaku/tameshi-r86/l1/a3 sh .ufo/waves/round-86/w1/T86L1-attempt3-probes.sh (script sha256 9e90f1fa8d36fa5bb6da03459377425e22837a275e1143db1028afd8bd0c1e95)
+# date: 2026-11-04, attempt 3 (TameshiR86a3)
+# note: P1/P2 - both frozen instruments resolve `git` from PATH and strip only GIT_* (data channel is PATH-inherited).
+#       P3/P4/P6 - a failing git fails closed (no pass line, setup refusal).
+#       P5 - a caller-supplied --manifest outside the repo is accepted and prints the frozen after-state tuple.
+
+REV=a01293c75193cc343f36daeaf2f611ec7982286f
+=== P1: measure.py under a logging PATH shim ===
+P1_EXIT=0
+}
+C1_R86 rev=a01293c75193cc343f36daeaf2f611ec7982286f passed=8/8 C1_R86_PASS=true
+P1 git argv issued (first 6):
+-C /home/vgpnk/Projects/shokunin/tameshi-shokunin rev-parse --verify a01293c75193cc343f36daeaf2f611ec7982286f^{commit}
+-C /home/vgpnk/Projects/shokunin/tameshi-shokunin show a01293c75193cc343f36daeaf2f611ec7982286f:tools/design-blob-audit.py
+-C /fast/scratch/hyaku/tameshi-r86/l1/a3/work/p1/fixture init -q
+-C /fast/scratch/hyaku/tameshi-r86/l1/a3/work/p1/fixture rev-parse --show-toplevel
+-C /fast/scratch/hyaku/tameshi-r86/l1/a3/work/p1/fixture -c user.name=tameshi-fixture -c user.email=tameshi@shokunin.local -c commit.gpgsign=false add -A
+-C /fast/scratch/hyaku/tameshi-r86/l1/a3/work/p1/fixture -c user.name=tameshi-fixture -c user.email=tameshi@shokunin.local -c commit.gpgsign=false commit -q -m fixture-base-1a0e7c90020c
+P1 argv count: 73
+=== P2: capability-census.py under the same logging shim ===
+P2_EXIT=0
+CAP_ROW selftest-text pin disposition=live bound=yes reason=selfstate:selftest-text-pin
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0
+P2 git argv issued (first 4):
+-C /home/vgpnk/Projects/shokunin/tameshi-shokunin cat-file blob a01293c75193cc343f36daeaf2f611ec7982286f:SCORECARD.md
+-C /home/vgpnk/Projects/shokunin/tameshi-shokunin cat-file -e d10a9c66d6181cddcad52cdbffd672beb886ff6c:.ufo/evidence/kaika-round-1/sources-census-v2.sh
+-C /home/vgpnk/Projects/shokunin/tameshi-shokunin cat-file -e d10a9c66d6181cddcad52cdbffd672beb886ff6c:tools/mutate-and-run.sh
+-C /home/vgpnk/Projects/shokunin/tameshi-shokunin cat-file -e d10a9c66d6181cddcad52cdbffd672beb886ff6c:tools/repeat-control.py
+P2 argv count: 13
+=== P3: measure.py with a failing git (must not print a pass) ===
+P3_EXIT=1
+P3_PASS_LINES=0
+                       % (args[0], r.stderr.strip()[:200]))
+RuntimeError: fixture git rev-parse failed: 
+=== P4: capability-census.py with a failing git ===
+P4_EXIT=2
+capability-census: setup refusal document-unreadable:a01293c75193cc343f36daeaf2f611ec7982286f:SCORECARD.md
+=== P5: census manifest accepted from outside the repo (absolute path) ===
+P5_EXIT=0
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0
+=== P6: census against a non-repository path ===
+P6_EXIT=2
+capability-census: setup refusal document-unreadable:a01293c75193cc343f36daeaf2f611ec7982286f:SCORECARD.md

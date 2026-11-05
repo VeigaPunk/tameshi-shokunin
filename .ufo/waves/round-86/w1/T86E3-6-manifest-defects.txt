@@ -1,0 +1,647 @@
+T86E3 receipt — Duplicate entry, invented/missing disposition, extra entry, live relabel
+date: 2026-11-04  seat: T86E3  lane: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+base rev measured: d10a9c66d6181cddcad52cdbffd672beb886ff6c   freeze commit: 55d5a5c6002a048337cc511e1712df87b961d364 (lane HEAD == freeze)
+instrument: tools/capability-census.py sha256=041c0c123232ac05494a10ffc41ca2cc296177de37abba6dd59cbe351fc0d968 (byte-identical to freeze commit)
+lane manifest: tools/capability-census.json sha256=c1d8f0ca0892efc635ea2640e9025e93d047046b0f3c639cdcbaee0c2ef436a7; selfstate: tools/selfstate-freshness.json sha256=b00479387390a2dfcc7dc4dec29225153c6fd74bfbf909c3dadf81ce91d78e5b
+scratch manifests carry GIT_*-stripped env; cwd for every run: lane root
+
+### A5 duplicate capability entry (full manifest + sources-registry repeated)
+command: python3 -I -X utf8 tools/capability-census.py --repo . --rev d10a9c66d6181cddcad52cdbffd672beb886ff6c --manifest /fast/scratch/hyaku/tameshi-r86/T86E3/atk-dup.json
+manifest: /fast/scratch/hyaku/tameshi-r86/T86E3/atk-dup.json sha256=1460122eed0cfd73cd402438ee6342fe727dc1e56cf42e3d208bb24b707621a9
+exit: 1
+--- stdout (verbatim) ---
+CAP_ROW sources-registry disposition=historical bound=yes reason=pin:.ufo/evidence/kaika-round-1/sources-census-v2.sh@d10a9c66d618
+CAP_ROW mutation sweep runner disposition=live bound=yes reason=selfstate:mutation-runner-selftest
+CAP_ROW six-leg regression ledger disposition=historical bound=yes reason=pin:tools/mutate-and-run.sh@d10a9c66d618
+CAP_ROW repeated pristine-control gate disposition=historical bound=yes reason=pin:tools/repeat-control.py@d10a9c66d618
+CAP_ROW six-leg content-disposition probe disposition=live bound=yes reason=selfstate:r76-pin-disposition-selftest
+CAP_ROW exposed witness provenance correction disposition=historical bound=yes reason=pin:.ufo/evidence/round-13/producer-oracle-repair.json@d10a9c66d618
+CAP_ROW effective expectation reconciliation disposition=live bound=yes reason=selfstate:r76-evidence-disposition-selftest
+CAP_ROW retained invocation-context gate disposition=historical bound=yes reason=pin:.ufo/evidence/round-15/verify.py@d10a9c66d618
+CAP_ROW hermetic env-differential probe disposition=historical bound=yes reason=pin:tools/env-diff.py@d10a9c66d618
+CAP_ROW callback-authoritative wave accounting disposition=historical bound=yes reason=pin:.ufo/evidence/round-22/final/verification.json@d10a9c66d618
+CAP_ROW executor-source pin gate disposition=historical bound=yes reason=pin:.ufo/evidence/round-59/measure.py@d10a9c66d618
+CAP_ROW host-feasible no-harm precheck disposition=historical bound=yes reason=pin:tools/coldread-precheck-portable.py@d10a9c66d618
+CAP_ROW monitored-record rekey run-book disposition=historical bound=yes reason=pin:.ufo/evidence/round-63/win-host/coldread-rekey-rebind-r63.py@d10a9c66d618
+CAP_ROW receipt-existence sweep disposition=live bound=yes reason=selfstate:receipt-exists-selftest
+CAP_ROW commit-message receipt binding sweep disposition=live bound=yes reason=selfstate:commit-bind-selftest
+CAP_ROW quoted-line receipt backability disposition=live bound=yes reason=selfstate:quoted-line-selftest
+CAP_ROW counter-arm liveness check disposition=live bound=yes reason=selfstate:arm-liveness-selftest
+CAP_ROW figure-attribution check disposition=live bound=yes reason=selfstate:figure-selftest
+CAP_ROW anchor-drift sweep disposition=live bound=yes reason=selfstate:anchor-drift-selftest
+CAP_ROW printed-count recheck disposition=live bound=yes reason=selfstate:count-recheck-selftest
+CAP_ROW line-pointer recheck disposition=live bound=yes reason=selfstate:pointer-selftest
+CAP_ROW rekey-cost forecast disposition=live bound=yes reason=selfstate:rekey-cost-selftest
+CAP_ROW wave-record reconciliation disposition=historical bound=yes reason=pin:tools/wave-reconcile.py@d10a9c66d618
+CAP_ROW round-range additivity sweep disposition=live bound=yes reason=selfstate:additivity-selftest
+CAP_ROW non-Python instrument freshness row disposition=historical bound=yes reason=pin:tools/selfstate-freshness.py@d10a9c66d618
+CAP_ROW receipt-bytes binding sweep disposition=live bound=yes reason=selfstate:receipt-bind-selftest
+CAP_ROW registry-home figure binding disposition=live bound=yes reason=selfstate:registry-bind-selftest
+CAP_ROW closure-defect bind disposition=live bound=yes reason=selfstate:closure-defect-bind
+CAP_ROW standing-pin audit disposition=live bound=yes reason=selfstate:standing-pin-audit
+CAP_ROW selftest-text pin disposition=live bound=yes reason=selfstate:selftest-text-pin
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=1
+
+--- stderr (verbatim) ---
+(empty)
+bound=30 but mismatches=1 -> exit 1 — cannot certify
+
+### A6 invented disposition "witnessed"
+command: python3 -I -X utf8 tools/capability-census.py --repo . --rev d10a9c66d6181cddcad52cdbffd672beb886ff6c --manifest /fast/scratch/hyaku/tameshi-r86/T86E3/atk-invented.json
+manifest: /fast/scratch/hyaku/tameshi-r86/T86E3/atk-invented.json sha256=533315485151e215cdf12aa7319a80d68ead538eaec2883b383488101883bb37
+exit: 2
+--- stdout (verbatim) ---
+(empty)
+--- stderr (verbatim) ---
+capability-census: setup refusal unknown-disposition:'witnessed':sources-registry
+setup refusal, empty stdout
+
+### A7 missing disposition key
+command: python3 -I -X utf8 tools/capability-census.py --repo . --rev d10a9c66d6181cddcad52cdbffd672beb886ff6c --manifest /fast/scratch/hyaku/tameshi-r86/T86E3/atk-missing-disp.json
+manifest: /fast/scratch/hyaku/tameshi-r86/T86E3/atk-missing-disp.json sha256=458197cb5047ee2a481d7b5678329acc1b79d20dc7901c9197a34b870cec2257
+exit: 2
+--- stdout (verbatim) ---
+(empty)
+--- stderr (verbatim) ---
+capability-census: setup refusal unknown-disposition:None:sources-registry
+setup refusal unknown-disposition:None, empty stdout
+
+### A8 extra entry naming an invented capability
+command: python3 -I -X utf8 tools/capability-census.py --repo . --rev d10a9c66d6181cddcad52cdbffd672beb886ff6c --manifest /fast/scratch/hyaku/tameshi-r86/T86E3/atk-extra.json
+manifest: /fast/scratch/hyaku/tameshi-r86/T86E3/atk-extra.json sha256=a25cf7864a8640491cf55f4434fc47e0462fcd606ea9106f3ce74b20e2fe7950
+exit: 1
+--- stdout (verbatim) ---
+CAP_ROW sources-registry disposition=historical bound=yes reason=pin:.ufo/evidence/kaika-round-1/sources-census-v2.sh@d10a9c66d618
+CAP_ROW mutation sweep runner disposition=live bound=yes reason=selfstate:mutation-runner-selftest
+CAP_ROW six-leg regression ledger disposition=historical bound=yes reason=pin:tools/mutate-and-run.sh@d10a9c66d618
+CAP_ROW repeated pristine-control gate disposition=historical bound=yes reason=pin:tools/repeat-control.py@d10a9c66d618
+CAP_ROW six-leg content-disposition probe disposition=live bound=yes reason=selfstate:r76-pin-disposition-selftest
+CAP_ROW exposed witness provenance correction disposition=historical bound=yes reason=pin:.ufo/evidence/round-13/producer-oracle-repair.json@d10a9c66d618
+CAP_ROW effective expectation reconciliation disposition=live bound=yes reason=selfstate:r76-evidence-disposition-selftest
+CAP_ROW retained invocation-context gate disposition=historical bound=yes reason=pin:.ufo/evidence/round-15/verify.py@d10a9c66d618
+CAP_ROW hermetic env-differential probe disposition=historical bound=yes reason=pin:tools/env-diff.py@d10a9c66d618
+CAP_ROW callback-authoritative wave accounting disposition=historical bound=yes reason=pin:.ufo/evidence/round-22/final/verification.json@d10a9c66d618
+CAP_ROW executor-source pin gate disposition=historical bound=yes reason=pin:.ufo/evidence/round-59/measure.py@d10a9c66d618
+CAP_ROW host-feasible no-harm precheck disposition=historical bound=yes reason=pin:tools/coldread-precheck-portable.py@d10a9c66d618
+CAP_ROW monitored-record rekey run-book disposition=historical bound=yes reason=pin:.ufo/evidence/round-63/win-host/coldread-rekey-rebind-r63.py@d10a9c66d618
+CAP_ROW receipt-existence sweep disposition=live bound=yes reason=selfstate:receipt-exists-selftest
+CAP_ROW commit-message receipt binding sweep disposition=live bound=yes reason=selfstate:commit-bind-selftest
+CAP_ROW quoted-line receipt backability disposition=live bound=yes reason=selfstate:quoted-line-selftest
+CAP_ROW counter-arm liveness check disposition=live bound=yes reason=selfstate:arm-liveness-selftest
+CAP_ROW figure-attribution check disposition=live bound=yes reason=selfstate:figure-selftest
+CAP_ROW anchor-drift sweep disposition=live bound=yes reason=selfstate:anchor-drift-selftest
+CAP_ROW printed-count recheck disposition=live bound=yes reason=selfstate:count-recheck-selftest
+CAP_ROW line-pointer recheck disposition=live bound=yes reason=selfstate:pointer-selftest
+CAP_ROW rekey-cost forecast disposition=live bound=yes reason=selfstate:rekey-cost-selftest
+CAP_ROW wave-record reconciliation disposition=historical bound=yes reason=pin:tools/wave-reconcile.py@d10a9c66d618
+CAP_ROW round-range additivity sweep disposition=live bound=yes reason=selfstate:additivity-selftest
+CAP_ROW non-Python instrument freshness row disposition=historical bound=yes reason=pin:tools/selfstate-freshness.py@d10a9c66d618
+CAP_ROW receipt-bytes binding sweep disposition=live bound=yes reason=selfstate:receipt-bind-selftest
+CAP_ROW registry-home figure binding disposition=live bound=yes reason=selfstate:registry-bind-selftest
+CAP_ROW closure-defect bind disposition=live bound=yes reason=selfstate:closure-defect-bind
+CAP_ROW standing-pin audit disposition=live bound=yes reason=selfstate:standing-pin-audit
+CAP_ROW selftest-text pin disposition=live bound=yes reason=selfstate:selftest-text-pin
+CAP_ROW census defeat demonstration disposition=extra bound=no reason=not-in-table
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=1
+
+--- stderr (verbatim) ---
+(empty)
+CAP_ROW census defeat demonstration disposition=extra bound=no reason=not-in-table; mismatches=1 exit 1
+
+### A9 live relabel of the 12 historical rows with foreign selfstate id
+command: python3 -I -X utf8 tools/capability-census.py --repo . --rev d10a9c66d6181cddcad52cdbffd672beb886ff6c --manifest /fast/scratch/hyaku/tameshi-r86/T86E3/atk-live-relabel.json
+manifest: /fast/scratch/hyaku/tameshi-r86/T86E3/atk-live-relabel.json sha256=2c575f15e2cfb0eba565b589a2612085f51480148b1c458dd20a0c376b622f8b
+exit: 1
+--- stdout (verbatim) ---
+CAP_ROW sources-registry disposition=live bound=no reason=no-live-row
+CAP_ROW mutation sweep runner disposition=none bound=no reason=no-disposition
+CAP_ROW six-leg regression ledger disposition=live bound=no reason=no-live-row
+CAP_ROW repeated pristine-control gate disposition=live bound=no reason=no-live-row
+CAP_ROW six-leg content-disposition probe disposition=none bound=no reason=no-disposition
+CAP_ROW exposed witness provenance correction disposition=live bound=no reason=no-live-row
+CAP_ROW effective expectation reconciliation disposition=none bound=no reason=no-disposition
+CAP_ROW retained invocation-context gate disposition=live bound=no reason=no-live-row
+CAP_ROW hermetic env-differential probe disposition=live bound=no reason=no-live-row
+CAP_ROW callback-authoritative wave accounting disposition=live bound=no reason=no-live-row
+CAP_ROW executor-source pin gate disposition=live bound=no reason=no-live-row
+CAP_ROW host-feasible no-harm precheck disposition=live bound=no reason=no-live-row
+CAP_ROW monitored-record rekey run-book disposition=live bound=no reason=no-live-row
+CAP_ROW receipt-existence sweep disposition=none bound=no reason=no-disposition
+CAP_ROW commit-message receipt binding sweep disposition=none bound=no reason=no-disposition
+CAP_ROW quoted-line receipt backability disposition=none bound=no reason=no-disposition
+CAP_ROW counter-arm liveness check disposition=none bound=no reason=no-disposition
+CAP_ROW figure-attribution check disposition=none bound=no reason=no-disposition
+CAP_ROW anchor-drift sweep disposition=none bound=no reason=no-disposition
+CAP_ROW printed-count recheck disposition=none bound=no reason=no-disposition
+CAP_ROW line-pointer recheck disposition=none bound=no reason=no-disposition
+CAP_ROW rekey-cost forecast disposition=none bound=no reason=no-disposition
+CAP_ROW wave-record reconciliation disposition=live bound=no reason=no-live-row
+CAP_ROW round-range additivity sweep disposition=none bound=no reason=no-disposition
+CAP_ROW non-Python instrument freshness row disposition=live bound=no reason=no-live-row
+CAP_ROW receipt-bytes binding sweep disposition=none bound=no reason=no-disposition
+CAP_ROW registry-home figure binding disposition=none bound=no reason=no-disposition
+CAP_ROW closure-defect bind disposition=none bound=no reason=no-disposition
+CAP_ROW standing-pin audit disposition=none bound=no reason=no-disposition
+CAP_ROW selftest-text pin disposition=none bound=no reason=no-disposition
+CAP_CENSUS: rows=30 bound=0 unbound=30 mismatches=0
+
+--- stderr (verbatim) ---
+(empty)
+all 12 refused reason=no-live-row; bound=0 exit 1
+
+### seat-built manifests used above (verbatim JSON; scratch deleted after receipt capture)
+#### atk-dup.json
+{
+ "schema": "tameshi-capability-census-v1",
+ "note": "T86E3 duplicate-name attack",
+ "rows": [
+  {
+   "capability": "sources-registry",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/kaika-round-1/sources-census-v2.sh",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "mutation sweep runner",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "six-leg regression ledger",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/mutate-and-run.sh",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "repeated pristine-control gate",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/repeat-control.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "six-leg content-disposition probe",
+   "disposition": "live",
+   "selfstate_row": "r76-pin-disposition-selftest"
+  },
+  {
+   "capability": "exposed witness provenance correction",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/round-13/producer-oracle-repair.json",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "effective expectation reconciliation",
+   "disposition": "live",
+   "selfstate_row": "r76-evidence-disposition-selftest"
+  },
+  {
+   "capability": "retained invocation-context gate",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/round-15/verify.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "hermetic env-differential probe",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/env-diff.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "callback-authoritative wave accounting",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/round-22/final/verification.json",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "executor-source pin gate",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/round-59/measure.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "host-feasible no-harm precheck",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/coldread-precheck-portable.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "monitored-record rekey run-book",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/round-63/win-host/coldread-rekey-rebind-r63.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "receipt-existence sweep",
+   "disposition": "live",
+   "selfstate_row": "receipt-exists-selftest"
+  },
+  {
+   "capability": "commit-message receipt binding sweep",
+   "disposition": "live",
+   "selfstate_row": "commit-bind-selftest"
+  },
+  {
+   "capability": "quoted-line receipt backability",
+   "disposition": "live",
+   "selfstate_row": "quoted-line-selftest"
+  },
+  {
+   "capability": "counter-arm liveness check",
+   "disposition": "live",
+   "selfstate_row": "arm-liveness-selftest"
+  },
+  {
+   "capability": "figure-attribution check",
+   "disposition": "live",
+   "selfstate_row": "figure-selftest"
+  },
+  {
+   "capability": "anchor-drift sweep",
+   "disposition": "live",
+   "selfstate_row": "anchor-drift-selftest"
+  },
+  {
+   "capability": "printed-count recheck",
+   "disposition": "live",
+   "selfstate_row": "count-recheck-selftest"
+  },
+  {
+   "capability": "line-pointer recheck",
+   "disposition": "live",
+   "selfstate_row": "pointer-selftest"
+  },
+  {
+   "capability": "rekey-cost forecast",
+   "disposition": "live",
+   "selfstate_row": "rekey-cost-selftest"
+  },
+  {
+   "capability": "wave-record reconciliation",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/wave-reconcile.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "round-range additivity sweep",
+   "disposition": "live",
+   "selfstate_row": "additivity-selftest"
+  },
+  {
+   "capability": "non-Python instrument freshness row",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/selfstate-freshness.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "receipt-bytes binding sweep",
+   "disposition": "live",
+   "selfstate_row": "receipt-bind-selftest"
+  },
+  {
+   "capability": "registry-home figure binding",
+   "disposition": "live",
+   "selfstate_row": "registry-bind-selftest"
+  },
+  {
+   "capability": "closure-defect bind",
+   "disposition": "live",
+   "selfstate_row": "closure-defect-bind"
+  },
+  {
+   "capability": "standing-pin audit",
+   "disposition": "live",
+   "selfstate_row": "standing-pin-audit"
+  },
+  {
+   "capability": "selftest-text pin",
+   "disposition": "live",
+   "selfstate_row": "selftest-text-pin"
+  },
+  {
+   "capability": "sources-registry",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/kaika-round-1/sources-census-v2.sh",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  }
+ ]
+}
+#### atk-invented.json
+{
+ "schema": "tameshi-capability-census-v1",
+ "note": "T86E3 invented disposition",
+ "rows": [
+  {
+   "capability": "sources-registry",
+   "disposition": "witnessed",
+   "receipt": {
+    "path": ".ufo/evidence/kaika-round-1/sources-census-v2.sh",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  }
+ ]
+}
+#### atk-missing-disp.json
+{
+ "schema": "tameshi-capability-census-v1",
+ "note": "T86E3 missing disposition",
+ "rows": [
+  {
+   "capability": "sources-registry",
+   "receipt": {
+    "path": ".ufo/evidence/kaika-round-1/sources-census-v2.sh",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  }
+ ]
+}
+#### atk-extra.json
+{
+ "schema": "tameshi-capability-census-v1",
+ "note": "T86E3 invented capability entry",
+ "rows": [
+  {
+   "capability": "sources-registry",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/kaika-round-1/sources-census-v2.sh",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "mutation sweep runner",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "six-leg regression ledger",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/mutate-and-run.sh",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "repeated pristine-control gate",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/repeat-control.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "six-leg content-disposition probe",
+   "disposition": "live",
+   "selfstate_row": "r76-pin-disposition-selftest"
+  },
+  {
+   "capability": "exposed witness provenance correction",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/round-13/producer-oracle-repair.json",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "effective expectation reconciliation",
+   "disposition": "live",
+   "selfstate_row": "r76-evidence-disposition-selftest"
+  },
+  {
+   "capability": "retained invocation-context gate",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/round-15/verify.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "hermetic env-differential probe",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/env-diff.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "callback-authoritative wave accounting",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/round-22/final/verification.json",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "executor-source pin gate",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/round-59/measure.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "host-feasible no-harm precheck",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/coldread-precheck-portable.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "monitored-record rekey run-book",
+   "disposition": "historical",
+   "receipt": {
+    "path": ".ufo/evidence/round-63/win-host/coldread-rekey-rebind-r63.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "receipt-existence sweep",
+   "disposition": "live",
+   "selfstate_row": "receipt-exists-selftest"
+  },
+  {
+   "capability": "commit-message receipt binding sweep",
+   "disposition": "live",
+   "selfstate_row": "commit-bind-selftest"
+  },
+  {
+   "capability": "quoted-line receipt backability",
+   "disposition": "live",
+   "selfstate_row": "quoted-line-selftest"
+  },
+  {
+   "capability": "counter-arm liveness check",
+   "disposition": "live",
+   "selfstate_row": "arm-liveness-selftest"
+  },
+  {
+   "capability": "figure-attribution check",
+   "disposition": "live",
+   "selfstate_row": "figure-selftest"
+  },
+  {
+   "capability": "anchor-drift sweep",
+   "disposition": "live",
+   "selfstate_row": "anchor-drift-selftest"
+  },
+  {
+   "capability": "printed-count recheck",
+   "disposition": "live",
+   "selfstate_row": "count-recheck-selftest"
+  },
+  {
+   "capability": "line-pointer recheck",
+   "disposition": "live",
+   "selfstate_row": "pointer-selftest"
+  },
+  {
+   "capability": "rekey-cost forecast",
+   "disposition": "live",
+   "selfstate_row": "rekey-cost-selftest"
+  },
+  {
+   "capability": "wave-record reconciliation",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/wave-reconcile.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "round-range additivity sweep",
+   "disposition": "live",
+   "selfstate_row": "additivity-selftest"
+  },
+  {
+   "capability": "non-Python instrument freshness row",
+   "disposition": "historical",
+   "receipt": {
+    "path": "tools/selfstate-freshness.py",
+    "rev": "d10a9c66d6181cddcad52cdbffd672beb886ff6c"
+   }
+  },
+  {
+   "capability": "receipt-bytes binding sweep",
+   "disposition": "live",
+   "selfstate_row": "receipt-bind-selftest"
+  },
+  {
+   "capability": "registry-home figure binding",
+   "disposition": "live",
+   "selfstate_row": "registry-bind-selftest"
+  },
+  {
+   "capability": "closure-defect bind",
+   "disposition": "live",
+   "selfstate_row": "closure-defect-bind"
+  },
+  {
+   "capability": "standing-pin audit",
+   "disposition": "live",
+   "selfstate_row": "standing-pin-audit"
+  },
+  {
+   "capability": "selftest-text pin",
+   "disposition": "live",
+   "selfstate_row": "selftest-text-pin"
+  },
+  {
+   "capability": "census defeat demonstration",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  }
+ ]
+}
+#### atk-live-relabel.json
+{
+ "schema": "tameshi-capability-census-v1",
+ "note": "T86E3 live relabel of historical rows",
+ "rows": [
+  {
+   "capability": "sources-registry",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "six-leg regression ledger",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "repeated pristine-control gate",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "exposed witness provenance correction",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "retained invocation-context gate",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "hermetic env-differential probe",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "callback-authoritative wave accounting",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "executor-source pin gate",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "host-feasible no-harm precheck",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "monitored-record rekey run-book",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "wave-record reconciliation",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  },
+  {
+   "capability": "non-Python instrument freshness row",
+   "disposition": "live",
+   "selfstate_row": "mutation-runner-selftest"
+  }
+ ]
+}

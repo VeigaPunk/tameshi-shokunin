@@ -1,0 +1,37 @@
+### F0 baseline: real doc + real manifest + real selfstate at R1
+$ python3 -I -X utf8 tools/capability-census.py --repo . --rev cc544bb2966af827258c3db80e44e1099ca510ec
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0
+exit=0
+
+### F1 historical pins resolve to DIRECTORIES the row does not describe
+$ python3 -I -X utf8 tools/capability-census.py --repo . --rev cc544bb2966af827258c3db80e44e1099ca510ec   # uncommitted manifest
+CAP_ROW sources-registry disposition=historical bound=yes reason=pin:.ufo/evidence/kaika-round-1@3f018375fa3c
+CAP_ROW six-leg regression ledger disposition=historical bound=yes reason=pin:tools/@3f018375fa3c
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0
+exit=0
+
+### F2 a committed live row whose claimed figure is FALSE still binds
+committed false figure count at R2: 1
+$ python3 -I -X utf8 tools/capability-census.py --repo . --rev eaea33ccf49a0028b2e89328d7fa6aaf227a07fd
+CAP_ROW registry-home figure binding disposition=live bound=yes reason=selfstate:registry-bind-selftest
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0
+exit=0
+
+### F3 an UNCOMMITTED selfstate row binds a live row at a rev that lacks it
+committed selfstate at R1 carries forged-live: 0
+$ python3 -I -X utf8 tools/capability-census.py --repo . --rev cc544bb2966af827258c3db80e44e1099ca510ec
+CAP_ROW standing-pin audit disposition=live bound=yes reason=selfstate:forged-live
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0
+exit=0
+
+### F4 a live row bound to a selfstate row DECLARED expect=stale still binds
+$ python3 -I -X utf8 tools/capability-census.py --repo . --rev cc544bb2966af827258c3db80e44e1099ca510ec
+CAP_ROW standing-pin audit disposition=live bound=yes reason=selfstate:declared-stale-live
+CAP_CENSUS: rows=30 bound=30 unbound=0 mismatches=0
+exit=0
+
+### F5 negative control: de-citing a historical row IS refused
+$ python3 -I -X utf8 tools/capability-census.py --repo . --rev 392a408bec0534b4c8cc1bc3a10a39c81d9da66f
+CAP_ROW six-leg regression ledger disposition=historical bound=no reason=pin-not-cited
+CAP_CENSUS: rows=30 bound=29 unbound=1 mismatches=0
+exit=1

@@ -1,0 +1,28 @@
+# T86S1 pointer-resolution receipts — S305 page pointers vs snapshot bytes
+# snapshot: .ufo/evidence/round-86/sources/s305-ls-tree.html
+# sha256: ff06fbc8b15b0fee505a259e4dc54096c9fba0460f4f02b449d55ecce7818267
+# live refetch sha256 (byte-identical): ff06fbc8b15b0fee505a259e4dc54096c9fba0460f4f02b449d55ecce7818267
+
+$ python3 T86S1-pointer-check.py --expect-mode 1807 --expect-type 1811   # RED: as frozen in plan+contract at 55d5a5c6
+POINTER mode: claimed_line=1807 rendered='' expected='The mode of the object.' resolves=NO actual_physical_line=1808
+POINTER type: claimed_line=1811 rendered='' expected='The type of the object (commit, blob or tree).' resolves=NO actual_physical_line=1812
+POINTER_SUMMARY claimed_mode=1807 claimed_type=1811 actual_mode=1808 actual_type=1812 resolved=0/2
+LITERAL mode: raw_substring_present=True
+LITERAL type: raw_substring_present=False
+exit=1
+
+$ python3 T86S1-pointer-check.py --expect-mode 1808 --expect-type 1812   # GREEN: corrected pointers
+POINTER mode: claimed_line=1808 rendered='The mode of the object.' expected='The mode of the object.' resolves=yes actual_physical_line=1808
+POINTER type: claimed_line=1812 rendered='The type of the object (commit, blob or tree).' expected='The type of the object (commit, blob or tree).' resolves=yes actual_physical_line=1812
+POINTER_SUMMARY claimed_mode=1808 claimed_type=1812 actual_mode=1808 actual_type=1812 resolved=2/2
+LITERAL mode: raw_substring_present=True
+LITERAL type: raw_substring_present=False
+exit=0
+
+# raw grep -n for the two quotes in the snapshot:
+1808:<p>The mode of the object.</p>
+1812:<p>The type of the object (<span class='synopsis'><code>commit</code></span>, <span class='synopsis'><code>blob</code></span> or <span class='synopsis'><code>tree</code></span>).</p>
+
+# raw grep -n in the LIVE refetch:
+1808:<p>The mode of the object.</p>
+1812:<p>The type of the object (<span class='synopsis'><code>commit</code></span>, <span class='synopsis'><code>blob</code></span> or <span class='synopsis'><code>tree</code></span>).</p>
