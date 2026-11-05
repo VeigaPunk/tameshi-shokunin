@@ -5485,3 +5485,24 @@ PATH-inherited (attempt-3 P1/P2), and the census accepts a caller-supplied
 (repo, rev). The r85 `GIT_*` inheritance limit
 and the malformed-kind/source-id, revision-authority, conversion and receipt
 race/parent-alias debts stay open.
+
+## Round 87 — two frozen claims, both killed (honest stop)
+
+Base `4a079f6a` (round-86 tip). Pre-freeze instruments `a3b4f75d` and `38c83698`
+(counter, census v2, controls, overreach manifest, receipts). Freeze `1d5102a1`
+(`plans/round-87.plan.md`). Records `ccd6ac26`. Wave `r87-w1`: 10 seats, all settled,
+no dead seat. Lesson: `corpus/lessons/round-87.md`.
+
+| Claim | Axis | Before → after | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|---|
+| R87-C1 successor certification counter | operability (capability acquisition) | r86 counter: `att3b` 8/8, `cn1` 8/8 → r87 counter: real `passed=8/8`; controls 0/8, 1/8, 0/8, 0/8, 0/8, 0/8, 0/8 (`pre-freeze/c1/`) | **killed.** Counterfeits `cf-c` and `cf-d` (T87E1) and `cf-oid` (T87C1) reach `passed=8/8` | `python3 -I .ufo/evidence/round-87/measure.py --repo . --rev REV --work EMPTY` | pre-freeze `a3b4f75d`; freeze `1d5102a1`; landing sweep `ccd6ac26` (`landing/c1-real-at-landing.txt`) |
+| R87-C2 overreach-refusing census | calibration (lowest scored axis) | census v1 on the r86 overreach bytes: `bound=30` → v2: `bound=0` (predicate b met); real population `30/30` → `30/30` (predicate a met) | **killed.** A pin to an uncited file (`tools/selfstate-freshness.json`) binds through prose absorbed into the last table row (`selftest-text pin`); causal control flips it to `pin-not-cited` | `python3 -I -X utf8 tools/capability-census-v2.py --repo . --rev REV --manifest <manifest> --selfstate tools/selfstate-freshness.json` | pre-freeze `38c83698`; freeze `1d5102a1`; kill evidence `.ufo/evidence/round-87/kill-c2/` |
+
+Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0). No capability row
+enters. No retirement or saturation change.
+
+**Planned (round 88, each a new freeze):** the successor counter with a
+premise-faithful fixture and the M6 controls; census v3 with the row end at the
+first non-table line, the M7 and M9 arms, and a docstring that matches the code
+(M8); the calibration counter over docstring-versus-code and live-row figures. No
+claim is pre-approved here.

@@ -55,6 +55,26 @@ so they do not count as the outside check.
 | M3 | schema-tag drift in a copied population: the overreach manifest copied from round 86 kept the v1 schema tag, so census v2 refused it as a setup error and no before→after pair existed on identical rows | `.ufo/evidence/round-87/pre-freeze/c2/v2-overreach-schema-refusal.txt` (`setup refusal manifest-schema:'tameshi-capability-census-v1'`, exit 2) → commit `38c83698` | none | a derived copy with only the schema field changed; the 30 rows are identical (`r86-cited-tree-manifest-v2schema.json`); both files committed |
 | M4 | inherited from round-86 closure defect 3: the S305 round-86 note carried a fetch instant (`00:41:59 GMT`) that contradicts its own header (`00:45:18 GMT`) | `.ufo/evidence/round-86/sources/s305.headers`; `corpus/SOURCES.md` round-86 note | none | appended correction line in `corpus/SOURCES.md` (append-only); the row and sha256 stand |
 | M5 | inherited from round-86 M3: a certification counter's arm classes were disclosed by path labels, and its fixture worktree coincided with the candidate tree | `.ufo/evidence/round-86/attacks/c1-label-worktree-oracle.out` (8/8 for a counterfeit) | QUALITY criterion 111 (cheat family) — did not model a label-plus-worktree oracle | this round's counter uses opaque per-run labels and forces the worktree to the receipt revision; the counterfeit control `ctl-att3b-label-worktree` scores 0/8 and `ctl-cn1-oracle-worktree` 1/8 at `a3b4f75d` (`.ufo/evidence/round-87/pre-freeze/c1/`) |
+| M6 | pre-freeze control set omitted two counterfeit classes the wave then found: a population read from the fixture worktree (`cf-c`, 8/8) and a committed-diff oracle (`cf-d`, 8/8). The fixture also commits the declared bytes at design_base, contrary to the receipt marker `uncommitted at design_base`, so no control could test the real premise | `.ufo/waves/round-87/w1/T87E1.md` (kill candidates `cf-c`, `cf-d`; extra check: `cf-a` `different` against `cf-d` `carried` on a premise-faithful fixture) | none: criterion 132 was drafted after the freeze; criterion 111 does not model either class | successor freeze: premise-faithful fixture (declared bytes absent at design_base), worktree-population and diff-oracle controls committed before freezing. Shown able to fail: the premise-faithful extra check separates `cf-a` from `cf-d` |
+| M7 | a reviewer finding graded `note` was the kill. `parse_rows` absorbs post-table prose into the last row's citation text, so a pin named only in that prose binds | `.ufo/evidence/round-87/kill-c2/probe-prose-absorbed.txt` (`selftest-text pin … bound=yes reason=pin:tools/selfstate-freshness.json@d10a9c66d618`, exit 0, 30/30 bound on the real rows); `control-prose-path-removed.txt` (same manifest, path removed from the prose: `pin-not-cited`, 29/30); `.ufo/waves/round-87/w1/T87R1.md` finding C4; `T87E3.md` | none: the reviewer saw the absorption and no selftest or population arm exercised it | successor parser ends a row at the table's end (first non-table line) and an arm binds a prose-cited uncited pin as refused. Shown able to fail: the probe/control pair flips on exactly the prose path |
+| M8 | the frozen census docstring describes checks the code does not make: a `git cat-file -t` pin check (code: ls-tree mode and type), exact-token citation only (code: directory-token and whole-word forms), and `shutil.which("git")` (code: trusted directories `/usr/bin:/bin`) | `tools/capability-census-v2.py` lines 14–29 at 1d5102a1 against `pin_state`, `is_cited` and `resolve_git`; `.ufo/waves/round-87/w1/T87CN1.md` overlap line; `T87R1.md` finding C1 | none: no criterion ties a self-description to the code it describes | not amended (frozen bytes). Successor docstring matches the code, and a docstring-versus-code row is counted in the successor |
+| M9 | the census selftest is weak: 7 of 20 single-edit mutants survive its 15 arms (C03, C05, C12, C17, C18, C19, C20). C12 is caught only by the real population (20/30 bound) | `.ufo/waves/round-87/w1/T87M1.md` census table | none | successor selftest gains an arm for each survivor, including the M7 prose arm |
+
+## Verdicts — both frozen claims killed (honest stop)
+
+| claim | axis | verdict | evidence |
+|---|---|---|---|
+| R87-C1 | operability (capability acquisition) | **killed.** Three non-correct counterfeits reach `passed=8/8`: `cf-c` (population from the fixture worktree, `.ufo/waves/round-87/w1/T87E1.md`), `cf-d` (committed-diff oracle, same file), and `cf-oid` (object-id equality; wrong `carried` on a well-formed wrong sha, `T87C1.md` A2). Frozen counter and controls untouched. A correct git-backed counterfeit (`cf-a`) also reaches 8/8 and is not a kill | `T87E1.md`, `T87C1.md`, `.ufo/evidence/round-87/measure.py` (frozen) |
+| R87-C2 | calibration (lowest scored axis) | **killed.** The frozen overreach population is refused (`bound=0`, predicate (b) met), and the real population stays bound (`30/30`, predicate (a) met). The kill rule still fires: a pin to a file no row cites, `tools/selfstate-freshness.json`, is bound through prose absorbed into the last table row (`selftest-text pin`). A causal control removes only that prose path and flips the row to `pin-not-cited` | `.ufo/evidence/round-87/kill-c2/`, `.ufo/waves/round-87/w1/T87E3.md` |
+
+Admission: none. No capability row enters `SCORECARD.md` `## Capabilities` (C1 is not verified). Scores unchanged: depth 10, calibration 8, freshness 9.
+
+## Routed to round 88 (successors; each needs its own freeze)
+
+1. R87-C1 successor: premise-faithful fixture (declared bytes absent at design_base); committed controls for `cf-c`, `cf-d` and `cf-oid`; a case with a 64-hex sha that differs from the blob (expect `different`); a per-blob worktree-difference assertion (R1 M2). Kill rule unchanged.
+2. Census v3: a row ends at the first non-table line (M7); arms for prose-absorbed pins and for mutants C03, C05, C17, C18, C19, C20 (M9); docstring equals code (M8); exit 2 for non-dict manifest or self-state (R1 C7); the `live` branch's id check and the `None`-id hole (R1 C2) closed; the `empty-table-cell` token reachable (R1 C6).
+3. Calibration counter: count docstring-versus-code mismatches as the lane's self-description (M8), and count live rows whose figures do not match at REV (T87C1 C2e: an overreach manifest with `live` relabels binds 18/30).
+
 
 ## Source curation delta
 
@@ -63,3 +83,11 @@ so they do not count as the outside check.
 - Round-86 note correction (append-only, `corpus/SOURCES.md`): fetch instant corrected to the header's `Thu, 05 Nov 2026 00:45:18 GMT`.
 - Registry rows `171` → `171`. Tier histogram unchanged. Next unused id `S312`.
 - Census: before `sources-census.sh validate --root … tameshi` exit 0 (`.ufo/evidence/round-87/census-before.txt`, warnings W01/W04 retained); mid-round exit 1 with E11 only while this lesson did not yet exist (the `used-by` paths must resolve); final exit recorded in the report.
+
+## Learning trends
+
+| Trend | Verdict | Evidence |
+|---|---|---|
+| expansion | unchanged | No `knowledge/` entry, no capability row, no frontier move; SOURCES rows 171 → 171 (`sources-census.sh validate` exit 0 before and after). |
+| quality | unchanged | No admitted entry changed. Both successor instruments were killed by their own rules, and the rules now carry criteria 132–133. |
+| discernment | unchanged | The gate froze two claims whose kill classes the wave then found (M6, M7), the same pattern as round 86 (kill by wave, not by the freeze gate). A reviewer finding was graded `note` and was the kill (M7). No claim was admitted wrongly, so the trend is unchanged and not improved. The operator may rule `harmed` on the M7 grading miss. |

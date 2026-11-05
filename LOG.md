@@ -4854,3 +4854,35 @@ regenerated it from its own run by
 from `sha256sum` (fixture sha `7c349fce…`) and records `measured_bytes_rev:
 7c146da8…` — the records commit that carries the fixture — so the sweep reads
 `state=corrected` and `unbound=0` (criterion-128 two-commit pattern; mistake M8).
+
+## Round 87 (2026-11-05)
+
+Two claims, both killed by their own kill rules (honest stop); no admission.
+Freeze `1d5102a1`; pre-freeze instruments `a3b4f75d` and `38c83698`; records
+`ccd6ac26`. One v1 wave `r87-w1` of 10 seats (executor 3, scout 1, connector 1,
+scribe 1, reviewer 1, critic 1, mutation-tester 1, sentinel 1), all settled, no dead
+seat. Attack roles (reviewer, critic, mutation-tester) 3 of 10 = 30 %; sentinel
+counted as robustness.
+
+- **R87-C1 (operability) killed.** The successor counter closed the r86 label and
+  worktree classes: the real instrument scores 8/8, and the seven pre-freeze
+  controls score 0–1/8. The wave then found `cf-c` (population from the worktree),
+  `cf-d` (committed-diff oracle) and `cf-oid` (object-id equality), each at 8/8. The
+  fixture also commits declared bytes at design_base, which the receipt premise
+  forbids (`corpus/lessons/round-87.md` M6). Evidence: `.ufo/waves/round-87/w1/T87E1.md`,
+  `T87C1.md`.
+- **R87-C2 (calibration) killed.** Census v2 refuses the r86 overreach population
+  (0/30 bound) and binds the real population (30/30). An uncited pin to
+  `tools/selfstate-freshness.json` binds through the post-table prose, which
+  `parse_rows` appends to the last row (M7). Probe `bound=yes` on exit 0; the control
+  with that prose path removed is `pin-not-cited`. Evidence:
+  `.ufo/evidence/round-87/kill-c2/`, `.ufo/waves/round-87/w1/T87E3.md`.
+- **Frontier.** S289 and S299 re-opened 2026-11-05 for R87-C1; `used-by` old → new in
+  `corpus/SOURCES.md` and the lesson. Rows 171 → 171. The S305 round-86 fetch instant
+  is corrected in an appended note. `corpus/QUALITY.md` gains criteria 132–133.
+- **Mistakes** M1–M9 are in `corpus/lessons/round-87.md`, each with a pointer and a
+  captured-by cell. M1 and M2 have red-before selftests under
+  `.ufo/evidence/round-87/mistakes/`.
+- Standing sweeps at `ccd6ac26`: selfstate `24 match / 2 declared-stale`; census v1
+  and v2 real `30/30`; census v2 selftest `15/15`; receipt bind
+  `unbound=0`; registry figures match; coldread `lost=0`.
