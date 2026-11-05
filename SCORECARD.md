@@ -5477,6 +5477,11 @@ forced off the candidate tree — it counts only when both `att3b`-class and
 census that refuses a pin resolving to a tree and refuses a bare ancestor
 directory or `path:line` token as the receipt path — it counts only when the
 cited-tree relabel scores `bound<30`; (3) the C1 capability row, entered with a
-population-stable calibration predicate (M6). The r85 `GIT_*` inheritance limit
+population-stable calibration predicate (M6). (4) Bind each instrument's data
+channel: both resolve `git` from PATH and strip only `GIT_*`, so the channel is
+PATH-inherited (attempt-3 P1/P2), and the census accepts a caller-supplied
+`--manifest` from outside the repo and prints the frozen after-state tuple
+(P5) — the successor must pin the git it executes and bind its manifest to
+(repo, rev). The r85 `GIT_*` inheritance limit
 and the malformed-kind/source-id, revision-authority, conversion and receipt
 race/parent-alias debts stay open.

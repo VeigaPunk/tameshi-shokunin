@@ -4808,3 +4808,49 @@ Sources: rows 171→171, no new row. S305 re-opened 2026-11-04 (HTTP/2 200,
 refused as a within-scope duplicate. Census before and after exit 0 with the 19
 standing warnings retained. Assimilation: none — `merge/tameshi/MERGE-REPORT.md`
 and `considerthese/2026-10-28.md` were read and serve neither frozen claim.
+
+Attempt 3 ran as TWO concurrent L1 sessions (the driver's `TameshiR86` and this
+`TameshiR86a3`): the first landed the records commit `7c146da8` and the report
+at 22:16-22:17; this one inherited that tip, re-verified the frozen bytes and
+re-ran both verdicts independently at
+`a01293c75193cc343f36daeaf2f611ec7982286f`
+(`.ufo/evidence/round-86/landing/attempt3-kills.txt`, every `*_EXIT` captured
+without a pipeline): real instrument `passed=8/8 C1_R86_PASS=true` exit 0, the
+`att3b` zero-git-read cheat `8/8` exit 0, the worktree oracle `8/8` exit 0, the
+full census `rows=30 bound=30 unbound=0 mismatches=0` exit 0, and the
+cited-tree relabel `30/30` exit 0. Both kill rules fire on attempt 3's own
+runs, so the honest stop stands unchanged.
+
+Wave settlement: the dispatcher never wrote a settlement file, and the
+concurrent attempt-3 session that landed `7c146da8` wrote
+`.ufo/waves/round-86/r86-w1-results.json` as a reconstruction — 10 seats, every
+`status` null and every `final` empty. Seat state therefore comes from
+`w1/swarm-registry.json`, the 72 delivered files and `history://`: 10 seats
+dispatched (executor 3; scribe, scout, reviewer, critic, mutation-tester,
+connector, sentinel 1 each — attack reviewer+critic+mutation-tester = 3/10 =
+30 %), 8 delivered reports, 2 dead seats: T86M1 (mutation-tester) ended with an
+empty scratch and no report while still reading the frozen artifacts, T86SN1
+(sentinel) ran 30+ probes and wrote no report. Both seats' scratch was recovered
+byte-exact into `.ufo/waves/round-86/w1/dead-seat-T86SN1/` (56 KB) and
+`dead-seat-T86M1.note.txt`, then removed from `/fast/scratch`. A dead seat is
+never replaced.
+
+Six L1 probes on the two frozen instruments
+(`.ufo/evidence/round-86/landing/attempt3-probes.txt`): both strip `GIT_*` but
+resolve `git` from PATH (P1: 73 argv, P2: 13 argv through a logging shim), so
+their data channel is PATH-inherited — a limit, not a new kill, because a PATH
+shim also serves the counter's own expectations and the class collapses into
+the already-killed root-label oracle; a failing `git` fails closed (P3 exit 1
+with `P3_PASS_LINES=0`, P4/P6 exit 2 setup refusal); and a caller-supplied
+`--manifest` outside the repo is accepted (P5 `30/30` exit 0), so the census
+does not bind its manifest to the repo or the revision — routed to round 87.
+
+Attempt 2's `.ufo/evidence/round-86/pointer-recheck.out` was defective as left
+(and committed that way in `7c146da8`): `# tool_sha256` was the empty-file hash
+`e3b0c442…` and `# tool` named the wave-dir fixture no revision then carried, so
+the standing sweep read it `unbound` (`receipts=70 … unbound=1`). This session
+regenerated it from its own run by
+`.ufo/waves/round-86/w1/T86L1-pointer-receipt-regen.sh`, which prints the header
+from `sha256sum` (fixture sha `7c349fce…`) and records `measured_bytes_rev:
+7c146da8…` — the records commit that carries the fixture — so the sweep reads
+`state=corrected` and `unbound=0` (criterion-128 two-commit pattern; mistake M8).
