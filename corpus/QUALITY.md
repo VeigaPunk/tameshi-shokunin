@@ -2386,3 +2386,20 @@ on the landed bytes (`c2-landed-battery.txt`).
     The passing nine-case predicate does not repair its wrong-axis claim.
     Lesson: `lessons/round-84.md` Mistakes M2; critic T84C1's committed
     counter/data-flow audit is the demonstrated failing case.
+
+## Criteria appended — round 87
+
+132. A certification counter's fixture is built so that no class can be read from the
+    fixture's names or its worktree: fixture roots and receipt names carry per-run tokens
+    with no class substring, and the fixture worktree is checked out at a revision that
+    differs from the candidate tree before any case runs. A counterfeit that reaches the
+    complete expected output through a path label or a worktree read is a kill, whatever
+    its other cases score. (`lessons/round-86.md` `## Mistakes` M3; `lessons/round-87.md`
+    `## Mistakes` M5.)
+133. A census pin is a claim about one regular blob entry named by its own row. The check
+    reads the object's mode and type from an exact tree listing at the pinned revision,
+    binds only a 100644 or 100755 blob, names a symlink (120000), a tree prefix and a
+    gitlink as refusals, and matches a citation as an exact token or a whole word, never
+    as a substring of another token. A `cat-file -t` or `cat-file -e` check is not a
+    regular-blob check. (`lessons/round-86.md` `## Mistakes` M4; `lessons/round-87.md`
+    `## Mistakes` M2.)
