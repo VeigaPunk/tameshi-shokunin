@@ -63,7 +63,7 @@ the claim.
 **Sourced claim.** R86-C1's expected-row derivation reads the per-entry
 `objectmode`/`objecttype` fields of a tree listing. Source **S305** (Git
 git-ls-tree documentation) re-opened by L1 on 2026-11-04; located quotes at
-page lines 1807 (“The mode of the object.”) and 1811 (“The type of the object
+snapshot lines 1808 (“The mode of the object.”) and 1812 (“The type of the object
 (commit, blob or tree).”), snapshot
 `.ufo/evidence/round-86/sources/s305-ls-tree.html`. The source supports
 listing semantics only, not the audit verdict policy; no new row is appended

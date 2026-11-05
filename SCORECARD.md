@@ -5443,3 +5443,40 @@ and use data-derived, root-label-independent expected rows with complete
 anchored output. Preserve this counter and its rejected verdict unchanged.
 No future claim is pre-approved. Existing malformed-kind/source-id,
 revision authority, conversion and receipt race/parent-alias debts remain.
+
+## Round 86 — two frozen claims, both killed by construction (honest stop)
+
+Base `d10a9c66d6181cddcad52cdbffd672beb886ff6c`; freeze
+`55d5a5c6002a048337cc511e1712df87b961d364` (attempt 1); settlement by attempt 2
+(TameshiR86a2), which re-verified the freeze bytes and ran the wave to
+settlement. TWO claims on distinct axes, each frozen before its data, with the
+criterion-111 cheat family committed before the freeze. No capability row
+enters and no score moves: both claims are falsified by a cheat class their
+frozen control sets did not model.
+
+| Claim / axis | Before → after (literal predicate) | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|
+| R86-C1 operability, capability acquisition: discriminating certification counter for `tools/design-blob-audit.py` | 8 cases: do-nothing/absent `passed=0/8` → real instrument `passed=8/8`; five committed controls 0/8, 4/8, 0/8, 0/8, 6/8 | **honest stop — killed by construction.** `T86E2-att3b-cheat.py` (zero git reads) and `T86CN1-oracle-worktree.py` each print `passed=8/8 C1_R86_PASS=true` exit 0; L1 reproduced both. Kill rule fires (M3) | `python3 -I .ufo/evidence/round-86/measure.py --repo . --rev REV --work <empty>` | before `d10a9c66`; freeze `55d5a5c6`; kill receipts `.ufo/evidence/round-86/attacks/` |
+| R86-C2 calibration: every `## Capabilities` row bound to repo state | `rows=30 bound=18 unbound=12` (live-only manifest, exit 1) → `rows=30 bound=30 unbound=0 mismatches=0` (exit 0) | **honest stop — killed by construction.** A relabel control whose pins are cited ancestor *trees* prints the exact after-state tuple (`rows=30 bound=30 unbound=0 mismatches=0`, exit 0) binding nothing to a receipt; L1 built the manifest independently. Kill rule clause "a relabel control that binds a row" fires (M4) | `python3 -I -X utf8 tools/capability-census.py --repo . --rev REV` | before/after at `d10a9c66`; kill receipt `.ufo/evidence/round-86/attacks/c2-cited-tree-relabel.out` |
+
+Landed by this round, unchanged by the verdicts: `.ufo/evidence/round-86/measure.py`
++ five committed controls with receipts, `tools/capability-census.py` +
+`tools/capability-census.json` (the 30-row disposition manifest), the S305
+snapshot, the two defeat fixtures, the two mined defect classes (M3, M4) and
+the pointer/quote corrections (M5, amendment A1).
+
+Scores remain depth10/calibration8/freshness9, delta0; no saturation,
+retirement or capability change. Round admission is **not claimed**: two honest
+stops, no axis harmed (no existing tool modified; round-85's counter, witness
+and rejected verdict untouched). Only canonical non-author closure may decide.
+
+**Planned (round 87):** (1) a successor C1 counter whose expected rows derive
+from committed objects only, with opaque nonce paths and the fixture worktree
+forced off the candidate tree — it counts only when both `att3b`-class and
+`oracle-worktree`-class oracles score below its target; (2) a successor C2
+census that refuses a pin resolving to a tree and refuses a bare ancestor
+directory or `path:line` token as the receipt path — it counts only when the
+cited-tree relabel scores `bound<30`; (3) the C1 capability row, entered with a
+population-stable calibration predicate (M6). The r85 `GIT_*` inheritance limit
+and the malformed-kind/source-id, revision-authority, conversion and receipt
+race/parent-alias debts stay open.
