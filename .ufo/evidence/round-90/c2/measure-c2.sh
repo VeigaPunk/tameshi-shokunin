@@ -14,7 +14,7 @@
 #             and prints REGISTRY_CHECK: held=1/1 (the row runs the real tool's selftest)
 # C2_R90_PASS=true iff all three. Exit 0 PASS, 1 not PASS, 2 setup.
 set -u
-MANIFEST_SHA="3712c5002b7404c51b6d962e34526d4aabd4c88839c36f509d04dd61a6e85fc3"
+MANIFEST_SHA="c52870037ea55307b0e61e62b97ac20d10b1915d8b79906e174de2c7ae849d95"
 LANE=${1:?lane}; REV=${2:?rev}; WORK=${3:?work}; MSRC=${4:-$2}
 [ -d "$WORK" ] && [ -z "$(ls -A "$WORK")" ] || { echo "C2_SETUP work-not-empty-dir"; echo "C2_R90_PASS=false"; exit 2; }
 WORK=$(realpath -- "$WORK")
