@@ -5,7 +5,7 @@
 #   controls-c2.sh LANE SCRATCH
 set -u
 LANE=$(realpath -- "${1:?lane}"); SC=${2:?scratch}
-INSTR=a90218cc06665ddaa76a0e2f26b9ad7df506d1ec
+INSTR=3cf905bc5d7d8dca31c9ba1e18d4b7b2159517f8
 BASE=4e1c10e0cfcc1e7533f1fc71a1b3b615aa60a7e0
 M="$LANE/.ufo/evidence/round-90/c2/measure-c2.sh"
 FX="$LANE/.ufo/evidence/round-90/c2/fixes.py"
