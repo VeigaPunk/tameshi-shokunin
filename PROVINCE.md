@@ -168,3 +168,23 @@ six-leg cut (legs 1-6) is `:88-93`, leg 6 `js-claims-check` at line 93. The
 round-16 sentence one line later carries `:85-91` and is corrected by the block
 appended above; both stale cells stand append-only, and the pointer rows pin the
 measured spans (`province-r72-sixleg-cut-88-93` alongside the two above).
+
+## Core — round 88 append (2026-11-06)
+
+The recorded mutation legs' gates now number eleven. The eleventh is kake
+`scripts/ledger_append_guard.py` (rev `e8d3a924249983972e5163d160cf236487986c55`,
+blob sha256 `0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067`),
+leg `py-kake-ledger-guard`, the ledger's first Python-language gate, held as a
+read-only primary surface like the other ten. Measured 5/10 under its own
+`--selftest` (`corpus/knowledge/mutation-case-kake-ledger-guard.md`). kake owns
+the gate and its contract; this lane writes nothing in kake and routes the five
+survivors to kake as a report-only note. Province scope is otherwise unchanged:
+the method is the same and the language class adds a suite shape
+(`python3 -I` inside the `env -i` sandbox), not a new domain.
+
+Span correction, appended at round 88 (closes the wave critic's D2): the round-72
+block above names the ten-leg ledger as `tools/mutate-and-run.sh:88-97`, measured at
+its own revision. The round-88 runner adds two header lines and leg 11, so at the
+round-88 runner the eleven-leg inventory is `:90-100` (leg 10 `bash-drift-pins` at
+`:99`, leg 11 `py-kake-ledger-guard` at `:100`). The earlier cells stand append-only;
+their pointer rows pin their own revisions.

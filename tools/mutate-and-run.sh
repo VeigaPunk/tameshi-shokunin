@@ -2096,7 +2096,7 @@ EOT
   st 'exact expectation flip reports killed-delta=1 flips=1' $?
 
   # r10-2 resolved the embedded-ledger cut; r16 adds leg 7, r18 leg 8, r26 leg 9 and r51 leg 10.
-  # The ten embedded legs' specs and recorded tables must agree with each other —
+  # The eleven embedded legs' specs and recorded tables must agree with each other —
   # parse OK, the table's ids are
   # exactly the spec's ids, and the recorded total / killed counts are the ones
   # the leg set carries. Hermetic: the specs come from this tool's own

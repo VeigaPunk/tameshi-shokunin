@@ -2323,3 +2323,36 @@ difference is not absence from all Git history. A carried digest establishes
 neither runtime execution nor trusted revision authority. Files above8MiB
 refuse; nonregular receipt entries are excluded. The existing receipt-gate
 race, parent aliases and conversion limits remain separate.
+
+## Eleventh recorded case, first Python gate — round 88
+
+kake `scripts/ledger_append_guard.py` at rev `e8d3a924249983972e5163d160cf236487986c55`
+(blob sha256 `0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067`, 153 lines,
+mode 100755) is ledger leg `py-kake-ledger-guard`: 5/10 killed, 10/10 verdict predictions
+held. Sweep: `.ufo/evidence/round-88/c1/sweep.txt`. Replay: `bash tools/mutate-and-run.sh
+--regression` → `REGRESSION_CASE py-kake-ledger-guard: PASS`, `cases=11 passed=11`. Entry:
+`corpus/knowledge/mutation-case-kake-ledger-guard.md` (S312).
+
+Python-gate suite shape (the first in the ledger): the same `env -i` sandbox as legs 7–9,
+with `python3 -I "$MUTANT" --selftest` (`-I`: no user site, no `PYTHON*` variables) and
+`GIT_CONFIG_NOSYSTEM=1 GIT_CEILING_DIRECTORIES="$h"`, because the gate's selftest commits
+inside its own mkdtemp fixture repo. Rule for a gate whose selftest runs git writes: no
+defect may touch a git invocation, a fixture path or the work-dir expression — a mutant
+that redirects `git -C` can commit into whatever repository encloses the cwd (the run-6
+fleet-repo incident class). The spec's header names this exclusion.
+
+| Survivor class in this case | What the two-check suite does not pin | Decision |
+|---|---|---|
+| zero-ledger vacuous pass (`S_VACUOUS`) | a tree with no compared ledger | hole; fix belongs to kake |
+| multi-ledger conjunction (`S_OK_ALL`) | two ledgers, the edited one sorting first | hole; kake |
+| unasserted offset (`S_OFFSET_EQ`) | the printed first-divergence byte | hole; kake |
+| one-byte head slack (`S_HEAD_SHORT`) | an edit at byte `cut-1` | hole; kake |
+| redundant red conjunct (`S_RED_FILES`) | nothing the gate's exit observes | equivalent for gate behaviour; keep it in the table and the score |
+
+The five fixtures that would kill the first four are routed to kake as a report-only note
+(`.ufo/waves/round-88/w1/T88CN1.md`); this lane writes nothing in kake.
+
+Runner re-anchor (round 88; appended, the round-52 "Current anchors" line above stands as
+the ten-leg record): at the round-88 runner the inventory is `tools/mutate-and-run.sh:86-100`
+(leg 11 at `:100`), pins/revisions/tables `:624-656`, the first-four specs start at `:686`,
+and the eleven dispatches run `:1538-1593`.

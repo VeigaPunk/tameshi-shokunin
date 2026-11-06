@@ -439,3 +439,18 @@ did not drain the service queue.
 ## Round 52 — §3 drift-pins cell superseded (2026-10-27)
 
 - **§3 supersession (cell, not edit; round-8 precedent `:280`).** The §3 queue row `drift-pins` (`:119`) said "unmeasured by sweep"; round 51 measured kagi `corpus/drift-pins.sh` @ `e64e81b8` (blob `c138d34c…`) as recorded case 10: `MUTATE: DONE (target=drift-pins.sh defects=10 killed=2 survived=8 inconclusive=0 kill-rate=20%)` (`.ufo/evidence/round-51/c2/sweep/sweep.txt:31`), wired as the runner's tenth leg (`REGRESSION: PASS (cases=10 passed=10 …)`, `.ufo/evidence/round-51/after/c2.stdout:22`); entry `corpus/knowledge/mutation-case-kagi-drift-pins.md`. That case 10 measurement supersedes the cell; §3's table stays as written. Three of the eight survivors are harness-masked by the gate's own unanchored verdict grep (`corpus/lessons/round-51.md`), so 2/10 is a floor on the gate's detecting power, not its ceiling. Routed by the round-51 spot-check, defect 7.
+
+## Round 88 — eleventh row appended, first Python gate (2026-11-06)
+
+Appended; nothing above is edited. No row in this file named kake's ledger
+append guard; it enters measured, as the ledger's first Python-language leg:
+
+| gate | suite | rate (composition) | survivors | sweep | pin |
+|---|---|---|---|---|---|
+| kake `scripts/ledger_append_guard.py` (leg `py-kake-ledger-guard`) | `python3 -I … --selftest`, 2 checks, under the `env -i` guard with `GIT_CEILING_DIRECTORIES` | **5/10 (50 %)**; 5 kill-aimed / 5 hole-aimed, 10/10 predictions held | S_HEAD_SHORT one-byte head slack, S_OFFSET_EQ unasserted offset, S_OK_ALL multi-ledger conjunction, S_VACUOUS zero-ledger vacuous pass, S_RED_FILES redundant red conjunct | 2026-11-06T18:58:27Z, runner `977de470…` (`.ufo/evidence/round-88/c1/sweep.txt`) | rev `e8d3a924`, sha256 `0c12838e…8514067`, mode 100755 |
+
+Detail of record: `mutation-case-kake-ledger-guard.md`. Receipt: `REGRESSION:
+PASS (cases=11 passed=11 …)` at runner commit `28ec5885`
+(`.ufo/evidence/round-88/landing/runner-regression-candidate.txt`). Tameshi's own
+read-only case on a sibling gate; it does not drain the service queue and no
+kake file was written.

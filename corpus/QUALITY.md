@@ -2403,3 +2403,13 @@ on the landed bytes (`c2-landed-battery.txt`).
     as a substring of another token. A `cat-file -t` or `cat-file -e` check is not a
     regular-blob check. (`lessons/round-86.md` `## Mistakes` M4; `lessons/round-87.md`
     `## Mistakes` M2.)
+
+## Criteria appended — round 88
+
+134. A pre-registered mutation spec is committed, alone or with nothing that runs a mutant,
+    in a commit that is a strict ancestor of the first commit carrying any receipt with a
+    verdict of that spec's mutants — controls and forgeries included, because a control
+    that executes the candidate's mutants is data. A prediction whose priority rests only
+    on file timestamps is disclosed as such and earns no prediction credit from git.
+    Checked by `.ufo/evidence/round-88/mistakes/prereg-order.sh <repo> <spec> <receipt>`
+    (`ok` exit 0; `same-commit`/`later` exit 1). (`lessons/round-88.md` `## Mistakes` M1.)

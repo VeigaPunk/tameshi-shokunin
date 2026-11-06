@@ -690,3 +690,13 @@ receipt counterexample and its named refusal, with a regular sibling
 control. This deepens existing object/receipt verification ground; no
 frontier row moves and no new capability is entered. Frozen C3's numerical
 population misses honestly (one declared, two committed).
+
+## Round 88 — eleventh recorded mutation case, first Python gate (coverage)
+
+| Note | Scope | Source / evidence |
+|---|---|---|
+| `knowledge/mutation-case-kake-ledger-guard.md` | kake `scripts/ledger_append_guard.py` @ `e8d3a924` measured 5/10 under its own `--selftest` with a pre-registered 10-defect spec (10/10 predictions held), wired as ledger leg 11 `py-kake-ledger-guard`; the ledger's language classes move from js + bash to js + bash + Python | S312 (new, opened 2026-11-06); `.ufo/evidence/round-88/c1/`; frozen counter `.ufo/evidence/round-88/measure.py` |
+
+Coverage-map move: the governed gate set grows by one sibling surface (PROVINCE.md
+Core round-88 append). No F1–F11 frontier row changes status: the case is core
+method on a new surface, not frontier ground.
