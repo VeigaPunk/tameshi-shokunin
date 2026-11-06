@@ -92,3 +92,27 @@ repaired) and stay landed as record upkeep.
   defects were repaired by append (T90R2: all four routed items actually repaired).
 - discernment: the wave killed both claims; the four kill/near-kill classes became QUALITY
   139-142, each with a committed state that shows the check can fail.
+
+## Gate addendum (appended after the scout seat returned)
+
+- Correction to the www.gnu.org rejection row above: wave scout T90S2 fetched three GNU Bash
+  manual node pages from www.gnu.org at 21:52:11-21:53:17 GMT (HTTP 200;
+  `.ufo/waves/round-90/w1/T90S2-*.html`, `T90S2.md:72-74`), inside the window in which the
+  L1's own connections failed (`sources/gnu-unreachable.txt`). So the site was not down; the
+  L1's connections failed at its fetch time. The rejection reason is narrowed to "not
+  retrievable by the L1 at fetch time"; the decision stands for this round.
+- T90S2's three proposed rows (Bash Conditional Expressions, Bash Builtins `read`, Word
+  Splitting; placeholder ids S316-S318, which collide with the ids written above): **not
+  appended** — redundant this round. The case note's C08 ground is S317 (the same `-e`/`-f`
+  text from bash(1)), and C12's mechanism is shown by execution (the witness and the T90E3
+  arm), not by a quote. Flip: S317's page drifts or is withdrawn; the gnu.org Conditional
+  Expressions node (sha256 `401cf8ec…09fd`) is then the replacement, with a fresh id.
+- The id collision is recorded as the census-note risk the assimilation item names: a seat
+  proposing ids in parallel with the L1 cannot know the next free id; placeholder ids in seat
+  output are never appended as-is.
+
+## Mistakes addendum (appended after the mutation-tester seat returned)
+
+| id | class | evidence pointer | captured-by | fix |
+|---|---|---|---|---|
+| M8 | the C1 control battery exercises only some of the counter's checks: 20 single-edit weakenings of `measure.py`, 9 killed by the 16 committed controls; four survivors are reachable by a committed lane state (D04 duplicate rows, D05 any S-id, D06 figure numerator only, D19 two verdict cells per row) | `.ufo/waves/round-90/w1/T90M1.md:53-72` (defect table), `:88-93` (reachability proofs) | round-88 M8 / round-89 M10 (one control per check, per branch) — applicable, met per conjunct but not per branch | routed with item 1: the successor's pre-freeze battery carries one committed state per branch, including T90M1's four reachable states; D19 is the same hole as T90R1 K1 |
