@@ -2356,3 +2356,14 @@ Runner re-anchor (round 88; appended, the round-52 "Current anchors" line above 
 the ten-leg record): at the round-88 runner the inventory is `tools/mutate-and-run.sh:86-100`
 (leg 11 at `:100`), pins/revisions/tables `:624-656`, the first-four specs start at `:686`,
 and the eleven dispatches run `:1538-1593`.
+
+## Gate registry — round 90 (retained instrument: ledger witness)
+
+Appended; earlier registry tables are unchanged. `tools/ledger-witness.py` (round 89) is a
+retained instrument that had no registry row (round-89 closure §6 item 4, the R-4 class).
+Its capability is **not admitted**: R89-C1 was killed by its own rule (T89E2 alias runners).
+The row records how to run it and what it cannot see; it certifies nothing.
+
+| Name | Kind | Entry command | Verdict map | Self-test command | Pinned values | Write scope | Owner |
+|---|---|---|---|---|---|---|---|
+| ledger witness (not admitted) | probe | `python3 -I tools/ledger-witness.py --audit --runner RUNNER --fleet FLEET --trace TRACE --workdir WORKDIR --stdout STDOUT --rc RC` over an strace record of `tools/mutate-and-run.sh --regression` | `LEDGER_WITNESS: legs=N witnessed=N findings=0 checks=- PASS` exit 0; findings exit 1; setup exit 2 | `python3 -I tools/ledger-witness.py --selftest` → `LEDGER_WITNESS_SELFTEST: 21/21 pass` (registry row `ledger-witness-selftest`) | declared limits L1-L4 and the M6 alias class (hard link, directory swap, symlink) in `corpus/knowledge/kernel-witnessed-ledger.md` | TMPDIR scratch only | tameshi |

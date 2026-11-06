@@ -700,3 +700,14 @@ population misses honestly (one declared, two committed).
 Coverage-map move: the governed gate set grows by one sibling surface (PROVINCE.md
 Core round-88 append). No F1–F11 frontier row changes status: the case is core
 method on a new surface, not frontier ground.
+
+## Round 90 — coverage-map repair (round-89 closure item 1)
+
+Appended; every earlier row is unchanged. Round 89 landed
+`knowledge/kernel-witnessed-ledger.md` without a coverage-map row, so LEARNING's
+`improved` test could not credit it (closure `lessons/round-89-verifier-spotcheck.md`
+§4 and §6 item 1). This row places it.
+
+| Entry | Map position and what it covers | Grounding |
+|---|---|---|
+| `knowledge/kernel-witnessed-ledger.md` | Frontier, not Core: the round-89 strace-witnessed audit of `tools/mutate-and-run.sh --regression` (`tools/ledger-witness.py`). R89-C1 was killed by its own rule (the T89E2 alias runners), so the entry records a killed instrument and its declared limits L1-L4; it moves no surface into Core | S313, S314 (mined, opened 2026-11-06); `.ufo/evidence/round-89/` |

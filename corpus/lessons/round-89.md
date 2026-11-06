@@ -104,3 +104,17 @@ sweeps `landing/selfstate-ff7a4b06.txt`, `pins-ff7a4b06.txt`, `registry-figure.t
 - quality: unchanged — no held entry re-verified or superseded.
 - discernment: improved — the wave killed the claim, and the kill and four other mistakes are
   mined with criteria 136–138, each tied to a committed control that shows the failure.
+
+## Round-90 corrections (append-only)
+
+The text above is not rewritten; these corrections answer the round-89 closure's
+routed items 2 and 3 (`round-89-verifier-spotcheck.md` §6).
+
+1. `## Trend` says "the kill and four other mistakes". The `## Mistakes` table holds
+   M1-M10: the kill (M6) and nine others. Corrected reading: the kill and nine other mistakes
+   became lessons; QUALITY 136-138 are the grounded criteria among them.
+2. The `## Gate` row rejecting mkcheck2 gives the reason "paywalled". It was not shown to
+   be a paywall: at closure the ACM page and its PDF answered HTTP 403 behind a bot
+   challenge, and no open manuscript was found. Corrected reason: the paper text was not retrievable at fetch time,
+   so no quote could be located. The decision
+   (reject) and its flip condition (an open manuscript with a located quote) are unchanged.

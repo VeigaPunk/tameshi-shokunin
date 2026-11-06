@@ -90,3 +90,10 @@ its process was arranged per defect.
 - Honest variants from a second author (`T89E3.md`, two runners) were accepted; the trace parser
   survived crafted edge cases except where noted in `T89C2.md` (dirfd-relative `execveat`
   fails closed; aliasing is the M6 class).
+
+## Coverage-map row (appended round 90)
+
+Appended; the entry above is unchanged. Its coverage-map row is
+`corpus/README.md` § "Round 90 — coverage-map repair (round-89 closure item 1)":
+Frontier, not Core, because R89-C1 was killed by its own rule (round-89 closure
+§2.3). The row cites the same mined sources as this entry, S313 and S314.
