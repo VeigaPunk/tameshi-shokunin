@@ -32,3 +32,13 @@ control	CTL14-pos	all-conjuncts-true	honest note generated from the derived tabl
 control	C2-nowork	C2_R90_PASS=false	closed=0/5 at base 4e1c10e0
 control	C2-wrongsection	C2_R90_PASS=false	the README token placed under another section -> D1 open
 control	C2-bogus-registry	C2_R90_PASS=false	registry row argv names a missing tool -> registry=fail
+# --- Amendment 1 (written after the first counter run at 33dd6e47 and BEFORE any control receipt; the C1 predictions above are unchanged)
+# The counter loses its --note-override/--spec-override options: every control is now a committed state of a scratch clone read through the
+# production path, so CTL14-pos is expected to reach C1_R90_PASS=true in its scratch clone (it replaces "PASS stays false under any override").
+# CTL1-nowork splits in two: at base 4e1c10e0 the spec is absent -> setup exit 2 (C1_SETUP spec-absent-at-rev); at 33dd6e47 (spec, no note) -> note=absent, exit 1.
+# Every forgery below is the CTL14-pos fixture with ONE change, so the named conjunct is the one it must fail.
+control	CTL1b-nowork-A	C1_R90_PASS=false	note=false (rev 33dd6e47: spec committed, no note, no source row, no README row)
+control	CTL15-coverage	C1_R90_PASS=false	coverage=false (README table row removed)
+control	CTL16-oldsource	C1_R90_PASS=false	source=false (note cites only S315, an id at or below the base maximum)
+# CTL13-canary is dropped as a separate control: canary=true is printed by every run, but no committed state can make it false without
+# editing the gate itself (disclosed limit, not a demonstrated arm).
