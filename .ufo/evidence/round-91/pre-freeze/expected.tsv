@@ -1,0 +1,44 @@
+# Round 90 pre-registered expectations — written and committed ALONE, before any verdict-bearing receipt (QUALITY 134 / r89 M8).
+# kind	id	expected	refused-by (the one conjunct each control must fail)
+# --- C1 per-mutant verdict predictions (scripts/sources-census.sh @ f47ad6ba, selftest suite). Predictions are not in the predicate.
+predict	C01	KILLED	E10 selftest check greps E10
+predict	C02	SURVIVED	fixture thin reason is "no" (2 chars): <8 and <7 both fire
+predict	C03	SURVIVED	no selftest row carries "supersedes S###"
+predict	C04	KILLED	cadence-due-on-opened-plus-N expects "S002 0d" on the due day
+predict	C05	KILLED	z lane opened 2026-10-19 = --today 2026-10-19 -> E08 under >=, z no longer ok
+predict	C06	SURVIVED	no fixture separator carries alignment colons
+predict	C07	KILLED	indented-*-3 arms use a 3-space indent
+predict	C08	SURVIVED	no fixture used-by names a directory
+predict	C09	SURVIVED	no fixture pair differs only by #fragment
+predict	C10	SURVIVED	fixture symbolic cadences (on-release, annual) carry no space
+predict	C11	KILLED	validate-missing-exit-2
+predict	C12	SURVIVED	no fixture used-by cell lists two paths
+# --- C1 counter controls (.ufo/evidence/round-90/c1/measure.py). Every control prints C1_R90_PASS=false.
+control	CTL1-nowork	C1_R90_PASS=false	note=absent (counter at base 4e1c10e0)
+control	CTL2-flip	C1_R90_PASS=false	mismatched=1 (one verdict flipped in a note copy)
+control	CTL3-figure	C1_R90_PASS=false	figure=mismatch (headline k/n inflated by one)
+control	CTL4-ids	C1_R90_PASS=false	ids=mismatch (one row deleted)
+control	CTL5-spec	C1_R90_PASS=false	spec=unpinned (one mutant's new string edited)
+control	CTL6-noop	C1_R90_PASS=false	invalid=noop (new == old)
+control	CTL7-syntax	C1_R90_PASS=false	invalid=syntax (bash -n fails on the mutant)
+control	CTL8-absent	C1_R90_PASS=false	invalid=count (old string occurs 0 times)
+control	CTL9-equiv	C1_R90_PASS=false	unwitnessed>=1 (a survivor's witness gives identical pristine/mutant output)
+control	CTL10-source	C1_R90_PASS=false	source=fail (note cites an S-id absent from SOURCES.md)
+control	CTL11-trivial	C1_R90_PASS=false	trivial>=1 (gawk program broken; mutant dies on a clean registry)
+control	CTL12-pin	C1_R90_PASS=false	pin=mismatch (gate sha256 in an override spec differs from the blob)
+control	CTL13-canary	canary=ok	pristine copy with `exit 97` after line 1 returns rc 97 (the copy is what runs)
+control	CTL14-pos	all-conjuncts-true	honest note generated from the derived table via --note override; PASS stays false under any override
+# --- C2 calibration counter (.ufo/evidence/round-90/c2/measure-c2.sh)
+control	C2-nowork	C2_R90_PASS=false	closed=0/5 at base 4e1c10e0
+control	C2-wrongsection	C2_R90_PASS=false	the README token placed under another section -> D1 open
+control	C2-bogus-registry	C2_R90_PASS=false	registry row argv names a missing tool -> registry=fail
+# --- Amendment 1 (written after the first counter run at 33dd6e47 and BEFORE any control receipt; the C1 predictions above are unchanged)
+# The counter loses its --note-override/--spec-override options: every control is now a committed state of a scratch clone read through the
+# production path, so CTL14-pos is expected to reach C1_R90_PASS=true in its scratch clone (it replaces "PASS stays false under any override").
+# CTL1-nowork splits in two: at base 4e1c10e0 the spec is absent -> setup exit 2 (C1_SETUP spec-absent-at-rev); at 33dd6e47 (spec, no note) -> note=absent, exit 1.
+# Every forgery below is the CTL14-pos fixture with ONE change, so the named conjunct is the one it must fail.
+control	CTL1b-nowork-A	C1_R90_PASS=false	note=false (rev 33dd6e47: spec committed, no note, no source row, no README row)
+control	CTL15-coverage	C1_R90_PASS=false	coverage=false (README table row removed)
+control	CTL16-oldsource	C1_R90_PASS=false	source=false (note cites only S315, an id at or below the base maximum)
+# CTL13-canary is dropped as a separate control: canary=true is printed by every run, but no committed state can make it false without
+# editing the gate itself (disclosed limit, not a demonstrated arm).
