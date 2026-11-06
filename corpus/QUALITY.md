@@ -2455,3 +2455,29 @@ on the landed bytes (`c2-landed-battery.txt`).
     three: `.ufo/waves/round-89/w1/T89C1-counterfeit-witness.py` (no subprocess, 53 lines)
     reaches `C1_R89_PASS=true`, `selftest=0/0` passes, and `legs=11` is printed, not derived
     (`T89C1.md` objections 1, 3, 6, 7). (`lessons/round-89.md` `## Mistakes` M7.)
+139. A counter that reads committed bytes through git seals every read: `GIT_NO_REPLACE_OBJECTS=1`
+    and a scrubbed `GIT_*` environment on each call, and a refusal when `git replace -l` is
+    non-empty — in every repository it reads (lane and fleet). A hardening learned in one
+    instrument (round 82, `tools/defect-bind.py`) is a criterion for the next one, not a property
+    of that tool. Able to fail: `.ufo/waves/round-90/w1/T90R1-probe-defects.out` V4-replace-env
+    prints `C1_R90_PASS=true` on a committed note whose C02 verdict is false; V4-replace-sealed
+    prints `false`. (`lessons/round-90.md` `## Mistakes` M3.)
+140. A parser that binds verdict cells to a population id refuses — never skips — any row keyed
+    by a population id that it cannot read unambiguously, and reads the verdict from a column
+    named in the header, not from "the only verdict token in the row". Skipping lets a
+    contradicting row ride along with a pass (T90R1 V1-dup-row, PASS with
+    `| C02 | … | KILLED | SURVIVED |`); token-counting refuses an honest note with a second
+    verdict-valued column (T90R1 D3, R1-draft-column). (`lessons/round-90.md` M4.)
+141. A record-repair counter (closure-routed defects) binds what the repair DOES, not that its
+    tokens exist: a registry row's argv equals the declared entry command and the tool's blob
+    equals its pin before the row's result counts; a correction is bound by its operative
+    sentence, not by a phrase that a quoted rejection also contains; the checker tools are run
+    from pinned blobs, not from the candidate tree. QUALITY 136/138 apply to record repairs too.
+    Able to fail: `.ufo/waves/round-90/w1/T90C2-forge-registry.out` (`print` row, PASS),
+    `T90C2-wrong-count.out`, `T90C2-tool-neuter.out`. (`lessons/round-90.md` M2.)
+142. A token manifest (defect-bind, census, any row-token counter) is gated before the freeze by a
+    positive control committed through the production path: the honest repair state must close
+    every row. Round 90's manifest v1 left two rows open on the honest fixes (receipt-tokens
+    needs the token inside the span; a doc token wrapped across a line):
+    `.ufo/evidence/round-90/pre-freeze/controls/superseded-manifest-v1/C2-pos.out`
+    (`rows=fail`). (`lessons/round-90.md` M1.)

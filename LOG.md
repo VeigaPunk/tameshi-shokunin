@@ -4932,3 +4932,25 @@ dead seat; attack share 5/12.
 - **Frontier.** S313 (execve(2)), S314 (strace(1) `-y`/`-v`) mined, S315 (mkcheck, ICSE 2019)
   queued; rows 172 → 175. Entry `corpus/knowledge/kernel-witnessed-ledger.md`. QUALITY 136–138.
   Mistakes M1–M10 in `corpus/lessons/round-89.md`.
+
+## Round 90 (2026-11-06) — fresh start: fleet census gate case (C1) + routed-defect closure (C2), both killed
+
+Two claims. Expectations committed alone first (`33dd6e47`, `dd0ddce9`), controls before the
+freeze `3485ceb0`. One v1 wave `r90-w1`, 14 seats (executor 4, scribe, scout 2, reviewer 2,
+critic 2, mutation-tester, connector, sentinel); attack share 5/14.
+
+- **R90-C1 (coverage) predicate met, killed.** The first fleet-root gate measured: the fleet's
+  `scripts/sources-census.sh` @ `f47ad6ba`, 5/12 killed under its own selftest, 12/12
+  predictions held, every survivor witnessed; counter `C1_R90_PASS=true` at `bc2c85a6`. Killed
+  by T90R1 K2 (unsealed git reads, `refs/replace`) and K1 (ambiguous-row skip).
+- **R90-C2 (calibration) predicate met, killed.** The round-89 closure's routed items 1-4
+  repaired by append (`9b5dde78`); counter `C2_R90_PASS=true`. Killed by T90C2's `print`
+  registry row and wrong-count correction (token/needle presence).
+- **Motivating evidence.** The census gate every lane's round end depends on has seven selftest
+  holes; C12 alone would turn 20 lanes' census red with `selftest ok` still printed
+  (`.ufo/waves/round-90/w1/T90CN1.md`); killing arms drafted and proven in scratch
+  (`T90E3-arms.patch`, report-only, never pushed).
+- **Frontier.** S316 (gawk(1) `sub` `&`), S317 (bash(1) `-e`/`-f`) mined; rows 175 → 177;
+  www.gnu.org unreachable (`sources/gnu-unreachable.txt`). Case note
+  `corpus/knowledge/mutation-case-fleet-sources-census.md`; coverage-map row; PROVINCE Core
+  append. QUALITY 139-142. Mistakes M1-M7 in `corpus/lessons/round-90.md`.

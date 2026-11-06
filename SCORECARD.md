@@ -5553,3 +5553,28 @@ stays, annotated **not admitted**. No-harm: `tools/mutate-and-run.sh` unchanged;
 **Planned (round 90):** an identity-keyed successor witness (QUALITY 137) and an independently
 deriving counter (QUALITY 138), with T89E2's three alias runners and T89C1's counterfeit witness
 as pre-freeze controls (`corpus/lessons/round-89.md` § Routed). No claim is pre-approved.
+
+## Round 90 — fresh start: two claims, both predicates met, both killed (honest stop)
+
+Base `4e1c10e0`; expectations alone `33dd6e47` and `dd0ddce9`; instruments `a90218cc`,
+`3cf905bc`; C2 v2 receipts `a4797ebe`; freeze `3485ceb0` (`plans/round-90.plan.md`); C2 record
+repairs `9b5dde78`; C1 landing `bc2c85a6`. Wave `r90-w1`, 14 seats. Stagnation nudge still
+applies (10/8/9 ≥ 8; no capability admitted since round 82); C2 works calibration anyway.
+
+| Claim / axis | Before → after | Verdict | Counting command | Measured commit |
+|---|---|---|---|---|
+| R90-C1 coverage (sourced: S316, S317): case 12, the fleet's own `scripts/sources-census.sh` @ `f47ad6ba` under its own selftest, re-executed by the counter | base: `C1_SETUP spec-absent-at-rev`, exit 2; `33dd6e47`: `note=false … C1_R90_PASS=false`, exit 1 (`pre-freeze/controls/CTL1-nowork-base.out`, `CTL1b-nowork-A.out`) → `n=12 killed=5 survived=7 … witnessed=7/7 note=present mismatched=0`, all conjuncts true, `C1_R90_PASS=true`, exit 0 (`.ufo/evidence/round-90/landing/c1-at-bc2c85a6.out`) | predicate met; **killed by rule (a)**: T90R1 K2 (git reads honour `refs/replace`; a false committed note passes) and K1 (an ambiguous contradicting row is skipped). T90C1's prediction copy disputed, does not fire by the letter. Not admitted | `python3 -I .ufo/evidence/round-90/c1/measure.py --repo . --rev REV --work EMPTY` | before `33dd6e47`; after `bc2c85a6` |
+| R90-C2 calibration: the round-89 closure's routed defects 1-4 over `tools/defect-bind-r90.json` (5 rows) + a live registry row | `rows=fail registry=fail`, `C2_R90_PASS=false` at base (`pre-freeze/controls/C2-nowork-base.out`) → `rows=ok registry=held`, `C2_R90_PASS=true`, exit 0 (`landing/c2-at-9b5dde78.out`) | predicate met; **killed by rule (a)**: T90C2 K1 (a `print` registry row holds), K2 (a wrong-count correction closes the row), K3 (neutered checkers pass). The four repairs are real (T90R2) and stay landed. Not admitted | `bash .ufo/evidence/round-90/c2/measure-c2.sh <lane> REV EMPTY` | before `4e1c10e0`; after `9b5dde78` |
+
+Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0). No capability row enters; no
+retirement or saturation change. No-harm (T90E2, base/freeze/freeze+fixes): selfstate
+`rows=26 match=24 stale=2 unexpected=0`, pins `26/26 settled`, registry-figure `9/9`,
+pointers `12/12`, registry-check `held=73/77` → `74/78` (the new row holds; the four
+pre-existing differs are unchanged). Measurement-side evidence that survived every attack:
+12/12 verdicts reproduced outside the counter (T90E1), invariant across six environments
+(T90L1), 12/12 pre-registered predictions, 7/7 survivors killed by scratch-proven arms (T90E3,
+report-only), and C12's fleet impact (20 lanes, T90CN1).
+
+**Planned (round 91):** the sealed successor counter (QUALITY 139-140) with T90R1 V1-V4 and
+T90C1's prediction copy as pre-freeze controls; the C2 successor binding argv and tool pins
+(QUALITY 141). No claim is pre-approved.
