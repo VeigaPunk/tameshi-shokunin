@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- 
+Copyright © 1989, 1991, 1992, 1993, 1996-2005, 2007, 2009-2026 
+
+Free Software Foundation, Inc.
+
+
+
+This is Edition 5.4 of GAWK: Effective AWK Programming: A User's Guide for GNU Awk,
+for the 5.4.0 (or later) version of the GNU
+implementation of AWK.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with the
+Invariant Sections being "GNU General Public License", with the
+Front-Cover Texts being "A GNU Manual", and with the Back-Cover Texts
+as in (a) below.
+A copy of the license is included in the section entitled
+"GNU Free Documentation License".
+
+a. The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual." -->
+<title>Regexp Operator Details (The GNU Awk User&rsquo;s Guide)</title>
+
+<meta name="description" content="Regexp Operator Details (The GNU Awk User&rsquo;s Guide)">
+<meta name="keywords" content="Regexp Operator Details (The GNU Awk User&rsquo;s Guide)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Index.html" rel="index" title="Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Regexp-Operators.html" rel="up" title="Regexp Operators">
+<link href="Interval-Expressions.html" rel="next" title="Interval Expressions">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+div.example {margin-left: 3.2em}
+kbd.kbd {font-style: oblique}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="https://www.gnu.org/software/gnulib/manual.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Regexp-Operator-Details">
+<div class="nav-panel">
+<p>
+Next: <a href="Interval-Expressions.html" accesskey="n" rel="next">Some Notes On Interval Expressions</a>, Up: <a href="Regexp-Operators.html" accesskey="u" rel="up">Regular Expression Operators</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Regexp-Operators-in-awk"><span>3.3.1 Regexp Operators in <code class="command">awk</code><a class="copiable-link" href="#Regexp-Operators-in-awk"> &para;</a></span></h4>
+
+<p>The escape sequences described
+earlier
+in <a class="ref" href="Escape-Sequences.html">Escape Sequences</a>
+are valid inside a regexp.  They are introduced by a &lsquo;<samp class="samp">\</samp>&rsquo; and
+are recognized and converted into corresponding real characters as
+the very first step in processing regexps.
+</p>
+<p>Here is a list of metacharacters.  All characters that are not escape
+sequences and that are not listed here stand for themselves:
+</p>
+<dl class="table">
+<dd><a class="index-entry-id" id="index-backslash-_0028_005c_0029-regexp-operator"></a>
+<a class="index-entry-id" id="index-_005c-_0028backslash_0029-regexp-operator"></a>
+</dd>
+<dt><code class="code">\</code></dt>
+<dd><p>This suppresses the special meaning of a character when
+matching.  For example, &lsquo;<samp class="samp">\$</samp>&rsquo;
+matches the character &lsquo;<samp class="samp">$</samp>&rsquo;.
+</p>
+<a class="index-entry-id" id="index-regular-expressions-anchors-in"></a>
+<a class="index-entry-id" id="index-Texinfo-chapter-beginnings-in-files"></a>
+<a class="index-entry-id" id="index-_005e-_0028caret_0029-regexp-operator"></a>
+<a class="index-entry-id" id="index-caret-_0028_005e_0029-regexp-operator"></a>
+</dd>
+<dt><code class="code">^</code></dt>
+<dd><p>This matches the beginning of a string.  &lsquo;<samp class="samp">^@chapter</samp>&rsquo;
+matches &lsquo;<samp class="samp">@chapter</samp>&rsquo; at the beginning of a string,
+for example, and can be used
+to identify chapter beginnings in Texinfo source files.
+The &lsquo;<samp class="samp">^</samp>&rsquo; is known as an <em class="dfn">anchor</em>, because it anchors the pattern to
+match only at the beginning of the string.
+</p>
+<p>It is important to realize that &lsquo;<samp class="samp">^</samp>&rsquo; does not match the beginning of
+a line (the point right after a &lsquo;<samp class="samp">\n</samp>&rsquo; newline character) embedded in a string.
+The condition is not true in the following example:
+</p>
+<div class="example">
+<pre class="example-preformatted">if (&quot;line1\nLINE 2&quot; ~ /^L/) ...
+</pre></div>
+
+<a class="index-entry-id" id="index-_0024-_0028dollar-sign_0029-regexp-operator"></a>
+<a class="index-entry-id" id="index-dollar-sign-_0028_0024_0029-regexp-operator"></a>
+</dd>
+<dt><code class="code">$</code></dt>
+<dd><p>This is similar to &lsquo;<samp class="samp">^</samp>&rsquo;, but it matches only at the end of a string.
+For example, &lsquo;<samp class="samp">p$</samp>&rsquo;
+matches a record that ends with a &lsquo;<samp class="samp">p</samp>&rsquo;.  The &lsquo;<samp class="samp">$</samp>&rsquo; is an anchor
+and does not match the end of a line
+(the point right before a &lsquo;<samp class="samp">\n</samp>&rsquo; newline character)
+embedded in a string.
+The condition in the following example is not true:
+</p>
+<div class="example">
+<pre class="example-preformatted">if (&quot;line1\nLINE 2&quot; ~ /1$/) ...
+</pre></div>
+
+</dd>
+<dt><a class="index-entry-id" id="index-period-_0028_002e_0029_002c-regexp-operator"></a>
+<a id="index-_002e-_0028period_0029_002c-regexp-operator"></a><span><code class="code">.</code> (period)<a class="copiable-link" href="#index-_002e-_0028period_0029_002c-regexp-operator"> &para;</a></span></dt>
+<dd><p>This matches any single character,
+<em class="emph">including</em> the newline character.  For example, &lsquo;<samp class="samp">.P</samp>&rsquo;
+matches any single character followed by a &lsquo;<samp class="samp">P</samp>&rsquo; in a string.  Using
+concatenation, we can make a regular expression such as &lsquo;<samp class="samp">U.A</samp>&rsquo;, which
+matches any three-character sequence that begins with &lsquo;<samp class="samp">U</samp>&rsquo; and ends
+with &lsquo;<samp class="samp">A</samp>&rsquo;.
+</p>
+<a class="index-entry-id" id="index-POSIX-mode-2"></a>
+<a class="index-entry-id" id="index-POSIX-awk-period-_0028_002e_0029_002c-using"></a>
+<p>In strict POSIX mode (see <a class="pxref" href="Options.html">Command-Line Options</a>),
+&lsquo;<samp class="samp">.</samp>&rsquo; does not match the <small class="sc">NUL</small>
+character, which is a character with all bits equal to zero.
+Otherwise, <small class="sc">NUL</small> is just another character. Other versions of <code class="command">awk</code>
+may not be able to match the <small class="sc">NUL</small> character.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-square-brackets-_0028_005b_005d_0029_002c-regexp-operator"></a>
+<a class="index-entry-id" id="index-bracket-expressions"></a>
+<a id="index-_005b_005d-_0028square-brackets_0029_002c-regexp-operator"></a><span><code class="code">[</code>&hellip;<code class="code">]</code><a class="copiable-link" href="#index-_005b_005d-_0028square-brackets_0029_002c-regexp-operator"> &para;</a></span></dt>
+<dd><p>This is called a <em class="dfn">bracket expression</em>.<a class="footnote" id="DOCF17" href="#FOOT17"><sup>17</sup></a>
+It matches any <em class="emph">one</em> of the characters that are enclosed in
+the square brackets.  For example, &lsquo;<samp class="samp">[MVX]</samp>&rsquo; matches any one of
+the characters &lsquo;<samp class="samp">M</samp>&rsquo;, &lsquo;<samp class="samp">V</samp>&rsquo;, or &lsquo;<samp class="samp">X</samp>&rsquo; in a string.  A full
+discussion of what can be inside the square brackets of a bracket expression
+is given in
+<a class="ref" href="Bracket-Expressions.html">Using Bracket Expressions</a>.
+</p>
+<a class="index-entry-id" id="index-bracket-expressions-complemented"></a>
+</dd>
+<dt><code class="code">[^</code>&hellip;<code class="code">]</code></dt>
+<dd><p>This is a <em class="dfn">complemented bracket expression</em>.  The first character after
+the &lsquo;<samp class="samp">[</samp>&rsquo; <em class="emph">must</em> be a &lsquo;<samp class="samp">^</samp>&rsquo;.  It matches any characters
+<em class="emph">except</em> those in the square brackets.  For example, &lsquo;<samp class="samp">[^awk]</samp>&rsquo;
+matches any character that is not an &lsquo;<samp class="samp">a</samp>&rsquo;, &lsquo;<samp class="samp">w</samp>&rsquo;,
+or &lsquo;<samp class="samp">k</samp>&rsquo;.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-vertical-bar-_0028_007c_0029"></a>
+<a id="index-_007c-_0028vertical-bar_0029"></a><span><code class="code">|</code><a class="copiable-link" href="#index-_007c-_0028vertical-bar_0029"> &para;</a></span></dt>
+<dd><p>This is the <em class="dfn">alternation operator</em> and it is used to specify
+alternatives.  The &lsquo;<samp class="samp">|</samp>&rsquo; has the lowest precedence of all the regular
+expression operators.  For example, &lsquo;<samp class="samp">^P|[aeiouy]</samp>&rsquo; matches any string
+that matches either &lsquo;<samp class="samp">^P</samp>&rsquo; or &lsquo;<samp class="samp">[aeiouy]</samp>&rsquo;.  This means it matches
+any string that starts with &lsquo;<samp class="samp">P</samp>&rsquo; or contains (anywhere within it)
+a lowercase English vowel.
+</p>
+<p>The alternation applies to the largest possible regexps on either side.
+</p>
+<a class="index-entry-id" id="index-_0028_0029-_0028parentheses_0029-regexp-operator"></a>
+<a class="index-entry-id" id="index-parentheses-_0028_0029-regexp-operator"></a>
+</dd>
+<dt><code class="code">(</code>&hellip;<code class="code">)</code></dt>
+<dd><p>Parentheses are used for grouping in regular expressions, as in
+arithmetic.  They can be used to concatenate regular expressions
+containing the alternation operator, &lsquo;<samp class="samp">|</samp>&rsquo;.  For example,
+&lsquo;<samp class="samp">@(samp|code)\{[^}]+\}</samp>&rsquo; matches both &lsquo;<samp class="samp">@code{foo}</samp>&rsquo; and
+&lsquo;<samp class="samp">@samp{bar}</samp>&rsquo;.
+(These are Texinfo formatting control sequences. The &lsquo;<samp class="samp">+</samp>&rsquo; is
+explained further on in this list.)
+</p>
+<p>The left or opening parenthesis is always a metacharacter; to match
+one literally, precede it with a backslash. However, the right or
+closing parenthesis is only special when paired with a left parenthesis;
+an unpaired right parenthesis is (silently) treated as a regular character.
+</p>
+<a class="index-entry-id" id="index-_002a-_0028asterisk_0029-_002a-operator-as-regexp-operator"></a>
+<a class="index-entry-id" id="index-asterisk-_0028_002a_0029-_002a-operator-as-regexp-operator"></a>
+</dd>
+<dt><code class="code">*</code></dt>
+<dd><p>This symbol means that the preceding regular expression should be
+repeated as many times as necessary to find a match.  For example, &lsquo;<samp class="samp">ph*</samp>&rsquo;
+applies the &lsquo;<samp class="samp">*</samp>&rsquo; symbol to the preceding &lsquo;<samp class="samp">h</samp>&rsquo; and looks for matches
+of one &lsquo;<samp class="samp">p</samp>&rsquo; followed by any number of &lsquo;<samp class="samp">h</samp>&rsquo;s.  This also matches
+just &lsquo;<samp class="samp">p</samp>&rsquo; if no &lsquo;<samp class="samp">h</samp>&rsquo;s are present.
+</p>
+<p>There are two subtle points to understand about how &lsquo;<samp class="samp">*</samp>&rsquo; works.
+First, the &lsquo;<samp class="samp">*</samp>&rsquo; applies only to the single preceding regular expression
+component (e.g., in &lsquo;<samp class="samp">ph*</samp>&rsquo;, it applies just to the &lsquo;<samp class="samp">h</samp>&rsquo;).
+To cause &lsquo;<samp class="samp">*</samp>&rsquo; to apply to a larger subexpression, use parentheses:
+&lsquo;<samp class="samp">(ph)*</samp>&rsquo; matches &lsquo;<samp class="samp">ph</samp>&rsquo;, &lsquo;<samp class="samp">phph</samp>&rsquo;, &lsquo;<samp class="samp">phphph</samp>&rsquo;, and so on.
+</p>
+<p>Second, &lsquo;<samp class="samp">*</samp>&rsquo; finds as many repetitions as possible. If the text
+to be matched is &lsquo;<samp class="samp">phhhhhhhhhhhhhhooey</samp>&rsquo;, &lsquo;<samp class="samp">ph*</samp>&rsquo; matches all of
+the &lsquo;<samp class="samp">h</samp>&rsquo;s.
+</p>
+<a class="index-entry-id" id="index-_002a_003f-_0028asterisk_0029-_002a_003f-operator-as-regexp-operator"></a>
+<a class="index-entry-id" id="index-asterisk-_0028_002a_003f_0029-_002a_003f-operator-as-regexp-operator"></a>
+</dd>
+<dt><code class="code">*?</code></dt>
+<dd><p>Shortest match or <em class="dfn">non-greedy</em> version of the &lsquo;<samp class="samp">*</samp>&rsquo; operator.
+This operator and the other non-greedy operators are discussed separately,
+shortly, in <a class="ref" href="Non_002dgreedy-operators.html">Shortest Match, or &ldquo;Non-greedy&rdquo; Regexp Operators</a>.
+</p>
+<a class="index-entry-id" id="index-_002b-_0028plus-sign_0029-regexp-operator"></a>
+<a class="index-entry-id" id="index-plus-sign-_0028_002b_0029-regexp-operator"></a>
+</dd>
+<dt><code class="code">+</code></dt>
+<dd><p>This symbol is similar to &lsquo;<samp class="samp">*</samp>&rsquo;, except that the preceding expression must be
+matched at least once.  This means that &lsquo;<samp class="samp">wh+y</samp>&rsquo;
+would match &lsquo;<samp class="samp">why</samp>&rsquo; and &lsquo;<samp class="samp">whhy</samp>&rsquo;, but not &lsquo;<samp class="samp">wy</samp>&rsquo;, whereas
+&lsquo;<samp class="samp">wh*y</samp>&rsquo; would match all three.
+</p>
+<a class="index-entry-id" id="index-_002b_003f-_0028plus-sign_0029-regexp-operator"></a>
+<a class="index-entry-id" id="index-plus-sign-_0028_002b_003f_0029-regexp-operator"></a>
+</dd>
+<dt><code class="code">+?</code></dt>
+<dd><p>Shortest match or non-greedy version of the &lsquo;<samp class="samp">+</samp>&rsquo; operator.
+</p>
+<a class="index-entry-id" id="index-_003f-_0028question-mark_0029-regexp-operator"></a>
+<a class="index-entry-id" id="index-question-mark-_0028_003f_0029-regexp-operator"></a>
+</dd>
+<dt><code class="code">?</code></dt>
+<dd><p>This symbol is similar to &lsquo;<samp class="samp">*</samp>&rsquo;, except that the preceding expression can be
+matched either once or not at all.  For example, &lsquo;<samp class="samp">fe?d</samp>&rsquo;
+matches &lsquo;<samp class="samp">fed</samp>&rsquo; and &lsquo;<samp class="samp">fd</samp>&rsquo;, but nothing else.
+</p>
+<a class="index-entry-id" id="index-_003f_003f-_0028plus-sign_0029-regexp-operator"></a>
+<a class="index-entry-id" id="index-plus-sign-_0028_003f_003f_0029-regexp-operator"></a>
+</dd>
+<dt><code class="code">??</code></dt>
+<dd><p>Shortest match or non-greedy version of the &lsquo;<samp class="samp">?</samp>&rsquo; operator.
+</p>
+<a class="index-entry-id" id="index-_007b_007d-_0028braces_0029-regexp-operator"></a>
+<a class="index-entry-id" id="index-braces-_0028_007b_007d_0029-regexp-operator"></a>
+</dd>
+<dt><a id="index-interval-expressions_002c-regexp-operator"></a><span><code class="code">{</code><var class="var">n</var><code class="code">}</code><a class="copiable-link" href="#index-interval-expressions_002c-regexp-operator"> &para;</a></span></dt>
+<dt><code class="code">{</code><var class="var">n</var><code class="code">,}</code></dt>
+<dt><code class="code">{</code><var class="var">n</var><code class="code">,</code><var class="var">m</var><code class="code">}</code></dt>
+<dd><p>One or two numbers inside braces denote an <em class="dfn">interval expression</em>.
+If there is one number in the braces, the preceding regexp is repeated
+<var class="var">n</var> times.
+If there are two numbers separated by a comma, the preceding regexp is
+repeated <var class="var">n</var> to <var class="var">m</var> times.
+If there is one number followed by a comma, then the preceding regexp
+is repeated at least <var class="var">n</var> times:
+</p>
+<dl class="table">
+<dt><code class="code">wh{3}y</code></dt>
+<dd><p>Matches &lsquo;<samp class="samp">whhhy</samp>&rsquo;, but not &lsquo;<samp class="samp">why</samp>&rsquo; or &lsquo;<samp class="samp">whhhhy</samp>&rsquo;.
+</p>
+</dd>
+<dt><code class="code">wh{3,5}y</code></dt>
+<dd><p>Matches &lsquo;<samp class="samp">whhhy</samp>&rsquo;, &lsquo;<samp class="samp">whhhhy</samp>&rsquo;, or &lsquo;<samp class="samp">whhhhhy</samp>&rsquo; only.
+</p>
+</dd>
+<dt><code class="code">wh{2,}y</code></dt>
+<dd><p>Matches &lsquo;<samp class="samp">whhy</samp>&rsquo;, &lsquo;<samp class="samp">whhhy</samp>&rsquo;, and so on.
+</p></dd>
+</dl>
+
+<a class="index-entry-id" id="index-_007b_007d_003f-_0028braces_0029-regexp-operator"></a>
+<a class="index-entry-id" id="index-braces-_0028_007b_007d_003f_0029-regexp-operator"></a>
+</dd>
+<dt><code class="code">{</code><var class="var">n</var><code class="code">}?</code></dt>
+<dt><code class="code">{</code><var class="var">n</var><code class="code">,}?</code></dt>
+<dt><code class="code">{</code><var class="var">n</var><code class="code">,</code><var class="var">m</var><code class="code">}?</code></dt>
+<dd><p>Shortest match or non-greedy versions of the &lsquo;<samp class="samp">{}</samp>&rsquo; operators.
+</p></dd>
+</dl>
+
+<a class="index-entry-id" id="index-precedence-regexp-operators"></a>
+<a class="index-entry-id" id="index-regular-expressions-operators-precedence-of"></a>
+<p>In regular expressions, the &lsquo;<samp class="samp">*</samp>&rsquo;, &lsquo;<samp class="samp">+</samp>&rsquo;, and &lsquo;<samp class="samp">?</samp>&rsquo; operators,
+as well as the braces &lsquo;<samp class="samp">{</samp>&rsquo; and &lsquo;<samp class="samp">}</samp>&rsquo;,
+have
+the highest precedence, followed by concatenation, and finally by &lsquo;<samp class="samp">|</samp>&rsquo;.
+As in arithmetic, parentheses can change how operators are grouped.
+</p>
+<a class="index-entry-id" id="index-POSIX-awk-regular-expressions-and"></a>
+<a class="index-entry-id" id="index-gawk-regular-expressions-precedence"></a>
+<p>According to the POSIX specification, when &lsquo;<samp class="samp">*</samp>&rsquo;, &lsquo;<samp class="samp">+</samp>&rsquo;, &lsquo;<samp class="samp">?</samp>&rsquo;,
+or &lsquo;<samp class="samp">{</samp>&rsquo; are not preceded by a character, the behavior is
+&ldquo;undefined.&rdquo;
+In practice, for <code class="command">gawk</code>, the &lsquo;<samp class="samp">*</samp>&rsquo;, &lsquo;<samp class="samp">+</samp>&rsquo;, &lsquo;<samp class="samp">?</samp>&rsquo; and
+&lsquo;<samp class="samp">{</samp>&rsquo; operators stand for themselves when there is nothing in the
+regexp that precedes them.  For example, <code class="code">/+/</code> matches a literal
+plus sign.  However, many other versions of <code class="command">awk</code> treat such a
+usage as a syntax error.
+</p>
+<a class="index-entry-id" id="index-sidebar-What-About-The-Empty-Regexp_003f"></a>
+<table class="cartouche" border="1"><tr><th>
+What About The Empty Regexp?</th></tr><tr><td>
+<a class="index-entry-id" id="index-empty-regexps"></a>
+<a class="index-entry-id" id="index-regexps_002c-empty"></a>
+<p>We describe here an advanced regexp usage. Feel free to skip it
+upon first reading.
+</p>
+<p>You can supply an empty regexp constant (&lsquo;<samp class="samp">//</samp>&rsquo;) in all places
+where a regexp is expected. Is this useful?  What does it match?
+</p>
+<p>It is useful. It matches the (invisible) empty string at the start
+and end of a string of characters, as well as the empty string
+between characters. This is best illustrated with the <code class="code">gsub()</code>
+function, which makes global substitutions in a string
+(see <a class="pxref" href="String-Functions.html">String-Manipulation Functions</a>).  Normal usage of <code class="code">gsub()</code> is like
+so:
+</p>
+<div class="example">
+<pre class="example-preformatted">$ <kbd class="kbd">awk '</kbd>
+&gt; <kbd class="kbd">BEGIN {</kbd>
+&gt; <kbd class="kbd">    x = &quot;ABC_CBA&quot;</kbd>
+&gt; <kbd class="kbd">    gsub(/B/, &quot;bb&quot;, x)</kbd>
+&gt; <kbd class="kbd">    print x</kbd>
+&gt; <kbd class="kbd">}'</kbd>
+-| AbbC_CbbA
+</pre></div>
+
+<p>We can use <code class="code">gsub()</code> to see where the empty strings
+are that match the empty regexp:
+</p>
+<div class="example">
+<pre class="example-preformatted">$ <kbd class="kbd">awk '</kbd>
+&gt; <kbd class="kbd">BEGIN {</kbd>
+&gt; <kbd class="kbd">    x = &quot;ABC&quot;</kbd>
+&gt; <kbd class="kbd">    gsub(//, &quot;x&quot;, x)</kbd>
+&gt; <kbd class="kbd">    print x</kbd>
+&gt; <kbd class="kbd">}'</kbd>
+-| xAxBxCx
+</pre></div>
+</td></tr></table>
+
+</div>
+<div class="footnotes-segment">
+<hr>
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<h5 class="footnote-body-heading"><a id="FOOT17" href="#DOCF17">(17)</a></h5>
+<p>In other literature,
+you may see a bracket expression referred to as either a
+<em class="dfn">character set</em>, a <em class="dfn">character class</em>, or a <em class="dfn">character list</em>.</p>
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Interval-Expressions.html">Some Notes On Interval Expressions</a>, Up: <a href="Regexp-Operators.html">Regular Expression Operators</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

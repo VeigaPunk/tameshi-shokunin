@@ -1,0 +1,147 @@
+# T90E2 — round-90 w1 no-harm sweep evidence (base / freeze / freeze+fixes)
+#
+# Driver : /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-90/w1/T90E2-sweeps.sh
+#           sha256 b4da4e86d4e68c9d63c2527541b8e416ddd572060ef1f5cd3f94a64d77a4aada
+# Fix gen : .ufo/evidence/round-90/c2/fixes.py  sha256 3f1e03527c7df351ffe57ce68e9b2c954d6d698e17dd4a59585351d12ac3293e
+# Counter : .ufo/evidence/round-90/c2/measure-c2.sh sha256 6b0a7070b486e22b270e3169e665a12d0707b7a82a36e8f2c5c87c34788c8ba6
+#           (both match .ufo/evidence/round-90/pre-freeze/instrument-sha256-v2.txt)
+#
+# States (all scratch --shared clones under /fast/scratch/hyaku/tameshi-r90/T90E2/, removed after the run;
+# TMPDIR pointed inside the scratch dir for every sweep):
+#   base            4e1c10e0cfcc1e7533f1fc71a1b3b615aa60a7e0   --shared clone, detached
+#   freeze          3485ceb08df394edf5fbe26bd09b03985a04fba1   --shared clone, detached
+#   fix-detached    9b01dd5e38b7bd4be2f8dcae576fb63ecadd848f   freeze + fixes.py --variant pos, committed with
+#                                                              identity ctl <ctl@fixture.invalid>, detached (artifact run)
+#   fix-branch      same commit, HEAD attached to refs/heads/fixture-r90 (runnable run)
+#   fix-pristine    fresh clone of fix-branch at the same commit (repeatability run, root not dirtied by the earlier run)
+
+## base — driver stdout
+SWEEP selfstate exit=0 summary=SELFSTATE: rows=26 match=24 stale=2 unexpected=0
+SWEEP pin-audit exit=0 summary=SELFSTATE_PINS: rows=26 settled=26 stale=0
+SWEEP figure-bind exit=0 summary=REGISTRY_BIND: rows=9 match=9 stale=0 absent=0 error=0 unexpected=0
+SWEEP pointer exit=0 summary=POINTER_RECHECK: rows=12 met=12 unexpected=0
+SWEEP registry exit=1 summary=REGISTRY_CHECK: held=73/77 superseded=7
+SWEEPS root=/fast/scratch/hyaku/tameshi-r90/T90E2/base runs=5 setup_refusals=0
+driver-exit=0
+
+## freeze — driver stdout
+SWEEP selfstate exit=0 summary=SELFSTATE: rows=26 match=24 stale=2 unexpected=0
+SWEEP pin-audit exit=0 summary=SELFSTATE_PINS: rows=26 settled=26 stale=0
+SWEEP figure-bind exit=0 summary=REGISTRY_BIND: rows=9 match=9 stale=0 absent=0 error=0 unexpected=0
+SWEEP pointer exit=0 summary=POINTER_RECHECK: rows=12 met=12 unexpected=0
+SWEEP registry exit=1 summary=REGISTRY_CHECK: held=73/77 superseded=7
+SWEEPS root=/fast/scratch/hyaku/tameshi-r90/T90E2/freeze runs=5 setup_refusals=0
+driver-exit=0
+
+## fix-detached — driver stdout (run 1; see disclosure D1)
+SWEEP selfstate exit=0 summary=SELFSTATE: rows=26 match=24 stale=2 unexpected=0
+SWEEP pin-audit exit=0 summary=SELFSTATE_PINS: rows=26 settled=26 stale=0
+SWEEP figure-bind exit=0 summary=REGISTRY_BIND: rows=9 match=9 stale=0 absent=0 error=0 unexpected=0
+SWEEP pointer exit=0 summary=POINTER_RECHECK: rows=12 met=12 unexpected=0
+SWEEP registry exit=1 summary=REGISTRY_CHECK: held=72/78 superseded=7
+SWEEPS root=/fast/scratch/hyaku/tameshi-r90/T90E2/fix runs=5 setup_refusals=0
+driver-exit=0
+
+## fix-branch — driver stdout (run 2; same commit, branch attached)
+SWEEP selfstate exit=0 summary=SELFSTATE: rows=26 match=24 stale=2 unexpected=0
+SWEEP pin-audit exit=0 summary=SELFSTATE_PINS: rows=26 settled=26 stale=0
+SWEEP figure-bind exit=0 summary=REGISTRY_BIND: rows=9 match=9 stale=0 absent=0 error=0 unexpected=0
+SWEEP pointer exit=0 summary=POINTER_RECHECK: rows=12 met=12 unexpected=0
+SWEEP registry exit=1 summary=REGISTRY_CHECK: held=74/78 superseded=7
+SWEEPS root=/fast/scratch/hyaku/tameshi-r90/T90E2/fix runs=5 setup_refusals=0
+driver-exit=0
+
+## fix-pristine — driver stdout (run 3; fresh clone at the same commit)
+SWEEP selfstate exit=0 summary=SELFSTATE: rows=26 match=24 stale=2 unexpected=0
+SWEEP pin-audit exit=0 summary=SELFSTATE_PINS: rows=26 settled=26 stale=0
+SWEEP figure-bind exit=0 summary=REGISTRY_BIND: rows=9 match=9 stale=0 absent=0 error=0 unexpected=0
+SWEEP pointer exit=0 summary=POINTER_RECHECK: rows=12 met=12 unexpected=0
+SWEEP registry exit=1 summary=REGISTRY_CHECK: held=74/78 superseded=7
+SWEEPS root=/fast/scratch/hyaku/tameshi-r90/T90E2/fix3 runs=5 setup_refusals=0
+driver-exit=0
+
+## measure-c2 — base (LANE=base clone, REV=4e1c10e0, MANIFEST_SRC=3485ceb0: manifest absent at base)
+DEFECT_BIND_ROW R89-1a-readme-row kind=doc-contains expect=closed state=open detail=section-absent:##_Round_90_—_coverage-map_repair_(round-89_closure_item_1)
+DEFECT_BIND_ROW R89-1b-entry-cites-row kind=doc-contains expect=closed state=open detail=section-absent:##_Coverage-map_row_(appended_round_90)
+DEFECT_BIND_ROW R89-2-3-lesson-corrections kind=doc-contains expect=closed state=open detail=section-absent:##_Round-90_corrections_(append-only)
+DEFECT_BIND_ROW R89-4a-skill-registry-row kind=doc-contains expect=closed state=open detail=section-absent:##_Gate_registry_—_round_90_(retained_instrument:_ledger_witness)
+REGISTRY_CHECK: could-not-evaluate (--only 'ledger-witness-selftest' matches no registry row)
+C2_SUMMARY rev=4e1c10e0cfcc1e7533f1fc71a1b3b615aa60a7e0 manifest=pinned manifest_src=3485ceb08df394edf5fbe26bd09b03985a04fba1 rows=fail registry=fail defect_bind_exit=2 registry_exit=2
+C2_R90_PASS=false
+measure-exit=1
+
+## measure-c2 — freeze (LANE=freeze clone, REV=HEAD)
+DEFECT_BIND_ROW R89-1a-readme-row kind=doc-contains expect=closed state=open detail=section-absent:##_Round_90_—_coverage-map_repair_(round-89_closure_item_1)
+DEFECT_BIND_ROW R89-1b-entry-cites-row kind=doc-contains expect=closed state=open detail=section-absent:##_Coverage-map_row_(appended_round_90)
+DEFECT_BIND_ROW R89-2-3-lesson-corrections kind=doc-contains expect=closed state=open detail=section-absent:##_Round-90_corrections_(append-only)
+DEFECT_BIND_ROW R89-4a-skill-registry-row kind=doc-contains expect=closed state=open detail=section-absent:##_Gate_registry_—_round_90_(retained_instrument:_ledger_witness)
+REGISTRY_CHECK: could-not-evaluate (--only 'ledger-witness-selftest' matches no registry row)
+C2_SUMMARY rev=3485ceb08df394edf5fbe26bd09b03985a04fba1 manifest=pinned manifest_src=HEAD rows=fail registry=fail defect_bind_exit=2 registry_exit=2
+C2_R90_PASS=false
+measure-exit=1
+
+## measure-c2 — freeze+fixes (LANE=fix clone, REV=HEAD, MANIFEST_SRC default HEAD)
+DEFECT_BIND_ROW R89-1a-readme-row kind=doc-contains expect=closed state=closed detail=section-carries
+DEFECT_BIND_ROW R89-1b-entry-cites-row kind=doc-contains expect=closed state=closed detail=section-carries
+DEFECT_BIND_ROW R89-2-3-lesson-corrections kind=doc-contains expect=closed state=closed detail=section-carries
+DEFECT_BIND_ROW R89-4a-skill-registry-row kind=doc-contains expect=closed state=closed detail=section-carries
+DEFECT_BIND_ROW R89-4b-registry-json-row kind=receipt-tokens expect=closed state=closed detail=tokens-in-span-and-receipt
+ROW ledger-witness-selftest expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+C2_SUMMARY rev=9b01dd5e38b7bd4be2f8dcae576fb63ecadd848f manifest=pinned manifest_src=HEAD rows=ok registry=held defect_bind_exit=0 registry_exit=0
+C2_R90_PASS=true
+measure-exit=0
+
+## row-level equality of the four non-registry sweeps (grep of ROW/SELFSTATE_ROW/... lines, byte compare)
+base==freeze  selfstate rows-identical
+base==freeze  figure-bind rows-identical
+base==freeze  pointer rows-identical
+base==freeze  pin-audit rows-identical-modulo-tip      (only the printed tip=<rev> field differs)
+freeze==fix3  selfstate rows-identical
+freeze==fix3  figure-bind rows-identical
+freeze==fix3  pointer rows-identical
+freeze==fix3  pin-audit rows-identical-modulo-tip
+
+## registry-check row-level diff, freeze -> fix-pristine (only addition; no pre-existing row changes state)
+35a36
+> ROW ledger-witness-selftest held
+
+## registry-check rows that differ, identical in base, freeze and fix (standing red arms)
+ROW mutate-and-run-regression expect=0 got=2 differs
+ROW sources-census expect=0 got=1 differs
+ROW verify-round15 expect=0 got=1 differs
+ROW mte-interop-check expect=0 got=2 differs
+
+## selfstate stale rows (declared expect=stale, identical in every state)
+SELFSTATE_ROW r74-frozen-addr-six expect=stale measured=stale ok span_figure=ADDRANGE: rows=6 met=6 unexpected=0 measured_figure=ADDRANGE: rows=11 met=11 unexpected=0 instrument_exit=0
+SELFSTATE_ROW r76-r17-evidence-disposition expect=stale measured=stale ok span_figure=56/56 measured_figure=66/66 instrument_exit=0
+
+## disclosure D1 probe — detached fixture commit, evidence-disposition anchor resolution
+$ cd <fix clone>; python3 tools/evidence-disposition.py --root . --dispositions .ufo/evidence/round-18/dispositions.json --json
+fix-exit=2   (same bytes, detached HEAD 9b01dd5e38b7bd4be2f8dcae576fb63ecadd848f)
+{"error": {"kind": "historical_input_unavailable", "message": "detached HEAD 9b01dd5e38b7bd4be2f8dcae576fb63ecadd848f is on no branch or remote-tracking branch"}, ... "status": "could_not_evaluate"}
+
+## disclosure D1 probe — same bytes with the live lane's anchor binding (lane.branch=master, master at HEAD)
+$ cd <clone of fix>; git config lane.branch master; git branch -f master HEAD
+ROW evidence-disposition-round18 expect=0 got=0 held
+REGISTRY_CHECK: held=1/1 superseded=0
+rc18=0
+ROW evidence-disposition-round18-before expect=1 got=1 held
+REGISTRY_CHECK: held=1/1 superseded=0
+rc18b=0
+
+## fix commit diffstat (fixture clone)
+9b01dd5e round-90 C2 fixes (fixture clone)
+ .../round-90/c2/ledger-witness-selftest.txt        | 24 ++++++++++++++++++++++
+ .../round-90/c2/registry-check-ledger-witness.txt  |  4 ++++
+ SKILL.md                                           | 11 ++++++++++
+ corpus/README.md                                   | 11 ++++++++++
+ corpus/knowledge/kernel-witnessed-ledger.md        |  7 +++++++
+ corpus/lessons/round-89.md                         | 14 +++++++++++++
+ tools/registry.json                                | 23 +++++++++++++++++++++
+ 7 files changed, 94 insertions(+)
+
+## base -> freeze tree diff (read-only; additive only)
+40 files changed, 1519 insertions(+)
+(only .ufo/evidence/round-90/**, plans/round-90.plan.md, tools/defect-bind-r90.json; no existing tool, doc,
+ registry or manifest byte changed — tools/registry.json diff empty)

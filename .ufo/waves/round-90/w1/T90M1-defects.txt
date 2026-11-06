@@ -1,0 +1,135 @@
+# T90M1 defect spec — mutation of the frozen R90-C1 counter
+# target file: .ufo/evidence/round-90/c1/measure.py @ 33dd6e474ec3660f72c3c1e1c30105269807fe12
+#             sha256 d7365bbb472db738722d35e56ddc8c752cbf88f4400ef1608f7752f85a8cb528
+# each defect is ONE single-line edit (old -> new, exact), applied to a scratch copy;
+# exactly one occurrence of `old` is required, asserted before the battery runs.
+# detector: the committed control battery (pre-freeze/controls), run via
+# c1/controls.py with only its measure path redirected to the mutated copy.
+# The committed control states, and the frozen receipts they produced, are read-only.
+#
+# Levels reported per defect:
+#   L1 (receipt-observable) = differs in any of exit, C1_R90_PASS, C1_CONJUNCTS map,
+#                              C1_ROW lines, C1_SETUP, for any control state
+#   L0 (verdict-only)       = differs in the PASS/FAIL outcome or exit code of any control
+#
+# anchor legend: measure.py line numbers are as of the sha256 above.
+
+[D01]
+anchor: 139  verdict two-run requirement
+weakens: runs_per_verdict -> 1, so UNSTABLE (two runs differ) can never be derived
+old: runs = int(spec.get("runs_per_verdict", 2))
+new: runs = 1
+
+[D02]
+anchor: 174  verdict timeout class
+weakens: a timed-out selftest is recorded SURVIVED instead of INCONCLUSIVE
+old: verdicts.append("INCONCLUSIVE" if rc is None else ("SURVIVED" if rc == 0 else "KILLED"))
+new: verdicts.append("SURVIVED" if rc is None or rc == 0 else "KILLED")
+
+[D03]
+anchor: 254  conjunct witnessed
+weakens: drops the rule that every SURVIVED row must have a differing witness
+old: witnessed=witnessed == survived
+new: witnessed=True
+
+[D04]
+anchor: 228  note duplicate-row refusal
+weakens: a note with a duplicated id row is accepted (last row wins)
+old: ids_ok = (not dup) and sorted(note_rows) == sorted(ids)
+new: ids_ok = sorted(note_rows) == sorted(ids)
+
+[D05]
+anchor: 236  note source novelty guard
+weakens: accepts an S-id <= S315 (re-cites a pre-existing registry row)
+old: if int(sid) <= BASE_MAX_SID:
+new: if False:
+
+[D06]
+anchor: 231  measured figure denominator
+weakens: compares only the killed numerator, not the mutant count denominator
+old: figure_ok = len(heads) == 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n
+new: figure_ok = len(heads) == 1 and int(heads[0][0]) == killed
+
+[D07]
+anchor: 165  mutant syntax gate
+weakens: skips `bash -n` on the mutated gate copy
+old: if run(["bash", "-n", mgp], work, md, 30)[0] != 0:
+new: if False:
+
+[D08]
+anchor: 150  canary (the copy is what runs)
+weakens: canary conjunct is hard-wired true
+old: canary = selftest(cgp, work, to)[0] == 97
+new: canary = True
+
+[D09]
+anchor: 144  pristine green token
+weakens: pristine baseline accepted on rc 0 alone, without the `selftest ok` token
+old: green = all(r[0] == 0 and b"selftest ok" in r[1] for r in green_runs)
+new: green = all(r[0] == 0 for r in green_runs)
+
+[D10]
+anchor: 252  conjunct trivial0
+weakens: a mutant that only breaks the program (trivial) no longer fails the claim
+old: trivial0=trivial == 0, inconclusive0=inconclusive == 0, unstable0=unstable == 0,
+new: trivial0=True, inconclusive0=inconclusive == 0, unstable0=unstable == 0,
+
+[D11]
+anchor: 253  conjunct mismatched0
+weakens: note table rows need not agree with the derived verdicts
+old: note=note is not None, ids=ids_ok, mismatched0=(note is not None and mism == 0),
+new: note=note is not None, ids=ids_ok, mismatched0=True,
+
+[D12]
+anchor: 244  conjunct coverage
+weakens: corpus/README.md need not name the case note
+old: coverage_ok = any(l.lstrip().startswith("|") and "knowledge/mutation-case-fleet-sources-census.md" in l
+new: coverage_ok = True or any(l.lstrip().startswith("|") and "knowledge/mutation-case-fleet-sources-census.md" in l
+
+[D13]
+anchor: 136  gate blob pin
+weakens: gate bytes are not hashed against the spec's sha256
+old: pin = hashlib.sha256(gate_bytes).hexdigest() == g["sha256"]
+new: pin = True
+
+[D14]
+anchor: 129  spec bytes pin
+weakens: the mutant spec at REV is not hashed against SPEC_SHA
+old: spec_pinned = hashlib.sha256(spec_bytes).hexdigest() == SPEC_SHA
+new: spec_pinned = True
+
+[D15]
+anchor: 158  mutant old-string occurrence count
+weakens: accepts an old string occurring 2+ times (first occurrence only is replaced)
+old: if cnt != 1:
+new: if cnt < 1:
+
+[D16]
+anchor: 160  mutant no-op refusal
+weakens: accepts new == old as a valid mutant
+old: if m["new"] == m["old"]:
+new: if False:
+
+[D17]
+anchor: 175  UNSTABLE derivation
+weakens: two differing runs are read as the first run's verdict
+old: if len(set(verdicts)) > 1:
+new: if False:
+
+[D18]
+anchor: 255  conjunct n_min
+weakens: a spec with fewer than 10 mutants is accepted
+old: n_min=n >= N_MIN)
+new: n_min=True)
+
+[D19]
+anchor: 221  note row verdict-cell count
+weakens: a row carrying both KILLED and SURVIVED (ambiguous) is accepted as vs[0]
+old: if len(vs) != 1:
+new: if len(vs) < 1:
+
+[D20]
+anchor: 252  conjunct invalid0
+weakens: invalid mutants (bad count/noop/syntax) no longer fail the claim
+old: invalid0=invalid == 0,
+new: invalid0=True,

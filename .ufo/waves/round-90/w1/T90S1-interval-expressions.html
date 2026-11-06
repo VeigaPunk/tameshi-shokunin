@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- 
+Copyright © 1989, 1991, 1992, 1993, 1996-2005, 2007, 2009-2026 
+
+Free Software Foundation, Inc.
+
+
+
+This is Edition 5.4 of GAWK: Effective AWK Programming: A User's Guide for GNU Awk,
+for the 5.4.0 (or later) version of the GNU
+implementation of AWK.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with the
+Invariant Sections being "GNU General Public License", with the
+Front-Cover Texts being "A GNU Manual", and with the Back-Cover Texts
+as in (a) below.
+A copy of the license is included in the section entitled
+"GNU Free Documentation License".
+
+a. The FSF's Back-Cover Text is: "You have the freedom to
+copy and modify this GNU manual." -->
+<title>Interval Expressions (The GNU Awk User&rsquo;s Guide)</title>
+
+<meta name="description" content="Interval Expressions (The GNU Awk User&rsquo;s Guide)">
+<meta name="keywords" content="Interval Expressions (The GNU Awk User&rsquo;s Guide)">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="index.html" rel="start" title="Top">
+<link href="Index.html" rel="index" title="Index">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Regexp-Operators.html" rel="up" title="Regexp Operators">
+<link href="Non_002dgreedy-operators.html" rel="next" title="Non-greedy operators">
+<link href="Regexp-Operator-Details.html" rel="prev" title="Regexp Operator Details">
+<style type="text/css">
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+</style>
+<link rel="stylesheet" type="text/css" href="https://www.gnu.org/software/gnulib/manual.css">
+
+
+</head>
+
+<body lang="en">
+<div class="subsection-level-extent" id="Interval-Expressions">
+<div class="nav-panel">
+<p>
+Next: <a href="Non_002dgreedy-operators.html" accesskey="n" rel="next">Shortest Match, or &ldquo;Non-greedy&rdquo; Regexp Operators</a>, Previous: <a href="Regexp-Operator-Details.html" accesskey="p" rel="prev">Regexp Operators in <code class="command">awk</code></a>, Up: <a href="Regexp-Operators.html" accesskey="u" rel="up">Regular Expression Operators</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+<hr>
+<h4 class="subsection" id="Some-Notes-On-Interval-Expressions"><span>3.3.2 Some Notes On Interval Expressions<a class="copiable-link" href="#Some-Notes-On-Interval-Expressions"> &para;</a></span></h4>
+
+<a class="index-entry-id" id="index-POSIX-awk-interval-expressions-in"></a>
+<p>Interval expressions were not traditionally available in <code class="command">awk</code>.
+They were added as part of the POSIX standard to make <code class="command">awk</code>
+and <code class="command">egrep</code> consistent with each other.
+</p>
+<a class="index-entry-id" id="index-gawk-interval-expressions-and"></a>
+<p>Initially, because old programs may use &lsquo;<samp class="samp">{</samp>&rsquo; and &lsquo;<samp class="samp">}</samp>&rsquo; in regexp
+constants,
+<code class="command">gawk</code> did <em class="emph">not</em> match interval expressions
+in regexps.
+</p>
+<p>However, beginning with version 4.0,
+<code class="command">gawk</code> does match interval expressions by default.
+This is because compatibility with POSIX has become more
+important to most <code class="command">gawk</code> users than compatibility with
+old programs.
+</p>
+<p>For programs that use &lsquo;<samp class="samp">{</samp>&rsquo; and &lsquo;<samp class="samp">}</samp>&rsquo; in regexp constants,
+it is good practice to always escape them with a backslash.  Then the
+regexp constants are valid and work the way you want them to, using
+any version of <code class="command">awk</code>.<a class="footnote" id="DOCF18" href="#FOOT18"><sup>18</sup></a>
+</p>
+<p>When &lsquo;<samp class="samp">{</samp>&rsquo; and &lsquo;<samp class="samp">}</samp>&rsquo; appear in regexp constants
+in a way that cannot be interpreted as an interval expression
+(such as <code class="code">/q{a}/</code>), then they stand for themselves.
+</p>
+<a class="index-entry-id" id="index-BWK-awk-interval-expressions-in"></a>
+<p>As mentioned, interval expressions were not traditionally available
+in <code class="command">awk</code>. In March of 2019, BWK <code class="command">awk</code> (finally) acquired them.
+Starting with version 5.2, <code class="command">gawk</code>&rsquo;s
+<samp class="option">--traditional</samp> option no longer disables interval
+expressions in regular expressions.
+</p>
+<p>POSIX says that interval expressions containing repetition counts greater
+than 255 produce unspecified results.
+</p>
+<a class="index-entry-id" id="index-Eggert_002c-Paul"></a>
+<p>In the manual for GNU <code class="command">grep</code>, Paul Eggert notes the following:
+</p>
+<blockquote class="quotation">
+<p>Interval expressions may be implemented internally via repetition.
+For example, &lsquo;<samp class="samp">^(a|bc){2,4}$</samp>&rsquo; might be implemented as
+&lsquo;<samp class="samp">^(a|bc)(a|bc)((a|bc)(a|bc)?)?$</samp>&rsquo;.  A large repetition count may
+exhaust memory or greatly slow matching.  Even small counts can cause
+problems if cascaded; for example, &lsquo;<samp class="samp">grep -E
+&quot;.*{10,}{10,}{10,}{10,}{10,}&quot;</samp>&rsquo; is likely to overflow a
+stack.  Fortunately, regular expressions like these are typically
+artificial, and cascaded repetitions do not conform to POSIX so cannot
+be used in portable programs anyway.
+</p></blockquote>
+
+<p>This same caveat applies to <code class="command">gawk</code>.
+</p>
+</div>
+<div class="footnotes-segment">
+<hr>
+<h4 class="footnotes-heading">Footnotes</h4>
+
+<h5 class="footnote-body-heading"><a id="FOOT18" href="#DOCF18">(18)</a></h5>
+<p>Use two backslashes if you&rsquo;re
+using a string constant with a regexp operator or function.</p>
+</div>
+<hr>
+<div class="nav-panel">
+<p>
+Next: <a href="Non_002dgreedy-operators.html">Shortest Match, or &ldquo;Non-greedy&rdquo; Regexp Operators</a>, Previous: <a href="Regexp-Operator-Details.html">Regexp Operators in <code class="command">awk</code></a>, Up: <a href="Regexp-Operators.html">Regular Expression Operators</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="Index.html" title="Index" rel="index">Index</a>]</p>
+</div>
+
+
+
+</body>
+</html>

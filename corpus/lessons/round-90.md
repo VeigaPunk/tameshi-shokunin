@@ -116,3 +116,11 @@ repaired) and stay landed as record upkeep.
 | id | class | evidence pointer | captured-by | fix |
 |---|---|---|---|---|
 | M8 | the C1 control battery exercises only some of the counter's checks: 20 single-edit weakenings of `measure.py`, 9 killed by the 16 committed controls; four survivors are reachable by a committed lane state (D04 duplicate rows, D05 any S-id, D06 figure numerator only, D19 two verdict cells per row) | `.ufo/waves/round-90/w1/T90M1.md:53-72` (defect table), `:88-93` (reachability proofs) | round-88 M8 / round-89 M10 (one control per check, per branch) — applicable, met per conjunct but not per branch | routed with item 1: the successor's pre-freeze battery carries one committed state per branch, including T90M1's four reachable states; D19 is the same hole as T90R1 K1 |
+- T90S1's three proposed gawk-manual rows (Interval Expressions, Regexp Operator Details,
+  String Functions; `.ufo/waves/round-90/w1/T90S1.md:143-160`): **not appended**. The bodies
+  came through the public `allorigins` relay (the seat's own direct connections to
+  www.gnu.org failed), so the saved headers are the relay's, not the origin's
+  (`T90S1.md:34-57`) — the fetch is not a first-hand opening by the lane. The `&` rule they
+  would ground is already S316 (first-hand); the interval mechanism behind C03/C07 is shown
+  by execution (the witnesses and T90E3's arms). Flip: a direct origin fetch of any of the
+  three pages; it then enters as a new row citing its own headers.

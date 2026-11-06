@@ -1,0 +1,99 @@
+--- a/scripts/sources-census.sh
++++ b/scripts/sources-census.sh
+@@ -444,6 +444,96 @@
+   else
+     printf 'SURVIVED\tgawk-failure-is-error-not-ok\n'; fail=1
+   fi
++  # --- round-90 survivor-killing arms (drafted, report-only) -----------------
++  r90_c02="$test_root/r90-thin7-shokunin"
++  mkdir -p "$r90_c02/corpus" || exit 3
++  cat > "$r90_c02/corpus/SOURCES.md" <<'EOF'
++# Thin reject boundary fixture
++
++## Registry
++| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
++|---|---|---|---|---|---|---|---|---|---|---|
++| S001 | Rej — https://r90.example/thin | docs | B | s | §1 | 1234567 | rejected | 2026-10-01 | 90d | — |
++EOF
++  check "r90-W02-thin-reject-seven-chars" "W02" \
++    "$0" validate --today 2026-10-19 "$r90_c02"
++  r90_c03="$test_root/r90-supersedes-shokunin"
++  mkdir -p "$r90_c03/corpus" || exit 3
++  cat > "$r90_c03/corpus/SOURCES.md" <<'EOF'
++# Supersedes exemption fixture
++
++## Registry
++| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
++|---|---|---|---|---|---|---|---|---|---|---|
++| S001 | Old — https://r90.example/supersedes | docs | B | s | §1 | first row | queued | 2026-10-01 | 90d | — |
++| S002 | New — https://r90.example/supersedes | docs | B | s | §2 | supersedes S001 with newer text | queued | 2026-10-01 | 90d | — |
++EOF
++  checkx "r90-E04-supersedes-exemption" 0 \
++    "$0" validate --today 2026-10-19 "$r90_c03"
++  r90_c06="$test_root/r90-separator-colons-shokunin"
++  mkdir -p "$r90_c06/corpus" || exit 3
++  cat > "$r90_c06/corpus/SOURCES.md" <<'EOF'
++# Alignment-colon separator fixture
++
++## Registry
++| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
++|:---|:---|:---:|---|---|---|---|---|---|---|---:|
++| S001 | Row — https://r90.example/sep | docs | B | s | §1 | one row | queued | 2026-10-01 | 90d | — |
++EOF
++  checkline "r90-C06-colon-separator-single-row" \
++    $'r90-separator-colons-shokunin\trows\t1' \
++    "$0" census "$r90_c06"
++  r90_c08="$test_root/r90-usedby-dir-shokunin"
++  mkdir -p "$r90_c08/corpus/knowledge" || exit 3
++  cat > "$r90_c08/corpus/SOURCES.md" <<'EOF'
++# Used-by directory fixture
++
++## Registry
++| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
++|---|---|---|---|---|---|---|---|---|---|---|
++| S001 | Dir — https://r90.example/dir | docs | B | s | §1 | used by a directory | mined | 2026-10-01 | 90d | corpus/knowledge |
++EOF
++  checkx "r90-E11-usedby-directory" 0 \
++    "$0" validate --today 2026-10-19 "$r90_c08"
++  r90_c09="$test_root/r90-fragment-shokunin"
++  mkdir -p "$r90_c09/corpus" || exit 3
++  cat > "$r90_c09/corpus/SOURCES.md" <<'EOF'
++# URL fragment fixture
++
++## Registry
++| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
++|---|---|---|---|---|---|---|---|---|---|---|
++| S001 | A — https://r90.example/p#a | docs | B | s | §1 | anchor a | queued | 2026-10-01 | 90d | — |
++| S002 | B — https://r90.example/p#b | docs | B | s | §2 | anchor b | queued | 2026-10-01 | 90d | — |
++EOF
++  checkx "r90-E04-fragment-normalization" 1 \
++    "$0" validate --today 2026-10-19 "$r90_c09"
++  r90_c10="$test_root/r90-symbolic-space-shokunin"
++  mkdir -p "$r90_c10/corpus" || exit 3
++  cat > "$r90_c10/corpus/SOURCES.md" <<'EOF'
++# Symbolic cadence with spaces fixture
++
++## Registry
++| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
++|---|---|---|---|---|---|---|---|---|---|---|
++| S001 | Rel — https://r90.example/rel | docs | B | s | §1 | release cadence | queued | 2026-10-01 | on next release | — |
++EOF
++  checkx "r90-symbolic-space-cadence" 0 \
++    "$0" validate --today 2026-10-19 "$r90_c10"
++  r90_c12="$test_root/r90-usedby-comma-shokunin"
++  mkdir -p "$r90_c12/corpus" || exit 3
++  printf 'a\n' > "$r90_c12/corpus/a.md" || exit 3
++  printf 'b\n' > "$r90_c12/corpus/b.md" || exit 3
++  cat > "$r90_c12/corpus/SOURCES.md" <<'EOF'
++# Used-by comma list fixture
++
++## Registry
++| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
++|---|---|---|---|---|---|---|---|---|---|---|
++| S001 | Two — https://r90.example/two | docs | B | s | §1 | used by two files | mined | 2026-10-01 | 90d | corpus/a.md, corpus/b.md |
++EOF
++  checkx "r90-E11-usedby-comma-trim" 0 \
++    "$0" validate --today 2026-10-19 "$r90_c12"
+   if [ "$fail" = 0 ]; then echo "selftest ok"; exit 0; else echo "selftest FAILED" >&2; exit 3; fi
+ fi
+ 

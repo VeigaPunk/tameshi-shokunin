@@ -1,0 +1,49 @@
+Interval Expressions (The GNU Awk User’s Guide)
+<!--
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+span:hover a.copiable-link {visibility: visible}
+-->
+Next: Shortest Match, or “Non-greedy” Regexp Operators, Previous: Regexp Operators in awk, Up: Regular Expression Operators   [Contents][Index]
+3.3.2 Some Notes On Interval Expressions ¶
+Interval expressions were not traditionally available in awk.
+They were added as part of the POSIX standard to make awk
+and egrep consistent with each other.
+Initially, because old programs may use ‘{’ and ‘}’ in regexp
+constants,
+gawk did not match interval expressions
+in regexps.
+However, beginning with version 4.0,
+gawk does match interval expressions by default.
+This is because compatibility with POSIX has become more
+important to most gawk users than compatibility with
+old programs.
+For programs that use ‘{’ and ‘}’ in regexp constants,
+it is good practice to always escape them with a backslash.  Then the
+regexp constants are valid and work the way you want them to, using
+any version of awk.18
+When ‘{’ and ‘}’ appear in regexp constants
+in a way that cannot be interpreted as an interval expression
+(such as /q{a}/), then they stand for themselves.
+As mentioned, interval expressions were not traditionally available
+in awk. In March of 2019, BWK awk (finally) acquired them.
+Starting with version 5.2, gawk’s
+--traditional option no longer disables interval
+expressions in regular expressions.
+POSIX says that interval expressions containing repetition counts greater
+than 255 produce unspecified results.
+In the manual for GNU grep, Paul Eggert notes the following:
+Interval expressions may be implemented internally via repetition.
+For example, ‘^(a|bc){2,4}$’ might be implemented as
+‘^(a|bc)(a|bc)((a|bc)(a|bc)?)?$’.  A large repetition count may
+exhaust memory or greatly slow matching.  Even small counts can cause
+problems if cascaded; for example, ‘grep -E
+".*{10,}{10,}{10,}{10,}{10,}"’ is likely to overflow a
+stack.  Fortunately, regular expressions like these are typically
+artificial, and cascaded repetitions do not conform to POSIX so cannot
+be used in portable programs anyway.
+This same caveat applies to gawk.
+Footnotes
+(18)
+Use two backslashes if you’re
+using a string constant with a regexp operator or function.
+Next: Shortest Match, or “Non-greedy” Regexp Operators, Previous: Regexp Operators in awk, Up: Regular Expression Operators   [Contents][Index]

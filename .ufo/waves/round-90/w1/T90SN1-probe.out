@@ -1,0 +1,69 @@
+
+===== D0 the 2026-11-06 incident class: empty path resolves to cwd
+/home/vgpnk/Projects/shokunin
+rc=0
+python realpath(empty)=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-90/w1
+
+===== D1 measure.py --repo '' (empty repo arg is not refused; it becomes cwd)
+C1_SETUP git-failed:rev-parse --verify HEAD^{commit}:fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+C1_R90_PASS=false
+rc=2
+
+===== D2 measure.py --work '' from an empty cwd (empty work passes the emptiness check)
+C1_SETUP git-failed:rev-parse --verify 0000000000000000000000000000000000000000^{commit}:fatal: Needed a single revision
+C1_R90_PASS=false
+rc=2
+
+===== D3 fixes.py --target '' from a lane-shaped cwd (all five writes land in cwd, rc 0)
+fixes written variant=pos registry_exit=2 selftest_exit=2
+rc=0
+--- files changed by --target '':
+./corpus/knowledge/kernel-witnessed-ledger.md
+./corpus/lessons/round-89.md
+./corpus/README.md
+./SKILL.md
+./tools/registry.json
+./.ufo/evidence/round-90/c2/ledger-witness-selftest.txt
+./.ufo/evidence/round-90/c2/registry-check-ledger-witness.txt
+--- is the target a git worktree? (fixes.py never asks)
+fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+rc=128
+
+===== D4 fixes.py --target on a sibling-lane shape (4 appends, then no rollback)
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-90/c2/fixes.py", line 120, in <module>
+    main()
+    ~~~~^^
+  File "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-90/c2/fixes.py", line 95, in main
+    reg = json.load(open(rp, encoding="utf-8"))
+                    ~~~~^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r90/T90SN1/d4/sibling-lane/tools/registry.json'
+rc=1
+--- files changed before the registry.json crash:
+./corpus/knowledge/kernel-witnessed-ledger.md
+./corpus/lessons/round-89.md
+./corpus/README.md
+./SKILL.md
+
+===== D5 fixes.py --target on a fleet-root shape (no corpus/: fails before writing)
+    with open(path, "a", encoding="utf-8") as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r90/T90SN1/d5/fleet-root-shape/corpus/README.md'
+rc=1
+--- files created under the target:
+0
+
+===== D6 shell counters refuse empty path arguments (contrast with D1-D3)
+measure-c2 empty REV rc=1
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-90/c2/measure-c2.sh: line 18: 2: rev
+measure-c2 empty WORK rc=1
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-90/c2/measure-c2.sh: line 18: 3: work
+controls-c2 empty SC rc=1
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-90/c2/controls-c2.sh: line 7: 2: scratch
+
+===== D7 fixes.py exit status ignores both of its own receipts
+(D3 printed rc=0 although registry_exit/selftest_exit were non-zero: no sys.exit) 
+
+===== done
