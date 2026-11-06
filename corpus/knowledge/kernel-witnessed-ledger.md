@@ -70,3 +70,23 @@ work. A runner that declares legs outside the `regression_case_git` call shape f
 L3 is the next frontier: the witness proves that each mutant ran, on its exact bytes, with the
 control's argv and environment, and how the kernel says it ended — not that nothing else about
 its process was arranged per defect.
+
+## 5. What the round-89 wave proved (the claim was killed; this entry keeps the design)
+
+- **Path spelling is not identity.** Three runners from `.ufo/waves/round-89/w1/T89E2-make-counterfeits.py`
+  (`hardlink`, `dirswap`, `symlink`) exec a one-line stub at every audited path and install the
+  spec-exact bytes afterwards through another name; the witness prints `legs=11 witnessed=11
+  findings=0 … PASS` with no gate run (`T89E2.md`; reproduced in
+  `.ufo/evidence/round-89/landing/t89e2-reproduced-by-l1.txt`). W_ORDER and W_CONTENT need
+  (dev, inode) of file and directory at the exec, or a hash at the exec (QUALITY 137).
+- **A counter over an instrument needs a counterfeit instrument.** `T89C1-counterfeit-witness.py`
+  runs nothing, answers by control name, and reaches `C1_R89_PASS=true`; the selftest conjunct
+  accepts any `n/n` (QUALITY 138).
+- **L3 is real.** `umask 0777` plus stdout on `/dev/full` for recorded-KILLED defects is accepted
+  and manufactures a false KILLED row on a fixture (`T89E4.md`). A kernel exit binds the verdict
+  to an exec, not to the mutant's behaviour; the honest statement of what the witness proves is
+  "the declared legs ran on their pinned bytes, with the declared argv and environment, and
+  these are the kernel exits".
+- Honest variants from a second author (`T89E3.md`, two runners) were accepted; the trace parser
+  survived crafted edge cases except where noted in `T89C2.md` (dirfd-relative `execveat`
+  fails closed; aliasing is the M6 class).

@@ -4914,3 +4914,21 @@ refused by the validator as a non-swarm role and rode an executor, M2).
   Case note `corpus/knowledge/mutation-case-kake-ledger-guard.md`. QUALITY 134–135.
   Mistakes M1–M8 in `corpus/lessons/round-88.md`; M1, M4, M5 shown able to fail.
 - Standing sweeps at the tip: selfstate 0 unexpected, pins 26/26, registry 9/9, pointers 12/12.
+
+## Round 89 (2026-11-06) — fresh start: kernel-witnessed ledger audit (killed)
+
+One claim (fresh start; stagnation nudge waives the lowest-axis obligation). Pre-freeze
+`a65e11c0`/`48383295`, freeze `8876cca5`, landing `ff7a4b06`. One v1 wave `r89-w1`, 12 seats
+(executor 4, mutation-tester, reviewer 2, critic 2, scout, scribe, connector), all settled, no
+dead seat; attack share 5/12.
+
+- **R89-C1 (operability) predicate met, claim killed.** `tools/ledger-witness.py` runs the
+  ledger under `strace -f -y -v` and binds each declared leg to kernel-observed execs, bytes and
+  exits; counter at `ff7a4b06` prints `C1_R89_PASS=true` (real + 2 honest PASS, 12/12 forgeries
+  refused). Kill rule (b) fires: T89E2's alias runners (hard link, directory swap, symlink) exec
+  stubs and pass (M6). T89C1: a counterfeit witness passes the counter (M7).
+- **Motivating evidence.** Round 88's print-binding check accepts a forgery that prints every
+  per-leg PASS line and runs nothing (`.ufo/evidence/round-89/landing/m1-r88-check-vs-stub-lines.txt`).
+- **Frontier.** S313 (execve(2)), S314 (strace(1) `-y`/`-v`) mined, S315 (mkcheck, ICSE 2019)
+  queued; rows 172 → 175. Entry `corpus/knowledge/kernel-witnessed-ledger.md`. QUALITY 136–138.
+  Mistakes M1–M10 in `corpus/lessons/round-89.md`.

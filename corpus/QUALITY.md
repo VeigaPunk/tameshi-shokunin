@@ -2421,3 +2421,37 @@ on the landed bytes (`c2-landed-battery.txt`).
     never on a path spelling (`a/./b` and `a/b` are one target). Checked at round 88 by
     `.ufo/evidence/round-88/landing/executed-set-check.py`. (`lessons/round-88.md`
     `## Mistakes` M4, M5.)
+
+## Criteria appended — round 89
+
+136. A counter that certifies a subject DID work (ran, executed, swept) binds to what an
+    observer outside the subject recorded, not to anything the subject prints: for a
+    command-running subject, the kernel's record of which interpreter exec'd which bytes
+    (bytes the counter computed itself from git), with which argv and environment, and how
+    each exec ended. Its forgery battery includes a forgery that prints every figure the
+    counter parses while doing nothing (`stub-lines`), and its positive controls include
+    honest variants whose bytes differ from the known-good subject (fresh nonce per
+    measurement), so neither a print-reader nor a byte-recognizer passes. Limits of the
+    observer are declared before data. The print-reading failure is shown by
+    `.ufo/evidence/round-89/landing/m1-r88-check-vs-stub-lines.txt` (round-88's
+    `executed-set-check.py` accepts `stub-lines`, exit 0) against the witness's refusal
+    (`landing/measure-ff7a4b06.out`). (`lessons/round-89.md` `## Mistakes` M1.)
+137. An observer that ties "the bytes that ran" to "the bytes audited" keys files on object
+    identity, not on path spelling: a second hard link, a renamed or symlinked parent
+    directory, or a symlink at the audited path are the same file to the kernel and a
+    different string to a path matcher. The check records (dev, inode) of each audited file
+    and of its directory at the exec, refuses a write through any name that resolves to them
+    after it, and refuses a file or directory whose identity changed between exec and
+    audit; or it hashes the bytes at the exec itself. Its controls include the three alias
+    forgeries of round 89 (`.ufo/waves/round-89/w1/T89E2-make-counterfeits.py`: `hardlink`,
+    `dirswap`, `symlink`), which the round-89 witness accepts
+    (`landing/t89e2-reproduced-by-l1.txt`). (`lessons/round-89.md` `## Mistakes` M6.)
+138. A counter that certifies an INSTRUMENT (not a subject) derives every conjunct itself and
+    commits a counterfeit-instrument control: a file that prints the instrument's verdict
+    lines without doing its work must fail the counter before the freeze. Self-reported
+    selftest totals are compared to the committed arm list (never `n/n` for any `n`), no
+    figure is a literal in the counter's own format string, and controls are handed to the
+    instrument under names that do not disclose their class. Round 89's counter fails all
+    three: `.ufo/waves/round-89/w1/T89C1-counterfeit-witness.py` (no subprocess, 53 lines)
+    reaches `C1_R89_PASS=true`, `selftest=0/0` passes, and `legs=11` is printed, not derived
+    (`T89C1.md` objections 1, 3, 6, 7). (`lessons/round-89.md` `## Mistakes` M7.)
