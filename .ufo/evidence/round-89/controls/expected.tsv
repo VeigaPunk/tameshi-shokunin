@@ -1,0 +1,22 @@
+# R89-C1 pre-freeze control expectations, written 2026-11-06 before any forgery result was read.
+# control	expected_rc	expected_verdict	checks expected to fire (informative; the frozen predicate binds rc+verdict)
+real-runner	0	PASS	-
+stub-lines	1	FAIL	W_MAT,W_CONTROL,W_EXEC,W_CONTENT
+lazy	1	FAIL	W_EXEC
+copy-sweep	1	FAIL	W_CONTENT,W_VERDICT
+late-write	1	FAIL	W_ORDER,W_VERDICT
+liar-flip	1	FAIL	W_VERDICT
+env-steer	1	FAIL	W_ENV
+rlimit-steer	1	FAIL	W_ENV
+argv-steer	1	FAIL	W_EXEC
+fake-interp	1	FAIL	W_EXEC
+parked	1	FAIL	W_RUN,W_MAT,W_CONTROL,W_EXEC,W_CONTENT
+stub	1	FAIL	W_RUN,W_MAT,W_CONTROL,W_EXEC,W_CONTENT
+dupbase	1	FAIL	W_PATH,W_DUP
+no-work@61990f3d	absent	absent	tools/ledger-witness.py does not exist at the base revision
+# appended 2026-11-06 after the development runs above were read and BEFORE any honest variant ran:
+honest-reorder	0	PASS	-
+honest-rename	0	PASS	-
+# observed-vs-expected note (development runs, tool sha256 0839f587…): env-steer fired W_EXEC, not the
+# expected W_ENV (BASH_ENV makes `bash -c` exit before the interpreter exec, so no mutant is exec'd);
+# rlimit-steer kept every verdict (witnessed=11) and was refused by W_ENV only. Both still FAIL.
