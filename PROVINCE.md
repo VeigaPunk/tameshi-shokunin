@@ -188,3 +188,12 @@ its own revision. The round-88 runner adds two header lines and leg 11, so at th
 round-88 runner the eleven-leg inventory is `:90-100` (leg 10 `bash-drift-pins` at
 `:99`, leg 11 `py-kake-ledger-guard` at `:100`). The earlier cells stand append-only;
 their pointer rows pin their own revisions.
+
+## Core — round 90 append (2026-11-06)
+
+Appended; earlier lines are unchanged. The fleet's own registry gate,
+`scripts/sources-census.sh` in the fleet root (pinned `f47ad6ba`), enters Core as a
+read-only primary surface: "the fleet's existing gates" (line 7) include fleet-root gates,
+not only sibling-lane ones. It is measured from the fleet's object store into scratch
+copies only; recommendations (the seven survivor-killing arms) travel in the round
+report, never as an edit (lines 16-17). It is a recorded case, not a ledger leg.

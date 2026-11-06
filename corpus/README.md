@@ -711,3 +711,11 @@ Appended; every earlier row is unchanged. Round 89 landed
 | Entry | Map position and what it covers | Grounding |
 |---|---|---|
 | `knowledge/kernel-witnessed-ledger.md` | Frontier, not Core: the round-89 strace-witnessed audit of `tools/mutate-and-run.sh --regression` (`tools/ledger-witness.py`). R89-C1 was killed by its own rule (the T89E2 alias runners), so the entry records a killed instrument and its declared limits L1-L4; it moves no surface into Core | S313, S314 (mined, opened 2026-11-06); `.ufo/evidence/round-89/` |
+
+## Round 90 — coverage map: the fleet's own registry gate (R90-C1)
+
+Appended; every earlier row is unchanged.
+
+| Entry / map position | What it covers | Grounding |
+|---|---|---|
+| `knowledge/mutation-case-fleet-sources-census.md` / Core (recorded cases; not a ledger leg) | case 12: the fleet's `scripts/sources-census.sh` @ `f47ad6ba`, the first fleet-root gate the lane measures (every earlier case is a sibling-lane gate), 5/12 killed under its own `selftest`, 12/12 pre-registered predictions held, every survivor witnessed non-equivalent and killed by a scratch-proven arm (report-only); fleet impact: C12 would turn 20 lanes' census red | S316, S317 (new, opened 2026-11-06); `.ufo/evidence/round-90/c1/`; frozen counter `.ufo/evidence/round-90/c1/measure.py` |
