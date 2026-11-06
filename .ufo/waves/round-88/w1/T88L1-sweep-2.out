@@ -1,0 +1,56 @@
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=0a0e46de70e8b4f7cda2220efc37757e8bb49ea3833e0920a97a78aaad795a4a
+MUTATE_DATE: 2026-11-06T19:09:25Z
+MUTATE_TARGET: /fast/scratch/hyaku/tameshi-r88/T88L1/ledger_append_guard.py sha256=0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067 bytes=6969
+MUTATE_SPEC: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-88/c1/py-kake-ledger-guard.defects.spec defects=10
+CONTROL: GREEN (exit=0 duration-ms=72 pristine-sha256=0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067)
+  | fixture append: passed
+  | fixture non-prefix: failed (first divergence at byte 126)
+  | selftest: 2/2 passed
+DEFECT K_CUT_WHOLE: KILLED (exit=1 duration-ms=66) the stable prefix is the whole base, not the bytes before the final `]`
+  | fixture append: failed
+  | fixture non-prefix: failed (first divergence at byte 126)
+  | selftest: 1/2 passed
+DEFECT K_STARTSWITH: KILLED (exit=1 duration-ms=70) only the first byte of the head is compared
+  | fixture append: passed
+  | fixture non-prefix: passed (first divergence at byte None)
+  | selftest: 1/2 passed
+DEFECT K_FILES_EQ: KILLED (exit=1 duration-ms=73) the append check demands two compared ledgers
+  | fixture append: failed
+  | fixture non-prefix: failed (first divergence at byte 126)
+  | selftest: 1/2 passed
+DEFECT K_GLOB: KILLED (exit=1 duration-ms=68) the governed glob no longer matches `receipt-rewrites*.json`
+  |     sys.exit(main())
+  |              ~~~~^^
+  |   File "/fast/scratch/hyaku/tameshi-r88/T88L1/work-2/mutant-K_GLOB.ledger_append_guard.py", line 135, in main
+  |     return selftest(work)
+  |   File "/fast/scratch/hyaku/tameshi-r88/T88L1/work-2/mutant-K_GLOB.ledger_append_guard.py", line 115, in selftest
+  |     f"(first divergence at byte {res['detail'][0].get('first_divergence')})")
+  |                                  ~~~~~~~~~~~~~^^^
+  | IndexError: list index out of range
+DEFECT K_SHOW_RC: KILLED (exit=1 duration-ms=66) the base read's success test is inverted
+  | fixture append: failed
+  | fixture non-prefix: passed (first divergence at byte None)
+  | selftest: 0/2 passed
+DEFECT S_HEAD_SHORT: SURVIVED (exit=0 duration-ms=66) the compared head drops its last byte
+  | fixture append: passed
+  | fixture non-prefix: failed (first divergence at byte 126)
+  | selftest: 2/2 passed
+DEFECT S_OFFSET_EQ: SURVIVED (exit=0 duration-ms=74) the first-divergence scan reports the first EQUAL byte
+  | fixture append: passed
+  | fixture non-prefix: failed (first divergence at byte 0)
+  | selftest: 2/2 passed
+DEFECT S_OK_ALL: SURVIVED (exit=0 duration-ms=76) the tree verdict keeps only the last ledger's result
+  | fixture append: passed
+  | fixture non-prefix: failed (first divergence at byte 126)
+  | selftest: 2/2 passed
+DEFECT S_VACUOUS: SURVIVED (exit=0 duration-ms=62) a tree with no compared ledger reports prefix_preserved=True
+  | fixture append: passed
+  | fixture non-prefix: failed (first divergence at byte 126)
+  | selftest: 2/2 passed
+DEFECT S_RED_FILES: SURVIVED (exit=0 duration-ms=66) the non-prefix check no longer requires exactly one compared ledger
+  | fixture append: passed
+  | fixture non-prefix: failed (first divergence at byte 126)
+  | selftest: 2/2 passed
+MUTATE_RESTORE: OK (target-sha256 before=0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067 after=0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067 pristine-sha256=0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067)
+MUTATE_EVIDENCE: /fast/scratch/hyaku/tameshi-r88/T88L1/work-2
+MUTATE: DONE (target=ledger_append_guard.py defects=10 killed=5 survived=5 inconclusive=0 kill-rate=50%)

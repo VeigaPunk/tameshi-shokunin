@@ -1,0 +1,194 @@
+diff --git a/tools/mutate-and-run.sh b/tools/mutate-and-run.sh
+index 51fa5bc8..80f701f6 100755
+--- a/tools/mutate-and-run.sh
++++ b/tools/mutate-and-run.sh
+@@ -18 +18,3 @@
+-# tenth measured leg, kagi corpus/drift-pins.sh, as bash-drift-pins.
++# tenth measured leg, kagi corpus/drift-pins.sh, as bash-drift-pins; r88 adds the
++# eleventh measured leg and the first Python gate, kake
++# scripts/ledger_append_guard.py, as py-kake-ledger-guard.
+@@ -84 +86 @@
+-# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten) — the fleet's
++# --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten; r88 eleven) — the fleet's
+@@ -97,0 +100 @@
++#   py-kake-ledger-guard  kake-shokunin/scripts/ledger_append_guard.py 5/10 (50 %)
+@@ -104 +107,2 @@
+-# .ufo/evidence/round-51/c2/bash-drift-pins.defects.spec (leg 10).
++# .ufo/evidence/round-51/c2/bash-drift-pins.defects.spec (leg 10),
++# .ufo/evidence/round-88/c1/py-kake-ledger-guard.defects.spec (leg 11).
+@@ -114 +118,6 @@
+-# All ten defect specs are embedded below (legs 1–4 cut from those notes'
++# Leg 11's spec is the round-88 pre-registration (written before any mutant ran,
++# committed in 6998726f with its pre-freeze controls); its table is the measured
++# 2026-11-06 sweep (18:58:27Z, .ufo/evidence/round-88/c1/sweep.txt; 10/10 verdict
++# predictions held). The suite runs the gate's own `--selftest` under
++# `python3 -I` in the same env -i sandbox as legs 7-9.
++# All eleven defect specs are embedded below (legs 1–4 cut from those notes'
+@@ -121 +130,2 @@
+-# round-51 pre-registered spec (kagi corpus/drift-pins.sh) verbatim and its measured sweep table).
++# round-51 pre-registered spec (kagi corpus/drift-pins.sh) verbatim and its measured sweep table;
++# leg 11 likewise: the round-88 pre-registered spec (kake scripts/ledger_append_guard.py)).
+@@ -226 +236 @@ bash-checklist-run, js-claims-check, js-round-gate, js-sources-check, js-cite-ch
+-bash-drift-pins) at its pinned
++bash-drift-pins, py-kake-ledger-guard) at its pinned
+@@ -642,0 +653,3 @@ TABLE_CITECHECK='K_UNRESOLVED_SEV:KILLED,K_PIN_KIND:KILLED,K_FENCE_TILDE:KILLED,
++PIN_KAKEGUARD=0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067
++REV_KAKEGUARD=e8d3a924249983972e5163d160cf236487986c55
++TABLE_KAKEGUARD='K_CUT_WHOLE:KILLED,K_STARTSWITH:KILLED,K_FILES_EQ:KILLED,K_GLOB:KILLED,K_SHOW_RC:KILLED,S_HEAD_SHORT:SURVIVED,S_OFFSET_EQ:SURVIVED,S_OK_ALL:SURVIVED,S_VACUOUS:SURVIVED,S_RED_FILES:SURVIVED'
+@@ -671 +684 @@ table_total() { # <table> -> number of entries
+-regression_specs() { # <dir> — write the ten embedded case specs
++regression_specs() { # <dir> — write the eleven embedded case specs
+@@ -1212,0 +1226,64 @@ EOT
++EOT
++  cat >"$d/py-kake-ledger-guard.spec" <<'EOT'
++# tameshi round-88 C1 — PRE-REGISTERED mutation spec for kake scripts/ledger_append_guard.py
++# rev e8d3a924249983972e5163d160cf236487986c55 · blob ed2a135e31aa2fa7b05c9c7a1ec0edbdd5599b56
++# sha256 0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067 · 153 lines (wc -l) · mode 100755
++# Author of the pinned revision: kake-shokunin <kake@shokunin.local> (sibling lane; read-only primary surface).
++# Suite: hermetic `env -i … python3 -I "$MUTANT" --selftest` in a per-defect sandbox (2 checks at the pin:
++# a pure append passes, an in-place edit fails); verdict oracle = exit status only.
++# Predictions were fixed before any mutant run. Composition: 5 kill-aimed / 5 hole-aimed.
++# Safety: no defect touches a git invocation, the fixture path or the work dir (the selftest
++# commits inside its own mkdtemp fixture repo; GIT_CEILING_DIRECTORIES bounds discovery).
++# Each @old occurs exactly once in the pinned bytes.
++
++# PREDICT KILLED — the append fixture inserts before the final `]`; with the whole base as the
++# compared head the base is no longer a byte prefix, so the "append" check is false and the selftest exits 1.
++@defect K_CUT_WHOLE | the stable prefix is the whole base, not the bytes before the final `]`
++@old     cut = base.rindex(b"]") if b"]" in base else len(base)
++@new     cut = len(base)
++
++# PREDICT KILLED — the non-prefix fixture (em dash re-escaped) still starts with the first byte, so it passes and `red` is false.
++@defect K_STARTSWITH | only the first byte of the head is compared
++@old     if carrier.startswith(head):
++@new     if carrier.startswith(head[:1]):
++
++# PREDICT KILLED — the fixture tree carries exactly one governed ledger, so `files == 2` is false.
++@defect K_FILES_EQ | the append check demands two compared ledgers
++@old checks.append(("append", res["prefix_preserved"] is True and res["files"] == 1))
++@new checks.append(("append", res["prefix_preserved"] is True and res["files"] == 2))
++
++# PREDICT KILLED — the fixture ledger is receipt-rewrites.json; the narrowed glob finds no ledger, files=0.
++@defect K_GLOB | the governed glob no longer matches `receipt-rewrites*.json`
++@old GOVERNED_GLOB = ".ufo/waves/*/receipt-rewrites*.json"
++@new GOVERNED_GLOB = ".ufo/waves/*/receipt-rewrite.json"
++
++# PREDICT KILLED — a successful `git show` is now treated as "base does not carry the path"; nothing is compared.
++@defect K_SHOW_RC | the base read's success test is inverted
++@old             if show.returncode != 0:
++@new             if show.returncode == 0:
++
++# PREDICT SURVIVED — the em-dash edit sits before `cut - 1`, so the shortened head still detects it,
++# and the append fixture keeps the shortened head as a prefix. One byte of the head is unguarded.
++@defect S_HEAD_SHORT | the compared head drops its last byte
++@old     head = base[:cut]
++@new     head = base[:cut - 1]
++
++# PREDICT SURVIVED — the first-divergence offset is printed by the selftest but never asserted.
++@defect S_OFFSET_EQ | the first-divergence scan reports the first EQUAL byte
++@old if head[i] != carrier[i]
++@new if head[i] == carrier[i]
++
++# PREDICT SURVIVED — both fixtures carry one ledger, so dropping the conjunction across ledgers is unobserved.
++@defect S_OK_ALL | the tree verdict keeps only the last ledger's result
++@old         ok_all = ok_all and ok
++@new         ok_all = ok
++
++# PREDICT SURVIVED — no fixture has zero governed ledgers, so a vacuous pass on an empty tree is unasserted.
++@defect S_VACUOUS | a tree with no compared ledger reports prefix_preserved=True
++@old "prefix_preserved": ok_all and any(f["compared"] for f in files),
++@new "prefix_preserved": ok_all,
++
++# PREDICT SURVIVED — the red check's file-count conjunct is redundant on the one-ledger fixture.
++@defect S_RED_FILES | the non-prefix check no longer requires exactly one compared ledger
++@old     red = res["prefix_preserved"] is False and res["files"] == 1
++@new     red = res["prefix_preserved"] is False
+@@ -1219 +1296,2 @@ EOT
+-     && -s "$d/bash-drift-pins.spec" ]]
++     && -s "$d/bash-drift-pins.spec" \
++     && -s "$d/py-kake-ledger-guard.spec" ]]
+@@ -1446 +1524 @@ run_regression() {
+-  printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s bash-checklist-run=%s/%s js-claims-check=%s/%s js-round-gate=%s/%s js-sources-check=%s/%s js-cite-check=%s/%s bash-drift-pins=%s/%s\n' \
++  printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s bash-checklist-run=%s/%s js-claims-check=%s/%s js-round-gate=%s/%s js-sources-check=%s/%s js-cite-check=%s/%s bash-drift-pins=%s/%s py-kake-ledger-guard=%s/%s\n' \
+@@ -1456 +1534,2 @@ run_regression() {
+-    "$(table_count "$TABLE_DRIFTPINS" KILLED)" "$(table_total "$TABLE_DRIFTPINS")"
++    "$(table_count "$TABLE_DRIFTPINS" KILLED)" "$(table_total "$TABLE_DRIFTPINS")" \
++    "$(table_count "$TABLE_KAKEGUARD" KILLED)" "$(table_total "$TABLE_KAKEGUARD")"
+@@ -1458 +1537 @@ run_regression() {
+-  local st_js st_kagi st_tsu st_mado st_checklist st_claims st_roundgate st_sourcescheck st_citecheck st_driftpins
++  local st_js st_kagi st_tsu st_mado st_checklist st_claims st_roundgate st_sourcescheck st_citecheck st_driftpins st_kakeguard
+@@ -1510,2 +1589,8 @@ run_regression() {
+-  local nlegs=10 npass=0 nfail=0 nsetup=0 st
+-  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate" "$st_sourcescheck" "$st_citecheck" "$st_driftpins"; do
++  regression_case_git py-kake-ledger-guard \
++    'kake-shokunin/scripts/ledger_append_guard.py' "$PIN_KAKEGUARD" "$REV_KAKEGUARD" \
++    "$specs/py-kake-ledger-guard.spec" 'h="$WORKDIR/sandbox-$DEFECT_ID"; mkdir -p "$h/home" "$h/tmp" && cd "$h" && exec env -i PATH="$PATH" HOME="$h/home" TMPDIR="$h/tmp" LC_ALL=C GIT_CONFIG_NOSYSTEM=1 GIT_CEILING_DIRECTORIES="$h" python3 -I "$MUTANT" --selftest' "$TABLE_KAKEGUARD" \
++    "$root/py-kake-ledger-guard"
++  st_kakeguard=$?
++
++  local nlegs=11 npass=0 nfail=0 nsetup=0 st
++  for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate" "$st_sourcescheck" "$st_citecheck" "$st_driftpins" "$st_kakeguard"; do
+@@ -2024 +2109 @@ EOT
+-  st 'embedded leg specs: ten files written' $?
++  st 'embedded leg specs: eleven files written' $?
+@@ -2030 +2115 @@ EOT
+-  lcalls=$(grep -cE '^  regression_case_git (js|bash)-' "$SELF")
++  lcalls=$(grep -cE '^  regression_case_git (js|bash|py)-' "$SELF")
+@@ -2033,2 +2118,2 @@ EOT
+-  [[ "$lcalls" -eq 10 && "$lfiles" -eq 10 && "$lnlegs" -eq 10 ]]
+-  st "leg-count agreement: calls=$lcalls specs=$lfiles nlegs=$lnlegs (want 10)" $?
++  [[ "$lcalls" -eq 11 && "$lfiles" -eq 11 && "$lnlegs" -eq 11 ]]
++  st "leg-count agreement: calls=$lcalls specs=$lfiles nlegs=$lnlegs (want 11)" $?
+@@ -2045,0 +2131 @@ EOT
++    'py-kake-ledger-guard:py-kake-ledger-guard.spec:TABLE_KAKEGUARD:10:5'
+@@ -2047,2 +2133,2 @@ EOT
+-  [[ ${#lent[@]} -eq 10 ]]
+-  st "leg-count agreement: selftest leg tuples=${#lent[@]} (want 10)" $?
++  [[ ${#lent[@]} -eq 11 ]]
++  st "leg-count agreement: selftest leg tuples=${#lent[@]} (want 11)" $?
+@@ -2073,4 +2159,4 @@ EOT
+-  tblock=$(awk '/^  local nlegs=10 npass=0 nfail=0 nsetup=0 st$/{f=1} f&&/^}$/{exit} f' "$SELF")
+-  mapfile -t tnames < <(awk '/^run_regression\(\) \{$/{f=1} /^  local nlegs=10 npass=0 nfail=0 nsetup=0 st$/{f=0} f&&/^  st_[a-z]+=\$\?$/{sub(/^  /,""); sub(/=\$\?$/,""); print}' "$SELF")
+-  [[ -n "$tblock" && ${#tnames[@]} -eq 10 ]]
+-  st "tally harness: block extracted, leg status names=${#tnames[@]} (want 10)" $?
++  tblock=$(awk '/^  local nlegs=11 npass=0 nfail=0 nsetup=0 st$/{f=1} f&&/^}$/{exit} f' "$SELF")
++  mapfile -t tnames < <(awk '/^run_regression\(\) \{$/{f=1} /^  local nlegs=11 npass=0 nfail=0 nsetup=0 st$/{f=0} f&&/^  st_[a-z]+=\$\?$/{sub(/^  /,""); sub(/=\$\?$/,""); print}' "$SELF")
++  [[ -n "$tblock" && ${#tnames[@]} -eq 11 ]]
++  st "tally harness: block extracted, leg status names=${#tnames[@]} (want 11)" $?
+@@ -2087,4 +2173,4 @@ EOT
+-  tally_line 0 'REGRESSION: PASS (cases=10 passed=10; ledger legs exact: killed-delta<=0 flips<=0)' 0 0 0 0 0 0 0 0 0 0
+-  st 'tally harness: all ten legs pass -> PASS passed=10, exit 0' $?
+-  for tvec in '1:1:REGRESSION: FAIL (cases=10 passed=9 failed=1 setup=0)' \
+-    '2:2:REGRESSION: SETUP (cases=10 passed=9 cannot-verify=1)'; do
++  tally_line 0 'REGRESSION: PASS (cases=11 passed=11; ledger legs exact: killed-delta<=0 flips<=0)' 0 0 0 0 0 0 0 0 0 0 0
++  st 'tally harness: all eleven legs pass -> PASS passed=11, exit 0' $?
++  for tvec in '1:1:REGRESSION: FAIL (cases=11 passed=10 failed=1 setup=0)' \
++    '2:2:REGRESSION: SETUP (cases=11 passed=10 cannot-verify=1)'; do
+@@ -2092,2 +2178,2 @@ EOT
+-    for ti in 0 1 2 3 4 5 6 7 8 9; do
+-      local -a tst=(0 0 0 0 0 0 0 0 0 0)
++    for ti in 0 1 2 3 4 5 6 7 8 9 10; do
++      local -a tst=(0 0 0 0 0 0 0 0 0 0 0)
+@@ -2098,2 +2184,2 @@ EOT
+-    [[ $tgot -eq 10 ]]
+-    st "tally harness: one leg status ${tvec%%:*} at each of 10 positions -> ${tj#*:} (${tgot}/10)" $?
++    [[ $tgot -eq 11 ]]
++    st "tally harness: one leg status ${tvec%%:*} at each of 11 positions -> ${tj#*:} (${tgot}/11)" $?
+@@ -2103,4 +2189,4 @@ EOT
+-  for tvec in '1 1 0 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=10 passed=8 failed=2 setup=0)' \
+-    '2 2 0 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=10 passed=8 cannot-verify=2)' \
+-    '1 2 0 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=10 passed=8 failed=1 setup=1)' \
+-    '3 0 0 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=10 passed=9 cannot-verify=1)'; do
++  for tvec in '1 1 0 0 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=11 passed=9 failed=2 setup=0)' \
++    '2 2 0 0 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=11 passed=9 cannot-verify=2)' \
++    '1 2 0 0 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=11 passed=9 failed=1 setup=1)' \
++    '3 0 0 0 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=11 passed=10 cannot-verify=1)'; do
+@@ -2108 +2194 @@ EOT
+-    # shellcheck disable=SC2086 # the status list splits into ten arguments on purpose
++    # shellcheck disable=SC2086 # the status list splits into eleven arguments on purpose
+@@ -2113 +2199 @@ EOT
+-  # refuse as SETUP (case-tally mismatch), not print PASS with nine counted legs.
++  # refuse as SETUP (case-tally mismatch), not print PASS with ten counted legs.
+@@ -2117 +2203 @@ EOT
+-    tally_line 2 'REGRESSION: SETUP (case-tally mismatch: cases=10 counted=9)' 0 0 0 0 0 0 0 0 0 0
++    tally_line 2 'REGRESSION: SETUP (case-tally mismatch: cases=11 counted=10)' 0 0 0 0 0 0 0 0 0 0 0

@@ -1,0 +1,39 @@
+PASS pin-sha256: 0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067
+PASS pin-bytes: 6969
+PASS pin-lines: 153
+PASS spec-sha256: 724beed385222b6342dc6d3af5ad19ae605bca8101f983f3ce58da905492689e
+PASS spec-defects: 10
+PASS old-once:K_CUT_WHOLE: count=1 old='    cut = base.rindex(b"]") if b"]" in base else len(base)'
+PASS old-new-differ:K_CUT_WHOLE: '    cut = base.rindex(b"]") if b"]" in base else len(base)' -> '    cut = len(base)'
+PASS old-once:K_STARTSWITH: count=1 old='    if carrier.startswith(head):'
+PASS old-new-differ:K_STARTSWITH: '    if carrier.startswith(head):' -> '    if carrier.startswith(head[:1]):'
+PASS old-once:K_FILES_EQ: count=1 old='checks.append(("append", res["prefix_preserved"] is True and res["files"] == 1))'
+PASS old-new-differ:K_FILES_EQ: 'checks.append(("append", res["prefix_preserved"] is True and res["files"] == 1))' -> 'checks.append(("append", res["prefix_preserved"] is True and res["files"] == 2))'
+PASS old-once:K_GLOB: count=1 old='GOVERNED_GLOB = ".ufo/waves/*/receipt-rewrites*.json"'
+PASS old-new-differ:K_GLOB: 'GOVERNED_GLOB = ".ufo/waves/*/receipt-rewrites*.json"' -> 'GOVERNED_GLOB = ".ufo/waves/*/receipt-rewrite.json"'
+PASS old-once:K_SHOW_RC: count=1 old='            if show.returncode != 0:'
+PASS old-new-differ:K_SHOW_RC: '            if show.returncode != 0:' -> '            if show.returncode == 0:'
+PASS old-once:S_HEAD_SHORT: count=1 old='    head = base[:cut]'
+PASS old-new-differ:S_HEAD_SHORT: '    head = base[:cut]' -> '    head = base[:cut - 1]'
+PASS old-once:S_OFFSET_EQ: count=1 old='if head[i] != carrier[i]'
+PASS old-new-differ:S_OFFSET_EQ: 'if head[i] != carrier[i]' -> 'if head[i] == carrier[i]'
+PASS old-once:S_OK_ALL: count=1 old='        ok_all = ok_all and ok'
+PASS old-new-differ:S_OK_ALL: '        ok_all = ok_all and ok' -> '        ok_all = ok'
+PASS old-once:S_VACUOUS: count=1 old='"prefix_preserved": ok_all and any(f["compared"] for f in files),'
+PASS old-new-differ:S_VACUOUS: '"prefix_preserved": ok_all and any(f["compared"] for f in files),' -> '"prefix_preserved": ok_all,'
+PASS old-once:S_RED_FILES: count=1 old='    red = res["prefix_preserved"] is False and res["files"] == 1'
+PASS old-new-differ:S_RED_FILES: '    red = res["prefix_preserved"] is False and res["files"] == 1' -> '    red = res["prefix_preserved"] is False'
+PASS fixture-emdash-offset-126: first divergence=126
+PASS fixture-cut-1-is-space: base[151:152]=b' ' cut=152
+PASS fixture-append-is-prefix: True
+PASS S_STARTSWITH-one-byte-head-accepts-edit: True (mutant accepts; pristine rejects)
+PASS S_HEAD_SHORT-short-head-accepts-cut-1-flip: short head accepts=True, full head accepts=False
+PASS S_OFFSET_EQ-first-equal-byte-0: 0
+PASS S_VACUOUS-empty-tree-pristine-false: prefix_preserved=False
+PASS S_VACUOUS-empty-tree-mutant-true: prefix_preserved=True (mutant)
+PASS S_OK_ALL-two-ledger-pristine-false: False
+PASS S_OK_ALL-two-ledger-mutant-true: True
+PASS S_OK_ALL-order-matters: edited-last would not kill; the edited ledger must sort first
+PASS S_RED_FILES-pristine-red-false: False
+PASS S_RED_FILES-mutant-red-true: True (only a meta-fixture can observe it)
+CHECKS: 0 failed

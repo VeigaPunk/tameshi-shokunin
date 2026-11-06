@@ -1,0 +1,28 @@
+frozen counting   : if out["agree"] == out["n"] and out["killed"] >= 1:
+frozen agreement  : if v == table[d["id"]]:
+
+M5 counting: if out["agree"] <= out["n"] and out["killed"] >= 1:
+  agree n killed | frozen counts | M5 counts
+      0 10      0 | False         | False        
+      0 10      5 | False         | True           <-- differs
+      3 10      0 | False         | False        
+      3 10      5 | False         | True           <-- differs
+     10 10      0 | False         | False        
+     10 10      5 | True          | True         
+
+M6 counting: if out["agree"] == out["n"]:
+  agree n killed | frozen counts | M6 counts
+      0 10      0 | False         | False        
+      0 10      5 | False         | False        
+      3 10      0 | False         | False        
+      3 10      5 | False         | False        
+     10 10      0 | False         | True           <-- differs
+     10 10      5 | True          | True         
+
+M7 agreement: if v == table[d["id"]] or v == "INCONCLUSIVE":
+  measured verdict / recorded | frozen agrees | M7 agrees
+  KILLED       / KILLED     | True          | True         
+  SURVIVED     / SURVIVED   | True          | True         
+  SURVIVED     / KILLED     | False         | False        
+  INCONCLUSIVE / KILLED     | False         | True           <-- differs
+  INCONCLUSIVE / SURVIVED   | False         | True           <-- differs

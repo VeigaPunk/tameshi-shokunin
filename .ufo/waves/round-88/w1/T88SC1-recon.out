@@ -1,0 +1,352 @@
+
+===== Q1a  kake lane: commits touching scripts/ledger_append_guard.py (all refs) =====
+3dbb86e245de4b715d01abb8d2992dbbfd6cdf51 2026-11-04 08:05:06 -0300 
+6ed530cdc2f6b72060751ff5eb14e9ac650bf319 2026-11-04 08:05:06 -0300 
+e8d3a924249983972e5163d160cf236487986c55 2026-11-04 08:05:06 -0300 round-80: guard --base-file and revision-mode ledger export (amendment 3), base receipt re-run
+12116017c7eb07cc15372e619ea7935438956c03 2026-11-04 08:03:09 -0300 round-80: append guard, survivor fixture harness, cheap-note receipt, guard registry rows, wave evidence, refreshed selftest receipt
+2d423c43e8ca855a67876c78b73c493b11c4a70c 2026-11-04 08:03:09 -0300 
+bf79a6118ae0c8d7d467f194b82d172d09f6ff2e 2026-11-04 08:03:09 -0300 
+
+===== Q1b  kake lane: does any kill-rate / mutation figure exist FOR THE GUARD? =====
+(none)
+
+===== Q1c  kake round-80 mutation-tester seat (MutC): which file was its target? =====
+SEAT: MutC
+ITEM: Mutation-test the repair. Work only on copies in `$HYAKU_SCRATCH/kake-r80/MutC/` — never mutate `/home/vgpnk/Projects/shokunin/kake-shokunin/scripts/x_robots_tag_audit.py` in place and never touch the frozen cases or oracle.
+Start from the current worktree tool (sha256 it first). Produce at least six mutants, each a single semantic change:
+m1 remove the comma protection (back to the round-79 split
+--- did MutC leave a report? ---
+(no MutC report file)
+
+===== Q1d  kake round-80 'kills 3 mutants': what are the mutants of? =====
+108:def run_counter(counter: Path, d: Path, rev: str, run_dir: Path, json_mode: bool):
+116:    plain = run_counter(counter, d, rev, run_dir, json_mode=False)
+117:    doc_run = run_counter(counter, d, rev, run_dir, json_mode=True)
+157:def build_wrong_kind(counter: Path, base: Path, run_dir: Path) -> dict:
+172:def build_cheap_note(counter: Path, base: Path, run_dir: Path) -> dict:
+188:def build_symlinks(counter: Path, base: Path, run_dir: Path) -> dict:
+221:        counter = find_counter(root)
+222:        out["counter"] = str(counter)
+
+===== Q1e  fleet-wide: any mutant of the guard SOURCE (prefix_probe / rindex / startswith)? =====
+/home/vgpnk/Projects/shokunin/kake-shokunin/scripts/ledger_append_guard.py:35:def prefix_probe(base: bytes, carrier: bytes) -> tuple[bool, int]:
+/home/vgpnk/Projects/shokunin/kake-shokunin/scripts/ledger_append_guard.py:37:    cut = base.rindex(b"]") if b"]" in base else len(base)
+/home/vgpnk/Projects/shokunin/kake-shokunin/scripts/ledger_append_guard.py:39:    if carrier.startswith(head):
+/home/vgpnk/Projects/shokunin/kake-shokunin/scripts/ledger_append_guard.py:71:        ok, detail = prefix_probe(base_bytes, carrier)
+/home/vgpnk/Projects/shokunin/kake-shokunin/.ufo/waves/round-80/w1/ExecGuard.md:9:`prefix_probe` (`scripts/ledger_append_guard.py:37-45`): `cut = base.rindex(b"]")`; preserved iff `carrier.startswith(base[:cut])`; on failure reports the first divergent offset. I endorse this over the common-prefix+common-suffix (A+I+B) rule I proposed mid-wave: A+I+B would accept a mid-entry insertion (e.g. a field spliced into a prior event's note — the rewrite class R79-2 targets) as long as the tail matched, while prefix-to-`]`` accepts only an insertion at the array's end, which is exactly the sanctioned byte-splice. I could not name any legitimate append that must move bytes before the final `]` — the L1's challenge stands answered: none exists under this ledger's end-append discipline.
+/home/vgpnk/Projects/shokunin/kake-shokunin/.ufo/waves/round-80/l1/splice_ledger.py:38:    idx = base.rindex(b"]")
+/home/vgpnk/Projects/shokunin/kake-shokunin/.ufo/waves/round-80/w1-results.json:40:   "output": "{\n  \"assignment\": \"ExecGuard \u2014 R79-2 standing ledger append guard (kake round 80, w1)\",\n  \"verdict\": \"R79-2 closed \u2014 verified independently against the shipped artifact\",\n  \"files_changed\": {\n    \"production\": \"none \u2014 L1 took over scripts/ledger_append_guard.py mid-wave at my seat's request window; report verifies the shipped bytes (sha256 0c12838e\u2026, unchanged carrier aa44b9af \u2192 HEAD 63afc0ee)\",\n    \"report\": \".ufo/waves/round-80/w1/ExecGuard.md\",\n    \"receipts\": [\n      \".ufo/waves/round-80/w1/ExecGuard/selftest-output.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/lane-json-output.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/final-lane-json.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/counter-revision-HEAD.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/counter-revision-aa44b9af.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/counter-revision-base.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/counter-worktree-crash.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/design-reference-execguard.py\",\n      \".ufo/waves/round-80/w1/ExecGuard/design-reference-strict-prefix-run.txt\"\n    ]\n  },\n  \"key_results\": {\n    \"selftest\": \"exit 0 \u2014 fixture append passed / fixture non-prefix failed (first divergence at byte 126) / selftest 2/2 passed\",\n    \"lane_run\": \"files=1 prefix_preserved=true, base 20061 B (sha 93182dec\u2026) prefix of tree 22324 B (sha 5a59b068\u2026) after two in-round byte-spliced appends, exit 0 at HEAD 63afc0ee\",\n    \"c1_counter_revision_mode\": \"R79-2 closed; C1v1 open=0 closed=6 met=true exit 0 at HEAD and at aa44b9af; base re-run still open=6 met=false exit 1 (premise holds)\"\n  },\n  \"semantics_endorsed\": \"shipped prefix_probe (base bytes up to the ledger's final `]` must byte-prefix the tree) over my proposed A+I+B: no legitimate append moves bytes before the final `]`; A+I+B would accept mid-entry insertions. Stated limit: bytes after the final `]` (today the JSON close) are unconstrained.\",\n  \"findings_routed\": [\n    \"C1 counter worktree mode crashes: UnboundLocalError 'errors' at c80_defect_queue.py:308 (introduced by amendment 2 de65ec21); frozen junk control predates it \u2014 one-line fix for round 81; revision mode (both committed controls' mode) unaffected\",\n    \"interim export-mode flag withdrawn: amendment 3 e8d3a924 exports the ledger + passes --base-file; verified by runs\",\n    \"counter amended post-freeze (amendments 2\u20133 + settlements); base receipt re-run and premise re-verified\",\n    \"guard glob governs exactly one ledger today (.ufo/waves/round-58/receipt-rewrites.json)\"\n  ],\n  \"registry_guidance\": \"SKILL.md row for scripts/ledger_append_guard.py delivered in report \u00a76 (name, kind, entry command, verdict map 0/1/2/64, self-test spelling, pinned proof, reads-only scope, owner kake)\",\n  \"scratch\": \"$HYAKU_SCRATCH/kake-r80/ExecGuard deleted before yield (trap-equivalent verified: test ! -e passed)\",\n  \"blockers\": \"none\"\n}",
+/home/vgpnk/Projects/shokunin/kake-shokunin/.ufo/waves/round-81/w1/ExecSeatRecord/cases/r80-reordered.json:64:   "output": "{\n  \"assignment\": \"ExecGuard \u2014 R79-2 standing ledger append guard (kake round 80, w1)\",\n  \"verdict\": \"R79-2 closed \u2014 verified independently against the shipped artifact\",\n  \"files_changed\": {\n    \"production\": \"none \u2014 L1 took over scripts/ledger_append_guard.py mid-wave at my seat's request window; report verifies the shipped bytes (sha256 0c12838e\u2026, unchanged carrier aa44b9af \u2192 HEAD 63afc0ee)\",\n    \"report\": \".ufo/waves/round-80/w1/ExecGuard.md\",\n    \"receipts\": [\n      \".ufo/waves/round-80/w1/ExecGuard/selftest-output.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/lane-json-output.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/final-lane-json.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/counter-revision-HEAD.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/counter-revision-aa44b9af.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/counter-revision-base.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/counter-worktree-crash.txt\",\n      \".ufo/waves/round-80/w1/ExecGuard/design-reference-execguard.py\",\n      \".ufo/waves/round-80/w1/ExecGuard/design-reference-strict-prefix-run.txt\"\n    ]\n  },\n  \"key_results\": {\n    \"selftest\": \"exit 0 \u2014 fixture append passed / fixture non-prefix failed (first divergence at byte 126) / selftest 2/2 passed\",\n    \"lane_run\": \"files=1 prefix_preserved=true, base 20061 B (sha 93182dec\u2026) prefix of tree 22324 B (sha 5a59b068\u2026) after two in-round byte-spliced appends, exit 0 at HEAD 63afc0ee\",\n    \"c1_counter_revision_mode\": \"R79-2 closed; C1v1 open=0 closed=6 met=true exit 0 at HEAD and at aa44b9af; base re-run still open=6 met=false exit 1 (premise holds)\"\n  },\n  \"semantics_endorsed\": \"shipped prefix_probe (base bytes up to the ledger's final `]` must byte-prefix the tree) over my proposed A+I+B: no legitimate append moves bytes before the final `]`; A+I+B would accept mid-entry insertions. Stated limit: bytes after the final `]` (today the JSON close) are unconstrained.\",\n  \"findings_routed\": [\n    \"C1 counter worktree mode crashes: UnboundLocalError 'errors' at c80_defect_queue.py:308 (introduced by amendment 2 de65ec21); frozen junk control predates it \u2014 one-line fix for round 81; revision mode (both committed controls' mode) unaffected\",\n    \"interim export-mode flag withdrawn: amendment 3 e8d3a924 exports the ledger + passes --base-file; verified by runs\",\n    \"counter amended post-freeze (amendments 2\u20133 + settlements); base receipt re-run and premise re-verified\",\n    \"guard glob governs exactly one ledger today (.ufo/waves/round-58/receipt-rewrites.json)\"\n  ],\n  \"registry_guidance\": \"SKILL.md row for scripts/ledger_append_guard.py delivered in report \u00a76 (name, kind, entry command, verdict map 0/1/2/64, self-test spelling, pinned proof, reads-only scope, owner kake)\",\n  \"scratch\": \"$HYAKU_SCRATCH/kake-r80/ExecGuard deleted before yield (trap-equivalent verified: test ! -e passed)\",\n  \"blockers\": \"none\"\n}",
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md:188:| S312 | Python 3.15, Built-in Types: bytes and bytearray operations (docs.python.org) — https://docs.python.org/3/library/stdtypes.html | docs | A | the byte-prefix rule of kake `scripts/ledger_append_guard.py` (`base.rindex(b"]")`, `carrier.startswith(head)`) read by the round-88 mutation case: what the two calls the kill-aimed defects K_CUT_WHOLE and K_STARTSWITH change actually return | §bytes.startswith (`id="bytes.startswith"`, snapshot line 4171) and §bytes.rindex (`id="bytes.rindex"`, line 4143) @ Python 3.15.2 documentation, fetched 2026-11-06 (HTTP date Fri, 06 Nov 2026 18:46:19 GMT; URL 301-redirects to /3/builtins/stdtypes.html; 815447 B; sha256 cee1bf3bd366d04b5ecc60b0b35c8d4d474bd10895a7908c84543b4ae14dc327; snapshot .ufo/evidence/round-88/sources/s312-stdtypes.html, headers s312.headers) | "Return True if the binary data starts with the specified prefix, otherwise return False." (15 words, line 4175) — the guard's verdict is a whole-head prefix test, so a head truncated to its first byte passes any carrier that keeps byte 0; `rindex` "raises ValueError when the subsequence sub is not found" (line 4147-4148), which the guard pre-empts with its `b"]" in base` test | mined | 2026-11-06 | 365d | corpus/knowledge/mutation-case-kake-ledger-guard.md, corpus/lessons/round-88.md |
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh:1242:@old     cut = base.rindex(b"]") if b"]" in base else len(base)
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh:1247:@old     if carrier.startswith(head):
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh:1248:@new     if carrier.startswith(head[:1]):
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-88/c1/py-kake-ledger-guard.defects.spec:15:@old     cut = base.rindex(b"]") if b"]" in base else len(base)
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-88/c1/py-kake-ledger-guard.defects.spec:20:@old     if carrier.startswith(head):
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-88/c1/py-kake-ledger-guard.defects.spec:21:@new     if carrier.startswith(head[:1]):
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-88/w1/T88SC1-recon.sh:52:hr "Q1e  fleet-wide: any mutant of the guard SOURCE (prefix_probe / rindex / startswith)?"
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-88/w1/T88SC1-recon.sh:53:grep -rn 'prefix_probe\|base.rindex(b"]")\|carrier.startswith(head' \
+
+===== Q2a  every .defects.spec in the fleet (a leg needs one) =====
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-16/round-gate/round-gate.defects.spec
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-18/sources-check/sources-check.defects.spec
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-26/cite-check/cite-check.defects.spec
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-51/c2/bash-drift-pins.defects.spec
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-88/c1/py-kake-ledger-guard.defects.spec
+
+===== Q2b  lanes holding a COPY of the fleet mutation-ledger runner (REGRESSION_EXPECT) =====
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-13/frozen/harness.sh
+/home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-14/frozen/harness.sh
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-53/assimilation/validate/tools/mutate-and-run.sh
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-16/w1/RGLeg.mutate-and-run.sh
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-17/staged/tools/mutate-and-run.sh
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-18/staged/tools/mutate-and-run.sh
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-51/w1/T51ExecEmbed/mutate-and-run.sh
+/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-76/w1/T76W1E1/mutate-and-run.sh
+
+===== Q2c  leg list in each runner copy (any python leg before tameshi's leg 11?) =====
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-13/frozen/harness.sh
+    js-kimi-census
+    bash-surface-census
+    bash-tsukuroi-census
+    bash-mado-verify
+    bash-checklist-run
+    js-claims-check
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-exec
+    fixture-noexec
+--- /home/vgpnk/Projects/shokunin/mado-shokunin/.ufo/waves/round-14/frozen/harness.sh
+    js-kimi-census
+    bash-surface-census
+    bash-tsukuroi-census
+    bash-mado-verify
+    bash-checklist-run
+    js-claims-check
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-exec
+    fixture-noexec
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh
+    js-kimi-census
+    bash-surface-census
+    bash-tsukuroi-census
+    bash-mado-verify
+    bash-checklist-run
+    js-claims-check
+    js-round-gate
+    js-sources-check
+    js-cite-check
+    bash-drift-pins
+    py-kake-ledger-guard
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-exec
+    fixture-noexec
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-53/assimilation/validate/tools/mutate-and-run.sh
+    js-kimi-census
+    bash-surface-census
+    bash-tsukuroi-census
+    bash-mado-verify
+    bash-checklist-run
+    js-claims-check
+    js-round-gate
+    js-sources-check
+    js-cite-check
+    bash-drift-pins
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-exec
+    fixture-noexec
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-16/w1/RGLeg.mutate-and-run.sh
+    js-kimi-census
+    bash-surface-census
+    bash-tsukuroi-census
+    bash-mado-verify
+    bash-checklist-run
+    js-claims-check
+    js-round-gate
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-exec
+    fixture-noexec
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-17/staged/tools/mutate-and-run.sh
+    js-kimi-census
+    bash-surface-census
+    bash-tsukuroi-census
+    bash-mado-verify
+    bash-checklist-run
+    js-claims-check
+    js-round-gate
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-exec
+    fixture-noexec
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-18/staged/tools/mutate-and-run.sh
+    js-kimi-census
+    bash-surface-census
+    bash-tsukuroi-census
+    bash-mado-verify
+    bash-checklist-run
+    js-claims-check
+    js-round-gate
+    js-sources-check
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-exec
+    fixture-noexec
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-51/w1/T51ExecEmbed/mutate-and-run.sh
+    js-kimi-census
+    bash-surface-census
+    bash-tsukuroi-census
+    bash-mado-verify
+    bash-checklist-run
+    js-claims-check
+    js-round-gate
+    js-sources-check
+    js-cite-check
+    bash-drift-pins
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-exec
+    fixture-noexec
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-76/w1/T76W1E1/mutate-and-run.sh
+    js-kimi-census
+    bash-surface-census
+    bash-tsukuroi-census
+    bash-mado-verify
+    bash-checklist-run
+    js-claims-check
+    js-round-gate
+    js-sources-check
+    js-cite-check
+    bash-drift-pins
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-git
+    fixture-exec
+    fixture-noexec
+
+===== Q2d  other lanes' python mutation tools: do they reference a SIBLING lane repo? =====
+  /home/vgpnk/Projects/shokunin/tsukuroi-shokunin/tools/mutation-kill-r82.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/tsukuroi-shokunin/tools/mutation-kill-r83.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-80/guard-battery.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-80/pointer-bind.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-80/receipt-provenance.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-80/strictness-battery.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-81/record-integration.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-81/strictness-battery.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-82/cli-fixtures.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-82/conjunction-gate.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-82/printed-command.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-83/attribution-audit.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-83/outer-cli-fixtures.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-83/source-bind.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-84/freeze-precheck.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-84/mutation-closure.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-84/nested-sqfs.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-85/predicate-bind.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-86/gate-registry.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-86/record-agreement.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-87/freeze-precheck.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-87/registry-opened-check.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-87/upx-magic-repair.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-87/upx-tamper-battery.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-88/depth-blocks.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-88/field-tamper-matrix.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-88/field-tamper-matrix-v2.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-88/upx-chain-battery.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-88/upx-chain-repair.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/depth-blocks-v2.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-battery.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-89/upx-field-value-repair.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/souji-shokunin/census/round-66/c2-mutate.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/souji-shokunin/census/round-67/c2-mutate.py  sibling-repo-refs=0
+0
+  /home/vgpnk/Projects/shokunin/kotodama-shokunin/reports/round-72/accept-c.py  sibling-repo-refs=0
+0
+
+===== Q3a  kake: commits touching the guard ON origin/master =====
+e8d3a924249983972e5163d160cf236487986c55 2026-11-04 08:05:06 -0300 round-80: guard --base-file and revision-mode ledger export (amendment 3), base receipt re-run
+12116017c7eb07cc15372e619ea7935438956c03 2026-11-04 08:03:09 -0300 round-80: append guard, survivor fixture harness, cheap-note receipt, guard registry rows, wave evidence, refreshed selftest receipt
+
+===== Q3b  guard blob at origin/master vs at the pin e8d3a924 =====
+100755 blob ed2a135e31aa2fa7b05c9c7a1ec0edbdd5599b56	scripts/ledger_append_guard.py
+ed2a135e31aa2fa7b05c9c7a1ec0edbdd5599b56
+ed2a135e31aa2fa7b05c9c7a1ec0edbdd5599b56
+sha256(origin/master) 0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067  -
+sha256(pin)         0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067  -
+sha256(local master) 0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067  -
+pin is an ancestor of origin/master: YES
+--- guard blob at every remote-tracking ref ---
+  refs/remotes/origin/HEAD ed2a135e31aa2fa7b05c9c7a1ec0edbdd5599b56
+  refs/remotes/origin/cloud-hyaku-20261102 refs/remotes/origin/cloud-hyaku-20261102:scripts/ledger_append_guard.py
+(absent)
+  refs/remotes/origin/cloud-reviewed-export-20261103 refs/remotes/origin/cloud-reviewed-export-20261103:scripts/ledger_append_guard.py
+(absent)
+  refs/remotes/origin/considerthese-curation-20261103 refs/remotes/origin/considerthese-curation-20261103:scripts/ledger_append_guard.py
+(absent)
+  refs/remotes/origin/devin/wiki-link refs/remotes/origin/devin/wiki-link:scripts/ledger_append_guard.py
+(absent)
+  refs/remotes/origin/master ed2a135e31aa2fa7b05c9c7a1ec0edbdd5599b56
+
+===== Q4a  S312 snapshot: sha256, size, anchor lines =====
+cee1bf3bd366d04b5ecc60b0b35c8d4d474bd10895a7908c84543b4ae14dc327  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-88/sources/s312-stdtypes.html
+815447
+4171:<dt class="sig sig-object py" id="bytes.startswith">
+4143:<dt class="sig sig-object py" id="bytes.rindex">
+
+===== Q4b  S312 snapshot: the two located sentences (rendered text, tags dropped) =====
+anchor bytes.startswith at snapshot line 4171
+  RENDERED: bytes.startswith(prefix[, start[, end]])¶ bytearray.startswith(prefix[, start[, end]])¶ Return True if the binary data starts with the specified prefix, otherwise return False. prefix can also be a tuple of prefixes to look for. With optional start, test beginning at that position. With optional end
+  QUOTE PRESENT (14 words): Return True if the binary data starts with the specified prefix, otherwise return False.
+
+anchor bytes.rindex     at snapshot line 4143
+  RENDERED: bytes.rindex(sub[, start[, end]])¶ bytearray.rindex(sub[, start[, end]])¶ Like rfind() but raises ValueError when the subsequence sub is not found. The subsequence to search for may be any bytes-like object or an integer in the range 0 to 255.
+  QUOTE PRESENT (12 words): Like rfind() but raises ValueError when the subsequence sub is not found.
+  QUOTE PRESENT (9 words): raises ValueError when the subsequence sub is not found
+
+--- line spans of the two bytes.* sentences (anchored at the bytes.* anchor) ---
+bytes.startswith: anchor line 4171; sentence spans snapshot lines 4175-4178
+bytes.rindex: anchor line 4143; sentence spans snapshot lines 4147-4148
+
+===== Q4c  live page fetch: does it agree with the snapshot? =====
+http=200 final_url=https://docs.python.org/3/builtins/stdtypes.html bytes=815447
+cee1bf3bd366d04b5ecc60b0b35c8d4d474bd10895a7908c84543b4ae14dc327  /fast/scratch/hyaku/tameshi-r88/T88SC1/live-stdtypes.html
+LIVE == SNAPSHOT (byte-identical)
+4171:<dt class="sig sig-object py" id="bytes.startswith">
+4143:<dt class="sig sig-object py" id="bytes.rindex">
+
+===== Q4d  S312 registry row as it currently stands (working tree, uncommitted) =====
+188:| S312 | Python 3.15, Built-in Types: bytes and bytearray operations (docs.python.org) — https://docs.python.org/3/library/stdtypes.html | docs | A | the byte-prefix rule of kake `scripts/ledger_a
+S312 row committed at 28ec5885? 0
+case note corpus/knowledge/mutation-case-kake-ledger-guard.md exists on disk? NO
+
+===== Q4e  word counts of the two quotes the row cites =====
+14 words | Return True if the binary data starts with the specified prefix, otherwise return False.
+12 words | Like rfind() but raises ValueError when the subsequence sub is not found.
+
+===== Q5  the sweep receipt leg 11 (tameshi's own measured table) =====
+MUTATE_TOOL: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/mutate-and-run.sh sha256=977de47034cbe52b87c3b4ba4a82ca334a6b88f1ef26d07dd59fd705649e0bda
+MUTATE_DATE: 2026-11-06T18:58:27Z
+MUTATE_TARGET: /fast/scratch/hyaku/tameshi-r88/L1/sweep/target.ledger_append_guard.py sha256=0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067 bytes=6969
+MUTATE_SPEC: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-88/c1/py-kake-ledger-guard.defects.spec defects=10
+CONTROL: GREEN (exit=0 duration-ms=73 pristine-sha256=0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067)
+  | fixture append: passed
+MUTATE: DONE (target=py-kake-ledger-guard defects=10 killed=5 survived=5 inconclusive=0 kill-rate=50%)
+
+===== Q6  the ledger row for leg 11 (working tree fleet-kill-rate-ledger.md) =====
+450:| kake `scripts/ledger_append_guard.py` (leg `py-kake-ledger-guard`) | `python3 -I … --selftest`, 2 checks, under the `env -i` guard with `GIT_CEILING_DIRECTORIES` | **5/10 (50 %)**; 5 kill-aimed / 5 hole-aimed, 10/10 predictions held |
+
+===== DONE (read-only recon) =====

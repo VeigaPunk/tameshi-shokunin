@@ -1,0 +1,271 @@
+PIN rev=e8d3a924249983972e5163d160cf236487986c55 path=scripts/ledger_append_guard.py sha256=0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067 bytes=6969
+SPEC /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-88/c1/py-kake-ledger-guard.defects.spec defects=10 sha256=724beed385222b6342dc6d3af5ad19ae605bca8101f983f3ce58da905492689e
+MUTANTS re-derived and hash-pinned: 10/10 (all equal sweep-results.tsv)
+CONTROL append F0: prefix_preserved=True files=1
+FIXTURES F1=F1-two-ledgers F2=F2-empty-tree F3=F3-truncation-edge (byte cut=152, edge byte ' ' -> '\t') F4=F4-emdash (em-dash byte offset=126)
+
+READINGS  (pristine vs each survivor mutant; the fixture the selftest never builds)
+  F1: pristine files=2 pp=False off=126 | S_HEAD_SHORT pp=False off=126 | S_OFFSET_EQ off=0 | S_OK_ALL pp=True | S_VACUOUS pp=False
+  F1b: pristine files=2 pp=False off=None | S_HEAD_SHORT pp=False off=None | S_OFFSET_EQ off=None | S_OK_ALL pp=False | S_VACUOUS pp=False
+  F2: pristine files=0 pp=False off=None | S_HEAD_SHORT pp=False off=None | S_OFFSET_EQ off=None | S_OK_ALL pp=False | S_VACUOUS pp=True
+  F3: pristine files=1 pp=False off=151 | S_HEAD_SHORT pp=True off=None | S_OFFSET_EQ off=0 | S_OK_ALL pp=False | S_VACUOUS pp=False
+  F4: pristine files=1 pp=False off=126 | S_HEAD_SHORT pp=False off=126 | S_OFFSET_EQ off=0 | S_OK_ALL pp=False | S_VACUOUS pp=False
+
+NEGATIVE CONTROL F1b (edited ledger sorts last): pristine pp=False mutant pp=False -> proposed check would NOT kill (fixture order is part of the fix)
+
+FIX TABLE  (proposed kake-backed selftest checks run on pristine vs survivor)
+  S_HEAD_SHORT   F3 pristine=pass mutant=fail KILLED     | F3 non-prefix check fires and first_divergence == cut-1 (byte offset)
+  S_OFFSET_EQ    F4 pristine=pass mutant=fail KILLED     | F4 non-prefix check asserts first_divergence == the em-dash byte offset
+  S_OK_ALL       F1 pristine=pass mutant=fail KILLED     | F1 prefix_preserved is False and files == 2
+  S_VACUOUS      F2 pristine=pass mutant=fail KILLED     | F2 files == 0 and prefix_preserved is False
+  S_RED_FILES    F1 pristine=pass mutant=fail KILLED     | F1 red is False (prefix_preserved False, files 2)
+
+JSON
+{
+ "checks": [
+  {
+   "check": "F3 non-prefix check fires and first_divergence == cut-1 (byte offset)",
+   "fixture": "F3",
+   "mutant": "fail",
+   "pristine": "pass",
+   "survivor": "S_HEAD_SHORT",
+   "verdict": "KILLED"
+  },
+  {
+   "check": "F4 non-prefix check asserts first_divergence == the em-dash byte offset",
+   "fixture": "F4",
+   "mutant": "fail",
+   "pristine": "pass",
+   "survivor": "S_OFFSET_EQ",
+   "verdict": "KILLED"
+  },
+  {
+   "check": "F1 prefix_preserved is False and files == 2",
+   "fixture": "F1",
+   "mutant": "fail",
+   "pristine": "pass",
+   "survivor": "S_OK_ALL",
+   "verdict": "KILLED"
+  },
+  {
+   "check": "F2 files == 0 and prefix_preserved is False",
+   "fixture": "F2",
+   "mutant": "fail",
+   "pristine": "pass",
+   "survivor": "S_VACUOUS",
+   "verdict": "KILLED"
+  },
+  {
+   "check": "F1 red is False (prefix_preserved False, files 2)",
+   "fixture": "F1",
+   "mutant": "fail",
+   "pristine": "pass",
+   "survivor": "S_RED_FILES",
+   "verdict": "KILLED"
+  }
+ ],
+ "control": {
+  "files": 1,
+  "first_divergence": null,
+  "prefix_preserved": true,
+  "row_prefix": true
+ },
+ "fixtures": {
+  "F1": {
+   "rev": "80480a53d499b251fdf4529be2386359b5c3af82",
+   "root": "/fast/scratch/hyaku/tameshi-r88/T88CN1/work/F1-two-ledgers"
+  },
+  "F1b": {
+   "rev": "80480a53d499b251fdf4529be2386359b5c3af82",
+   "root": "/fast/scratch/hyaku/tameshi-r88/T88CN1/work/F1b-two-ledgers-reversed"
+  },
+  "F2": {
+   "rev": "53fdaff662defc259e5a0fa3aff9bbd418a23818",
+   "root": "/fast/scratch/hyaku/tameshi-r88/T88CN1/work/F2-empty-tree"
+  },
+  "F3": {
+   "rev": "13966b007f14aa91aa8892580da2c48ecdbde226",
+   "root": "/fast/scratch/hyaku/tameshi-r88/T88CN1/work/F3-truncation-edge"
+  },
+  "F4": {
+   "rev": "13966b007f14aa91aa8892580da2c48ecdbde226",
+   "root": "/fast/scratch/hyaku/tameshi-r88/T88CN1/work/F4-emdash"
+  }
+ },
+ "negative_control_f1b": {
+  "check_on_mutant": true,
+  "check_on_pristine": true,
+  "reading": {
+   "mutant": {
+    "files": 2,
+    "first_divergence": null,
+    "prefix_preserved": false,
+    "row_prefix": true
+   },
+   "pristine": {
+    "files": 2,
+    "first_divergence": null,
+    "prefix_preserved": false,
+    "row_prefix": true
+   }
+  }
+ },
+ "pin": {
+  "path": "scripts/ledger_append_guard.py",
+  "rev": "e8d3a924249983972e5163d160cf236487986c55",
+  "sha256": "0c12838e3d4ea441eb750fd4c6af2398cfa704e5077f6c58b053d535f8514067"
+ },
+ "readings": {
+  "F1/S_HEAD_SHORT": {
+   "files": 2,
+   "first_divergence": 126,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F1/S_OFFSET_EQ": {
+   "files": 2,
+   "first_divergence": 0,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F1/S_OK_ALL": {
+   "files": 2,
+   "first_divergence": 126,
+   "prefix_preserved": true,
+   "row_prefix": false
+  },
+  "F1/S_VACUOUS": {
+   "files": 2,
+   "first_divergence": 126,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F1/pristine": {
+   "files": 2,
+   "first_divergence": 126,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F1b/S_HEAD_SHORT": {
+   "files": 2,
+   "first_divergence": null,
+   "prefix_preserved": false,
+   "row_prefix": true
+  },
+  "F1b/S_OFFSET_EQ": {
+   "files": 2,
+   "first_divergence": null,
+   "prefix_preserved": false,
+   "row_prefix": true
+  },
+  "F1b/S_OK_ALL": {
+   "files": 2,
+   "first_divergence": null,
+   "prefix_preserved": false,
+   "row_prefix": true
+  },
+  "F1b/S_VACUOUS": {
+   "files": 2,
+   "first_divergence": null,
+   "prefix_preserved": false,
+   "row_prefix": true
+  },
+  "F1b/pristine": {
+   "files": 2,
+   "first_divergence": null,
+   "prefix_preserved": false,
+   "row_prefix": true
+  },
+  "F2/S_HEAD_SHORT": {
+   "files": 0,
+   "first_divergence": null,
+   "prefix_preserved": false,
+   "row_prefix": null
+  },
+  "F2/S_OFFSET_EQ": {
+   "files": 0,
+   "first_divergence": null,
+   "prefix_preserved": false,
+   "row_prefix": null
+  },
+  "F2/S_OK_ALL": {
+   "files": 0,
+   "first_divergence": null,
+   "prefix_preserved": false,
+   "row_prefix": null
+  },
+  "F2/S_VACUOUS": {
+   "files": 0,
+   "first_divergence": null,
+   "prefix_preserved": true,
+   "row_prefix": null
+  },
+  "F2/pristine": {
+   "files": 0,
+   "first_divergence": null,
+   "prefix_preserved": false,
+   "row_prefix": null
+  },
+  "F3/S_HEAD_SHORT": {
+   "files": 1,
+   "first_divergence": null,
+   "prefix_preserved": true,
+   "row_prefix": true
+  },
+  "F3/S_OFFSET_EQ": {
+   "files": 1,
+   "first_divergence": 0,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F3/S_OK_ALL": {
+   "files": 1,
+   "first_divergence": 151,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F3/S_VACUOUS": {
+   "files": 1,
+   "first_divergence": 151,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F3/pristine": {
+   "files": 1,
+   "first_divergence": 151,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F4/S_HEAD_SHORT": {
+   "files": 1,
+   "first_divergence": 126,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F4/S_OFFSET_EQ": {
+   "files": 1,
+   "first_divergence": 0,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F4/S_OK_ALL": {
+   "files": 1,
+   "first_divergence": 126,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F4/S_VACUOUS": {
+   "files": 1,
+   "first_divergence": 126,
+   "prefix_preserved": false,
+   "row_prefix": false
+  },
+  "F4/pristine": {
+   "files": 1,
+   "first_divergence": 126,
+   "prefix_preserved": false,
+   "row_prefix": false
+  }
+ },
+ "recorded_mutant_hashes_equal": true
+}

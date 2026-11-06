@@ -2413,3 +2413,11 @@ on the landed bytes (`c2-landed-battery.txt`).
     on file timestamps is disclosed as such and earns no prediction credit from git.
     Checked by `.ufo/evidence/round-88/mistakes/prereg-order.sh <repo> <spec> <receipt>`
     (`ok` exit 0; `same-commit`/`later` exit 1). (`lessons/round-88.md` `## Mistakes` M1.)
+135. A counter that reads a subject's declarations and also takes a figure the subject
+    prints must bind the printed figure to what the subject executed: the names the
+    subject reports as run equal the names the counter parsed, each once. A forgery
+    control prints the subject's figure over REAL declarations, not only over doctored
+    ones. Distinctness of governed targets is keyed on object identity (blob sha256),
+    never on a path spelling (`a/./b` and `a/b` are one target). Checked at round 88 by
+    `.ufo/evidence/round-88/landing/executed-set-check.py`. (`lessons/round-88.md`
+    `## Mistakes` M4, M5.)

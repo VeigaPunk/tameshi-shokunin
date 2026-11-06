@@ -4886,3 +4886,31 @@ counted as robustness.
 - Standing sweeps at `ccd6ac26`: selfstate `24 match / 2 declared-stale`; census v1
   and v2 real `30/30`; census v2 selftest `15/15`; receipt bind
   `unbound=0`; registry figures match; coldread `lost=0`.
+
+## Round 88 (2026-11-06) — fresh start: eleventh ledger leg, first Python gate
+
+One claim (fresh start after rejected 83–87; stagnation nudge waives the lowest-axis
+obligation). Pre-freeze `6998726f` (counter, spec, nine controls, all `C1_R88_PASS=false`
+incl. the base `declared=10 legs=10`); freeze `1763efe7`; candidate `28ec5885`; records
+`37bbf019`; self-state repair `6c4595d0`. One v1 wave `r88-w1`, 10 seats (executor 4,
+scout, scribe, connector, reviewer, critic, mutation-tester), all settled, no dead seat.
+Attack share reviewer+critic+mutation-tester 3/10 = 30 % (the planned labrat seat was
+refused by the validator as a non-swarm role and rode an executor, M2).
+
+- **R88-C1 (coverage) predicate met.** kake `scripts/ledger_append_guard.py` @ `e8d3a924`
+  swept with the pre-registered spec: 5/10, 10/10 predictions (`.ufo/evidence/round-88/c1/sweep.txt`);
+  wired as leg 11; runner selftest 108/108, `--regression` 11/11. Frozen counter at
+  `6c4595d0`: `declared=11 legs=11 python_legs=1 prereg=ok runner=PASS(cases=11 passed=11)
+  C1_R88_PASS=true`, exit 0 (`landing/c1-final-6c4595d0.out`); independently reproduced by
+  T88E1 and T88C1 at `28ec5885`. Labrat-class probe T88L1: deterministic over 3 sweeps,
+  host vs `env -i` identical.
+- **Wave attacks.** T88E2: three runner variants (`parked`, `dupbase`, `stub`) print the
+  predicate while carrying the real replayed leg (M4, M5) — corroboration check
+  `landing/executed-set-check.py` refuses all three and passes the landing. T88M1: 6/8
+  counter-check mutants killed (M8). T88R1: docstring-vs-code INCONCLUSIVE gap (M7), stale
+  comment fixed. T88C1: claim stands; self-state pin drift (D1) repaired; PROVINCE span
+  correction (D2) appended; disclosure carried into the records (D3).
+- **Frontier.** S312 opened 2026-11-06 and written (rows 171 → 172); S001 `used-by` +1.
+  Case note `corpus/knowledge/mutation-case-kake-ledger-guard.md`. QUALITY 134–135.
+  Mistakes M1–M8 in `corpus/lessons/round-88.md`; M1, M4, M5 shown able to fail.
+- Standing sweeps at the tip: selfstate 0 unexpected, pins 26/26, registry 9/9, pointers 12/12.

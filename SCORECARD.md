@@ -5506,3 +5506,29 @@ premise-faithful fixture and the M6 controls; census v3 with the row end at the
 first non-table line, the M7 and M9 arms, and a docstring that matches the code
 (M8); the calibration counter over docstring-versus-code and live-row figures. No
 claim is pre-approved here.
+
+## Round 88 — fresh start: one coverage claim (eleventh ledger leg, first Python gate)
+
+Base `f256302b`; pre-freeze `6998726f` (counter, pre-registered spec, nine controls);
+freeze `1763efe7` (`plans/round-88.plan.md`); candidate `28ec5885`; records `37bbf019`;
+self-state repair `6c4595d0`. Stagnation nudge applies (scored axes 10/8/9 ≥ saturation 8;
+no capability entered in window 2), so the lowest-axis obligation is waived. One claim.
+
+| Claim / axis | Before → after | Verdict | Counting command | Measured commit |
+|---|---|---|---|---|
+| R88-C1 coverage: the replayable ledger governs an eleventh sibling gate, kake `scripts/ledger_append_guard.py` @ `e8d3a924`, its first Python gate | `declared=10 legs=10 python_legs=0 prereg=absent runner=PASS(cases=10 passed=10) C1_R88_PASS=false` → `declared=11 legs=11 python_legs=1 prereg=ok runner=PASS(cases=11 passed=11) C1_R88_PASS=true`, exit 0 | predicate met; kill rule (b) not fired by its letter; wave-found M4/M5 forgeable conjuncts corroborated at landing by `executed-set-check.py` (11/11 executed, 11/11 distinct pins); closure rules | `python3 -I .ufo/evidence/round-88/measure.py --repo . --rev REV --fleet /home/vgpnk/Projects/shokunin --work <empty>` | before `f256302b` (`pre-freeze/ctl-nowork.out`); after `6c4595d0` (`landing/c1-final-6c4595d0.out`; runner blob unchanged to the tip) |
+
+Leg 11 measured 5/10 (5 kill-aimed killed, 5 hole-aimed survived; predictions 10/10,
+timestamp-backed only — `plans/round-88.plan.md` § Disclosure; the predicate does not
+depend on predicted values). Runner `--selftest` 107 → 108/108. Capability cell
+`mutation sweep runner` repaired 107/107 → 108/108 and its self-state row re-pinned to
+`37bbf019` (wave critic D1). Standing sweeps at the tip: selfstate 26/24 match/2
+declared-stale/0 unexpected; pins 26/26 settled; registry 9/9; pointers 12/12. Depth
+command D still prints 10 (its regex counts only `js|bash` rows; capped at 10).
+Scores unchanged: depth 10, calibration 8, freshness 9. No capability row enters; no
+retirement or saturation change.
+
+**Planned (round 89):** a successor counter whose predicate binds the executed leg set
+and blob-distinct targets (QUALITY 135), refuses table values outside {KILLED, SURVIVED}
+(M7), and commits one control per check (M8); route the five kake survivors' fixtures as
+the report-only note in `.ufo/waves/round-88/w1/T88CN1.md`. No claim is pre-approved.

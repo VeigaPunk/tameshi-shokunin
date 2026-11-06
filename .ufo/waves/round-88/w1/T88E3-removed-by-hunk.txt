@@ -1,0 +1,67 @@
+HUNK  1  old=19 removed=1
+    | # tenth measured leg, kagi corpus/drift-pins.sh, as bash-drift-pins.
+HUNK  2  old=85 removed=1
+    | # --regression (r4-2; r7-1 leg ledger; r10-2 six legs; r16 seven; r18 eight; r26 nine; r51 ten) — the fleet's
+HUNK  3  old=98 removed=0
+HUNK  4  old=105 removed=1
+    | # .ufo/evidence/round-51/c2/bash-drift-pins.defects.spec (leg 10).
+HUNK  5  old=115 removed=1
+    | # All ten defect specs are embedded below (legs 1–4 cut from those notes'
+HUNK  6  old=122 removed=1
+    | # round-51 pre-registered spec (kagi corpus/drift-pins.sh) verbatim and its measured sweep table).
+HUNK  7  old=227 removed=1
+    | bash-drift-pins) at its pinned
+HUNK  8  old=643 removed=0
+HUNK  9  old=672 removed=1
+    | regression_specs() { # <dir> — write the ten embedded case specs
+HUNK 10  old=1213 removed=0
+HUNK 11  old=1220 removed=1
+    |      && -s "$d/bash-drift-pins.spec" ]]
+HUNK 12  old=1447 removed=1
+    |   printf 'REGRESSION_EXPECT: recorded kill-rates — js-kimi-census=%s/%s bash-surface-census=%s/%s bash-tsukuroi-census=%s/%s bash-mado-verify=%s/%s bash-checklist-run=%s/%s js-claims-check=%s/%s js-round-gate=%s/%s js-sources-check=%s/%s js-cite-check=%s/%s bash-drift-pins=%s/%s\n' \
+HUNK 13  old=1457 removed=1
+    |     "$(table_count "$TABLE_DRIFTPINS" KILLED)" "$(table_total "$TABLE_DRIFTPINS")"
+HUNK 14  old=1459 removed=1
+    |   local st_js st_kagi st_tsu st_mado st_checklist st_claims st_roundgate st_sourcescheck st_citecheck st_driftpins
+HUNK 15  old=1511 removed=2
+    |   local nlegs=10 npass=0 nfail=0 nsetup=0 st
+    |   for st in "$st_js" "$st_kagi" "$st_tsu" "$st_mado" "$st_checklist" "$st_claims" "$st_roundgate" "$st_sourcescheck" "$st_citecheck" "$st_driftpins"; do
+HUNK 16  old=2025 removed=1
+    |   st 'embedded leg specs: ten files written' $?
+HUNK 17  old=2031 removed=1
+    |   lcalls=$(grep -cE '^  regression_case_git (js|bash)-' "$SELF")
+HUNK 18  old=2034 removed=2
+    |   [[ "$lcalls" -eq 10 && "$lfiles" -eq 10 && "$lnlegs" -eq 10 ]]
+    |   st "leg-count agreement: calls=$lcalls specs=$lfiles nlegs=$lnlegs (want 10)" $?
+HUNK 19  old=2046 removed=0
+HUNK 20  old=2048 removed=2
+    |   [[ ${#lent[@]} -eq 10 ]]
+    |   st "leg-count agreement: selftest leg tuples=${#lent[@]} (want 10)" $?
+HUNK 21  old=2074 removed=4
+    |   tblock=$(awk '/^  local nlegs=10 npass=0 nfail=0 nsetup=0 st$/{f=1} f&&/^}$/{exit} f' "$SELF")
+    |   mapfile -t tnames < <(awk '/^run_regression\(\) \{$/{f=1} /^  local nlegs=10 npass=0 nfail=0 nsetup=0 st$/{f=0} f&&/^  st_[a-z]+=\$\?$/{sub(/^  /,""); sub(/=\$\?$/,""); print}' "$SELF")
+    |   [[ -n "$tblock" && ${#tnames[@]} -eq 10 ]]
+    |   st "tally harness: block extracted, leg status names=${#tnames[@]} (want 10)" $?
+HUNK 22  old=2088 removed=4
+    |   tally_line 0 'REGRESSION: PASS (cases=10 passed=10; ledger legs exact: killed-delta<=0 flips<=0)' 0 0 0 0 0 0 0 0 0 0
+    |   st 'tally harness: all ten legs pass -> PASS passed=10, exit 0' $?
+    |   for tvec in '1:1:REGRESSION: FAIL (cases=10 passed=9 failed=1 setup=0)' \
+    |     '2:2:REGRESSION: SETUP (cases=10 passed=9 cannot-verify=1)'; do
+HUNK 23  old=2093 removed=2
+    |     for ti in 0 1 2 3 4 5 6 7 8 9; do
+    |       local -a tst=(0 0 0 0 0 0 0 0 0 0)
+HUNK 24  old=2099 removed=2
+    |     [[ $tgot -eq 10 ]]
+    |     st "tally harness: one leg status ${tvec%%:*} at each of 10 positions -> ${tj#*:} (${tgot}/10)" $?
+HUNK 25  old=2104 removed=4
+    |   for tvec in '1 1 0 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=10 passed=8 failed=2 setup=0)' \
+    |     '2 2 0 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=10 passed=8 cannot-verify=2)' \
+    |     '1 2 0 0 0 0 0 0 0 0:1:REGRESSION: FAIL (cases=10 passed=8 failed=1 setup=1)' \
+    |     '3 0 0 0 0 0 0 0 0 0:2:REGRESSION: SETUP (cases=10 passed=9 cannot-verify=1)'; do
+HUNK 26  old=2109 removed=1
+    |     # shellcheck disable=SC2086 # the status list splits into ten arguments on purpose
+HUNK 27  old=2114 removed=1
+    |   # refuse as SETUP (case-tally mismatch), not print PASS with nine counted legs.
+HUNK 28  old=2118 removed=1
+    |     tally_line 2 'REGRESSION: SETUP (case-tally mismatch: cases=10 counted=9)' 0 0 0 0 0 0 0 0 0 0
+TOTAL_REMOVED=38 HUNKS=28
