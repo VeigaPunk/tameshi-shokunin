@@ -6,108 +6,89 @@ before data in `plans/round-96.plan.md` and `.ufo/waves/round-96/claims.json`.
 
 ## Gate
 
-Sources opened for this round's rows (all four fetched 2026-11-08; the snapshot paths are
-the bytes the round-96 counter reads). Each sid line below carries its located quote on the
+Sources re-opened this round (all four fetched live by this round's scout, 2026-11-08; the
+snapshots under `.ufo/evidence/round-96/sources/` are byte-identical to the round-95 bodies,
+so the anchors below name the round-96 path). Each sid line carries its located quote on the
 same line — the counter's `located_quotes` collects a quoted span only from a line naming
 its sid. Line numbers are in the tag-stripped snapshot (each tag replaced by one space,
-entities unescaped, lines right-trimmed, consecutive lines joined for the match); word
-counts are `len(quote.split())`.
+entities unescaped, lines right-trimmed); word counts are `len(quote.split())`.
 
-- S320 sha256sum(1) `https://man.archlinux.org/man/sha256sum.1.en` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 08:53:29 GMT; `.ufo/evidence/round-96/sources/s320.html` sha256 `b968bc09…`), line 84: "Print or check SHA256 (256-bit) checksums." (6 words) — the digest the `SELF_SHA256` pin computes and the audit compares is a sha256 of the counter bytes.
-- S321 GFM Tables `https://github.github.com/gfm/` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 08:53:23 GMT; `.ufo/evidence/round-96/sources/s321.html` sha256 `b153d814…`), line 4399: "The delimiter row consists of cells whose only content are hyphens" (11 words) — one hyphen is a legal delimiter cell, which is the round-95 A5 rule.
-- S321 GFM Tables, line 4393: "a single header row, a delimiter row separating the header from the data, and zero or more data rows" (19 words) — the table shape the reader keys, which is why an indented row outside a table is not a verdict row.
-- S321 GFM Tables, line 4493: "The table is broken at the first empty line, or beginning of another block-level structure" (15 words) — a following indented chunk ends a table, so it cannot extend an earlier verdict table.
-- S322 CommonMark 0.31.2 Fenced code blocks `https://spec.commonmark.org/0.31.2/` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 08:53:28 GMT; `.ufo/evidence/round-96/sources/s322.html` sha256 `c85f56cc…`), line 2615: "A fenced code block begins with a code fence, preceded by up to three spaces of indentation." (17 words) — a fence opens literal text, the declared limit the reader already held.
-- S323 CommonMark 0.31.2 Indented code blocks `https://spec.commonmark.org/0.31.2/` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 10:41:46 GMT; `.ufo/evidence/round-96/sources/s323.html` sha256 `c85f56cc…`, the same page bytes as the fenced-code snapshot above), line 2355: "An indented code block is composed of one or more indented chunks separated by blank lines." (16 words) — an indented chunk is literal text, so a presented verdict row inside one is not a keyed row; this is the round-95 A2 rule.
+- S320 sha256sum(1) `https://man.archlinux.org/man/sha256sum.1.en` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 12:21:54 GMT; `.ufo/evidence/round-96/sources/s320.html` sha256 `b968bc09…`), line 88: "Print or check SHA256 (256-bit) checksums." (6 words) — the digest the counter's `SELF_SHA256` pin computes and the audit compares is a sha256 of the counter bytes.
+- S320 sha256sum(1), line 116: "don't output anything, status code shows success" (7 words) — why the checker reads the exit code, never prose, when it runs `git rev-parse --verify --quiet` for the revision identity (A2).
+- S321 GFM Tables `https://github.github.com/gfm/` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 12:21:54 GMT; `.ufo/evidence/round-96/sources/s321.html` sha256 `b153d814…`), line 4403: "The delimiter row consists of cells whose only content are hyphens" (11 words) — one hyphen is a legal delimiter cell, the round-95 A5 rule the successor reader keeps.
+- S321 GFM Tables, line 4496: "The table is broken at the first empty line, or beginning of another block-level structure" (15 words) — a following indented chunk ends a table, so it cannot extend an earlier verdict table.
+- S322 CommonMark 0.31.2 Fenced code blocks `https://spec.commonmark.org/0.31.2/` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 12:21:54 GMT; `.ufo/evidence/round-96/sources/s322.html` sha256 `c85f56cc…`), line 2618: "A fenced code block begins with a code fence, preceded by up to three spaces of indentation." (17 words) — a fence opens literal text, the declared limit the reader already held.
+- S323 CommonMark 0.31.2 Indented code blocks `https://spec.commonmark.org/0.31.2/` (the same page bytes as S322; same fetch) line 2358: "An indented code block is composed of one or more indented chunks separated by blank lines." (16 words) — an indented chunk is literal text, so a verdict row presented inside one is not a keyed row.
 
-Rejected this round: none. Rows re-opened: S320, S321, S322 (status unchanged, `mined`;
-`used-by` appended). Row added: S323 (`mined`, `used-by` = this lesson).
-
-## Erratum — the round-94 C2 tally sentence (routed defect 1)
-
-The frozen round-94 record says `DISPOSITION_SELFTEST: 8/8 pass` in three places —
-`plans/round-94.plan.md:165`, `LOG.md:5085` ("8/8 (QUALITY 166)") and
-`corpus/lessons/round-94.md:66` — while the operative committed receipt
-`.ufo/evidence/round-94/pre-freeze/c2-selftest.out:10` prints
-`DISPOSITION_SELFTEST: 9/9 pass` (rev 2 added the `a4-prose-state-word-cheat` case; rev 3
-kept it). A1 of that round declared "No claim wording, predicate, state expectation or
-target changes", which is false for that tally, so C2 was filed as `unprovable`.
-
-This paragraph is the erratum: the superseded sentence is `DISPOSITION_SELFTEST: 8/8 pass`
-as recorded at the three pointers above; the operative tally is `9/9`, and the frozen
-files are not edited. QUALITY 169 records the rule.
+Rejected this round: **one**. `https://docs.github.com/en/rest/commits/commits#get-a-commit`
+(GitHub REST API "Get a commit", opened 2026-11-08, HTTP date Sun, 08 Nov 2026 12:24:50 GMT,
+547 847 B, sha256 `fc8e1251…`, located line 733: "Returns the commit's SHA-1 hash. You can use
+this endpoint to check if a remote reference's SHA-1 hash is the same as your local
+reference's SHA-1 hash") is **refused** for the revision-identity ground: it is a hosted-API
+statement about an `ETag` comparison, not the `<rev>` grammar or the `^{commit}`
+dereference the seal needs; those grounds are already held at tier A (`S091`, `S062`).
+Flip condition: a future claim specifically about GitHub's REST API (the
+`application/vnd.github.sha` media type as an ETag) admits it as a tier-B vendor row
+anchored at §Get a commit. Rows re-opened: S320, S321, S322, S323 — status unchanged
+(`mined`), `used-by` gains `corpus/lessons/round-96.md`. Row added: none. Registry rows
+183, mined 149, queued 23, rejected 11 — unchanged; census exit 0 before and after.
 
 ## Mistakes
 
 | id | class | evidence pointer | captured-by | fix |
 |---|---|---|---|---|
-| M1 | **number-drift**: a frozen self-assessment tally was written from an earlier instrument revision and never reconciled with the operative receipt; the claims table and SCORECARD printed 9/9 while the plan, LOG and lesson printed 8/8. | `plans/round-94.plan.md:165` and `corpus/lessons/round-94.md:66` vs `.ufo/evidence/round-94/pre-freeze/c2-selftest.out:10` (`9/9 pass`); found by the round-94 closure. | none — QUALITY 168 checks quoted receipt lines, and this was a frozen predicate line; no rule compared a frozen tally to its receipt at freeze time. | the erratum above plus QUALITY 169; every frozen tally now cites its receipt path at freeze. |
-| M2 | **vacuous**: the first `escaped-backslash-pipe` fixture was not discriminating — a four-column note whose witness cell ended in `C:\\` before a space-separated delimiter is padded by the round-94 reader, the verdict stays in its column, and v94 prints `C1_R94_PASS=true`. | `.ufo/evidence/round-95/pre-freeze/before-v94/escaped-backslash-pipe.out` (the corrected five-column run: exit 1, `ids=false`, `width:9:cells=4`); the non-discriminating construction is recorded in `plans/round-96.plan.md` §A1. | the round's own do-nothing control (a fixture the claimed work must change; v94 passed it, so the fixture was wrong). | plan §A1: five-column fixture with the verdict cell immediately after `\\|`. |
-| M3 | **scope**: the first `double-pin` fixture inserted the decoy pin line *after* the real constant, so the decoy became the constant Python executes and v94 died `self-pin-mismatch` — the state did not discriminate the single-pin rule. | `.ufo/evidence/round-95/pre-freeze/before-v94/double-pin.out` (corrected: exit 0, `C1_R94_PASS=true`); the after-insert variant printed `C1_SETUP self-pin-mismatch`, exit 2. | the same do-nothing control. | plan §A2: the decoy goes before the real pin line; the executed constant stays the real digest. |
+| M1 | **wrong-path default**: the successor checker's `COUNTER` constant still named round 95's `measure-v95.py`, which does not exist in round 96, so every run of the documented command died `counter-absent-at-rev` — kill rule (d)-class, found by the round's own reviewer before any positive existed. | `w1/R96R1.md` FALSIFIES-WORDING #1 (`R96R1-probe1-positive-default.out`: `DISPOSITION_SETUP counter-absent-at-rev`, exit 2); the constant was at `conjunct-disposition-v96.py:53`. | the plan's own counter command (`plans/round-96.plan.md` §C1) was never executed at the freeze — no pre-freeze run of the documented command existed. | A1 repaired the constant; QUALITY 173 now requires the printed instrument line to name the revision and the digest the verdict was read at, so a wrong default is visible in the receipt. |
+| M2 | **inherited label**: the round-95 to round-96 copy carried `C1_R95_`, `round-95/` paths and a `--rev` string into the new instruments; the path rewrites were mechanical and left `measure-v95.py` and a `v95` name in prose and code. | `git show 10d8fa5d:.ufo/evidence/round-96/conjunct-disposition-v96.py` line 53; `w1/R96C1.md` C1.1. | none — the copy step had no post-copy assertion that every `round-95`/`v95` token had been replaced or deliberately kept. | A1; the round-96 instruments now carry a `ROUND = 96` constant and the receipts prove the run (`counter_sha=` on every graded body, validated by the driver since A9). |
+| M3 | **no-op selftest cases**: the two print statements added for the new cases asserted nothing that could fail, so kill rule (c) was tripped by the shipped selftest itself. | `w1/R96C1.md` C1.8 (`selftest.txt` 13/13 while a reverted seal would still pass); the block was `selftest()` cases 12-13. | the plan's kill rule (c) was written but not read against the new cases before the freeze. | A5 rewrote them to run the real main path — `hostile-path-cheat` under a poisoned `PATH`, `branch-revspec-cheat` with `--rev master` — and both now fail if the seal or the guard is removed. |
 
 ## Registry changes
 
-| row | field | old | new |
-|---|---|---|---|
-| S320 | used-by | `corpus/lessons/round-92.md, corpus/lessons/round-93.md, corpus/lessons/round-94.md, corpus/knowledge/mutation-case-fleet-sources-census.md` | `…, corpus/lessons/round-94.md, corpus/knowledge/mutation-case-fleet-sources-census.md, corpus/lessons/round-95.md` |
-| S321 | used-by | `corpus/lessons/round-93.md, corpus/lessons/round-94.md, corpus/knowledge/mutation-case-fleet-sources-census.md` | `…, corpus/knowledge/mutation-case-fleet-sources-census.md, corpus/lessons/round-95.md` |
-| S322 | used-by | `corpus/lessons/round-93.md, corpus/lessons/round-94.md, corpus/knowledge/mutation-case-fleet-sources-census.md` | `…, corpus/knowledge/mutation-case-fleet-sources-census.md, corpus/lessons/round-95.md` |
-| S323 | added | — | `mined`, `corpus/lessons/round-95.md` |
-
-Census before (round start): `scripts/sources-census.sh validate --root
-/home/vgpnk/Projects/shokunin tameshi` exit 0; rows 182; tiers A=164 B=14 C=4; status
-mined=148 queued=23 rejected=11 (`.ufo/waves/round-95/census-before.txt`). Census after is
-recorded in the round report with its exit code.
+No row added this round (no uncovered ground was opened). S320-S323 carry `used-by` for
+this lesson, appended in `corpus/SOURCES.md` before the freeze (`scripts/sources-census.sh
+validate --root /home/vgpnk/Projects/shokunin tameshi` exit 0; rows 183, mined 149, queued
+23, rejected 11, unchanged before -> after).
 
 ## Measurements
 
-Every number is a line a committed receipt printed at the revision named; nothing is
-projected.
+Every number below is a line a committed receipt printed at the revision named.
 
-- **C1 before (round-94 counter at `6a2a1fdd`, the five fixtures).**
-  `.ufo/evidence/round-95/pre-freeze/before-v94/{indent-code-row,indent-token,escaped-backslash-pipe,two-hyphen-delimiter,double-pin}.out`
-  print exit 1 / 1 / 1 / 1 / 0 (`double-pin` prints `C1_R94_PASS=true`): the two indented
-  fixtures are refused (`verdict_tables=false` with `dup:` badrows; `ids=false` with
-  `stray-verdict`), the escaped-pipe fixture is refused `ids=false` (`width:9:cells=4`),
-  the two-hyphen fixture is refused `ids=false` (stray verdicts), and the double-pinned
-  counter runs to `C1_R94_PASS=true`.
-- **C1 after (v95 battery, `--rev f219fb0c`, `--jobs 6`).**
-  `.ufo/evidence/round-95/pre-freeze/controls-run.log:52` prints
-  `C1_CONTROLS states=50 matched=50 mismatches=0 missing=0`, exit 0. The five added
-  receipts print `.ufo/evidence/round-95/pre-freeze/controls/<state>.out`:
-  `indent-code-row` exit 0 `C1_R95_PASS=true`; `indent-token` exit 0
-  `C1_R95_PASS=true`; `escaped-backslash-pipe` exit 0 `C1_R95_PASS=true`;
-  `two-hyphen-delimiter` exit 0 `C1_R95_PASS=true`; `double-pin` exit 2
-  `C1_SETUP self-pin-line-count`. Every state receipt carries a `counter_sha=` line equal
-  to the counter blob at the records revision (`.ufo/evidence/round-95/pre-freeze/controls/`).
-- **C1 honest note at the pre-freeze records revision `4bd1e88f`.**
-  `.ufo/evidence/round-95/landing/c1-at-records.out`: `C1_SUMMARY rev=4bd1e88f n=12
-  killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7
-  note=present mismatched=0 badrows=0 verdict_tables=1`; `C1_SOURCE S320=row:1,quote:1
-  S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1`; `C1_R95_PASS=true`, exit 0.
-- **C1 do-nothing control.** `c1-nowork-base`
-  (`.ufo/evidence/round-95/pre-freeze/nowork/c1-nowork-base.out`) at base `02ff6290`
-  prints `C1_SETUP spec-absent-at-rev`, exit 2 — the target is not reachable without the
-  round's work.
-- **C2 before (round-94 checker at `6a2a1fdd`).** The forge matrix
-  (`.ufo/evidence/round-95/pre-freeze/c2/forge-matrix.txt`) prints `findings=0`, exit 0 on
-  `forge-handwritten` and `forge-counter-sha`; on `forge-replace-ref` it prints
-  `DISPOSITION_INSTRUMENT sha256=5f0d1770…` — the substituted counter bytes are read.
-- **C2 after.** `.ufo/evidence/round-95/pre-freeze/c2/c2-pos.out` at `4bd1e88f` prints
+- **C1 positive at the records revision `8ed9c526`.**
+  `.ufo/evidence/round-96/landing/c1-positive.out` reads
+  `DISPOSITION_INSTRUMENT rev=8ed9c5262bd2f36f3cc8a64550897f4d1adb3a3b
+  sha256=69ee68b6… conjuncts=19` and
   `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`, exit 0.
-  `c2-selftest.out` prints `DISPOSITION_SELFTEST: 11/11 pass`, exit 0. The forge matrix
-  prints: `forge-handwritten` exit 1 `DISPOSITION_FINDING receipt-absent-at-rev figure`;
-  `forge-counter-sha` exit 1 `DISPOSITION_FINDING receipt-counter-sha-mismatch
-  mismatched0`; `forge-replace-ref` exit 2 `DISPOSITION_SETUP replace-refs-present`;
-  summary `8 checks, 0 failed`.
-- **C2 do-nothing control.** `c2-nowork-base`
-  (`.ufo/evidence/round-95/pre-freeze/nowork/c2-nowork-base.out`) at base `02ff6290`
-  prints `DISPOSITION_SETUP counter-absent-at-rev`, exit 2.
-- **Wave.** `w1`, 13 seats (executor 4, scribe 1, scout 1, reviewer 2, critic 1,
-  mutation-tester 1, sentinel 1, connector 1, revenger 1); all settled, no dead seat;
-  `.ufo/waves/round-95/w1-results.json` records 13 results with `output: null` after the
-  orchestrator kernel restart — the seat reports in `.ufo/waves/round-95/w1/` are the
-  retained evidence.
-- **Registry.** 182 → 183 rows; tiers A=164→165, B=14, C=4; status mined=148→149,
-  queued=23, rejected=11; census exit 0 before and after
-  (`.ufo/waves/round-95/census-before.txt`; the round report carries the after block).
+- **C1 rev refusals.** `c1-rev-branch.out` (`--rev master`) and `c1-rev-empty.out`
+  (`--rev ''`) each print `DISPOSITION_SETUP rev-not-a-commit-id` exit 2;
+  `c1-rev-unresolvable.out` (`--rev deadbeef…`) prints `DISPOSITION_SETUP rev-unresolvable`
+  exit 2.
+- **C1 hostile PATH.** `c1-hostile-path.out`: a `git` shim at the head of `PATH` that exits
+  99; the checker prints `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=17`
+  exit 1 (17 `receipt-absent-at-rev` findings on a lane with no committed receipts) — never
+  green, and the shim is never the binary that answered (`GIT=/usr/bin/git`).
+- **C1 forge matrix.** `landing/forge-matrix.txt` prints `summary: 8 checks, 0 failed`:
+  `forge-handwritten` exit 1 `receipt-absent-at-rev figure` (round-95 checker exit 0),
+  `forge-counter-sha` exit 1 `receipt-counter-sha-mismatch mismatched0` (round-95 exit 0),
+  `forge-replace-ref` exit 2 `DISPOSITION_SETUP replace-refs-present` (round-95 executes the
+  substituted blob).
+- **C1 nowork + selftest.** `c2-nowork-base.out` at base `c8de77f3` prints
+  `DISPOSITION_SETUP counter-absent-at-rev` exit 2; `c1-nowork-base.out` prints
+  `C1_SETUP spec-absent-at-rev` exit 2; `c2-selftest.out` prints
+  `DISPOSITION_SELFTEST: 13/13 pass` exit 0, including
+  `SELFTEST hostile-path-cheat PASS exit=2 (identical to honest PATH)` and
+  `SELFTEST branch-revspec-cheat PASS exit=2 (rev-not-a-commit-id)`.
+- **C2 pins tool.** `c2-pins-positive.out`: `PINS_WRITTEN …/pins.json`, `PINS_CHECK OK`;
+  `c2-pins-empty-lane.out`: `PINS_SETUP lane-empty` exit 2; `c2-pins-symlink.out`:
+  `PINS_SETUP pins-symlink-refused` exit 2 with `target_before == target_after ==
+  9660b330…`.
+- **C2 driver.** `c2-rerun-plant.out`: a planted `pos-real.out` carrying
+  `counter_sha=000…0` sits beside the driver's own `pos-real.rerun-1.out`, and the driver
+  prints `pos-real MATCH exit=0 states=1 matched=1` — it graded its own write.
+  `c2-receipt-symlink.out`: the same, with `pos-real.out` a symlink to an outside file
+  (`FORGED` untouched). `c2-outdir-symlink.out`: `outdir-symlink-refused`, exit 1.
+- **C2 battery.** The full run at the records revision prints
+  `C1_CONTROLS states=50 matched=50 mismatches=0 missing=0`, exit 0
+  (`.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt`); every one of the fifty
+  receipts carries a `counter_sha=` line equal to the counter blob
+  (`69ee68b6…`, or the mutant's own digest for `D01`-`D05`).
+- **Census.** `census-before.txt` and `census-after.txt` both exit 0; rows 183, mined 149,
+  queued 23, rejected 11, unchanged.

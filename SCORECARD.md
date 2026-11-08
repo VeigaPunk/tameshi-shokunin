@@ -5759,3 +5759,36 @@ writing rank (F3), symlinked receipt followed (F4), `make-pins95.py` symlink wri
 `--lane ''` CWD (F5, F6), movable revspec (F7), `--rev ''` reads the index (F2), hostile
 `PATH`/ambient env (F1, F8); plus `unstable0`'s unfalsifiability if a deterministic
 two-run disagreement can be constructed. No claim is pre-approved here.
+
+## Round 96 — two claims: the sealed revision identity (calibration) and the hardened write path (operability)
+
+Base `c8de77f3de0fd4bf619ebe78fa0b28adaf320d3e`; instruments `10d8fa5d`; pre-data amendments
+A1-A9 `933df676`; records (50 receipts + claims shas) `8ed9c526`; landing receipts `9b89c68d`.
+One v1 wave `w1`, 13 seats (executor 4, scribe 1, scout 1, reviewer 2, critic 1,
+mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 5/13 = 38 % by the policy's
+role set, 7/13 = 54 % including sentinel and connector).
+
+| Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|---|---|
+| R96-C1 | calibration | at base `c8de77f3`: `DISPOSITION_SETUP counter-absent-at-rev`, exit 2 (`.ufo/evidence/round-96/landing/c2-nowork-base.out`); the round-95 checker prints `findings=0` exit 0 on `--rev master` and on a hostile-PATH lane (`w1/R96C1.md` C1.10, `w1/R96R1.md`) | `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`, exit 0 at `8ed9c526`; `rev=8ed9c526…` printed in `DISPOSITION_INSTRUMENT`; `rev-not-a-commit-id` for `''` and `master`, `rev-unresolvable` for a dead 40-hex; hostile-PATH lane gives 17 `receipt-absent-at-rev` findings, never green; `DISPOSITION_SELFTEST: 13/13 pass` | **verified under the amended wording (A1-A5)** | `python3 -I .ufo/evidence/round-96/conjunct-disposition-v96.py --lane <lane> --rev <REV> --min-falsifiable 17`; `--selftest`; receipts `.ufo/evidence/round-96/landing/c1-*.out`, forge matrix 8/8 (`forge-matrix.txt`) | instruments `10d8fa5d`; amendments `933df676`; records `8ed9c526`; landing `9b89c68d` |
+| R96-C2 | operability | at base: successor tool absent; round-95 `make-pins95.py` writes into the CWD on `--lane ''` and through a symlink, exit 0; the round-95 driver grades a planted `.rerun-9.out` and follows a symlinked receipt (`w1/R96R2.md`, `w1/R96E2.md`, `w1/R96SN1.md` F3-F9) | `PINS_WRITTEN` + `PINS_CHECK OK`; `lane-empty`, `pins-symlink-refused`, `lane-not-absolute`, `rev-not-a-commit-id` each exit 2 (outside target sha256 unchanged); driver grades its own `pos-real.rerun-1.out` over a planted index-0 file and refuses a symlinked `--outdir` (`outdir-symlink-refused`); battery `C1_CONTROLS states=50 matched=50 mismatches=0 missing=0` | **verified under the amended wording (A6-A9)** | `python3 -I .ufo/evidence/round-96/c1/make-pins96.py --lane <lane> --rev <REV> [--check]`; battery `controls-v96.py --lane … --rev <REV> --base <BASE> --work <dir> --outdir <dir> --jobs 8`; receipts `.ufo/evidence/round-96/landing/c2-*.out` | instruments `10d8fa5d`; amendments `933df676`; records `8ed9c526` |
+
+Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0); the nudge premise holds
+(10/8/9 >= 8). A capability row enters: `revision-identity seal` — an audit that pins its
+revision as a resolved commit id, prints it, and refuses a ref, a shorthand, an empty value
+or a hostile `git` before reading; evidence
+`.ufo/evidence/round-96/landing/c1-{positive,rev-branch,rev-empty,rev-unresolvable,hostile-path}.out`
+and `c2-selftest.out` (13/13); first-working round 96.
+
+**Retired:** none. **Saturation:** unchanged.
+
+**Wave.** `w1`, 13 seats. R96R1 `FALSIFIES-WORDING ×2` (default counter path; dead
+`rev-unresolvable`), R96C1 `falsified 5 / holds 5` (unprinted rev, no-op selftest cases,
+before-rev citation, `--rev ''` token, the vacuous "findings=0 honest" clause), R96SN1
+`findings:10` (F1 counter-sha hand-write, F2 alternates, F3 pins `git` by name, F4 planted
+index 0, F5 driver `--rev HEAD`, F6/F7 rev tokens, F8 counter path, F9 outdir symlink, F10
+manifest unpinned), R96E4 `independent_match=44/50` (the driver's `--rev HEAD` contract
+break), R96M1 `41/41 rows` (mutation matrix over the counter), R96E1/E2/E3 `holds`
+(counter, driver read side, pins tool), R96CN1 `diverges/absent` sweep, R96S1 `agree`
+(4 sources, census), R96L1 probe. Every finding was amended pre-data (A1-A9) or declared as
+a limit; nothing was smoothed.
