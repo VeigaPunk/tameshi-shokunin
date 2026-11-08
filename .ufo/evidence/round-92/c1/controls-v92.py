@@ -302,7 +302,18 @@ def main():
             mp = os.path.join(work, "counter-" + n + ".py")
             open(mp, "w").write(text)
             recompute_pin(mp)
-            repo = st1 if state_name == "replace-honest" else st2
+            if state_name == "replace-honest":
+                repo = st1
+            elif state_name == "replace-false-committed":
+                repo = st2
+            else:
+                sd = tempfile.mkdtemp(dir=work, prefix="mstate-" + state_name + "-")
+                repo = clone_at(lane, a.rev, os.path.join(sd, "repo"))
+                materialize_state(repo, C[state_name])
+                sh("git", "-C", repo, "add", "-A")
+                sh("git", "-C", repo, "-c", "user.name=r92-fixture", "-c",
+                   "user.email=r92-fixture@invalid", "commit", "-q", "--allow-empty",
+                   "-m", "r92 mutant state " + state_name)
             mw = os.path.join(work, "mwork-" + n)
             os.makedirs(mw, exist_ok=True)
             p = subprocess.run([sys.executable, "-I", mp, "--repo", repo, "--rev", "HEAD",
@@ -330,7 +341,7 @@ def main():
         if not fn.endswith(".out"):
             continue
         body = open(os.path.join(a.outdir, fn), encoding="utf-8", errors="replace").read()
-        m = re.search(r"^exit=(\d+)$", body, re.M)
+        m = re.search(r"exit=(\d+)", body)
         if m:
             results[fn[:-4]] = (int(m.group(1)), body)
     lines = []
