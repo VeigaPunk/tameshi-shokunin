@@ -324,3 +324,40 @@ pinned gate's own `selftest` over the twelve single-edit mutants and prints
 they were obtained. Round 94's battery registers 45 states — 6 positive, 30 hostile, 1
 gate-identity setup, 3 setup, 5 removal mutants — and every hostile state names the
 conjunct it must falsify. Admission remains the non-author closure's.
+
+### Part 2 (appended round 94, from R94SC1's verified block) — what the reader certifies, and what it does not
+
+Appended; the section above is unchanged. The split below is R94SC1's drafted block,
+fixture-verified to move no conjunct (a clone at `6b19eb92` carrying this text returns
+`C1_R94_PASS=true`, `verdict_tables=1`, `badrows=0`, all nineteen conjuncts identical to
+the control run; probe `R94SC1-note-block-fixture.py` in the wave dir).
+
+**What this reader certifies.** The twelve cells of the single verdict table above — one
+cell per spec id `C01` to `C12`, in the header-named `verdict` column — agree with the
+verdicts the counter itself re-derives by re-running the pinned gate's own `selftest`
+twice per mutant: `n=12 killed=5 survived=7`, `mismatched=0`, every survivor's witness
+registry rebuilt and differing between pristine and mutant, the spec still carrying its
+twelve ids, and the note's own figure line matching the re-derived kill count.
+
+**What this reader does not certify.** It certifies those twelve cells and nothing about
+how they were obtained — a note that copies the committed predictions instead of the
+measured receipt carries the same cells and passes. It does not certify a fenced
+presentation: a fenced block is literal text (S322), so a fenced inverted table or a
+fenced figure line is neither keyed nor counted. And it does not certify a table whose
+header row carries no `verdict` cell: such a table is not a verdict table at all (S321),
+so the §2 survivor table and the §2b impact table are outside the reader's scope by
+construction. It also keys 4-space-indented literal blocks and refuses a short (`--`)
+delimiter: both are declared limits recorded in `plans/round-94.plan.md` A2/A5, not
+silent behaviour.
+
+The three ground rules, by the located quotes the reader's own `source` conjunct accepts
+(file:line in the round-94 snapshots, which are byte-identical to round 93's):
+
+- S320 (sha256sum(1)) — "Print or check SHA256 (256-bit) checksums."
+  (`.ufo/evidence/round-94/sources/s320.html:88`).
+- S321 (GFM §4.10 Tables) — "a single header row, a delimiter row separating the header
+  from the data" (`.ufo/evidence/round-94/sources/s321.html:4506-4507`); "The table is
+  broken at the first empty line, or beginning of another block-level structure"
+  (`.ufo/evidence/round-94/sources/s321.html:4607-4608`).
+- S322 (CommonMark §4.5) — "A fenced code block begins with a code fence, preceded by up
+  to three spaces of indentation." (`.ufo/evidence/round-94/sources/s322.html:2732-2733`).
