@@ -1,0 +1,49 @@
+{
+ "lane": "tameshi",
+ "round": 94,
+ "base": "a8f0e14bd400002324793d82030431696435d9a7",
+ "instrument": "7084358c732ebe1334c2eb9a352c3ed96b547f7c",
+ "freeze": null,
+ "claims": {
+  "C1": {
+   "axis": "coverage",
+   "type": "measured",
+   "surface": "corpus/knowledge/mutation-case-fleet-sources-census.md certified over the fleet gate scripts/sources-census.sh @ f47ad6ba8d306f8125597401cb2ce45c1297a593 under the successor reader with QUALITY 163-166",
+   "wording": "at the instrument revision the committed note yields C1_R94_PASS=true, exit 0, with verdict_tables=1 badrows=0 mismatched=0; each of the six positive states pos-real, pos-fixture, pos-honest-a13, pos-honest-verdict-cell, pos-fenced-hidden, pos-coverage-fenced-denial yields C1_R94_PASS=true, exit 0; and each of the thirty hostile states named in the plan's Controls section yields C1_R94_PASS=false, exit 1, with the conjunct named for that state false. The gate-foreign state refuses at setup with C1_SETUP gate-identity-mismatch, exit 2.",
+   "counter": "python3 -I .ufo/evidence/round-94/c1/measure-v94.py --repo <lane> --rev REV --work <empty dir>",
+   "battery": "python3 -I .ufo/evidence/round-94/c1/controls-v94.py --lane <lane> --rev 7084358c732ebe1334c2eb9a352c3ed96b547f7c --base a8f0e14bd400002324793d82030431696435d9a7 --work <empty dir> --outdir <dir> --jobs 6",
+   "predicate": "C1_R94_PASS=true",
+   "battery_predicate": "C1_CONTROLS states=45 matched=45 mismatches=0 missing=0",
+   "before": "C1_SETUP spec-absent-at-rev, exit 2 at base a8f0e14b",
+   "after": "C1_R94_PASS=true, exit 0 at the landing revision; C1_CONTROLS states=45 matched=45 mismatches=0 missing=0",
+   "instrument_sha256": "a22563b0c2b4a2b43922cec3d1ab3fa511110e035b9edfdfdc6eaebb97023010",
+   "driver_sha256": "9a0870c2e33b8634dcd9dbd28adbec3fe5178ba76cce9a94a16e9e063b4c6ecf",
+   "kill": [
+    "a: an honest note state (the committed note, the note with an id-keyed table that asserts no verdict, the note with a data cell equal to `verdict`, the note with a fenced inverted table) is refused by a rule stated in the plan",
+    "b: one of the thirty named states fails to reach C1_R94_PASS=false with its named conjunct false",
+    "c: the counter blob at the instrument revision differs from the named sha256, or a receipt was produced by other bytes",
+    "d: a pre-registered control name has no receipt, or the driver's summary counts a state it did not write",
+    "e: a foreign gate committed by a lane commit (spec slug repointed + pins regenerated) is ever executed or ever reported with pin=true instead of refusing at setup with gate-identity-mismatch"
+   ]
+  },
+  "C2": {
+   "axis": "calibration",
+   "type": "measured",
+   "surface": "the counter's self-assessment: .ufo/evidence/round-94/conjunct-disposition-v94.py + .ufo/evidence/round-94/conjunct-disposition.json audited against the committed battery receipts under the state/digest reason test and the frozen falsifiable floor",
+   "wording": "the checker prints DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0, exit 0, against the counter at the instrument revision and the committed manifest under --min-falsifiable 17, and its --selftest prints DISPOSITION_SELFTEST: 8/8 pass, exit 0, with each failing case producing a finding and the clean case producing none; the mechanism-word-only unfalsifiable reason (the A4 cheat) produces a finding with --min-falsifiable 17",
+   "counter": "python3 -I .ufo/evidence/round-94/conjunct-disposition-v94.py --lane <lane> --rev REV --min-falsifiable 17",
+   "battery": "python3 -I .ufo/evidence/round-94/conjunct-disposition-v94.py --selftest",
+   "predicate": "DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0",
+   "battery_predicate": "DISPOSITION_SELFTEST: 8/8 pass",
+   "before": "DISPOSITION_SETUP counter-absent-at-rev, exit 2 at base a8f0e14b (neither the counter nor the manifest exists there)",
+   "after": "rows=19 falsifiable=17 unfalsifiable=2 findings=0, exit 0 under --min-falsifiable 17; selftest 8/8",
+   "instrument_sha256": "8ec7924ea1d57997bdba1770317a6ff44d6c3bacbb55d15e4a4742292c00b6eb",
+   "kill": [
+    "a: findings=0 is printed while a printed conjunct key has no row, a row names an unknown key, a state row's receipt does not move its conjunct, or an unfalsifiable reason is shorter than 40 characters, names no mechanism, or names no battery state and no pin digest",
+    "b: fewer than 17 of the 19 rows carry a state",
+    "c: the selftest cannot fail - a case that must produce a finding (including the A4 mechanism-word cheat) produces none, or the clean case produces one",
+    "d: the checker or manifest blob at the named revision differs from the sha256 named in the plan"
+   ]
+  }
+ }
+}
