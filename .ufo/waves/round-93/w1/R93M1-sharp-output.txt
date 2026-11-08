@@ -1,0 +1,41 @@
+R93M1 sharpened probes (NOT committed battery states)
+instrument 18903602aa040b7e258fd6c81491cfee4ea7bb0575784fe27e351587fe094c2d
+
+px2-delim-only (frozen only): a 5-cell verdict header over a 4-cell delimiter
+  baseline exit=0 grade=MATCH pass=true badrows_line=no
+
+px1-source-wrongquote mutant=D22 rule_key=source
+  baseline exit=1 grade=MATCH source=False pass=false badrows=0
+  mutant   exit=0 grade=MATCH source=True pass=true badrows=0 delta=differs
+  probe_detects_mutant=YES
+
+px2-width-lastrow mutant=D17 rule_key=ids
+  baseline exit=1 grade=MATCH ids=False pass=false badrows=1
+  mutant   exit=0 grade=MATCH ids=True pass=true badrows=0 delta=differs
+  probe_detects_mutant=YES
+
+px2-width-firstrow mutant=D18 rule_key=ids
+  baseline exit=1 grade=MATCH ids=False pass=false badrows=2
+  mutant   exit=1 grade=MATCH ids=False pass=false badrows=1 delta=differs
+  probe_detects_mutant=YES
+
+px3-position-nodup mutant=D16 rule_key=ids
+  baseline exit=1 grade=MATCH ids=False pass=false badrows=12
+  mutant   exit=1 grade=MATCH ids=True pass=false badrows=0 delta=differs
+  probe_detects_mutant=YES
+
+px4-fenced-hidden mutant=D29 rule_key=verdict_tables
+  baseline exit=0 grade=MATCH verdict_tables=True pass=true badrows=0
+  mutant   exit=1 grade=MATCH verdict_tables=False pass=false badrows=12 delta=differs
+  probe_detects_mutant=YES
+
+px5-two-verdict-cols mutant=D30 rule_key=ids
+  baseline exit=1 grade=MATCH ids=False pass=false badrows=1
+  mutant   exit=0 grade=MATCH ids=True pass=true badrows=0 delta=differs
+  probe_detects_mutant=YES
+
+px6-figure-two mutant=D26 rule_key=figure
+  baseline exit=1 grade=MATCH figure=False pass=false badrows=0
+  mutant   exit=0 grade=MATCH figure=True pass=true badrows=0 delta=differs
+  probe_detects_mutant=YES
+

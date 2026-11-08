@@ -270,6 +270,7 @@ written and are superseded here:
 | standing-pin audit | measure whether a standing sweep's declared population pins the instrument bytes the tip carries (`settled` = blob equality at pin vs tip), instead of trusting that a matching figure means settled bytes | `python3 -I -X utf8 tools/selfstate-freshness.py --repo . --manifest tools/selfstate-freshness.json --pin-audit --pin-rev HEAD` → `SELFSTATE_PINS: rows=26 settled=26 stale=0` exit 0; before the round-81 landing `settled=20 stale=3` (`.ufo/evidence/round-81/controls/c2-before.txt`) | round 81; the three capability rows are live under R82-C2 |
 | selftest-text pin | pin a suite's own assertion text (digest of `inspect.getsource(selftest)` against a constant), so a weakened arm fails an arm instead of passing vacuously — the round-80 `ss-bom-only` / `wr-prefix` survivor class; extended to `tools/defect-bind.py` in round 82 | `SELFSTATE_SELFTEST: 24/24 pass`, `WAVE_RECONCILE_SELFTEST: 25/25 pass`, `DEFECT_BIND_SELFTEST: 15/15 pass` (round84 A15 adds public-CLI identity refusals and valid sibling; text pin explicitly recomputed). Historical round81/82 batteries `defects=5 killed=5` / `defects=14 killed=14` / `defects=5 killed=5` with `CONTROL: GREEN`; base controls `killed=0 survived=1` per tool (`.ufo/evidence/round-81/controls/`, `.ufo/evidence/round-82/controls/c3-before-mutant.txt`); round84 isolated selftest output in `.ufo/waves/round-84/w1/T84E1.md` | round 81; defect-bind text-pin arm round 82; identity arm round84 |
 | ledger witness | audit `tools/mutate-and-run.sh --regression` from the kernel's record instead of the runner's printed figure: run it under `strace -f -y -v` from a clean environment and bind every declared leg to a `git show` exec, an interpreter exec of the pristine and of each spec-exact mutant (sha256 computed by the witness from git), no write after exec, environment parity with the control, and a kernel exit equal to the recorded verdict (15 checks W_PARSE…W_ENV); out of model: L1–L4 in `plans/round-89.plan.md` | `python3 -I tools/ledger-witness.py --selftest` → `LEDGER_WITNESS_SELFTEST: 21/21 pass`; `bash .ufo/evidence/round-89/measure.sh <lane> <REV> <fleet> <empty>` → real runner and two honest variants `legs=11 witnessed=11 findings=0 checks=- PASS`, `forgeries_refused=12/12` (pre-freeze `.ufo/evidence/round-89/pre-freeze/measure-a65e11c0.out`; landing receipt named in `## Round 89`); `corpus/knowledge/kernel-witnessed-ledger.md`, S313, S314 | round 89; lane demonstrated; **killed by its own kill rule (b)**: wave seat T89E2's `hardlink`, `dirswap` and `symlink` runners exec one-line stubs at the audited paths and install the spec-exact bytes through an alias afterwards, and the witness prints PASS (`.ufo/waves/round-89/w1/T89E2.md`) — W_ORDER matches path spelling, not object identity; **not admitted** (appended at the round-89 records commit) |
+| conjunct-disposition audit | prove every conjunct of a frozen counter is falsifiable by a named committed battery receipt, or declared unfalsifiable with a mechanism-naming reason; flag a manifest key the counter no longer prints; six-case self-falsifying selftest, and a measured do-nothing control showing what the checker alone does not catch | `python3 -I tools/conjunct-disposition.py --lane . --rev <REV>` -> `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`, exit 0; `--selftest` -> `DISPOSITION_SELFTEST: 6/6 pass`; `.ufo/evidence/round-93/pre-freeze/c2-cheat-all-unfalsifiable.out` | round 93 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout. The three round-81 capabilities above now live here rather than only in `## Round 81 — capabilities entered` (the round-81 closure's routed defect 6); each is a live self-state row from round 82 (`tools/selfstate-freshness.json` rows `closure-defect-bind`, `standing-pin-audit`, `selftest-text-pin`).
 
@@ -5644,3 +5645,28 @@ construction (QUALITY 154-155) with the A12/A13 states in its pre-freeze battery
 `timeout_s` state for M19; the decoy states for A10/A11 (QUALITY 157); and the derived
 spec constants (M5). No claim is pre-approved here.
 
+
+## Round 93 — two claims: the verdict-content reader (coverage) and the conjunct-disposition audit (calibration)
+
+Base `4a7e259b`; counter `855f0c1c`; battery driver `69d377a0`; C2 instruments `9bf52b03`;
+freeze `978f04bc`; wave `r93-w1`, 12 seats (executor 3, scribe 1, scout 2, reviewer 2,
+critic 1, mutation-tester 1, sentinel 1, connector 1; attack 4/12 by the policy's role set,
+6/12 including sentinel and connector), all settled, no dead seat.
+
+| Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|---|---|
+| R93-C1 | coverage (verdict-only axis; fourth attempt) | at base `4a7e259b`: `C1_SETUP spec-absent-at-rev`, exit 2 (`.ufo/evidence/round-93/pre-freeze/controls/nowork-base.out`) | `C1_R93_PASS=true`, exit 0, `mismatched=0 badrows=0 verdict_tables=1` at the instrument revision; battery `C1_CONTROLS states=35 matched=35 mismatches=0 missing=0` (committed summary + an independent second replay in `R93E3.md`) | **verified, wording narrowed by A1-A3** — the twelve cells and the 23 named hostile states hold; the wave falsified three sentences of the record, not the claim | `python3 -I .ufo/evidence/round-93/c1/measure-v93.py --repo . --rev <REV> --work <empty dir>`; battery: `controls-v93.py --lane . --rev 855f0c1c --base 4a7e259b --work <dir> --outdir <dir> --jobs 6`; `docs: .ufo/evidence/round-93/pre-freeze/controls/` | counter `855f0c1c`; freeze `978f04bc`; landing receipt `.ufo/evidence/round-93/landing/` |
+| R93-C2 | calibration (conjunct-level) | at base: `DISPOSITION_SETUP counter-absent-at-rev`, exit 2 (`.ufo/evidence/round-93/pre-freeze/c2-nowork-base.out`) | `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`, exit 0; `DISPOSITION_SELFTEST: 6/6 pass`, exit 0 | **verified at conjunct granularity**; rule-level falsifiability is incomplete (8 reader rules, `R93M1` Q2) and stated in A6 | `python3 -I tools/conjunct-disposition.py --lane . --rev <REV>`; `--selftest`; receipts `.ufo/evidence/round-93/pre-freeze/c2-*.out` | instruments `9bf52b03`; freeze `978f04bc` |
+
+Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0). The nudge premise still
+holds (10/8/9 ≥ 8). One capability row enters: `conjunct-disposition audit`, demonstrated by
+`--selftest` 6/6 and a real run at `findings=0` with the do-nothing cheat measured.
+
+**Retired:** none. **Saturation:** unchanged.
+
+**Planned (round 94):** the eight routed items in `corpus/lessons/round-93.md` —
+fence-aware `coverage` (A1), a real delimiter-width rule and a decided remainder-row policy
+(A2), an externally anchored gate identity with `die` on disagreement (A3), `--min-falsifiable`
+plus a reason test naming a state or digest (A4), a fixture-assembly assertion (M1),
+`O_NOFOLLOW` receipt writes and a run-scoped outdir (M9), `GIT_*` scrubbing in the driver with
+its canary (M10), and the eight rule-level states (M8). No claim is pre-approved here.

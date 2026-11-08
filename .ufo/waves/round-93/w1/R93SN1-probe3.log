@@ -1,0 +1,37 @@
+
+===== X1 real driver: ambient GIT_DIR - where does the control commit land? =====
+PROBE X1.driver-rc                             1
+PROBE X1.log-tail                              counter absent at rev|
+PROBE X1.hijack-repo-log                       a530c6a base|
+PROBE X1.hijack-has-fixture-commit             0
+PROBE X1.hijack-refs                           a530c6a55f9d1dfd2d2c8b50a2888bdec9ece6de refs/heads/main|
+
+===== X2 real driver: RELATIVE --outdir lands in the process cwd =====
+PROBE X2.rc                                    0
+PROBE X2.cwd-listing                           relative-receipts 
+PROBE X2.receipt-landed-in-cwd                 YES
+
+===== X3 real driver: M4 guard vs a pre-existing DANGLING symlink in --outdir =====
+PROBE X3.rc                                    0
+PROBE X3.escape-file-created                   YES
+PROBE X3.escape-content                        control=pos-real clone_rev=2df4bb3b37e3e4efd316d803f55903111
+PROBE X3.outdir-listing                        C1-summary.txt pos-real.out 
+
+===== X4 measure-v93: --work '' in an EMPTY cwd materialises the gate into the cwd =====
+PROBE X4.rc-and-head                           C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs|C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs|
+PROBE X4.cwd4-tree                             . ./pristine ./pristine/scripts ./pristine/scripts/fixtures ./pristine/scripts/sources-census.sh ./tmp ./canary ./canary/scripts ./canary/scripts/fixtures ./canary/scripts/sources-census.sh ./w-C01 ./w-C01/w-shokunin 
+PROBE X4.gate-written-into-cwd                 no
+
+===== X5 receipt provenance: does a receipt attest the counter bytes that made it? =====
+PROBE X5.pos-real.has-counter-digest           0
+PROBE X5.timeout.has-counter-digest            0
+PROBE X5.hidden-c001.has-counter-digest        0
+PROBE X5.D01.has-counter-digest                1
+PROBE X5.receipt-head-pos-real                 control=pos-real clone_rev=74b542e9209a7607e41bbf4965a4012343adae74 parent=855f0c1c59ee2af7f184d8de62d02cdd576eb94e|exit=0|
+
+===== X6 measure-v93: is the gate EXECUTED even when pin/pins are false? =====
+PROBE X6.rc                                    0
+PROBE X6.conjuncts                             pins=true pin=true green=true 
+PROBE X6.gate-executed                         /fast/scratch/hyaku/tameshi-r93/R93SN1/probe3.LKNpib/w6/canary /fast/scratch/hyaku/tameshi-r93/R93SN1/probe3.LKNpib/w6/pristine 
+
+===== done =====

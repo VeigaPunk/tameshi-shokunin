@@ -1,0 +1,25 @@
+
+===== L1 git ':path' (empty rev) reads the INDEX, not a commit =====
+PROBE L1.commit-versions                                 COMMITTED
+PROBE L1.index-version(:path)                            STAGED-BUT-NOT-COMMITTED
+
+===== L2 the counter with --rev '' measures the INDEX of the lane =====
+PROBE L2.rc                                              0
+PROBE L2.PASS                                            C1_R93_PASS=true
+PROBE L2.summary-rev-field                               rev=
+
+===== L3 driver control states are built from the lane WORKING TREE, not from --rev =====
+PROBE L3.driver-rc                                       0
+PROBE L3.receipt-note-has-worktree-marker                0
+PROBE L3.receipt-note-has-rev-marker                     0 (the rev's note has none)
+PROBE L3.cloned-fixture-note-has-marker                  
+PROBE L3.receipt-verdict-tables                          verdict_tables=1
+PROBE L3.PASS-line                                       C1_R93_PASS=true
+
+===== L4 same, but the working-tree note is mutated to a HOSTILE shape (extra verdict table) =====
+PROBE L4.driver-rc                                       0
+PROBE L4.PASS-line                                       C1_R93_PASS=true
+PROBE L4.verdict-tables                                  verdict_tables=1
+PROBE L4.note-the-control-was-supposed-to-certify        the committed note at REV (not the working tree)
+
+===== done =====

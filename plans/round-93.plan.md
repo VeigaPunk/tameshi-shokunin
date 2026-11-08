@@ -258,3 +258,92 @@ its receipt as evidence; `hardening-lint.py` (idea 1) is re-run over the new cou
 Appended here if a wave artifact falsifies this record's own mechanics, in the round-92 A1-A5
 form: the claim, predicate and state expectations never change; only statements about the
 record are corrected, each citing the artifact that falsified it.
+Both claims' predicates, counters and state expectations are unchanged by A1-A6. What follows
+narrows the *wording* to what the instruments enforce, each amendment citing the wave artifact
+that falsified the wider reading (§8 of the round contract; Amendment 59).
+
+### A1 — `coverage` is fence-blind (R93R1 finding 2; `R93R1.md`, `R93R1-probe4.py`)
+
+The §Declared limits sentence "a fenced block is literal text (S322): … not keyed" is true of
+the *note reader* and false of the `coverage` conjunct: that scan reads every line of
+`corpus/README.md` whose text names the note's path, fenced or not, and takes the last one.
+Measured: a fenced README row appended after a committed denial sets `coverage=true` (false
+green), and a fenced denial after an assertion sets it false (false red). Narrowed wording:
+**`coverage` = the last *line* in `corpus/README.md` that names the note's path, without the
+fence rule; a fenced README row is therefore keyed by `coverage`.** Routed to round 94: run the
+README scan through `block_lines` and require the path as its own cell, not a substring.
+
+### A2 — the width rules are stricter than GFM and unstated (R93R1 finding 1, R93C1 finding 1, R93S1 observation, R93M1 §4.7)
+
+Two width rules exist and neither is named in §Declared limits. (i) `tables()` returns no
+delimiter row, so the check `len(delim) != len(header)` compares the header to the first *data*
+row; a delimiter row with the wrong cell count is never checked, so a GFM-invalid table is
+still keyed (`R93R1` probe; `R93C1-A5`). (ii) Every verdict-table data row whose cell count
+differs from the header refuses, which is stricter than S321's remainder-row allowance
+("The header row must match the delimiter row in the number of cells." is the delimiter rule;
+GFM pads or truncates remainder rows — R93S1, `s321.txt:4585-4587`). Narrowed wording: **the
+reader certifies the twelve cells and the named states; it does not certify that the table is a
+valid GFM table, and it refuses a data row of non-header width.** Routed to round 94: return
+the delimiter cells from `tables()` and add a `delim` finding; decide pad/truncate vs refuse.
+
+### A3 — the seal's root of trust is the lane's own spec (R93SN1 F1, `R93SN1-probe18.log`)
+
+§Declared limits says "the gate bytes are pinned, so no committed lane state can falsify the
+two-run stability conjunct". R93SN1 falsified the wider reading: `pin` compares the spec's
+declared digest to the blob the same spec names, and `pins` compares the derived values to a
+`pins.json` the lane also commits, so one lane commit that repoints `census-mutants.json` and
+regenerates `pins.json` makes the counter materialise and **execute a foreign gate** while
+printing `pin=true pins=true green=true canary=true` (`R93SN1-probe18.log`, control arm
+marker absent). The frozen certificate is **revision-bound**: it is true of the spec bytes at
+`855f0c1c`, and the counter blob is bound by kill rule (c). Narrowed wording: **the certificate
+certifies the fleet gate only at the instrument revision; the seal is self-consistent, not
+externally anchored.** Routed to round 94: anchor `gate_commit`/`gate_sha256` in the counter's
+own self-pinned bytes and `die` (never report a conjunct false) when the derived identity
+disagrees.
+
+### A4 — C2's "names the seal" test is a substring match (R93SN1 F8, `pre-freeze/c2-cheat-all-unfalsifiable.out`)
+
+The checker accepts an `unfalsifiable` row when the reason is >= 40 characters and contains one
+of `pin`, `sealed`, `seal`, `gate bytes`, `GIT_`, `pinned`, `replace`. A manifest whose 19 rows
+all say "the pin forbids it" therefore prints `findings=0` — measured, committed at
+`pre-freeze/c2-cheat-all-unfalsifiable.out` (`rows=19 falsifiable=0 unfalsifiable=19 findings=0`,
+exit 0). C2's wording names the counts (`falsifiable=17`), and kill rule (b) rejects that
+manifest, so C2 is not falsified; but the checker's *rule* is weaker than "names the mechanism
+that forbids the falsifier". Narrowed wording: **C2 audits conjunct-level falsifiability and the
+manifest's counts; it does not by itself reject a zero-state manifest.** Routed to round 94:
+`--min-falsifiable N` and a reason test that names a state or a pin digest, not a word.
+
+### A5 — C2's `canary` reason is scoped to the frozen spec (R93SN1 F1)
+
+The manifest's `canary` row says "no committed lane state can make it false". Under A3's
+repointed spec that is false (a foreign gate can swallow the inserted `exit 97`). The
+declaration holds for the gate bytes the frozen spec names, which is what the battery measured
+twice (`timeout` state, `canary=true` both runs). The manifest is a frozen artifact and is not
+edited; the narrowing is recorded here and routed to round 94 with A3's remediation.
+
+### A6 — record corrections (R93R2 F1-F5)
+
+- **F1/F2 (receipt provenance):** per-state receipts carry no `CONTROL_INSTRUMENT sha256=` line
+  (the driver prints it once to its own stdout) and the fixture clone revisions are not in the
+  lane object store, so byte provenance is textual. Mitigation, measured: R93E3 re-ran the
+  battery from committed bytes into one outdir twice — `C1_CONTROLS states=35 matched=35
+  mismatches=0 missing=0` both times, stable lines identical, and the instrument digest
+  independently re-derived from the working tree and from the blob at `855f0c1c`
+  (`R93E3.md`). Residual limit: no per-receipt instrument line.
+- **F3 (freeze_note wording):** `claims.json` `freeze_note` calls the pins commit and the driver
+  "ancestors" of the instrument revision; the graph has `855f0c1c` (counter) then `69d377a0`
+  (driver), so the driver is its **descendant**. The three named revisions are correct; the
+  word is not. Recorded, not edited (frozen artifact).
+- **F4 (green):** §Declared limits calls `green`, `canary` and `unstable0` "declarations"; `green`
+  has a falsifying committed state (`timeout`, `green=false`) and C2's manifest names it. The
+  sentence is corrected to: `canary` and `unstable0` are declarations (subject to A5), `green`
+  is falsifiable.
+- **F5 (C2 `--rev`):** the C2 counting command reproduces at any revision where both the counter
+  and the manifest exist (`9bf52b03` onward); at `855f0c1c` the manifest is absent and the
+  checker refuses `DISPOSITION_SETUP manifest-absent-at-rev`. The frozen predicate is measured at
+  the landing revision, not at the instrument revision.
+- **M1 rule-granularity:** QUALITY 158 is satisfied at *conjunct* granularity (all 19 keys move
+  or are declared) and not at *rule* granularity (8 reader rules have no discriminating state:
+  source's occurrence half, both width halves, position, figure-exactly-one, verdict-column
+  count, fence, spec count). C2 audits conjuncts; the rule-level gap is routed to round 94 and
+  recorded in the lesson's `## Mistakes`.

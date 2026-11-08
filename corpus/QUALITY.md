@@ -2590,3 +2590,40 @@ on the landed bytes (`c2-landed-battery.txt`).
     state is constructible). Able to fail: `.ufo/waves/round-92/w1/T92M1.md` §5.
     (`lessons/round-92.md` M8.)
 
+
+## Criteria appended — round 93
+
+159. A rule stated twice is a removal control that cannot say which site is load-bearing.
+    Before a removal mutant is scored, the rule it removes has exactly one implementation
+    site; if two sites exist, the mutant's survival measures the duplicate, not the rule.
+    Able to fail: round 93's `D01` removed only the second copy of the stray-verdict scan
+    and the mutant still refused `renamed-result` (`exit=1`, `C1_R93_PASS=false`), while
+    the single-site counter at `855f0c1c` returns the cheat (`C1_R93_PASS=true`).
+    (`lessons/round-93.md` M2.)
+160. A conjunct-disposition manifest is a claim about the instrument and is audited by a
+    checker that can fail: every conjunct key the counter prints has one row, a `state`
+    row's committed receipt shows that conjunct false (or the named setup token), a row
+    naming an unknown key is a finding, and the counts (`falsifiable`, `unfalsifiable`)
+    are part of the claim. The checker's own acceptance rule is weaker than the sentence
+    it serves — a mechanism-worded all-unfalsifiable manifest prints `findings=0` — so the
+    counts and a kill rule, not `findings` alone, decide. Able to fail:
+    `.ufo/evidence/round-93/pre-freeze/c2-cheat-all-unfalsifiable.out`
+    (`rows=19 falsifiable=0 unfalsifiable=19 findings=0`, exit 0) and the frozen target
+    `falsifiable=17`; the disposition checker's 6-case selftest
+    (`python3 -I tools/conjunct-disposition.py --selftest` → `6/6 pass`).
+    (`lessons/round-93.md` M5, M8; R93SN1 F8.)
+161. A seal whose root of trust is the artifact under test certifies self-consistency, not
+    identity. A counter that pins a gate by reading a spec and a pins file the same lane
+    commits will execute a foreign gate while printing its pin conjuncts true; the
+    certificate is therefore revision-bound, and the claim must say so. Able to fail:
+    `.ufo/waves/round-93/w1/R93SN1-probe18.log` (a lane commit repointing the spec and
+    regenerating `pins.json` → `pin=true pins=true green=true canary=true` on a foreign
+    gate; the control arm shows the real gate ran), and `plans/round-93.plan.md` A3.
+    (`lessons/round-93.md` M5.)
+162. A positive control's fixture transform is scoped to the structure it means to change.
+    A file-wide string replace that also hits the certified table produces a state that is
+    not the thing the control claims to be; the control must assert its own premise (the
+    transformed note still parses to the declared rows) before the clone is committed.
+    Able to fail: `.ufo/evidence/round-93/pre-freeze/controls-firstrun/pos-honest-a13.out`
+    (`badrows=3`, `C1_R93_PASS=false`) against the fixed receipt in
+    `pre-freeze/controls/`. (`lessons/round-93.md` M1.)

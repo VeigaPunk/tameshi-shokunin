@@ -1,0 +1,15 @@
+
+===== N1 cwd repo holds a gate on the INDEX (staged, uncommitted) - is it executed? =====
+PROBE N1.committed-has-gate                                yes
+PROBE N1.index-has-gate                                    yes
+PROBE N1.counter-output                                    C1_SETUP git-failed:archive --format=tar  scripts/fixtures/sources-census:fatal: not a valid object name:|C1_R93_PASS=false|
+PROBE N1.blob-read-from-cwd-index                          C1_SETUP git-failed:archive --format=tar  scripts/fixtures/sources-census:fatal: not a valid object name:
+PROBE N1.did-it-execute-the-cwd-index-gate                 no
+PROBE N1.written-gate-digest                               
+PROBE N1.cwd-index-gate-digest                             f0e55bf3b8053969
+
+===== N2 same, but the CWD is a repo whose INDEX carries a hostile gate (no commit needed) =====
+PROBE N2.counter-output                                    C1_SETUP git-failed:archive --format=tar  scripts/fixtures/sources-census:fatal: not a valid object name:|C1_R93_PASS=false|
+PROBE N2.executed-cwd-index-gate                           no
+
+===== done =====

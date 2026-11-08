@@ -1,0 +1,44 @@
+== the two copies of the stray-verdict rule at b34c929e ==
+260:                bad.append("stray-verdict:%d:%s" % (ln + 1, cells[0][:24] if cells else ""))
+266:            bad.append("stray-verdict:%d:%s" % (oi + 1, raw.strip()[:24]))
+== the single copy at 855f0c1c59ee2af7f184d8de62d02cdd576eb94e ==
+262:            bad.append("stray-verdict:%d:%s" % (oi + 1, raw.strip()[:24]))
+== D01 anchor in the driver (rev C) ==
+    a = """        toks = [c for c in split_cells(raw) if c in VERDICTS]
+        if toks:
+            bad.append("stray-verdict:%d:%s" % (oi + 1, raw.strip()[:24]))
+"""
+== running the rev-C battery with --only D01 ==
+CONTROL_INSTRUMENT sha256=8f41c34248f5237fd61b1aa36d661017d84d364bf32d42c683020417f509b307
+D01 MISMATCH exit=1
+C1_CONTROLS states=1 matched=0 mismatches=1 missing=0 [D01]
+== the rev-C D01 receipt ==
+mutant=D01 state=renamed-result
+counter_sha=162aff7612bbfb82e375837c840ababe11f3ae90e780883b8d0462376f67df28
+exit=1
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=HEAD n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=2 verdict_tables=1
+C1_BADROWS stray-verdict:299:C01 stray-verdict:300:C02
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=true ids=false mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R93_PASS=false
+== the committed A3 D01 receipt (for comparison) ==
+mutant=D01 state=renamed-result
+counter_sha=4bd4b77ce8b5ae4268b4bfb631cc71650306d4ed8e80126bf5d97509bb0c2d35
+exit=0
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=HEAD n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=true ids=true mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R93_PASS=true

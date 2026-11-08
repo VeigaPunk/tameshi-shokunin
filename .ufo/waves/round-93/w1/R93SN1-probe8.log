@@ -1,0 +1,34 @@
+
+===== J1 counter with --rev '' : index read, and does it PASS? =====
+PROBE J1.rc                                            0
+PROBE J1.PASS-line                                     C1_R93_PASS=true
+PROBE J1.summary-rev-field                             C1_SUMMARY rev= n=12 killed=5 survived=7
+PROBE J1.rev-echoed                                    rev=
+
+===== J2 counter with --repo '' (realpath -> process cwd) =====
+PROBE J2.rc                                            2
+PROBE J2.first-line                                    C1_SETUP replace-list-failed:lane
+
+===== J3 RELATIVE --work writes into the process cwd =====
+PROBE J3.rc                                            0
+PROBE J3.cwd-tree                                      . ./relwork ./relwork/pristine ./relwork/tmp ./relwork/canary ./relwork/w-C01 ./relwork/w-C02 ./relwork/w-C03 
+PROBE J3b.driver-rc                                    1
+PROBE J3b.cwd-tree                                     . ./relwork ./relwork/pristine ./relwork/tmp ./relwork/canary ./relwork/w-C01 ./relwork/w-C02 ./relwork/w-C03 ./relwork/w-C04 ./relwork/w-C05 
+
+===== J4 git config inheritance: core.hooksPath from an ambient GIT_CONFIG_GLOBAL =====
+PROBE J4.driver-rc                                     0
+PROBE J4.hook-executed                                 YES - ambient git config drove a hook during the fixture commit
+PROBE J4.marker                                        HOOK-EXECUTED pid=2071835|
+
+===== J5 the counter's own git calls are env-scrubbed (sealed_env) - verify =====
+PROBE J5.rc                                            0
+PROBE J5.PASS                                          C1_R93_PASS=true
+PROBE J5.first-line                                    C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+
+===== J6 driver summary after a partial run: does C1-summary.txt describe the receipts on disk? =====
+PROBE J6.receipts-on-disk                              36
+PROBE J6.summary-rows                                  1
+PROBE J6.summary-content                               nowork-base MISMATCH exit=0|
+PROBE J6.unmentioned-receipts                          coverage-absent coverage-denial D01 D02 D03 D04 D05 drop-c12 dup-row figure hidden-c001 hidden-x inverted noop-mutant note-absent nowork-base.rerun-1 pin-mismatch pins-mutated pos-fixture pos-honest-a13 pos-honest-verdict-cell position pos-real pseudo-row renamed-result replace-honest selfpin-edit short-spec source-noquote source-status spec-shape syntax-mutant timeout trivial-mutant witness-same 
+
+===== done =====

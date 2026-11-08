@@ -1,0 +1,21 @@
+
+===== S1 counter --repo '' with cwd = the FLEET ROOT =====
+PROBE S1.rc                                                    2
+PROBE S1.first-line                                            C1_SETUP spec-absent-at-rev
+PROBE S1.meaning                                               realpath('') == cwd, so the FLEET ROOT was passed to git -C as the lane
+
+===== S2 driver --rev '' : is the counter blob taken from the INDEX? =====
+PROBE S2.index-counter-has-marker                              1
+PROBE S2.commit-counter-has-marker                             0
+PROBE S2.driver-rc                                             1
+PROBE S2.driver-saw-the-INDEX-counter                          CONTROL_INSTRUMENT sha256=e97e2080d9d82ad309850508764dc5de3d5d82726254b2a509e74fa8f5258382
+PROBE S2.expected-if-commit                                    18903602aa040b7e258fd6c81491cfee4ea7bb0575784fe27e351587fe094c2d
+PROBE S2.receipt-exit                                          exit=2
+
+===== S3 make-pins.py write mode: does it overwrite the FROZEN pins.json in place? =====
+PROBE S3.pins-before                                           688fe42aab453748
+PROBE S3.pins-after                                            688fe42aab453748
+PROBE S3.wrote-in-place-without-a-check                        bytes identical here, but the write happened in place with NO --check gate
+PROBE S3.check-mode-refuses-drift                              PINS_CHECK OK
+
+===== done =====

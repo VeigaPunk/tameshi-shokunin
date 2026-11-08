@@ -1,0 +1,37 @@
+
+===== E1 git -C '' behaviour (fleet incident 2026-11-06) =====
+PROBE E1.git-C-empty.toplevel            rc=0 out=/fast/scratch/hyaku/tameshi-r93/R93SN1/probe.YAs5XD/cwdrepo
+PROBE E1.git-C-empty.status              rc=0 out=
+PROBE E1.git-C-empty.commit              rc=0 out=[main 7005ffe] x
+
+===== E2 does GIT_NO_REPLACE_OBJECTS=1 hide 'git replace -l'? =====
+PROBE E2.replace-l-plain                 ce013625030ba8dba906f756967f9e9ca394464a 
+PROBE E2.replace-l-no-replace-env        ce013625030ba8dba906f756967f9e9ca394464a 
+PROBE E2.replace-l-scrubbed              ce013625030ba8dba906f756967f9e9ca394464a 
+
+===== E3 ambient GIT_DIR / GIT_INDEX_FILE / GIT_OBJECT_DIRECTORY vs 'git -C dir' =====
+PROBE E3.clean.toplevel                  /fast/scratch/hyaku/tameshi-r93/R93SN1/probe.YAs5XD/e3dst
+PROBE E3.GIT_DIR.toplevel                /fast/scratch/hyaku/tameshi-r93/R93SN1/probe.YAs5XD/e3dst
+PROBE E3.GIT_DIR.status                  
+PROBE E3.GIT_INDEX_FILE.add-target       cwdrepo e1 e2 e3clone e3dst 
+PROBE E3.GIT_OBJECT_DIRECTORY.clone      fatal: repository '/fast/scratch/hyaku/tameshi-r93/R93SN1/probe.YAs5XD/e3clone' does not exist
+
+===== E4 git rev:path syntax: traversal / absolute path =====
+PROBE E4.normal                          echo ok
+PROBE E4.traversal-dotdot                fatal: path 'scripts/../../x' does not exist in '33d4612c79f32739a185794c58d385b0c80cd65a'
+PROBE E4.absolute-path                   fatal: path '/etc/passwd' exists on disk, but not in '33d4612c79f32739a185794c58d385b0c80cd65a'
+PROBE E4.leading-slash-scripts           fatal: path '/scripts/gate.sh' does not exist in '33d4612c79f32739a185794c58d385b0c80cd65a'
+
+===== E5 M4 receipt_path() vs a pre-existing symlink =====
+chosen=/fast/scratch/hyaku/tameshi-r93/R93SN1/probe.YAs5XD/outdir5/pos-real.out
+chosen_is_symlink=True
+PROBE E5.payload-written-outside-outdir  YES
+PROBE E5.payload-content                 exit=0 
+PROBE E5.exists-on-dangling-symlink      True
+
+===== E6 tarfile extractall(filter='data') vs traversal / absolute members =====
+PROBE E6.extractall-data           refused: OutsideDestinationError: '../escape-rel.txt' would be extracted to '/fast/scratch/hyaku/tameshi-r93/R93SN1/probe.YAs5XD/escape-rel.txt', which is outside the destination
+PROBE E6.rel-escape-exists          False
+PROBE E6.abs-escape-exists          False
+
+===== done =====

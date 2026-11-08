@@ -1,0 +1,30 @@
+
+===== Q1 ambient GIT_DIR: does 'git -C dir replace' create the ref in the GIT_DIR repo? =====
+PROBE Q1.other-repo-replace-refs                             
+PROBE Q1.target-repo-replace-refs                            
+PROBE Q1.verdict                                             stayed in the -C dir
+
+===== Q2 gate_path traversal: git refuses the blob, so no write happens =====
+PROBE Q2.cat-file(../../../../tmp/evil.sh)                   fatal: '../../../../tmp/evil.sh' is outside repository at '/home/vgpnk
+PROBE Q2.cat-file(/tmp/evil.sh)                              fatal: path '/tmp/evil.sh' does not exist in '855f0c1c59ee2af7f184d8de
+PROBE Q2.cat-file(scripts/../scripts/sources-census.sh)      fatal: path 'scripts/../scripts/sources-census.sh' does not exist in '
+PROBE Q2.os.path.join-behaviour                              /w/pristine/../../../../tmp/evil.sh
+PROBE Q2.join-is-normalised-by-open                          the counter writes gp = os.path.join(dest, gate_path); open(gp) resolves '..'
+
+===== Q3 is the gate_path used for the WRITE the same string git validated? =====
+    112:def materialize(fleet, commit, gate_path, fixtures, gate_bytes, dest):
+    113:    sd = os.path.join(dest, os.path.dirname(gate_path))
+    118:    gp = os.path.join(dest, gate_path)
+    363:    gate_bytes = blob(fleet, g.get("commit", ""), g.get("path", ""))
+    379:                       "gate_commit": g.get("commit"), "gate_path": g.get("path"),
+    391:    gp = materialize(fleet, g["commit"], g["path"], g["fixtures"], gate_bytes, pr)
+    397:    cgp = materialize(fleet, g["commit"], g["path"], g["fixtures"], canary_text.encode(), cn)
+    411:        mgp = materialize(fleet, g["commit"], g["path"], g["fixtures"], mtext.encode(), md)
+
+===== Q4 the counter's replace-ref seal covers the lane AND the fleet =====
+    344:        p = git(r, "replace", "-l", check=False)
+    348:            die("replace-refs-present:" + label)
+    358:    p = git(fleet, "replace", "-l", check=False)
+    362:        die("replace-refs-present:fleet")
+
+===== done =====

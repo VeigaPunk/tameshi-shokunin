@@ -1,0 +1,44 @@
+
+===== E7 empty --outdir writes into the process cwd =====
+PROBE E7.rc                                  1
+PROBE E7.cwd-listing                         
+PROBE E7.receipt-in-cwd                      no
+PROBE E7.summary-in-cwd                      no
+PROBE E7.tail                                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^|  File "<frozen os>", line 236, in makedirs|FileNotFoundError: [Errno 2] No such file or directory: ''|
+
+===== E8 empty --work in an EMPTY cwd (counter materialization target) =====
+PROBE E8.rc-and-out                          C1_SETUP spec-absent-at-rev|C1_R93_PASS=false|
+PROBE E8.cwd8-listing                        
+
+===== E9 shared clone: does hash-object -w / git replace leak into the lane? =====
+PROBE E9.lane-replace-refs-before            
+PROBE E9.new-oid                             f75283350f1250fb446bd8a4e870434f31c3d09c
+PROBE E9.clone-has-object                    yes
+PROBE E9.LANE-HAS-OBJECT                     no-leak
+PROBE E9.clone-replace-l                     cdd743fd6b3b9899325ec38cc7b6c7cd607fcf82 
+PROBE E9.LANE-replace-l-after                
+PROBE E9.lane-status-after                   4 untracked/modified lines
+PROBE E9.lane-refs-replace-dir               none
+
+===== E3b ambient GIT_DIR hijack of 'git -C <dir>' (precise) =====
+PROBE E3b.plain.toplevel                     /fast/scratch/hyaku/tameshi-r93/R93SN1/probe2.yUyQD7/tgt
+PROBE E3b.GIT_DIR.toplevel                   /fast/scratch/hyaku/tameshi-r93/R93SN1/probe2.yUyQD7/tgt
+PROBE E3b.GIT_DIR.commit-lands-in            c85c378 hijack
+PROBE E3b.GIT_INDEX_FILE.add                 0
+PROBE E3b.GIT_WORK_TREE.toplevel             /fast/scratch/hyaku/tameshi-r93/R93SN1/probe2.yUyQD7/amb
+
+===== E11 disposition checker: mechanism-word match on a contentless reason =====
+PROBE E11.contentless-40char-reason findings=0 detail=[]
+PROBE E11.short-reason findings=0
+
+===== E12 hardcoded /tmp or credential reads in the four drivers =====
+PROBE E12.hardcoded-paths.controls-v93.py    matches=0
+0
+PROBE E12.hardcoded-paths.measure-v93.py     matches=0
+0
+PROBE E12.hardcoded-paths.conjunct-disposition.py matches=0
+0
+PROBE E12.hardcoded-paths.make-pins.py       matches=0
+0
+
+===== done =====

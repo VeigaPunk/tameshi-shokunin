@@ -1,0 +1,37 @@
+
+===== P4 frozen digests: plan-stated vs on-disk vs at the frozen rev =====
+PROBE P4.plan-counter-sha256                     18903602aa040b7e258fd6c81491cfee4ea7bb0575784fe27e351587fe094c2d
+PROBE P4.worktree-counter-sha256                 18903602aa040b7e258fd6c81491cfee4ea7bb0575784fe27e351587fe094c2d
+PROBE P4.rev-855f-counter-sha256                 18903602aa040b7e258fd6c81491cfee4ea7bb0575784fe27e351587fe094c2d
+PROBE P4.plan-driver-sha256                      400d8e0ffceadc3e9aa7d057ac16b5142f0f4b60626544133462b1067bc0da74
+PROBE P4.worktree-driver-sha256                  400d8e0ffceadc3e9aa7d057ac16b5142f0f4b60626544133462b1067bc0da74
+PROBE P4.rev-69d3-driver-sha256                  400d8e0ffceadc3e9aa7d057ac16b5142f0f4b60626544133462b1067bc0da74
+PROBE P4.plan-disposition-sha256                 1b1c6895ebf1d167900113030beebb071d04ed5e8bbb46988176c82b26764a9a
+PROBE P4.worktree-disposition-sha256             1b1c6895ebf1d167900113030beebb071d04ed5e8bbb46988176c82b26764a9a
+
+===== P5 counter: spec gate.repo='' -> git -C '' reads the PROCESS CWD repo =====
+PROBE P5.counter-output                          C1_SETUP replace-refs-present:fleet|C1_R93_PASS=false|
+PROBE P5.read-cwd-repo-not-spec-repo             YES - it inspected the CWD repo
+
+===== P6 tar filter=data vs a symlink member escaping the destination =====
+PROBE P6.symlink-escape               refused: AbsoluteLinkError
+PROBE P6.escape-link-exists           False
+
+===== P7 disposition checker reproducibility at the frozen rev vs HEAD =====
+PROBE P7.at-855f0c1c.rc                          2
+PROBE P7.at-855f0c1c.output                      DISPOSITION_SETUP manifest-absent-at-rev|
+PROBE P7.at-HEAD.rc                              0
+PROBE P7.at-HEAD.output                          DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0|
+PROBE P7.selftest                                DISPOSITION_SELFTEST: 6/6 pass
+
+===== P8 disposition checker: mechanism word 'pin' inside an unrelated word =====
+PROBE P8.contentless-with-shipping    len=61 findings=0
+PROBE P8.contentless-with-pin-word    len=58 findings=0
+PROBE P8.genuine-mechanism            len=82 findings=0
+
+===== P9 receipts: do they attest the counter/driver bytes that produced them? =====
+PROBE P9.pos-real.first-line                     control=pos-real clone_rev=74b542e9209a7607e41bbf4965a4012343adae74 parent=855f0c1c59ee2af7f184d8de62d02cdd576eb94e
+PROBE P9.timeout.first-line                      control=timeout clone_rev=9289c3d76a42591794ff25ca4bacb4f3eb4d108f parent=855f0c1c59ee2af7f184d8de62d02cdd576eb94e
+PROBE P9.D01.first-line                          mutant=D01 state=renamed-result
+
+===== done =====

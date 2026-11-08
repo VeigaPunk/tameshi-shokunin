@@ -1,0 +1,17 @@
+
+===== O1 gate.repo='' + valid commit in the CWD repo -> CWD gate read + executed? =====
+PROBE O1.cwd-commit                                          3cec350552bc2eab0f41646b22a2ae34428440a5
+PROBE O1.cwd-gate-sha                                        ed890878b6368aa8ea29c26ca8ed13b3bcd0701a540a16f4b1471014e0edeb0c
+PROBE O1.counter-output                                      C1_SUMMARY rev=5198062fc76162502c181f5f4ec8882333033f1d n=0 killed=0 survived=0 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=0/0 note=absent mismatched=0 badrows=0 verdict_tables=0|C1_SOURCE S320=row:0,quote:0 S321=row:0,quote:0 S322=row:0,quote:0|
+PROBE O1.conjuncts                                           pins=false pin=true green=true canary=true 
+PROBE O1.CWD-gate-executed                                   YES - gate bytes came from the CWD repo and were EXECUTED
+PROBE O1.executed-gate-digest                                ed890878b6368aa8 vs cwd ed890878b6368aa8ea29c26ca8ed13b3bcd0701a540a16f4b1471014e0edeb0c
+PROBE O1.PASS                                                C1_R93_PASS=false
+
+===== O2 the same run from a NON-repo cwd (fleet root is a repo; a plain dir is not) =====
+PROBE O2.counter-output                                      C1_SETUP replace-list-failed:fleet|C1_R93_PASS=false|
+
+===== O3 does the driver's clone_at guard survive a repo whose toplevel differs? =====
+PROBE O3.nested-repo-toplevel                                $S/b
+
+===== done =====

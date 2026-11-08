@@ -5024,3 +5024,45 @@ carries a `## Correction appended in round 92` block. The frozen `plans/round-91
   `tools/hardening-lint.py` lands (considerthese 2026-11-07 idea 1) with lint-v91 5/8 as
   its failing case and lint-v92 8/8 as its positive case.
 
+
+## Round 93 (2026-11-08) — two claims: the verdict-content reader (coverage) and the conjunct-disposition audit (calibration)
+
+- **Shape.** One v1 wave `r93-w1`, 12 seats (executor 3, scribe 1, scout 2, reviewer 2,
+  critic 1, mutation-tester 1, sentinel 1, connector 1; attack 4/12 = 33 % by the policy's
+  role set, 6/12 including sentinel and connector), all twelve settled, no dead seat, no
+  residual call. Base `4a7e259b`; counter `855f0c1c`; battery driver `69d377a0`; C2
+  instruments `9bf52b03`; lint curation `7626412`; freeze `978f04bc`.
+- **R93-C1 (coverage) — verified, narrowed by three record amendments.** The verdict-content
+  reader reproduces the twelve fleet-gate verdicts at the instrument revision
+  (`C1_R93_PASS=true`, exit 0, `mismatched=0 badrows=0 verdict_tables=1`) and the committed
+  battery prints `C1_CONTROLS states=35 matched=35 mismatches=0 missing=0` in two independent
+  replays (`R93E3`, and the committed summary). The round-92 kill class is closed by
+  construction: the A13 honest note (an id-keyed impact table) and a data cell exactly
+  `verdict` both PASS (`pos-honest-a13`, `pos-honest-verdict-cell`), while a second verdict
+  table (`hidden-c001`, `hidden-x`), a renamed-header table with verdict tokens
+  (`renamed-result`), a pseudo-table paragraph (`pseudo-row`) and a denied-README decoy
+  (`coverage-denial`) all refuse. The wave did not kill the claim; it killed three sentences
+  of the record — coverage's fence blindness (A1), the unstated width rules (A2) and the
+  self-referential seal (A3) — all narrowed in the plan with the artifact cited.
+- **R93-C2 (calibration) — verified at conjunct granularity.** `tools/conjunct-disposition.py`
+  prints `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0` (exit 0) against the
+  frozen counter and the committed manifest; its six-case selftest prints `6/6 pass`. Two
+  rows are declared unfalsifiable with a pin-naming reason (`canary`, `unstable0`), and the
+  do-nothing control shows the limit of the instrument itself: a mechanism-worded
+  all-unfalsifiable manifest prints `findings=0` and only the frozen counts and kill rule (b)
+  reject it (`pre-freeze/c2-cheat-all-unfalsifiable.out`, A4). Rule-level falsifiability is
+  **not** complete: eight reader rules have no discriminating state (`R93M1` Q2), stated in
+  A6 and routed.
+- **Sources.** Rows 180 -> 182 (S321 GFM tables, S322 CommonMark fenced blocks; S320
+  re-opened and its `used-by` extended), every row opened this round with a located quote in
+  the lesson's Gate.
+- **Measurements.** The counter command and the battery command in
+  `corpus/lessons/round-93.md` `## Measurements`; the disposition command and its selftest in
+  the same block; the do-nothing receipts in `.ufo/evidence/round-93/pre-freeze/`.
+- **Records.** QUALITY 159-162; `## Mistakes` M1-M10 in `corpus/lessons/round-93.md`;
+  `plans/round-93.plan.md` amendments A1-A6; `claim-falsification.tsv` (13 rows, six attack
+  seats); note and README status blocks; capability row `conjunct-disposition audit`.
+- **Routed to round 94.** Eight items, listed in `corpus/lessons/round-93.md` `## Routed to
+  round 94`: fence-aware coverage, delimiter width, an externally anchored gate identity,
+  `--min-falsifiable`, a fixture-assembly assertion, `O_NOFOLLOW` receipt writes, `GIT_*`
+  scrubbing in the driver, and the eight rule-level states.

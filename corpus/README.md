@@ -755,3 +755,15 @@ closure's.
 |---|---|---|
 | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); verdict-content certificate under round 93's sealed counter; admission pending | S316, S317 (opened 2026-11-06); S320, S321, S322 (opened 2026-11-08); `.ufo/evidence/round-93/` |
 
+
+## Round 93 — verdict-content certificate position of the fleet-gate case note (verified, wording narrowed)
+
+Appended; every earlier row is unchanged. The map position stays Core / recorded case. Round
+93's certificate is **revision-bound**: the counter certifies the twelve verdict cells against
+the fleet gate the spec names at the instrument revision, and the wave showed the seal is
+self-consistent rather than externally anchored (plan A3). Admission remains the non-author
+closure's.
+
+| Entry | Map position | Grounding |
+|---|---|---|
+| `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); verdict-content certificate at `855f0c1c`, battery `states=35 matched=35`; revision-bound seal | S316, S317 (opened 2026-11-06); S320, S321, S322 (opened 2026-11-08); `.ufo/evidence/round-93/` |

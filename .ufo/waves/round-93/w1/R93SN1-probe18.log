@@ -1,0 +1,25 @@
+
+===== F1 step 1: a FOREIGN 'fleet' repo whose gate is a marker script =====
+PROBE F1.foreign-commit                                    672d640b2f8a1bf6ba4bc21e3747401f5c42b9af
+PROBE F1.foreign-gate-sha256                               e9b363bd5a4657761865c52759ad4192db616c303370938ebdac9a19ba8600ce
+
+===== F1 step 2: a lane clone whose spec names the foreign repo, pins regenerated =====
+PROBE F1.make-pins.rc                                      0
+PROBE F1.make-pins-output                                  PINS_DERIVED fixtures=scripts/fixtures/sources-census gate_commit=672d640b2f8a1bf6ba4bc21e3747401f5c42b9af gate_path=scr
+PROBE F1.lane-commit-under-test                            17c98666b689032a962b06462a3e6ea48f77622f
+PROBE F1.pins-now-name-the-foreign-gate                     "gate_commit": "672d640b2f8a1bf6ba4bc21e3747401f5c42b9af",  "gate_sha256": "e9b363bd5a4657761865c52759ad4192db616c303370938ebdac9a19ba8600ce", 
+
+===== F1 step 3: run the frozen counter at that commit =====
+PROBE F1.counter-rc                                        1
+PROBE F1.PASS-line                                         C1_R93_PASS=false
+PROBE F1.pin-pins-green-canary                             pins=true pin=true green=true canary=true 
+PROBE F1.FOREIGN-gate-EXECUTED                             YES - the FOREIGN gate bytes were executed
+PROBE F1.executed-bytes-digest                             e9b363bd5a465776 vs foreign e9b363bd5a4657761865c52759ad4192db616c303370938ebdac9a19ba8600ce
+PROBE F1.conclusion                                        pin=true AND pins=true AND green=true while the measured gate is NOT the fleet gate at f47ad6b
+
+===== F1 control: the SAME counter on the untouched lane at the frozen rev =====
+PROBE F1.control-rc                                        0
+PROBE F1.control-conjuncts                                 pins=true pin=true green=true 
+PROBE F1.control-executed-gate-has-marker                  no marker - the real fleet gate ran
+
+===== done =====

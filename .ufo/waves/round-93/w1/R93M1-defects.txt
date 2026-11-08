@@ -1,0 +1,270 @@
+R93M1 defect spec — mutation matrix over .ufo/evidence/round-93/c1/measure-v93.py
+Written 2026-11-08 BEFORE any state clone, mutant run or counter invocation.
+
+Frozen instrument (blob at lane rev 855f0c1c59ee2af7f184d8de62d02cdd576eb94e):
+  sha256 18903602aa040b7e258fd6c81491cfee4ea7bb0575784fe27e351587fe094c2d
+  self-pin normalised digest 9a073d351dd23de2f61af95436e5cac1fa871193f7d52e0728553e9034cb99e2
+Battery driver of record (imported read-only, sha256
+400d8e0ffceadc3e9aa7d057ac16b5142f0f4b60626544133462b1067bc0da74):
+  .ufo/evidence/round-93/c1/controls-v93.py — its states(), clone_at(),
+  materialize_state(), grade() and mutant_edits() are reused verbatim, so the
+  state edits and the grading semantics are the committed battery's, not mine.
+
+Protocol. Each defect is ONE localized edit to the counter source. For every
+defect the SELF_SHA256 line is recomputed for the edited bytes exactly as
+controls-v93.recompute_pin() does (normalise the pin line away, sha256, write the
+line back). The pin is a seal against accidental post-freeze editing, not a
+defence against a declared mutation study: the plan does the same for D01-D05,
+and the frozen bytes stay pinned and unedited (restoration evidence is the
+before/after hash of the pristine copy and of the git blob).
+
+Detector. For each defect the battery state is the one whose committed
+expectation (controls-v93.grade: exit code plus the state's named conjunct) must
+move. KILLED = the graded expectation fails (the battery would report a
+MISMATCH on that state); SURVIVED = it still matches; INCONCLUSIVE = no
+committed state exercises the rule (or the pristine baseline fails). A
+SURVIVED mutant is a coverage finding about the battery, not permission to change
+the contract. "delta" is the raw-output change a surviving mutant still makes in
+a committed receipt that no graded expectation looks at.
+
+Prediction column is frozen before the run: K=killed, S=survived, I=inconclusive.
+
+ id  counter line(s)  rule weakened (one rule)                         single edit                                                            detector state     predicted
+ D01 329-331         self-pin assert                                    `selfpin = self_pin_ok(); if not selfpin: die(...)` -> `selfpin = True`  selfpin-edit*      K
+ D02 380             pins equality (one key dropped)                    remove "gate_sha256": gate_sha from the derived dict                    pins-mutated       K
+ D03 384             spec shape: unique ids                             drop `len(spec_ids) == N_MIN` from spec_ok                              spec-shape         K
+ D04 367             pin (gate digest vs spec)                          `pin = gate_sha == g.get("sha256")` -> `pin = True`                     pin-mismatch       K
+ D05 393             green (two green selftests)                        `green = all(...)` -> `green = True`                                    timeout            S (delta)
+ D06 398             canary (exit 97 after line 1)                      `canary = selftest(...)[0] == 97` -> `canary = True`                    none (C2 declares unfalsifiable)  I
+ D07 495             valid0 (count/new/bash -n)                         `valid0=invalid == 0` -> `valid0=True`                                  noop-mutant        K
+ D08 495             trivial0 (validate-trivial mutant)                 `trivial0=trivial == 0` -> `trivial0=True`                              trivial-mutant     K
+ D09 495             inconclusive0 (timeout)                            `inconclusive0=inconclusive == 0` -> `inconclusive0=True`               timeout            K
+ D10 389             unstable0 / run count                              `runs = int(spec.get("runs_per_verdict", 2))` -> `runs = 1`             pos-real (no falsifier)            S (delta; C2 declares unfalsifiable)
+ D11 496             note presence                                      `note=note is not None` -> `note=True`                                  note-absent        K
+ D12 460             table-count rule                                   `info["verdict_tables"] == 1` -> `>= 1`                                 hidden-c001        K
+ D13 260-262         stray-verdict scan                                 remove the scan block                                                   renamed-result     K
+ D14 283-285         out-of-set rule                                    remove the out-of-set block                                             hidden-c001        S (delta: badrows)
+ D15 289-291         duplicate rule                                     remove the dup block                                                    dup-row            K
+ D16 286-288         position rule                                      remove the position block                                               position           S (delta: badrow label)
+ D17 275-277         width rule (row cells vs header)                   remove the row-width block                                              none (no width state)             I
+ D18 270-271         width rule (delimiter vs header)                   remove the delimiter-width block                                        none (no width state)             I
+ D19 459             id-set equality                                    `set(note_rows) == spec_ids` dropped from ids_ok                        hidden-c001        S (identical output)
+ D20 456             figure check                                       `figure_ok = <regex equality>` -> `figure_ok = True`                    figure             K
+ D21 498             witness rule                                       `witnessed=witnessed == survived` -> `witnessed=True`                   witness-same       K
+ D22 478             source quote occurrence in snapshot                `any(norm_text(q) in text ...)` -> `bool(quotes.get(sid))`              source-noquote     S (identical output)
+ D23 499             n_min                                              `n_min=n >= N_MIN` -> `n_min=True`                                      short-spec         K
+ D24 486-487         coverage last-row                                  keep the FIRST naming README row (add `and last_row is None`)            coverage-denial    K
+ D25 66-67           coverage denial-token list                         `DENIAL_TOKENS = (...)` -> `DENIAL_TOKENS = ()`                         coverage-denial    K
+ D26 456             figure regex: exactly one measured line            `len(heads) == 1` -> `len(heads) >= 1`                                  figure             S (identical output)
+ D27 473             source row: status mined                           `c[8] == "mined"` -> `c[8] in ("mined", "queued")`                       source-status      K
+ D28 384             spec shape: mutant count                           drop `len(spec.get("mutants", [])) == N_MIN` from spec_ok                short-spec         S (identical output)
+ D29 191-193         fence rule (S322): fenced lines invisible          opening fence becomes a visible line; fence state never set              none (no fenced-verdict state)    I
+ D30 264             verdict-column count (exactly one)                 `if len(vcols) != 1:` -> `if False:`                                    none (no two-column state)        I
+
+* D01's detector is the battery's counter-side `selfpin-edit` state: the mutant
+  bytes plus one appended comment (the file's own pin no longer matches). The
+  pre-registered expectation is exit 2 with `C1_SETUP self-pin-mismatch`; a
+  counter that skips the pin assert cannot produce it.
+
+Exact replacements (old -> new), in source order. Each `old` occurs exactly once
+in the 22 262-byte pristine blob; the harness re-asserts uniqueness before it
+runs.
+
+D01
+old:
+    selfpin = self_pin_ok()
+    if not selfpin:
+        die("self-pin-mismatch")
+new:
+    selfpin = True
+
+D02
+old:
+                       "gate_sha256": gate_sha, "fixtures": g.get("fixtures")}
+new:
+                       "fixtures": g.get("fixtures")}
+
+D03
+old:
+    spec_ok = (len(spec.get("mutants", [])) == N_MIN and len(spec_ids) == N_MIN
+new:
+    spec_ok = (len(spec.get("mutants", [])) == N_MIN
+
+D04
+old:
+    pin = gate_sha == g.get("sha256")
+new:
+    pin = True
+
+D05
+old:
+    green = all(r[0] == 0 and b"selftest ok" in r[1] for r in green_runs)
+new:
+    green = True
+
+D06
+old:
+    canary = selftest(cgp, work, to)[0] == 97
+new:
+    canary = True
+
+D07
+old:  valid0=invalid == 0
+new:  valid0=True
+
+D08
+old:  trivial0=trivial == 0
+new:  trivial0=True
+
+D09
+old:  inconclusive0=inconclusive == 0
+new:  inconclusive0=True
+
+D10
+old:
+    runs = int(spec.get("runs_per_verdict", 2))
+new:
+    runs = 1
+
+D11
+old:  note=note is not None
+new:  note=True
+
+D12
+old:
+    vtables_ok = info["verdict_tables"] == 1
+new:
+    vtables_ok = info["verdict_tables"] >= 1
+
+D13
+old:
+        toks = [c for c in split_cells(raw) if c in VERDICTS]
+        if toks:
+            bad.append("stray-verdict:%d:%s" % (oi + 1, raw.strip()[:24]))
+new:
+        pass  # residual: stray-verdict scan removed
+
+D14
+old:
+            if first not in spec_ids:
+                bad.append("out-of-set:%d:%s" % (ln + 1, first[:24]))
+                continue
+new:
+            pass  # residual: out-of-set rule removed
+
+D15
+old:
+            if first in rows:
+                bad.append("dup:%d:%s" % (ln + 1, first))
+                continue
+new:
+            pass  # residual: duplicate rule removed
+
+D16
+old:
+            if len(toks) != 1 or vcol >= len(cells) or cells[vcol] not in VERDICTS:
+                bad.append("position:%d:%s" % (ln + 1, first))
+                continue
+new:
+            pass  # residual: position rule removed
+
+D17
+old:
+            if len(cells) != len(header):
+                bad.append("width:%d:cells=%d" % (ln + 1, len(cells)))
+                continue
+new:
+            pass  # residual: width row rule removed
+
+D18
+old:
+        if delim and len(delim) != len(header):
+            bad.append("width:%d:header=%d,delimiter=%d" % (oi + 1, len(header), len(delim)))
+new:
+        pass  # residual: width delimiter rule removed
+
+D19
+old:
+    ids_ok = (note is not None and not bad and set(note_rows) == spec_ids)
+new:
+    ids_ok = (note is not None and not bad)  # residual: id-set equality removed
+
+D20
+old:
+        figure_ok = len(heads) == 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n
+new:
+        figure_ok = True
+
+D21
+old:  witnessed=witnessed == survived
+new:  witnessed=True
+
+D22
+old:
+        quote_ok = any(norm_text(q) in text for q in quotes.get(sid, []))
+new:
+        quote_ok = bool(quotes.get(sid))  # residual: occurrence-in-snapshot removed
+
+D23
+old:  n_min=n >= N_MIN
+new:  n_min=True
+
+D24
+old:
+        if line.lstrip().startswith("|") and "knowledge/mutation-case-fleet-sources-census.md" in line:
+            last_row = line
+new:
+        if line.lstrip().startswith("|") and "knowledge/mutation-case-fleet-sources-census.md" in line and last_row is None:
+            last_row = line
+
+D25
+old:
+DENIAL_TOKENS = ("not admitted", "not-admitted", "uncertified", "withdrawn", "refused",
+                 "rejected")
+new:
+DENIAL_TOKENS = ()  # residual: denial list emptied
+
+D26
+old:
+        figure_ok = len(heads) == 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n
+new:
+        figure_ok = len(heads) >= 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n
+
+D27
+old:
+            if len(c) >= 13 and c[1] == sid and c[8] == "mined" and LESSON_PATH in c[11]:
+new:
+            if len(c) >= 13 and c[1] == sid and c[8] in ("mined", "queued") and LESSON_PATH in c[11]:
+
+D28
+old:
+    spec_ok = (len(spec.get("mutants", [])) == N_MIN and len(spec_ids) == N_MIN
+new:
+    spec_ok = (len(spec_ids) == N_MIN
+
+D29
+old:
+            if m:
+                fence = (m.group(1)[0], len(m.group(1)))
+                continue
+new:
+            if m:
+                vis.append((idx, raw))
+
+D30
+old:
+        if len(vcols) != 1:
+new:
+        if False:  # residual: two-verdict-column rule removed
+
+Plan removal mutants. The plan's own D01-D05 are re-run from
+controls-v93.mutant_edits() (anchors asserted by that driver) against their own
+states. Their committed expectation is inverted by construction: the state must
+print C1_R93_PASS=true / exit 0 (the cheat returns), so a MATCH is the
+load-bearing confirmation and a MISMATCH falsifies the plan's removal claim.
+Predicted: all five MATCH (PASS=true).
+
+Scoring. VERDICT counts only defects that were actually run against a committed
+detector state with a reproduced pristine baseline (killed / runnable). Defects
+with no committed detecting state are reported INCONCLUSIVE and listed
+separately; they are not counted as killed.

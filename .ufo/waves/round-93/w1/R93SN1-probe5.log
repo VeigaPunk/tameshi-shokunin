@@ -1,0 +1,32 @@
+
+===== A ambient GIT_DIR pointing at a CLONE OF THE LANE: where does the fixture commit land? =====
+PROBE A.driver-rc                                  1
+PROBE A.log-tail                                   cmd failed: git clone -q --shared --no-checkout /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r93/R93SN1/probe5.8isfl5/wA/ctl-pos-real-zqrtqpbq/repo|fatal: working tree '/fast/scratch/hyaku/tameshi-r93/R93SN1/probe5.8isfl5/hijack' already exists.||
+PROBE A.hijack-commit-count                        870
+PROBE A.hijack-has-r93-control-commit              0
+PROBE A.hijack-refs                                d5bcf1dbf750008069a8563241a028c5ffb48a9f refs/heads/master|d5bcf1dbf750008069a8563241a028c5ffb48a9f refs/remotes/origin/HEAD|09a3a309376e3e883053773a35bac801d10d8402 refs/remotes/origin/hyaku/s3-ready66-tameshi|1f7315732e0cfe0ba9dfe0fff2ef36d1c8481bb5 refs/remotes/origin/hyaku/s3-tameshi-r25-author|d5bcf1dbf750008069a8563241a028c5ffb48a9f refs/remotes/origin/master|
+PROBE A.receipt-written                            
+PROBE A.LANE-refs-replace-after                    
+PROBE A.LANE-status-after                          4 lines
+
+===== B partial run clobbers the committed C1-summary.txt =====
+PROBE B.summary-before-lines                       35
+PROBE B.rc                                         0
+PROBE B.summary-after-lines                        1
+PROBE B.summary-after-content                      nowork-base MATCH exit=2|
+PROBE B.receipt-count                              36
+
+===== C spec gate.repo='' -> 'git -C ""' reads the PROCESS CWD repo =====
+PROBE C.counter-output                             C1_SETUP replace-refs-present:fleet|C1_R93_PASS=false|
+PROBE C.inspected-CWD-repo-not-spec-repo           YES - it read the CWD repo, not the repo named in the spec
+
+===== D make-pins.py: --lane '' target, and whether it overwrites a committed pins.json =====
+PROBE D.empty-lane.rc                              1
+PROBE D.empty-lane.out                             Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+PROBE D.cwdD-tree                                  /fast/scratch/hyaku/tameshi-r93/R93SN1/probe5.8isfl5/cwdD 
+PROBE D.pins-before                                688fe42aab453748
+PROBE D.write-mode.rc                              0
+PROBE D.pins-after                                 688fe42aab453748
+PROBE D.laneD-status                               
+
+===== done =====

@@ -1,0 +1,36 @@
+
+===== M1 fleet repo replace refs (why the H2 control saw exit=2) =====
+PROBE M1.fleet-replace-l                                 
+PROBE M1.lane-replace-l                                  
+
+===== M2 ambient GIT_DIR: the fixture commit lands in the WRONG repo, guard passes =====
+PROBE M2.driver-rc                                       1
+PROBE M2.hijack-has-r93-control-commit                   1
+PROBE M2.hijack-refs                                     d5bcf1dbf750008069a8563241a028c5ffb48a9f refs/heads/master|d5bcf1dbf750008069a8563241a028c5ffb48a9f refs/remotes/origin/HEAD|09a3a309376e3e883053773a35bac801d10d8402 refs/remotes/origin/hyaku/s3-ready66-tameshi|
+PROBE M2.intended-clone-has-commit                       
+PROBE M2.receipt-exit                                    exit=2
+PROBE M2.receipt-setup-line                              C1_SETUP spec-absent-at-rev
+PROBE M2.LANE-unaffected                                 HEAD=d5bcf1db replace-refs=0
+
+===== M3 the driver's sh() inherits the ambient env (no GIT_* scrub) - code-level =====
+    52:def sh(*a, cwd=None, check=True):
+    53-    p = subprocess.run(list(a), cwd=cwd, capture_output=True, text=True)
+    54-    if check and p.returncode != 0:
+    55-        raise SystemExit("cmd failed: %s\n%s" % (" ".join(a), p.stderr))
+    56-    return p.stdout
+PROBE M3.counter-git-helper-env                          87:def sealed_env():|94:    p = subprocess.run(["git", "-C", repo, *a], capture_output=True, env=sealed_env())|
+
+===== M4 --outdir / --work are not validated (relative + empty) =====
+PROBE M4.driver-rc                                       0
+PROBE M4.written-into-process-cwd                        . ./relout ./relout/nowork-base.out ./relout/C1-summary.txt ./relwork ./relwork/counter.py ./relwork/base-work 
+
+===== M5 counter --rev '' : what blob semantics does it use? =====
+C1_SUMMARY rev= n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismat
+C1_R93_PASS=true
+
+===== M6 summary-file overwrite vs M4 rerun protection =====
+PROBE M6.receipt_path-protects                           per-state receipts: <name>.rerun-N.out
+PROBE M6.summary-write                                   C1-summary.txt written with plain open(...,'w') - NO rerun protection
+    449:    with open(os.path.join(a.outdir, "C1-summary.txt"), "w", encoding="utf-8") as f:
+
+===== done =====

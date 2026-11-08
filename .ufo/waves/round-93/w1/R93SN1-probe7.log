@@ -1,0 +1,40 @@
+
+===== I1 counter: --rev '' (empty) - refused, or does it read the INDEX? =====
+PROBE I1.rc                                          0
+PROBE I1.first-line                                  C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+PROBE I1.setup-or-rows                               12
+
+===== I2 disposition checker: --rev ''  =====
+PROBE I2.rc                                          64
+PROBE I2.output                                      
+
+===== I3 driver: --rev ''  =====
+PROBE I3.rc                                          0
+PROBE I3.tail                                        nowork-base MATCH exit=2|C1_CONTROLS states=1 matched=1 mismatches=0 missing=0|
+
+===== I4 driver: unwritable --outdir =====
+PROBE I4.rc                                          1
+PROBE I4.last-line                                   PermissionError: [Errno 13] Permission denied: '/fast/scratch/hyaku/tameshi-r93/R93SN1/probe7.fWLTb2/oI4/nowork-base.out'
+PROBE I4.traceback                                   1
+
+===== I5 isolated GIT_DIR bypass of the driver's toplevel guard =====
+PROBE I5.driver-rc                                   1
+PROBE I5.tail                                        counter absent at rev|
+PROBE I5.other-repo-commits                          1
+PROBE I5.other-has-r93-control-commit                0
+PROBE I5.other-worktree-files                        .git 
+PROBE I5.clone-in-work-has-commit                    
+
+===== I6 same, but with GIT_WORK_TREE too (should be caught by the toplevel guard) =====
+PROBE I6.driver-rc                                   1
+PROBE I6.tail                                        counter absent at rev|
+PROBE I6.other6-has-r93-commit                       0
+
+===== I7 driver: is the lane's own .git touched by a normal run? =====
+PROBE I7.rc                                          0
+PROBE I7.lane-head-unchanged                         yes
+PROBE I7.lane-status                                 4 lines
+PROBE I7.lane-refs-replace                           0 refs
+PROBE I7.lane-objects-count                          count: 2265 size: 17172 in-pack: 41119 packs: 3 size-pack: 208060 prune-packable: 0 garbage: 0 size-garbage: 0 
+
+===== done =====

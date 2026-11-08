@@ -1,0 +1,19 @@
+
+===== R1 hidden-c001 state: note content from the WORKING TREE or from --rev? =====
+PROBE R1.worktree-differs-from-rev                              M corpus/knowledge/mutation-case-fleet-sources-census.md 
+PROBE R1.driver-rc                                             0
+PROBE R1.receipt-contains-worktree-marker                      0
+PROBE R1.receipt-verdict-tables                                verdict_tables=2
+PROBE R1.receipt-C001-rows                                     0
+
+===== R2 same, but the working tree carries a HOSTILE note (extra verdict table) =====
+PROBE R2.driver-rc                                             0
+PROBE R2.receipt-verdict-tables                                verdict_tables=3
+PROBE R2.expected-at-rev                                       verdict_tables=1 (one table) -> 2 means the WORKING TREE note was used
+PROBE R2.badrows                                               badrows=13
+
+===== R3 the same clone, but the working tree RESTORED: does the state revert? =====
+PROBE R3.worktree-clean                                        0 changed lines
+PROBE R3.receipt-verdict-tables                                verdict_tables=2
+
+===== done =====
