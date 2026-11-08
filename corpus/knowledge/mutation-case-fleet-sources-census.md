@@ -232,3 +232,18 @@ Expected: the eleven lines of `T90SC1-fixture-absence.out`, including
 `REJECTED exactly_7_chars 0`, `SYMBOLIC_CADENCE … with_space []`,
 `USED_BY … with_comma []` and
 `USED_BY_DIRECTORY fixture_cells_naming_a_directory 0`.
+
+## Admission status (appended round 91)
+
+Appended; the entry above is unchanged. Its coverage-map row is
+`corpus/README.md` § "Round 90 — coverage map: the fleet's own registry gate".
+This row carries **not admitted**: R90-C1 was killed by its own frozen rule (a) —
+the round-90 counter honoured `refs/replace` (T90R1 K2) and skipped an ambiguous
+id-keyed row (T90R1 K1) (`corpus/lessons/round-90-verifier-spotcheck.md` §2.3).
+The verdicts above were independently reproduced (T90E1, T90L1, and again in
+round 91 by `.ufo/waves/round-91/w1/T91E1.md`, `VERDICT: reproducible`) and are
+stated as measurements; the kill is on the counters that certified them, not on
+the measured table. Round 91's sealed successor that was to re-certify this note
+was itself killed (`.ufo/waves/round-91/w1/T91C1.md` §1,
+`corpus/lessons/round-91.md`), so this note stays a measurement without a
+standing certificate.

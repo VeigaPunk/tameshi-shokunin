@@ -5578,3 +5578,38 @@ report-only), and C12's fleet impact (20 lanes, T90CN1).
 **Planned (round 91):** the sealed successor counter (QUALITY 139-140) with T90R1 V1-V4 and
 T90C1's prediction copy as pre-freeze controls; the C2 successor binding argv and tool pins
 (QUALITY 141). No claim is pre-approved.
+
+## Round 91 — fresh start: two sealed successors, both killed by their own rules (honest stop)
+
+Base `87d1635c`; freeze `50e59d59` (`plans/round-91.plan.md`, `.ufo/waves/round-91/claims.json`);
+wave spec/dispatch `584bbe3c`; wave `r91-w1`, 14 seats (attack 7). Stagnation nudge still applies
+(10/8/9 ≥ 8; no capability admitted since round 82). Neither claim is admitted: both are killed by
+their own frozen rule (a), with the counterexamples committed by this round's own wave before the
+report — the fleet's Amendment 59 class, caught here at the freeze-side check rather than by the
+closure.
+
+| Claim / axis | Before → after | Verdict | Counting command | Measured commit |
+|---|---|---|---|---|
+| R91-C1 coverage (sourced: S318, S319): the round-90 fleet-gate case re-derived under the sealed successor counter (QUALITY 139-140) | base: `C1_SETUP spec-absent-at-rev`, exit 2 (`pre-freeze/controls/CTL1-nowork-base.out`) → `n=12 killed=5 survived=7 witnessed=7/7 note=present mismatched=0`, all conjuncts true, `C1_R91_PASS=true`, exit 0 (`pre-freeze/controls/CTL14-pos.out`) | predicate met; **killed by rule (a) twice**: `w1/T91C1.md` §1 (state `34a92bbf` PASSes with all twelve *presented* verdicts inverted — a second table under `C001`-`C012` is invisible to `^\|\s*(C\d\d)`), and `w1/T91R1.md` F1 (the receipts certify `0b63b85e`'s parser, not the frozen `50e59d59`'s, which refuses every honest note). Not admitted | `python3 -I .ufo/evidence/round-91/c1/measure-v91.py --repo <lane> --rev <REV> --work <empty dir>` | before `87d1635c`; after `50e59d59` instrument / receipts at HEAD |
+| R91-C2 calibration: the round-90 closure's routed items 1-2 (QUALITY 141) | base `rows=fail argv=ok toolpin=ok blobrun=ok`, `C2_R91_PASS=false`, exit 1 (`C2-nowork-base.out`) → `rows=ok … C2_R91_PASS=true`, exit 0 (`C2-pos.out`) | predicate met; **killed by rule (a)**: `w1/T91C2.md` — `variant reject` (tokens quoted as rejected) and `variant falsereason` both print PASS; `w1/T91R2.md` §2.3 `toolpin` is a tautology; `w1/T91SN1.md` F1 a stub checker tool certifies an unrepaired note. The four record repairs are real (`T91R2` §3.1) and stay landed as upkeep. Not admitted | `bash .ufo/evidence/round-91/c2/measure-c2-v91.sh <lane> REV <empty dir>` | before `87d1635c`; after `50e59d59` |
+
+Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0). No capability row enters
+(the sealed-environment behaviour is shown — `w1/T91E4.md` `VERDICT: sealed-holds` — but its
+claim was killed, so it is evidence, not a capability). No retirement or saturation change.
+
+What survived every attack and stays as evidence: 12/12 verdicts reproduced outside the counter
+(`w1/T91E1.md`, `VERDICT: reproducible`); the seal behaves as designed when the shipped bytes run
+(`w1/T91E4.md`, `replace` ref → exit 2 `replace-refs-present`); seven survivor-killing arms for
+the fleet gate proven report-only (`w1/T91E3.md`, `arms-kill-7/7`); no standing sweep regressed
+(`w1/T91E2.md`, `VERDICT: no-regression`); both new sources verified byte-identically
+(`w1/T91S1.md`, `w1/T91S2.md`).
+
+**Planned (round 92):** the C1 third attempt refusing any verdict-shaped row outside the spec's
+id set and pinning its own sha256 in the freeze (QUALITY 143-144, 146); the C2 successor binding a
+machine-checkable admission block, running its checker from a pinned blob under the seal
+(QUALITY 145, 148). No claim is pre-approved.
+
+**Record upkeep landed this round (not a claim):** the case note's admission marker and its
+coverage-row citation (round-90 routed items 1-2), and `corpus/README.md`'s round-91 map position
+for the note. The round-90 manifest's third row (`corpus/lessons/round-90.md` receipt addendum) is
+**dropped**: `w1/T91R2.md` §3.3 shows no routed defect stands behind it.

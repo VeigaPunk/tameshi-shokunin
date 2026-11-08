@@ -719,3 +719,15 @@ Appended; every earlier row is unchanged.
 | Entry / map position | What it covers | Grounding |
 |---|---|---|
 | `knowledge/mutation-case-fleet-sources-census.md` / Core (recorded cases; not a ledger leg) | case 12: the fleet's `scripts/sources-census.sh` @ `f47ad6ba`, the first fleet-root gate the lane measures (every earlier case is a sibling-lane gate), 5/12 killed under its own `selftest`, 12/12 pre-registered predictions held, every survivor witnessed non-equivalent and killed by a scratch-proven arm (report-only); fleet impact: C12 would turn 20 lanes' census red | S316, S317 (new, opened 2026-11-06); `.ufo/evidence/round-90/c1/`; frozen counter `.ufo/evidence/round-90/c1/measure.py` |
+
+## Round 91 — coverage-map position of this case note (round-90 closure item 2)
+
+Appended; every earlier row is unchanged. The fleet-gate case note now carries its own
+admission marker and names this section (round-91 record upkeep: the round-90 closure's
+routed items 1-2, `corpus/lessons/round-90-verifier-spotcheck.md` §6). Its map position is
+unchanged from the round-90 row above — Core, recorded cases, not a ledger leg — and round
+91's killed successor (`.ufo/waves/round-91/w1/T91C1.md`) adds no position.
+
+| Entry | Map position | Grounding |
+|---|---|---|
+| `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases; **not admitted** as a certified case — the round-90 counter was killed by its own rule, and round 91's successor was killed too) | S316, S317 (opened 2026-11-06); `.ufo/evidence/round-90/`; `.ufo/waves/round-91/` |

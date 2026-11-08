@@ -2481,3 +2481,40 @@ on the landed bytes (`c2-landed-battery.txt`).
     needs the token inside the span; a doc token wrapped across a line):
     `.ufo/evidence/round-90/pre-freeze/controls/superseded-manifest-v1/C2-pos.out`
     (`rows=fail`). (`lessons/round-90.md` M1.)
+143. A verdict-table reader refuses a note that carries **any** verdict-shaped row whose id
+    is outside the spec's id set — not only rows it can key. A regex narrower than the
+    spec's id space makes a second, contradicting table invisible rather than refused, so a
+    note can present false verdicts while a machine table holds the truth. Able to fail:
+    `.ufo/waves/round-91/w1/T91C1.md` §1, committed state `34a92bbf` prints
+    `C1_R91_PASS=true` with the presented table's twelve verdicts inverted (`C001`-`C012`
+    invisible to `^\|\s*(C\d\d)\s*\|`). (`lessons/round-91.md` `## Mistakes` M1.)
+144. An instrument's committed sha256 is named in the freeze and asserted at run time; a
+    counter byte-identical to the freeze rev is the only one whose receipts may be cited. A
+    repair that lands after the freeze is a successor, never the claim's instrument — the
+    receipts then certify bytes the plan does not name. Able to fail: round-91's
+    `parse_note` at `50e59d59` reads `cells[vcol+1]` and refuses every honest note
+    (`w1/T91R1.md` F1: `HONEST frozen rows=0 ambiguous=12`), while every `CTL*.out` is
+    produced by the post-freeze `0b63b85e`. (`lessons/round-91.md` M2.)
+145. A record-repair marker whose payload is prose sentences is bound by a machine-checkable
+    predicate: the admission block carries parseable fields whose values are checked, not
+    tokens that a section can quote as rejected. Token presence is satisfied by a paragraph
+    that says the repair was refused. Able to fail: `w1/T91C2-reject.out` (tokens quoted as
+    rejected readings) and `w1/T91C2-falsereason.out` (a false kill reason) both print
+    `C2_R91_PASS=true`. (`lessons/round-91.md` M3.)
+146. Every conjunct of a counter fails at least once on a state built for it, and no conjunct
+    compares a value with itself. A tautological conjunct (`sha256(file)` vs
+    `sha256(same file)`) prints `ok` forever, including for a missing input. Able to fail:
+    `w1/T91R2.md` §2.3 (`c2/measure-c2-v91.sh:59-62`; `toolpin=ok` on every receipt).
+    (`lessons/round-91.md` M4.)
+147. A control summary is generated from the receipts it summarizes, by a committed writer,
+    and the driver filters the counter's current PASS label. A hand-authored summary
+    contradicts its own `.out` files silently. Able to fail: round-91's `C1-summary.txt`
+    prints `CTL15-coverage` as `C1_R91_PASS=true` where the receipt says `false`/`exit=1`,
+    and carries round-90's `note=false` text for `CTL1b-nowork-A` (`w1/T91R2.md` §2.2).
+    (`lessons/round-91.md` M5.)
+148. A counter runs every checker it trusts from a pinned blob under the same seal as its own
+    reads: never the candidate's copy of the checker, never an abbreviated rev that a
+    candidate-controlled tag can shadow. Able to fail: `w1/T91SN1.md` F1 (a stub
+    `tools/defect-bind.py` in the candidate tree yields `C2_R91_PASS=true` with the note
+    provably unrepaired), F3 (abbreviated `ff7a4b06`), F4 (no seal, no `replace` refusal).
+    (`lessons/round-91.md` M6.)

@@ -4954,3 +4954,38 @@ critic 2, mutation-tester, connector, sentinel); attack share 5/14.
   www.gnu.org unreachable (`sources/gnu-unreachable.txt`). Case note
   `corpus/knowledge/mutation-case-fleet-sources-census.md`; coverage-map row; PROVINCE Core
   append. QUALITY 139-142. Mistakes M1-M7 in `corpus/lessons/round-90.md`.
+
+## Round 91 (2026-11-08) — fresh start: two sealed successors, both killed by their own rules
+
+- **Shape.** One v1 wave `r91-w1`, 14 seats: executor ×4 (T91E1 reproduction, T91E2 no-harm,
+  T91E3 survivor arms, T91E4 seal probe), scribe ×1 (T91SC1 amendment draft), scout ×2
+  (T91S1 S318 verify, T91S2 git-replace source), reviewer ×2 (T91R1 counter review, T91R2
+  freeze conformance), critic ×2 (T91C1, T91C2 attacks), mutation-tester ×1 (T91M1 counter
+  mutation), connector ×1 (T91CN1 fleet impact), sentinel ×1 (T91SN1 driver audit). Attack
+  share 7/14 = 50 %. Freeze `50e59d59`; wave spec/dispatch `584bbe3c`.
+- **R91-C1 (coverage) predicate met, killed twice.** Sealed successor counter
+  (`GIT_NO_REPLACE_OBJECTS`, `replace`-list refusal, header-named verdict column) reaches
+  `C1_R91_PASS=true` at `14/16` conjuncts on the honest fixture. Killed by rule (a):
+  `w1/T91C1.md` §1 — committed state `34a92bbf` PASSes while the note's *presented* table
+  states twelve inverted verdicts, the true values sitting in a second table under
+  `C001`-`C012` that `^\|\s*(C\d\d)` cannot see; and `w1/T91R1.md` F1 — the frozen rev's
+  `parse_note` reads `cells[vcol+1]` and refuses every honest note, while every receipt was
+  produced by the post-freeze `0b63b85e`, so the receipts do not certify the frozen instrument.
+- **R91-C2 (calibration) predicate met, killed.** `w1/T91C2.md`: three clone states, three
+  PASSes — the honest one and two forged ones (tokens quoted as *rejected*; a false kill
+  reason) are indistinguishable to the defect-bind manifest. `w1/T91R2.md` §2.3: the `toolpin`
+  conjunct hashes one file against itself (a tautology). `w1/T91SN1.md` F1: the counter runs
+  the candidate's own checker tool, so a stub certifies an unrepaired note.
+- **Survived as evidence.** 12/12 verdicts reproduced outside the counter (T91E1); the seal
+  refuses a `replace`-ref clone with exit 2 and derives the same twelve verdicts sealed
+  (T91E4 `sealed-holds`); seven survivor-killing arms proven for the fleet gate (T91E3
+  `arms-kill-7/7`, report-only, never pushed); no standing sweep regressed (T91E2).
+- **Motivating evidence.** The fleet's own census gate still carries seven selftest holes whose
+  killing arms are drafted and proven; and the lane's three successive attempts to certify that
+  measurement have now failed on the same class — a reader narrower than the record it reads.
+- **Frontier.** S318 (git(1) `GIT_NO_REPLACE_OBJECTS`) and S319 (git-replace(1) replacement
+  ref) mined, both re-fetched byte-identically by a second seat; rows 177 → 179. QUALITY
+  143-148. Mistakes M1-M6 in `corpus/lessons/round-91.md`, each with a state shown able to fail.
+- **Upkeep (not a claim).** The case note's admission marker and coverage citation (round-90
+  routed items 1-2) and `corpus/README.md`'s round-91 map position; the round-90 manifest's
+  third row is dropped as having no routed defect behind it (`T91R2` §3.3).
