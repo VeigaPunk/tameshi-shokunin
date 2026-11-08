@@ -1,0 +1,18 @@
+# R97SC1 receipt — the A4 driver-pin refusals, measured against the committed tool at the records revision
+# command: python3 -I pins.py  (clean clone of the lane; TMPDIR passed explicitly)
+# context: the lesson attributes 'a non-64-hex --driver-sha prints BATTERY_SETUP driver-sha-invalid'
+#   to 'R97R1 case 13 and re-run at A4'. R97R1's committed case-13 output is the PRE-repair
+#   behaviour (predicate printed, rc 0) at rev 5e99c661, an object not in the store at HEAD.
+
+--- empty --driver-sha (the A4 refusal)
+    $ ... battery-bind.py --lane . --rev 35db02e9 --driver-sha 
+    BATTERY_SETUP driver-sha-invalid
+    rc=2
+--- 64-hex unequal --driver-sha
+    $ ... battery-bind.py --lane . --rev 35db02e9 --driver-sha 0000000000000000000000000000000000000000000000000000000000000000
+    BATTERY_SETUP driver-sha-mismatch
+    rc=2
+--- correct 64-hex pin
+    $ ... battery-bind.py --lane . --rev 35db02e9 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+    BATTERY states=50 matched=50 mismatched=0 missing=0
+    rc=0

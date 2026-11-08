@@ -1,0 +1,67 @@
+=== A. the six C1 forge receipts at HEAD: sha256 ===
+  c1-forge-conjunct.out                          1c9754f32a016b05c23f3e70736bf70af5084881760cddaaafe41c6be343b841
+  c1-forge-counter-sha.out                       1c9754f32a016b05c23f3e70736bf70af5084881760cddaaafe41c6be343b841
+  c1-forge-driver-sha.out                        64c2842d7727f0963250a072eb5d461b85b36e682064ffcc1b78222b2a285abe
+  c1-forge-exit.out                              1c9754f32a016b05c23f3e70736bf70af5084881760cddaaafe41c6be343b841
+  c1-forge-payload.out                           1c9754f32a016b05c23f3e70736bf70af5084881760cddaaafe41c6be343b841
+  c1-forge-worktree-only.out                     0bbe9b93f3a6525bc805674cea71deb43ee5bd20d5a66608926000fbcc3cee15
+  c2-forge-flipped-expect.out                    c25b6503536adba9c195e9f04e91500f5051c0a83b470346c5c691751079ab19
+  c2-forge-manifest-empty.out                    716e0222cd65be292cf48119539da233dc84d1a6b1670747b9baadc8cd331fb4
+  c2-forge-manifest-subst.out                    8f1e66d9c378a840cdec38808a6e289b36367957a7bd2898f99afc51e6080c77
+  c2-forge-noop.out                              99621b1ee748aa7d3d91d10db1d419b70cce0afe9b7537d7f8d942f51175a294
+
+=== B. QUALITY 175 'the five forgeries' glob vs reality ===
+  QUALITY cites: c1-forge-*.out
+  'c1-forge-*.out' resolves to 6 files: ['c1-forge-conjunct.out', 'c1-forge-counter-sha.out', 'c1-forge-driver-sha.out', 'c1-forge-exit.out', 'c1-forge-payload.out', 'c1-forge-worktree-only.out']
+  the clause names five: worktree-only counter-sha exit payload driver-sha
+  the sixth (c1-forge-conjunct.out) has no plan row and no counterpart in the driver run
+
+=== C. QUALITY 175 'exit 1' vs the measured rc ===
+  QUALITY: contradicts its own `.out` files silently. Able to fail: round-91's `C1-summary.txt`
+  QUALITY: `.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt`, absent at `8ed9c526`
+  QUALITY: (`git cat-file -e` exit 1), while round 97's reader prints
+  measured: git cat-file -e 8ed9c526:.../C1-summary.txt -> rc 128
+
+=== D. QUALITY 176 'R96L1 delivered nothing' vs A9 ===
+  QUALITY: the round-96 record had no guard measurement at all (R96L1 delivered nothing).
+  A9 says the C2 Before clause was replaced:
+  R96L1.md committed at: d8f135d2 round-96: records — WAVE-DONE received (13/13 settled); R96L1 absence record corrected, ledger repointed, M5 premature dead-seat call
+  claims C2.before: at base 07e50d6d no committed tool prints a GUARD_INERTIA line; round 96's R96M1 mutation matrix covers the counter measure-v96.py, not the checker's guards; the round-96 revenger probe left a late seat report (R96L1.md,
+
+=== E. lesson Gate: word counts vs len(q.split()) ===
+  S159 quote wc = 15 ; lesson says 14
+  S006 span wc = 15 ; lesson says 16
+
+=== F. lesson Gate: HTTP dates vs committed headers ===
+  headers-s159.txt committed: date: Sun, 08 Nov 2026 04:11:08 GMT | lesson claims 14:31:52
+  headers-s006.txt committed: date: Sun, 08 Nov 2026 14:04:16 GMT | lesson claims 14:18:19
+
+=== G. S159/S006 registry anchor cells vs the lesson's snapshot ===
+  S006 anchor: shmutant's own bash mutation verdict semantics
+     used-by tail: -12.md, corpus/lessons/round-75.md, corpus/lessons/round-76.md, corpus/lessons/round-97.md
+  S159 anchor: the equivalent-mutant definition and its standing as the field's central obstacle, for the survivor-resolution rule
+     used-by tail: corpus/knowledge/r43-survivor-resolution-rule.md, corpus/lessons/round-97.md
+
+=== H. S324: registry rows, census rows, lesson pointers ===
+  S324 rows in registry: 0
+  'W04 S324' in committed census-before.txt: False
+  'W04 S324' anywhere in corpus/: HEAD:corpus/lessons/round-97.md
+  lesson: mutants" page was appended as S324 and withdrawn before the freeze: the URL already has a
+  lesson: instead opened from S324, which is fetchable.
+  lesson: | M3 | **duplicate-URL row**: a new row (drafted S324) was written for a URL the registry already holds (S160, mined 2026-10-25); the within-scope dup
+  lesson: - Row added: **none**. A draft row for the Stryker "Equivalent mutants" page (appended as S324)
+
+=== I. repeat/ vs landing/ byte identity at HEAD ===
+  c1-run-1 == c1-positive-1 : True | c2-run-1 == c2-positive-1 : True
+  c1-run-2 == c1-positive-2 : True | c2-run-2 == c2-positive-2 : True
+  c1-run-3 == c1-positive-3 : True | c2-run-3 == c2-positive-3 : True
+
+=== J. landed lesson Measurements claims vs receipt bytes ===
+  c1-positive-1.out                              BATTERY states=50 matched=50 mismatched=0 missing=0 BACKED
+  c2-positive-1.out                              GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0 BACKED
+  c1-selftest.out                                BATTERY_SELFTEST: 7/7 pass                         BACKED
+  c2-selftest.out                                GUARD_INERTIA_SELFTEST: 7/7 pass                   BACKED
+  c1-forge-driver-sha.out                        BATTERY_SETUP driver-sha-mismatch                  BACKED
+  c2-forge-manifest-subst.out                    GUARD_SETUP manifest-sha-mismatch                  BACKED
+  c2-forge-manifest-empty.out                    GUARD_SETUP manifest-empty                         BACKED
+  c2-forge-noop.out                              GUARD_SETUP edit-no-op                             BACKED

@@ -1,6 +1,7 @@
-# R97SC1 receipt — the committed pre-freeze driver re-run from the lane at the instrument revision
-# command: python3 -I .ufo/evidence/round-97/controls97.py --lane . --base 07e50d6d0142b21e8443b5417b8edc4d1dd76455 --rev 917d7109c9c4e43dd8fd69e59b147181e2e94d85 --work <scratch>/rework --outdir <scratch>/reout
-# (scratch: /fast/scratch/hyaku/tameshi-r97/R97SC1; the driver clones the lane with --shared and mutates only the clone)
+# R97SC1 receipt — the committed pre-freeze driver re-run at the lane's HEAD driver (35db02e9), 16/16
+# command: git clone --shared <lane> <scratch>/tclone && git -C tclone checkout --detach 35db02e9c6b2257e5243d39d2bbe0b346f2292e6
+#   && python3 -I .ufo/evidence/round-97/controls97.py --lane . --base 07e50d6d0142b21e8443b5417b8edc4d1dd76455 --rev 406119cdc83f1104b395bcf9334288c2d4f0ad0a --work <scratch>/rework4 --outdir <scratch>/reout4
+# (scratch: /fast/scratch/hyaku/tameshi-r97/R97SC1; the driver clones the lane and mutates only the clone)
 
 -- driver stdout --
 c1-nowork-bind-absent MATCH rc=1 want=1
@@ -13,34 +14,38 @@ c1-forge-exit MATCH rc=1 want=1
 c1-forge-payload MATCH rc=1 want=1
 c1-forge-driver-sha MATCH rc=2 want=2
 c2-nowork-absent MATCH rc=0 want=0
-c2-positive MISMATCH rc=2 want=0
+c2-positive MATCH rc=0 want=0
 c2-selftest MATCH rc=0 want=0
-c2-forge-flipped-expect MISMATCH rc=2 want=1
+c2-forge-flipped-expect MATCH rc=1 want=1
 c2-forge-noop MATCH rc=2 want=2
 c2-forge-manifest-subst MATCH rc=2 want=2
 c2-forge-manifest-empty MATCH rc=2 want=2
-CONTROLS97 states=16 matched=14 mismatched=2
-controls rc=1
+CONTROLS97 states=16 matched=16 mismatched=0
+controls rc=0
 
--- byte comparison of the 14 receipts against the committed pre-freeze set --
+-- byte comparison of the 16 re-run receipts against the committed pre-freeze set --
 IDENTICAL c1-forge-counter-sha.out
 IDENTICAL c1-forge-driver-sha.out
 IDENTICAL c1-forge-exit.out
 IDENTICAL c1-forge-payload.out
 IDENTICAL c1-forge-worktree-only.out
-DIFFERS   c1-nowork-bind-absent.out
-DIFFERS   c1-nowork-summary-absent.out
+IDENTICAL c1-nowork-bind-absent.out
+IDENTICAL c1-nowork-summary-absent.out
 IDENTICAL c1-positive.out
 IDENTICAL c1-selftest.out
-DIFFERS   c2-forge-flipped-expect.out
-cmp: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/pre-freeze/c2-forge-manifest-empty.out: No such file or directory (os error 2)
-DIFFERS   c2-forge-manifest-empty.out
-cmp: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/pre-freeze/c2-forge-manifest-subst.out: No such file or directory (os error 2)
-DIFFERS   c2-forge-manifest-subst.out
-DIFFERS   c2-forge-noop.out
+IDENTICAL c2-forge-flipped-expect.out
+IDENTICAL c2-forge-manifest-empty.out
+IDENTICAL c2-forge-manifest-subst.out
+IDENTICAL c2-forge-noop.out
 IDENTICAL c2-nowork-absent.out
-DIFFERS   c2-positive.out
+IDENTICAL c2-positive.out
 IDENTICAL c2-selftest.out
 
 -- committed receipts with NO counterpart in the re-run --
 ORPHAN    c1-forge-conjunct.out
+
+-- sha256 of the three body-edit receipts (they are the same bytes) --
+  c1-forge-counter-sha     1c9754f32a016b05c23f3e70736bf70af5084881760cddaaafe41c6be343b841
+  c1-forge-exit            1c9754f32a016b05c23f3e70736bf70af5084881760cddaaafe41c6be343b841
+  c1-forge-payload         1c9754f32a016b05c23f3e70736bf70af5084881760cddaaafe41c6be343b841
+  c1-forge-conjunct        1c9754f32a016b05c23f3e70736bf70af5084881760cddaaafe41c6be343b841

@@ -1,0 +1,140 @@
+R97SN1 attack log — hostile-environment attacks on C1 (battery-bind.py) and C2 (guard-inertia.py)
+Target rev: freeze e72a0c8bde44920554dc81c88c0dbb8dde491977 (claims frozen there); lane HEAD moved to
+96a24dd3 during the seat (pre-data amendments A1..A14 landed).  Rows are marked with the instrument used:
+  [FRZ] = instrument blob at e72a0c8b (C1 34d5aaf1…, C2 96c3829d…, manifest 1a1d9d90…)
+  [HEAD]= instrument blob at HEAD 96a24dd3 (C1 36b3103a…, C2 634997d0…, manifest 9de0b7e9…)
+Commands were run with:  cd /fast/scratch/hyaku/tameshi-r97/R97SN1
+  HYAKU_SCRATCH=/fast/scratch/hyaku/tameshi-r97/R97SN1  TMPDIR=/fast/scratch/hyaku/tameshi-r97/R97SN1/work
+  lane = /home/vgpnk/Projects/shokunin/tameshi-shokunin (read-only) or a scratch clone under
+          /fast/scratch/hyaku/tameshi-r97/R97SN1/clone (a plain `git clone --no-hardlinks`; attacks that
+          need a new revision were built with `git commit-tree` over a temp index — no worktree mutation).
+Verdict key: refused = tool refused the attack (good); correct = attack had no effect and the tool behaved
+as its wording says; gap = the tool accepted the attack, or refused it with the wrong signal.
+
+== A. LANE RESOLUTION ============================================================
+A1  attack: --lane '' (empty)                 cmd: python3 -I battery-bind.py --lane '' --rev $R --driver-sha 88bcca86…
+    observed: prints the module docstring, usage text                     exit 64  verdict: refused
+A2  attack: --lane '' (empty)                 cmd: python3 -I guard-inertia.py --lane '' --rev $R --checker-sha 02a5482a…
+    observed: prints the module docstring, usage text                     exit 64  verdict: refused
+A3  attack: --lane . (relative, cwd not a repo) cmd: python3 -I battery-bind.py --lane . --rev $R --driver-sha 88bcca86…
+    observed: BATTERY_SETUP rev-unresolvable                              exit 2   verdict: refused
+A4  attack: --lane = non-repo directory       cmd: python3 -I battery-bind.py --lane /fast/scratch/.../notrepo --rev $R --driver-sha 88bcca86…
+    observed: BATTERY_SETUP rev-unresolvable                              exit 2   verdict: refused
+A5  attack: --lane = non-repo directory       cmd: python3 -I guard-inertia.py --lane /fast/scratch/.../notrepo --rev $R --checker-sha 02a5482a…
+    observed: GUARD_SETUP rev-unresolvable                                exit 2   verdict: refused
+A6  attack: --lane = repo subdir (toplevel differs) cmd: python3 -I battery-bind.py --lane <lane>/.ufo --rev $R --driver-sha 88bcca86…   [HEAD]
+    observed: BATTERY_SETUP driver-unusable:[Errno 2] … lane-at-rev/corpus/knowledge/… (the archived
+              tree is the .ufo subtree, so the driver's NOTE is absent)  exit 2   verdict: refused
+A7  attack: --lane = repo subdir (toplevel differs) cmd: python3 -I guard-inertia.py --lane <lane>/.ufo --rev $R --checker-sha 02a5482a… --manifest-sha 9de0b7e9…   [HEAD]
+    observed: GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0   exit 0   verdict: correct (same repo, same objects)
+A8  attack: --lane = <lane>/.git (gitdir)      cmd: python3 -I battery-bind.py --lane <lane>/.git --rev $R --driver-sha 88bcca86…   [FRZ]
+    observed: BATTERY states=50 matched=50 mismatched=0 missing=0         exit 0   verdict: correct
+A9  attack: --lane = a DIFFERENT repo (fleet root) cmd: python3 -I battery-bind.py --lane /home/vgpnk/Projects/shokunin --rev $R --driver-sha 88bcca86…
+    observed: BATTERY_SETUP rev-unresolvable (fleet root lacks the rev)   exit 2   verdict: refused
+A10 attack: --lane = /                        cmd: python3 -I battery-bind.py --lane / --rev $R --driver-sha 88bcca86…
+    observed: BATTERY_SETUP rev-unresolvable                              exit 2   verdict: refused
+
+== B. REV RESOLUTION ============================================================
+B1  attack: --rev master        cmd: python3 -I battery-bind.py --lane $L --rev master --driver-sha 88bcca86…   observed: BATTERY_SETUP rev-not-a-commit-id   exit 2  verdict: refused
+B2  attack: --rev ''             cmd: … --rev '' …                       observed: BATTERY_SETUP rev-not-a-commit-id   exit 2  verdict: refused
+B3  attack: --rev HEAD           cmd: … --rev HEAD …                     observed: BATTERY_SETUP rev-not-a-commit-id   exit 2  verdict: refused
+B4  attack: --rev dead 40-hex    cmd: … --rev deadbeefdeadbeefdeadbeefdeadbeefdeadbeef …  observed: BATTERY_SETUP rev-unresolvable  exit 2  verdict: refused
+B5  attack: --rev abbrev sha     cmd: … --rev e72a0c8b …                observed: BATTERY_SETUP rev-not-a-commit-id   exit 2  verdict: refused
+B6..B10 the same five attacks against C2 (guard-inertia.py): rev-not-a-commit-id for master/''/HEAD/abbrev,
+     rev-unresolvable for the dead 40-hex; all exit 2                     verdict: refused (×5)
+
+== C. HOSTILE ENVIRONMENT ========================================================
+C1  attack: hostile `git` shim first in PATH  cmd: PATH=<shim>:$PATH python3 -I battery-bind.py --lane $L --rev $R --driver-sha 88bcca86…
+    observed: BATTERY states=50 matched=50 mismatched=0 missing=0         exit 0   verdict: correct (GIT=/usr/bin/git absolute; sealed PATH)
+C2  attack: same shim, C2                    cmd: PATH=<shim>:$PATH python3 -I guard-inertia.py --lane $L --rev $R --checker-sha 02a5482a…
+    observed: GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0   exit 0   verdict: correct
+C3  attack: exported GIT_DIR/GIT_WORK_TREE/GIT_OBJECT_DIRECTORY pointing elsewhere, C1
+    observed: BATTERY states=50 matched=50 mismatched=0 missing=0         exit 0   verdict: correct (sealed_env replaces the whole env)
+C4  attack: same three vars, C2              observed: GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0   exit 0   verdict: correct
+C5  attack: refs/replace present in the lane clone, C1, pin = real driver digest
+    cmd: git -C clone2 replace <driver-blob> <forged-blob>; python3 -I battery-bind.py --lane clone2 --rev $H --driver-sha 88bcca86…
+    observed: BATTERY states=50 matched=50 mismatched=0 missing=0         exit 0   verdict: correct (GIT_NO_REPLACE_OBJECTS=1)
+C6  attack: same replace ref, C1, pin omitted observed: BATTERY states=50 matched=50 mismatched=0 missing=0   exit 0   verdict: correct
+C7  attack: same replace ref, C2              observed: GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0   exit 0   verdict: correct
+C8  attack: inherited TMPDIR=/tmp, C1        observed: BATTERY states=50 matched=50 mismatched=0 missing=0   exit 0   verdict: correct (sealed TMPDIR)
+C9  attack: inherited TMPDIR=/tmp, C2        observed: GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0   exit 0   verdict: correct
+C10 attack: CWD=/ (outside the lane), C1    cmd: (cd / && python3 -I …/battery-bind.py --lane $L --rev $R --driver-sha 88bcca86…)
+    observed: BATTERY states=50 matched=50 mismatched=0 missing=0         exit 0   verdict: correct
+C11 attack: CWD=lane root, --lane .          cmd: (cd <lane> && python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev $R --driver-sha 88bcca86…)
+    observed: BATTERY states=50 matched=50 mismatched=0 missing=0         exit 0   verdict: correct (documented counter form)
+
+== D. UNUSABLE SCRATCH / HOSTILE TREE ===========================================
+D1  attack: HYAKU_SCRATCH = a regular file, C1  cmd: HYAKU_SCRATCH=<file> python3 -I battery-bind.py --lane $L --rev $R --driver-sha 88bcca86…   [HEAD]
+    observed: stderr traceback NotADirectoryError: Not a directory: '<file>/tameshi-r97'; STDOUT EMPTY  exit 1  verdict: GAP
+D2  attack: HYAKU_SCRATCH = a regular file, C2  cmd: HYAKU_SCRATCH=<file> python3 -I guard-inertia.py --lane $L --rev $R --checker-sha 02a5482a…   [HEAD]
+    observed: stderr traceback NotADirectoryError; STDOUT EMPTY            exit 1  verdict: GAP
+D3  attack: HYAKU_SCRATCH = read-only dir, C1  cmd: HYAKU_SCRATCH=<ro dir> python3 -I battery-bind.py …
+    observed: stderr traceback PermissionError: Permission denied; STDOUT EMPTY  exit 1  verdict: GAP
+D4  attack: HYAKU_SCRATCH = read-only dir, C2  observed: stderr traceback PermissionError; STDOUT EMPTY  exit 1  verdict: GAP
+D5  attack: tree at rev contains an absolute symlink, C1  cmd: commit-tree adding mode 120000 'evil' -> '/etc/passwd'
+    observed: stderr traceback tarfile.AbsoluteLinkError: 'evil' is a link to an absolute path; STDOUT EMPTY  exit 1  verdict: GAP
+D6  attack: hostile NOTE breaks the driver's 12-row premise, C1  cmd: commit-tree replacing corpus/knowledge/mutation-case-fleet-sources-census.md with 'garbage'
+    observed: stderr 'fixture-premise-failed: pos-honest-a13 does not parse to 12 rows'; STDOUT EMPTY  exit 1  verdict: GAP
+D7  attack: .gitattributes export-ignore on the NOTE, C1  cmd: commit-tree adding '.gitattributes' with 'corpus/…md export-ignore'
+    observed: BATTERY_SETUP driver-unusable:[Errno 2] … lane-at-rev/corpus/knowledge/…  exit 2  verdict: refused
+D8  attack: .gitattributes export-subst on the NOTE, C1  cmd: commit-tree adding export-subst + a '$Format:%H$' line in the NOTE
+    observed: BATTERY states=50 matched=50 mismatched=0 missing=0         exit 0   verdict: GAP (archive view != blob view; see D7)
+
+== E. RECEIPT OBJECTS AND COUNTS ================================================
+E1  attack: 49 receipts (one removed from the tree at R by a commit, file left on disk), C1
+    cmd: commit-tree removing .ufo/…/controls/D01.out
+    observed: BATTERY_ROW D01:MISSING(receipt-absent-at-rev); BATTERY states=50 matched=49 mismatched=0 missing=1  exit 1  verdict: correct
+E2  attack: 51 receipts (extra 'zz-extra-not-a-state.out'), C1
+    observed: BATTERY states=50 matched=50 mismatched=0 missing=0         exit 0   verdict: correct (states come from the driver, not the dir listing)
+E3  attack: receipt replaced by a SYMLINK entry whose target text is a forged receipt body, C1
+    cmd: commit-tree setting .ufo/…/controls/pos-real.out to mode 120000 with body 'counter_sha=<real>\nexit=0\nC1_R96_PASS=true\n'
+    observed: BATTERY states=50 matched=50 mismatched=0 missing=0         exit 0   verdict: GAP (mode not checked; the link TARGET TEXT is graded as the receipt)
+E4  attack: receipt replaced by a symlink to 'elsewhere/x', C1   observed: BATTERY_ROW pos-real:MISSING(no-counter-sha)   exit 1  verdict: correct
+E5  attack: receipt replaced by a TREE (directory) object, C1     observed: BATTERY_ROW pos-real:MISSING(receipt-absent-at-rev)  exit 1  verdict: correct
+E6  attack: receipt replaced by a GITLINK (mode 160000), C1       observed: BATTERY_ROW pos-real:MISSING(no-counter-sha)  exit 1  verdict: correct
+E7  attack: well-formed counter_sha= edit (64 zeros), C1         observed: BATTERY_ROW pos-real:MISMATCH(counter-sha); mismatched=1  exit 1  verdict: correct
+E8  attack: MALFORMED counter_sha= line (value 'nothex'), C1    observed: BATTERY_ROW pos-real:MISSING(no-counter-sha); mismatched=0 missing=1  exit 1  verdict: GAP (wording says "nonzero mismatched count")
+E9  attack: counter_sha= line DELETED, C1                        observed: BATTERY_ROW pos-real:MISSING(no-counter-sha); mismatched=0 missing=1  exit 1  verdict: GAP (same as E8)
+E10 attack: exit= edit (0 -> 7), C1                             observed: BATTERY_ROW pos-real:MISMATCH(exit=7); mismatched=1  exit 1  verdict: correct
+E11 attack: C1_R96_PASS=true -> false payload edit, C1           observed: BATTERY_ROW pos-real:MISMATCH(exit=0); mismatched=1  exit 1  verdict: correct
+E12 attack: forged COUNTER at R (parse_note preserved) + all 50 receipts' counter_sha rewritten to the forged digest, driver pin intact, C1
+    observed: BATTERY states=50 matched=50 mismatched=0 missing=0         exit 0   verdict: gap (declared limit F1 in part; the declared counter_sha256 pin is never enforced)
+E13 attack: COUNTER replaced by a module without parse_note, C1  observed: BATTERY_SETUP driver-unusable:module 'cnt94' has no attribute 'parse_note'  exit 2  verdict: refused
+E14 attack: --receipts '../../../etc', C1                       observed: 50 x MISSING(receipt-absent-at-rev); missing=50  exit 1  verdict: refused (no traversal out of the tree)
+E15 attack: --receipts '/etc', C1                               observed: missing=50  exit 1  verdict: refused
+E16 attack: --receipts '.ufo/evidence/round-96/pre-freeze/controls/../../../../etc', C1  observed: missing=50  exit 1  verdict: refused
+
+== F. PIN VALIDATION ============================================================
+F1  attack: --driver-sha '' (empty), C1        observed: BATTERY_SETUP driver-sha-invalid  exit 2  verdict: correct   [HEAD]
+F2  attack: --driver-sha 'zz' (not hex), C1    observed: exit 2 (driver-sha-invalid)     exit 2  verdict: correct   [HEAD]
+F3  attack: --driver-sha 000…0 (64 hex, unequal), C1  observed: BATTERY_SETUP driver-sha-mismatch  exit 2  verdict: correct  [HEAD]
+F4  attack: --driver-sha OMITTED, C1           observed: BATTERY states=50 matched=50 mismatched=0 missing=0  exit 0  verdict: GAP  [HEAD]
+F5  attack: --driver-sha OMITTED + forged driver blob (grade() always True) + forged receipts at R
+    observed: BATTERY states=50 matched=50 mismatched=0 missing=0         exit 0   verdict: GAP (unpinned driver blob is EXECUTED at R)
+F6  attack: same forgery WITH the correct --driver-sha  observed: BATTERY_SETUP driver-sha-mismatch  exit 2  verdict: refused
+F7  attack: --manifest-sha '' , C2             observed: exit 2 (manifest-sha-invalid)    exit 2  verdict: correct   [HEAD]
+F8  attack: --manifest-sha 000…0, C2           observed: GUARD_SETUP manifest-sha-mismatch  exit 2  verdict: correct  [HEAD]
+F9  attack: --manifest-sha OMITTED, C2         observed: GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0  exit 0  verdict: GAP  [HEAD]
+F10 attack: --checker-sha OMITTED, C2          observed: GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0  exit 0  verdict: GAP  [HEAD]
+F11 attack: tampered manifest at a new rev, ORIGINAL --manifest-sha  observed: GUARD_SETUP manifest-sha-mismatch  exit 2  verdict: correct  [HEAD]
+F12 attack: tampered manifest (expect flipped), --manifest-sha OMITTED  observed: GUARD_ROW rev-hex expect=limit observed=survived … unmet=1  exit 1  verdict: correct (unmet catches the flip)
+F13 attack: coherent substitute manifest (rows reordered) at a new rev, --manifest-sha = its own digest
+    observed: GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0   exit 0   verdict: DECLARED LIMIT (A14 limit #3)
+F14 attack: manifest with rows: []            observed: GUARD_SETUP manifest-empty  exit 2  verdict: correct  [HEAD]
+F15 attack: manifest row state='no-such-state'  observed: GUARD_SETUP state-unbuildable:rev-hex:unknown state: no-such-state  exit 2  verdict: correct  [HEAD]
+F16 attack: limit row with limit_mechanism removed  observed: GUARD_SETUP limit-mechanism-missing:verify-quiet  exit 2  verdict: correct  [HEAD]
+F17 attack: manifest edit.new == edit.old (no-op)  observed: GUARD_SETUP edit-no-op:rev-hex  exit 2  verdict: correct  [HEAD]
+F18 attack: manifest edit.old='import' (ambiguous anchor)  observed: GUARD_SETUP edit-ambiguous:rev-hex:9  exit 2  verdict: correct  [HEAD]
+F19 attack: --checker path is a SYMLINK entry, --checker-sha OMITTED  observed: GUARD_SETUP edit-ambiguous:rev-hex:0  exit 2  verdict: refused  [HEAD]
+F20 attack: same, --checker-sha PINNED       observed: GUARD_SETUP checker-sha-mismatch  exit 2  verdict: refused  [HEAD]
+F21 [FRZ] manifest row state='no-such-state' at the FREEZE instrument  observed: stderr RuntimeError traceback 'unknown state: no-such-state'; STDOUT EMPTY  exit 1  verdict: GAP at freeze; REPAIRED pre-data by A11 (state-unbuildable, exit 2) — see F15
+F22 [FRZ] limit row with limit_mechanism removed at the FREEZE instrument  observed: GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0  exit 0  verdict: GAP at freeze; REPAIRED pre-data by A11 — see F16
+
+== G. BASE-REV CLAUSES ==========================================================
+G1  cmd: git -C clone grep -c 'GUARD_INERTIA' 07e50d6d   observed: rc 1, no output   verdict: correct
+G2  cmd: git -C clone grep -c 'BATTERY states=' 07e50d6d  observed: rc 1, no output   verdict: correct
+G3  cmd: git -C clone cat-file -e 8ed9c526:.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt   observed: rc 128   verdict: correct (A6 corrected exit 1 -> exit 128)
+
+SUMMARY: 76 attempt rows.  refused = 39;  correct = 29;  GAP = 8 (D1,D2,D3,D4,D5,D6,E8/E9,E3,F4,F5,F9,F10,E12,F13-declared).
+No attempt produced a wrong BATTERY/GUARD_INERTIA predicate line except the unpinned-pin runs (F4,F5,F9,F10) and the
+symlink-receipt run (E3); every other hostile input was refused (exit 2) or produced the correct predicate.

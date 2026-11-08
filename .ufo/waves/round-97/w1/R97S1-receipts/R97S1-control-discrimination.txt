@@ -1,0 +1,28 @@
+# R97S1 — discriminating power of the freeze's C1 body-edit controls
+# scratch clone: /fast/scratch/hyaku/tameshi-r97/R97S1/lane (asserted by git rev-parse --show-toplevel above)
+
+## Step 1 — the freeze's four C1 body-edit receipts are byte-identical
+1c9754f32a016b05  c1-forge-counter-sha
+1c9754f32a016b05  c1-forge-exit
+1c9754f32a016b05  c1-forge-payload
+1c9754f32a016b05  c1-forge-conjunct
+
+## Step 2 — the reason string in every one of them
+BATTERY_ROW pos-real:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+
+## Step 3 — MUTANT: grade() neutered, freeze's stacked exit forgery still identical
+-- MUTANT on counter-sha forgery:
+BATTERY_ROW pos-real:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+RC=1
+-- MUTANT on the stacked exit forgery (what controls97 calls c1-forge-exit):
+BATTERY_ROW pos-real:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+RC=1
+
+## Step 4 — control: an ISOLATED exit edit (counter_sha intact) names a different reason
+BATTERY_ROW pos-real:MISMATCH(exit=7)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+RC=1
