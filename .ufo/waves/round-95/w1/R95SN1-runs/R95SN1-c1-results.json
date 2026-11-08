@@ -1,0 +1,114 @@
+[
+ {
+  "id": "B01",
+  "title": "ambient GIT_DIR+GIT_WORK_TREE at the C1 counter",
+  "observed": "exit=1 out=['C1_SUMMARY rev=HEAD n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1', 'C1_R95_PASS=false']",
+  "expected": "the counter must read the --repo it was given; GIT_DIR must not redirect the read",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "B02",
+  "title": "ambient GIT_CONFIG_COUNT=1 core.replaceRefs=false at the C1 counter",
+  "observed": "exit=1 out=['C1_R95_PASS=false']",
+  "expected": "config injection must not change the counter's behaviour",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "B03",
+  "title": "refs/replace on the note blob inside the --repo clone",
+  "observed": "exit=2 out=['C1_SETUP replace-refs-present:lane', 'C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP replace-refs-present",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "B04",
+  "title": "refs/replace in the FLEET (gate) repo the counter executes from",
+  "observed": "exit=1 out=['C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP replace-refs-present:fleet (the counter checks both repos)",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "B05",
+  "title": "--repo is a linked worktree of the lane repo",
+  "observed": "exit=0 out=['C1_SUMMARY rev=HEAD n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1', 'C1_R95_PASS=true']",
+  "expected": "the counter must read the same objects from a worktree of the same repo",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "B06",
+  "title": "--rev '' : git resolves ':<path>' against the INDEX (staged bytes)",
+  "observed": "exit=1 staged_row_visible=True out=['C1_SUMMARY rev= n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=1 verdict_tables=1', 'C1_BADROWS stray-verdict:365:| C99 | x | KILLED | dif']",
+  "expected": "an empty --rev must not grade staged-but-uncommitted bytes",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "B07",
+  "title": "--work points at a non-empty directory",
+  "observed": "exit=2 out=['C1_SETUP work-not-empty-dir', 'C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP work-not-empty-dir",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "B08",
+  "title": "--repo given with .. path segments",
+  "observed": "exit=2 out=['C1_SETUP replace-list-failed:lane', 'C1_R95_PASS=false']",
+  "expected": "the counter must resolve --repo and behave as for the same repo named directly",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "B09",
+  "title": "second SELF_SHA256 line inserted before the __main__ guard",
+  "observed": "exit=2 out=['C1_SETUP self-pin-line-count', 'C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP self-pin-line-count (plan C1 control double-pin)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "B10",
+  "title": "second SELF_SHA256 line appended AFTER the __main__ guard",
+  "observed": "exit=2 out=['C1_SETUP self-pin-line-count', 'C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP self-pin-line-count (the line count is a whole-file property)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "B11",
+  "title": "counter edited to force ok=True with the SELF_SHA256 pin RECOMPUTED",
+  "observed": "exit=2 self_pin_passed=False claims_pass=False",
+  "expected": "the self-pin certifies the file's own bytes, not the executed bytes; identity is bound by kill rule (c) (the blob sha256 in claims.json)",
+  "severity": "MEDIUM (declared limit)",
+  "verdict": "accepted-by-design"
+ },
+ {
+  "id": "B12",
+  "title": "gate-identity constants are hand-copied into the counter's pinned bytes",
+  "observed": "GATE_COMMIT=f47ad6ba8d30 GATE_SHA256=3fb7261569f4",
+  "expected": "a foreign gate must be refused with gate-identity-mismatch (the constants anchor it)",
+  "severity": "INFO (defended)",
+  "verdict": "observed"
+ },
+ {
+  "id": "B13",
+  "title": "counter blob read from the lane working tree at HEAD (pin self-check)",
+  "observed": "exit=0 out=['C1_R95_PASS=true']",
+  "expected": "the counter must verify its own bytes before acting",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "B14",
+  "title": "objects/info/alternates in the --repo clone pointing at a foreign object store",
+  "observed": "exit=0 out=['C1_SUMMARY rev=HEAD n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1', 'C1_R95_PASS=true']",
+  "expected": "an alternates file must not let a foreign object store supply the graded bytes (git object ids are content-addressed)",
+  "severity": "NONE (defended by content addressing)",
+  "verdict": "defended"
+ }
+]

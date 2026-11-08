@@ -1,0 +1,121 @@
+--- base/measure-v94.py
++++ fix-combined.py
+@@ -56,7 +56,7 @@
+ """
+ import argparse, hashlib, html as htmlmod, io, json, os, re, shutil, subprocess, sys, tarfile
+ 
+-SELF_SHA256 = "5bd0f545da072b60bd3f1ea293cc3df6ee7d66b8a403240269f99808428dfd57"
++SELF_SHA256 = "d75d2649b8588fdbad75657867b54f6251167579336c813110067c4698ebfc17"
+ GATE_COMMIT = "f47ad6ba8d306f8125597401cb2ce45c1297a593"
+ GATE_SHA256 = "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30"
+ SELF_PIN_RE = rb'^SELF_SHA256 = "[0-9a-f]{64}"\n'
+@@ -76,20 +76,28 @@
+                  "inconclusive0", "unstable0", "note", "verdict_tables", "ids", "mismatched0",
+                  "figure", "witnessed", "source", "coverage", "n_min")
+ FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+-DELIM_RE = re.compile(r"^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$")
++DELIM_RE = re.compile(r"^\s*\|?\s*:?-{1,}:?\s*(?:\|\s*:?-{1,}:?\s*)+\|?\s*$")
+ DENIAL_TOKENS = ("not admitted", "not-admitted", "uncertified", "withdrawn", "refused",
+                  "rejected")
+ 
+ 
+-def self_pin_ok():
+-    """QUALITY 150: the check runs before any other action, on the file's own bytes."""
++def self_pin_state():
++    """QUALITY 150 + round-95 A3: exactly one pin line, then the digest.
++
++    The check runs before any other action, on the file's own bytes. A second
++    pin line is a setup refusal (`self-pin-line-count`), not a stripped no-op.
++    """
+     try:
+         with open(os.path.abspath(__file__), "rb") as f:
+             b = f.read()
+     except OSError:
+-        return False
++        return "self-pin-mismatch"
++    if len(re.findall(SELF_PIN_RE, b, flags=re.M)) != 1:
++        return "self-pin-line-count"
+     norm = re.sub(SELF_PIN_RE, b"", b, flags=re.M)
+-    return hashlib.sha256(norm).hexdigest() == SELF_SHA256
++    if hashlib.sha256(norm).hexdigest() != SELF_SHA256:
++        return "self-pin-mismatch"
++    return "ok"
+ 
+ 
+ def die(msg):
+@@ -169,10 +177,18 @@
+ 
+ # ---------------------------------------------------------------- note reader
+ def split_cells(line):
+-    """GFM cell split: unescaped `|` separates cells; `\\|` is a literal pipe."""
++    """GFM cell split: unescaped `|` separates cells; `\|` is a literal pipe.
++
++    Round-95 A4: `\\` is a literal backslash and is handled before `\|`, so a
++    cell ending in a literal backslash closes at the following `|`.
++    """
+     out, cur, i = [], [], 0
+     while i < len(line):
+         ch = line[i]
++        if ch == "\\" and i + 1 < len(line) and line[i + 1] == "\\":
++            cur.append("\\")
++            i += 2
++            continue
+         if ch == "\\" and i + 1 < len(line) and line[i + 1] == "|":
+             cur.append("|")
+             i += 2
+@@ -197,14 +213,32 @@
+ 
+ 
+ def block_lines(text):
+-    """(orig_index, text) for every line outside a fenced code block (S322)."""
+-    vis, fence = [], None
++    """(orig_index, text) for every line outside a fenced code block (S322).
++
++    Round-95 A2: a line matching `^ {4,}\S` is a literal indented-code line
++    and is not visible, unless it continues a list item. `list_open` is set by
++    a visible non-blank list-marker line, survives blank lines, and closes on a
++    visible non-indented non-marker line.
++    """
++    list_item = re.compile(r"^ {0,3}(?:[-*+]|\d{1,9}[.)])\s")
++    indented = re.compile(r"^ {4,}\S")
++    vis, fence, list_open = [], None, False
+     for idx, raw in enumerate(text.split("\n")):
+         m = FENCE_RE.match(raw)
+         if fence is None:
+             if m:
+                 fence = (m.group(1)[0], len(m.group(1)))
+                 continue
++            if raw.strip() == "":
++                vis.append((idx, raw))
++                continue
++            if list_item.match(raw):
++                list_open = True
++            elif indented.match(raw):
++                if not list_open:
++                    continue
++            else:
++                list_open = False
+             vis.append((idx, raw))
+         else:
+             if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= fence[1] \
+@@ -351,14 +385,16 @@
+ 
+ def main():
+     if "--conjuncts" in sys.argv:
+-        if not self_pin_ok():
+-            die("self-pin-mismatch")
++        _pin_state = self_pin_state()
++        if _pin_state != "ok":
++            die(_pin_state)
+         print("C1_CONJUNCT_KEYS " + " ".join(CONJUNCT_KEYS))
+         print("C1_R94_PASS=keys-only")
+         sys.exit(0)
+-    selfpin = self_pin_ok()
++    _pin_state = self_pin_state()
++    selfpin = _pin_state == "ok"
+     if not selfpin:
+-        die("self-pin-mismatch")
++        die(_pin_state)
+     ap = argparse.ArgumentParser()
+     ap.add_argument("--repo", required=True)
+     ap.add_argument("--rev", required=True)

@@ -1,0 +1,273 @@
+### 1. maintained CLI: validate
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi
+tameshi	W04	S047 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+tameshi	W04	S048 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+tameshi	W04	S075 duplicate url man7.org/linux/man-pages/man1/strace.1.html across scopes
+tameshi	W04	S076 duplicate url docs.jj-vcs.dev/latest/git-compatibility across scopes
+tameshi	W04	S077 duplicate url man7.org/linux/man-pages/man2/PR_SET_CHILD_SUBREAPER.2const.html across scopes
+tameshi	W04	S078 duplicate url man7.org/linux/man-pages/man2/open.2.html across scopes
+tameshi	W04	S081 duplicate url bazel.build/reference/test-encyclopedia across scopes
+tameshi	W04	S092 duplicate url bazel.build/remote/caching across scopes
+tameshi	W01	S101 tierC mined used-by=corpus/knowledge/witness-equivalence-rule.md
+tameshi	W04	S104 duplicate url cgit.git.savannah.gnu.org/cgit/bash.git/plain/doc/bashref.texi?id=b8c60bc9ca365f8261fa97900b6fa939f6ebc303 across scopes
+tameshi	W04	S160 duplicate url stryker-mutator.io/docs/mutation-testing-elements/equivalent-mutants across scopes
+tameshi	W04	S265 duplicate url testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html across scopes
+tameshi	W04	S266 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+tameshi	W04	S267 duplicate url github.com/containers/bubblewrap/blob/v0.13.1/bwrap.xml across scopes
+tameshi	W04	S268 duplicate url www.tensorflow.org/federated/golden_tests?hl=zh-cn across scopes
+tameshi	W04	S274 duplicate url bazel.build/basics/hermeticity across scopes
+tameshi	W04	S288 duplicate url www.atlassian.com/incident-management/handbook/postmortems across scopes
+tameshi	W04	S293 duplicate url git-scm.com/docs/git-cat-file across scopes
+tameshi	W04	S303 duplicate url www.gnu.org/software/sed/manual/sed.html across scopes
+tameshi	W04	S314 duplicate url man7.org/linux/man-pages/man1/strace.1.html across scopes
+tameshi	W04	S318 duplicate url git-scm.com/docs/git across scopes
+tameshi	ok	/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
+exit=0
+
+### 2. maintained CLI: census
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin tameshi
+tameshi	rows	182
+tameshi	tier.A	164
+tameshi	tier.B	14
+tameshi	tier.C	4
+tameshi	status.mined	148
+tameshi	status.queued	23
+tameshi	status.rejected	11
+FLEET	rows	182
+FLEET	tier.A	164
+FLEET	tier.B	14
+FLEET	tier.C	4
+FLEET	tier.invalid	0
+FLEET	status.queued	23
+FLEET	status.mined	148
+FLEET	status.rejected	11
+FLEET	status.invalid	0
+FLEET	missing	0
+exit=0
+
+### 3. CORPUS.md §Census frozen manual commands (run from lane root)
+$ grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+182
+exit=0
+$ awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13 {n++} END{print n+0}' corpus/SOURCES.md   # malformed rows
+0
+exit=0
+$ awk -F'|' '... {t=$5; ...}' corpus/SOURCES.md   # tier histogram
+A=164 B=14 C=4 
+exit=0
+$ awk -F'|' '... {s=$9; ...}' corpus/SOURCES.md   # status histogram
+mined=148 queued=23 rejected=11 
+exit=0
+$ awk -F'|' '... {print i}' corpus/SOURCES.md | sort | uniq -d   # duplicate ids
+exit=0 (empty output = no duplicate ids)
+$ awk -F'|' '... enum checks ...' corpus/SOURCES.md   # enum violations
+exit=0 (empty output = no enum violations)
+$ awk -F'|' '... mined used-by ...' | while read -r p; do [ -e "$p" ] || echo "missing: $p"; done
+exit=0 (empty output = no dangling used-by)
+
+### 4. APPENDIX — S323 candidate row shape (scratch-only; the lane registry was NOT edited)
+
+Scratch fixture: the lane's corpus/SOURCES.md was copied into
+  /fast/scratch/hyaku/tameshi-r95/R95S1/fix4/corpus/SOURCES.md
+and a candidate S323 row was appended after the S322 row; corpus/knowledge and
+corpus/lessons were mirrored as symlinks, plus a placeholder
+corpus/lessons/round-95.md so the candidate's used-by resolves.
+
+Candidate row (one line, 11 data columns):
+| S323 | CommonMark Spec 0.31.2 — Indented code blocks — https://spec.commonmark.org/0.31.2/ | docs | A | indented code block semantics: why an indented line is literal text, not a table row, unless it continues a list item | §4.4 Indented code blocks, tag-stripped snapshot `.ufo/evidence/round-95/sources/s323.html` line 2356 @ page fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 10:41:46 GMT; 514698 B; sha256 c85f56cc2101f761cc94215c677cd2c7c1ecca9c47be016479fdfe718af60f0d) | "An indented chunk is a sequence of non-blank lines, each preceded by four or more spaces of indentation." (18 words) | mined | 2026-11-08 | 365d | corpus/lessons/round-95.md |
+
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /fast/scratch/hyaku/tameshi-r95/R95S1/fix4/corpus/SOURCES.md
+file	W04	S288 duplicate url www.atlassian.com/incident-management/handbook/postmortems across scopes
+file	W04	S323 duplicate url spec.commonmark.org/0.31.2 across scopes
+file	ok	/fast/scratch/hyaku/tameshi-r95/R95S1/fix4/corpus/SOURCES.md
+exit=0
+finding-code histogram: W01=1 W04=21 ok=1   (no E-code; W04 is a warning and does not
+change the exit code — S322 and S323 share one URL across two scopes)
+
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --file /fast/scratch/hyaku/tameshi-r95/R95S1/fix2/corpus/SOURCES.md
+file	rows	183
+file	tier.A	165
+file	tier.B	14
+file	tier.C	4
+file	status.mined	149
+file	status.queued	23
+file	status.rejected	11
+FLEET	rows	183
+FLEET	tier.A	165
+FLEET	tier.B	14
+FLEET	tier.C	4
+FLEET	tier.invalid	0
+FLEET	status.queued	23
+FLEET	status.mined	149
+FLEET	status.rejected	11
+FLEET	status.invalid	0
+FLEET	missing	0
+exit=0
+
+Candidate-row shape facts (measured on the lane's own corpus/SOURCES.md):
+- data rows: 182, every one with NF=13 => exactly 11 data columns; malformed rows = 0
+- highest id in the registry: S322 (S318 S319 S320 S321 S322 are the last five)
+- registry header row is corpus/SOURCES.md:10
+- with S323 appended the registry has 183 rows / tier.A 165 / status.mined 149
+
+### 5. Fleet-wide census for reference (no lane argument)
+
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin
+kaidoku	rows	233
+kaidoku	tier.A	212
+kaidoku	tier.B	11
+kaidoku	tier.C	10
+kaidoku	status.mined	207
+kaidoku	status.rejected	26
+kasegi	rows	153
+kasegi	tier.A	134
+kasegi	tier.B	13
+kasegi	tier.C	6
+kasegi	status.mined	125
+kasegi	status.queued	1
+kasegi	status.rejected	27
+kengaku	rows	341
+kengaku	tier.A	306
+kengaku	tier.B	29
+kengaku	tier.C	6
+kengaku	status.mined	294
+kengaku	status.queued	8
+kengaku	status.rejected	39
+kake	rows	224
+kake	tier.A	199
+kake	tier.B	8
+kake	tier.C	17
+kake	status.mined	194
+kake	status.queued	8
+kake	status.rejected	22
+kumitate	rows	219
+kumitate	tier.A	185
+kumitate	tier.B	24
+kumitate	tier.C	10
+kumitate	status.mined	177
+kumitate	status.queued	14
+kumitate	status.rejected	28
+kotoba	rows	211
+kotoba	tier.A	170
+kotoba	tier.B	23
+kotoba	tier.C	18
+kotoba	status.mined	183
+kotoba	status.queued	7
+kotoba	status.rejected	21
+kagi	rows	156
+kagi	tier.A	139
+kagi	tier.B	2
+kagi	tier.C	15
+kagi	status.mined	136
+kagi	status.queued	3
+kagi	status.rejected	17
+kama	rows	358
+kama	tier.A	342
+kama	tier.B	11
+kama	tier.C	5
+kama	status.mined	322
+kama	status.queued	8
+kama	status.rejected	28
+lore	rows	32
+lore	tier.A	24
+lore	tier.B	3
+lore	tier.C	5
+lore	status.mined	12
+lore	status.queued	17
+lore	status.rejected	3
+revenger	rows	509
+revenger	tier.A	460
+revenger	tier.B	21
+revenger	tier.C	28
+revenger	status.mined	473
+revenger	status.queued	16
+revenger	status.rejected	20
+tameshi	rows	182
+tameshi	tier.A	164
+tameshi	tier.B	14
+tameshi	tier.C	4
+tameshi	status.mined	148
+tameshi	status.queued	23
+tameshi	status.rejected	11
+mado	rows	469
+mado	tier.A	451
+mado	tier.B	10
+mado	tier.C	8
+mado	status.mined	442
+mado	status.queued	10
+mado	status.rejected	17
+tsukuroi	rows	389
+tsukuroi	tier.A	371
+tsukuroi	tier.B	6
+tsukuroi	tier.C	12
+tsukuroi	status.mined	351
+tsukuroi	status.queued	5
+tsukuroi	status.rejected	33
+tabi	rows	223
+tabi	tier.A	205
+tabi	tier.B	9
+tabi	tier.C	9
+tabi	status.mined	198
+tabi	status.queued	15
+tabi	status.rejected	10
+mori	rows	416
+mori	tier.A	375
+mori	tier.B	20
+mori	tier.C	21
+mori	status.mined	354
+mori	status.queued	25
+mori	status.rejected	37
+chousa	rows	219
+chousa	tier.A	140
+chousa	tier.B	59
+chousa	tier.C	20
+chousa	status.mined	183
+chousa	status.queued	12
+chousa	status.rejected	24
+kotodama	rows	951
+kotodama	tier.A	570
+kotodama	tier.B	352
+kotodama	tier.C	29
+kotodama	status.mined	842
+kotodama	status.queued	60
+kotodama	status.rejected	49
+souji	rows	270
+souji	tier.A	257
+souji	tier.B	10
+souji	tier.C	3
+souji	status.mined	226
+souji	status.queued	14
+souji	status.rejected	30
+audio	rows	15
+audio	tier.A	11
+audio	tier.B	2
+audio	tier.C	2
+audio	status.mined	14
+audio	status.rejected	1
+game-dev-2d	rows	31
+game-dev-2d	tier.A	30
+game-dev-2d	tier.B	1
+game-dev-2d	status.mined	10
+game-dev-2d	status.queued	19
+game-dev-2d	status.rejected	2
+game-dev-3d	rows	36
+game-dev-3d	tier.A	33
+game-dev-3d	tier.B	2
+game-dev-3d	tier.C	1
+game-dev-3d	status.mined	6
+game-dev-3d	status.queued	28
+game-dev-3d	status.rejected	2
+FLEET	rows	5637
+FLEET	tier.A	4778
+FLEET	tier.B	630
+FLEET	tier.C	229
+FLEET	tier.invalid	0
+FLEET	status.queued	293
+FLEET	status.mined	4897
+FLEET	status.rejected	447
+FLEET	status.invalid	0
+FLEET	missing	0
+exit=0
+
+Note: the §1/§2 runs carry the lane argument `tameshi`, so their FLEET lines are
+the tameshi aggregate (rows 182), not the 21-lane fleet aggregate above.

@@ -1,0 +1,24 @@
+# R95SN1: ambient GIT_DIR/GIT_WORK_TREE at the C1 counter, against the FROZEN counter blob
+# counter sha256 = 5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e
+# (git cat-file blob 3ca1981a:.ufo/evidence/round-95/c1/measure-v95.py)
+$ git clone -q --shared .../tameshi-shokunin $S/finalB/lane
+$ git clone -q --shared .../tameshi-shokunin $S/finalB/other
+$ git -C $S/finalB/lane cat-file blob 3ca1981a:.ufo/evidence/round-95/c1/measure-v95.py > $S/finalB/counter.py
+$ sha256sum $S/finalB/counter.py
+5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e  $S/finalB/counter.py
+
+# --- control: no ambient GIT_DIR ---
+$ python3 -I $S/finalB/counter.py --repo $S/finalB/lane --rev 3ca1981a --work $S/finalB/wk1
+C1_SUMMARY rev=3ca1981a n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_R95_PASS=true
+exit 0
+
+# --- attack: ambient GIT_DIR + GIT_WORK_TREE pointing at a DIFFERENT repo ---
+$ GIT_DIR=$S/finalB/other/.git GIT_WORK_TREE=$S/finalB/other \
+    python3 -I $S/finalB/counter.py --repo $S/finalB/lane --rev 3ca1981a --work $S/finalB/wk2
+C1_SUMMARY rev=3ca1981a n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_R95_PASS=true
+exit 0
+
+# VERDICT: byte-identical output. The counter's sealed_env() replaces the whole
+# environment, so GIT_DIR/GIT_WORK_TREE cannot redirect its reads. DEFENDED (probe B01).

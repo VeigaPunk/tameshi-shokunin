@@ -1,0 +1,26 @@
+[
+ {
+  "id": "G01",
+  "title": "plan control forge-handwritten: a receipt for the manifest state verdict_tables that exists ONLY in the working tree (never committed)",
+  "observed": "exit=1 uncommitted_file_present=True git_status='?? .ufo/evidence/round-95/pre-freeze/controls/hidden-c001.out' findings=['DISPOSITION_FINDING receipt-absent-at-rev verdict_tables: receipt absent from the object store at 4b4f6105982651c212e2b77ff6e342700fe3a9bc (looked for 4b4f6105982651c212e2b77ff6e342700fe3a9bc:.ufo/evidence/round-95/pre-freeze/controls/hidden-c001.out)']",
+  "expected": "exit 1 with the named finding receipt-absent-at-rev (plan C2 wording)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "G02",
+  "title": "a hostile `git` earlier in PATH serves a FORGED counter blob to the checker",
+  "observed": "exit=1 rows=['DISPOSITION rows=1 falsifiable=17 unfalsifiable=2 findings=19'] unknown_key_findings=19 first=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch selfpin: receipt selfpin-edit carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=e9ed0ef43b30e124b425b60a8b0ab74446f3b57765c52602ad2727c58d3465d1\"]",
+  "expected": "the C2 verdict must be computed from the counter blob at --rev; the checker resolves `git` from the inherited PATH, so a hostile git supplies the bytes (the C1 counter pins PATH=/usr/local/bin:/usr/bin:/bin)",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "G03",
+  "title": "control: a PATH proxy that behaves like real git (no tampering) must not change the verdict",
+  "observed": "exit=0 rows=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "the verdict must be unchanged when git behaves honestly",
+  "severity": "INFO",
+  "verdict": "observed"
+ }
+]

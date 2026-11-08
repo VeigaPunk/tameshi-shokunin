@@ -1,0 +1,25 @@
+# R95SN1 F6: make-pins95.py --lane '' resolves to the process CWD and writes there.
+$ cd $S/atkD/cwd        # a scratch clone of the lane, checked out at 3ca1981a
+$ git rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r95/R95SN1/atkD/cwd      # asserted == the clone dir
+$ echo '{"STALE":"value"}' > .ufo/evidence/round-95/c1/pins.json
+$ sha256sum .ufo/evidence/round-95/c1/pins.json
+ea66093fb5daaeb5... .ufo/evidence/round-95/c1/pins.json
+$ python3 -I $S/snap/make-pins95.py --lane "" --rev HEAD
+PINS_WRITTEN /fast/scratch/hyaku/tameshi-r95/R95SN1/atkD/cwd/.ufo/evidence/round-95/c1/pins.json
+PINS_DERIVED fixtures=scripts/fixtures/sources-census gate_commit=f47ad6ba8d306f8125597401cb2ce45c1297a593 gate_path=scripts/sources-census.sh gate_sha256=3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30 spec_sha256=ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290
+exit 0
+$ cat .ufo/evidence/round-95/c1/pins.json
+{
+  "fixtures": "scripts/fixtures/sources-census",
+  "gate_commit": "f47ad6ba8d306f8125597401cb2ce45c1297a593",
+  "gate_path": "scripts/sources-census.sh",
+  "gate_sha256": "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30",
+  "spec_sha256": "ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290"
+}
+$ sha256sum .ufo/evidence/round-95/c1/pins.json
+688fe42aab453748... .ufo/evidence/round-95/c1/pins.json
+
+# VERDICT: the empty --lane was NOT refused. The tool wrote into the CWD
+# repository's working tree. The CWD here is a scratch clone; under the fleet host
+# guard the CWD is the fleet root, which is also a git repository. exit 0.

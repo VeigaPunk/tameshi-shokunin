@@ -1,0 +1,50 @@
+[
+ {
+  "id": "A06",
+  "title": "plan control forge-handwritten: receipt hand-written, in the working tree ONLY (never committed), for the manifest state verdict_tables",
+  "observed": "exit=0 git_status='' findings=[]",
+  "expected": "exit 1 with the named finding receipt-absent-at-rev (plan C2 wording)",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "A07",
+  "title": "receipt for the `ids` row hand-written to CLAIM ids=false, no counter run",
+  "observed": "exit=0 out=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "the checker certifies that a committed receipt MOVED the conjunct; a hand-written file that merely asserts the conjunct is false is indistinguishable from a real receipt (plan declared limit; counter_sha binds to the counter blob, not to a run)",
+  "severity": "MEDIUM (declared limit)",
+  "verdict": "accepted-by-design"
+ },
+ {
+  "id": "A13",
+  "title": "--receipts overridden to a filesystem directory outside the object store",
+  "observed": "exit=1 rows=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=17'] findings=17",
+  "expected": "--receipts must still resolve inside the object store at --rev; a filesystem path must not become a readable receipt source",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A15b",
+  "title": "--rev '' : git resolves ':<path>' against the INDEX (staged bytes)",
+  "observed": "exit=64 setup=['  * a committed setup refusal whose receipt shows the named `C1_SETUP` token'] leaked=False",
+  "expected": "an empty --rev must be refused outright, not resolved against the index",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A17",
+  "title": "a committed receipt for a state the manifest does not name",
+  "observed": "exit=0 out=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "the checker grades only what the manifest names; an extra receipt is inert",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "A18",
+  "title": "manifest rewritten so every row is `unfalsifiable` (each with a digest anchor)",
+  "observed": "exit=1 rows=['DISPOSITION rows=19 falsifiable=0 unfalsifiable=19 findings=1']",
+  "expected": "--min-falsifiable 17 must produce the finding falsifiable-below-minimum",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ }
+]

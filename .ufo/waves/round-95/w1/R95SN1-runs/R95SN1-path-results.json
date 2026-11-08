@@ -1,0 +1,34 @@
+[
+ {
+  "id": "F01",
+  "title": "a hostile `git` earlier in PATH is executed by the C2 checker",
+  "observed": "exit=2 hijacked=True out=['DISPOSITION_SETUP replace-list-failed:HIJACKED-GIT -C /fast/scratch/hyaku/tameshi-r95/R95SN1/atk7/f01 replace -l']",
+  "expected": "the checker must resolve git from a pinned PATH (the C1 counter pins PATH=/usr/local/bin:/usr/bin:/bin); an inherited PATH lets a hostile git supply the graded bytes",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "F02",
+  "title": "--rev names a movable branch instead of a frozen 40-hex commit",
+  "observed": "exit=0 out=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "--rev must be pinned to an object id so the audited bytes cannot move under a ref name; the checker accepts any revspec",
+  "severity": "MEDIUM",
+  "verdict": "observed"
+ },
+ {
+  "id": "F03",
+  "title": "ambient PATH reaches the counter subprocess the C2 checker spawns",
+  "observed": "exit=2 out=['DISPOSITION_SETUP replace-list-failed:']",
+  "expected": "the checker's sealed_env should pin PATH the way the C1 counter's does",
+  "severity": "MEDIUM",
+  "verdict": "observed"
+ },
+ {
+  "id": "F04",
+  "title": "C2 checker sealed_env(): which ambient state survives into its git calls",
+  "observed": "keeps_non_GIT_ambient=True pins_PATH=False body=['    env[\"GIT_CONFIG_NOSYSTEM\"] = \"1\"', '    env[\"GIT_CONFIG_GLOBAL\"] = \"/dev/null\"', '    return env']",
+  "expected": "the counter's sealed_env replaces the whole environment; the checker's keeps everything except GIT_*, including PATH (which selects the git binary)",
+  "severity": "MEDIUM",
+  "verdict": "observed"
+ }
+]

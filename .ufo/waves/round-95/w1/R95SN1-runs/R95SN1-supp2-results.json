@@ -1,0 +1,42 @@
+[
+ {
+  "id": "E01",
+  "title": "counter at --rev with a conjunct key REMOVED and the pin correctly recomputed",
+  "observed": "exit=1 setup=[] findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch selfpin: receipt selfpin-edit carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=be32cbd5622d9834e9cf786e022234d24aad01c54b9665dd7bbf07bd6a9c0c91\", \"DISPOSITION_FINDING receipt-counter-sha-mismatch pins: receipt pins-mutated carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=be32cbd5622d9834e9cf786e022234d24aad01c54b9665dd7bbf07bd6a9c0c91\", \"DISPOSITION_FINDING receipt-counter-sha-mismatch spec: receipt spec-shape carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=be32cbd5622d9834e9cf786e022234d24aad01c54b9665dd7bbf07bd6a9c0c91\"]",
+  "expected": "the manifest row for the removed conjunct must become a finding (unknown-key)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "E02",
+  "title": "counter at --rev with an EXTRA conjunct key, pin correctly recomputed",
+  "observed": "exit=1 findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch selfpin: receipt selfpin-edit carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=5ace6939bbc29039a7a1a807d3dce3a308fd11d1220dc43f25d9cce7add5bb4a\", \"DISPOSITION_FINDING receipt-counter-sha-mismatch pins: receipt pins-mutated carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=5ace6939bbc29039a7a1a807d3dce3a308fd11d1220dc43f25d9cce7add5bb4a\", \"DISPOSITION_FINDING receipt-counter-sha-mismatch spec: receipt spec-shape carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=5ace6939bbc29039a7a1a807d3dce3a308fd11d1220dc43f25d9cce7add5bb4a\"]",
+  "expected": "the manifest must be found incomplete (missing-row) for the new key",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "E03",
+  "title": "plan control forge-counter-sha: a COMMITTED receipt with counter_sha=0*64",
+  "observed": "exit=1 findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch verdict_tables: receipt hidden-c001 carries counter_sha='0000000000000000000000000000000000000000000000000000000000000000', counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e\"]",
+  "expected": "exit 1 with the named finding receipt-counter-sha-mismatch (plan C2 wording)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "E04",
+  "title": "counter edited at --rev WITHOUT a pin recompute: the counter's own self-pin refuses before the counter_sha binding is reached",
+  "observed": "exit=2 out=['DISPOSITION_SETUP counter-prints-no-conjunct-keys:C1_SETUP self-pin-mismatch']",
+  "expected": "a refusal is required; the named finding differs from receipt-counter-sha-mismatch because the counter's self-pin gate fires first (the counter_sha binding is a SECOND line of defence for the honest-counter case, exercised by E03)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "E05",
+  "title": "two receipts carrying the counter_sha of a DIFFERENT counter revision",
+  "observed": "exit=1 findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch verdict_tables: receipt hidden-c001 carries counter_sha='8b2926fcd6770b0971d138e3853899633fa9687f274108d177d368580ce57522', counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e\", \"DISPOSITION_FINDING receipt-counter-sha-mismatch ids: receipt renamed-result carries counter_sha='8b2926fcd6770b0971d138e3853899633fa9687f274108d177d368580ce57522', counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e\"]",
+  "expected": "exit 1 with receipt-counter-sha-mismatch",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ }
+]

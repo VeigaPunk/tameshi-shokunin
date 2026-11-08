@@ -275,3 +275,16 @@ The §Wave paragraph says "12 seats"; the dispatch committed in the same freeze 
 sentinel 1, connector 1, **revenger 1** — the revenger is R95L1). The executed roster is
 the dispatch; attack share by role is 7/13. The sentence is corrected here; no seat was
 added or dropped after the freeze.
+
+### A9 — the Gate quote layout falsified the honest-note sentence at 0685c358 (R95R1 F1 / R95C1 F13)
+
+At the first instruments commit `0685c358` the honest note printed
+`C1_SOURCE S320=row:1,quote:0 …` and `C1_R95_PASS=false`, exit 1: the lesson's Gate
+bullets put each quoted span on a continuation line, and `located_quotes` collects a
+span only from a line naming its sid. The five fixtures and the reader were unaffected
+(every reader conjunct true). The fix is the records reflow committed at `20fabad4`
+(each quote on its sid line; verified with the counter's own `located_quotes`:
+S320 1/1, S321 3/3, S322 1/1, S323 1/1). The five after-lines and the honest-note
+sentence were re-scored at `20fabad4` and hold. This amendment is the narrowing pointer
+for the `falsifies-wording` ledger row; the claim's wording, predicate and target are
+unchanged.

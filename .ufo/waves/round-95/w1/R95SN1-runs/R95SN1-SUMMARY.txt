@@ -1,0 +1,35 @@
+R95SN1 - security attack on the round-95 instruments (lane tameshi-shokunin)
+Attacked bytes = the frozen blobs at 3ca1981a:
+  measure-v95.py                5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e
+  controls-v95.py               b1a94edd4e50ad39ee09b23b7c26697587575ddb4281428c623e3afd4f441699
+  conjunct-disposition-v95.py   d6cf94b45a32f041dcf70b94148292fedbb92c70ec2fff98dc69b73fe34f3fcb
+  make-pins95.py                38a8fdd28d59aa4d493f77057a2d5c3be7a9aa8c5a6e9f82c2d96f4c3ea811bd
+  conjunct-disposition.json      c732837932b062d8156e52661bf5e4b3dd72417255607fc1b5c7637a454d110a
+
+FINDINGS (2 HIGH, 7 MEDIUM, 2 LOW) - full text in ../R95SN1.md
+  F1 HIGH    git seal      C2 checker resolves `git` from the inherited PATH; a hostile git
+                           forges counter+manifest+receipts -> green verdict, 0 committed receipts
+  F2 HIGH    file seal     C1 counter --rev '' grades the git INDEX (staged, uncommitted bytes)
+  F3 MEDIUM  file seal     C1 driver grades the HIGHEST .rerun-N.out; writer picks the LOWEST
+  F4 MEDIUM  file seal     C1 driver grades the receipt with plain open() -> symlink followed
+  F5 MEDIUM  file seal     make-pins95.py writes THROUGH a symlink at pins.json
+  F6 MEDIUM  file seal     make-pins95.py --lane '' resolves to the CWD and writes into it
+  F7 MEDIUM  git seal      C2 checker accepts any revspec (a movable branch name)
+  F8 MEDIUM  git seal      C2 checker sealed_env() keeps everything except GIT_* (PATH, TMPDIR)
+  F9 MEDIUM  counter-sha   a receipt with the honest counter_sha copied + a forged body is accepted
+  F10 MEDIUM  pin/identity counter edited to ok=True with a RECOMPUTED pin -> C1_R95_PASS=true
+  F11 LOW     file seal     C2 checker allocates 2 temp trees on the default TMPDIR (/tmp)
+  F12 LOW     file seal     C1 driver --canary-selftest allocates on the default /tmp
+
+REFUSED (defended, with reproductions):
+  git seals: refs/replace on counter/note/gate (A01 A14 B03 J04); ambient GIT_DIR (A02 B01);
+             GIT_CONFIG_COUNT (A03 B02); GIT_OBJECT_DIRECTORY/ALTERNATES (A04); alternates (B14)
+  file seals: symlinked receipt write refused (C01 C02); planted .rerun-9 (C03); containment (C07);
+              non-empty/symlinked --work (C08 C09 B07); worktree --repo/--lane (A05 C10 C11);
+              manifest state traversal (A12); --receipts override (A13); driver seal (C12)
+  pin/identity: 2nd pin line before/after __main__, same digest, 4 non-matching formats
+  counter-sha: 2 lines, 3 case/whitespace variants, truncated digest, mid-line, wrong revision,
+                plan controls forge-counter-sha (E03) and forge-handwritten (G01) all reproduce
+
+79 probes total. 4 had flawed fixtures and are superseded (disclosed in ../R95SN1.md):
+  A06 -> G01, A16 -> E04/E05, D02 -> E01, D06 -> E03/E05

@@ -1,0 +1,31 @@
+--- base/measure-v94.py
++++ fix-split-cells.py
+@@ -56,7 +56,7 @@
+ """
+ import argparse, hashlib, html as htmlmod, io, json, os, re, shutil, subprocess, sys, tarfile
+ 
+-SELF_SHA256 = "5bd0f545da072b60bd3f1ea293cc3df6ee7d66b8a403240269f99808428dfd57"
++SELF_SHA256 = "a5be7257824a60ceb3f560c23dc8f13638fc30b648c56998330bfbf5ddd0d993"
+ GATE_COMMIT = "f47ad6ba8d306f8125597401cb2ce45c1297a593"
+ GATE_SHA256 = "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30"
+ SELF_PIN_RE = rb'^SELF_SHA256 = "[0-9a-f]{64}"\n'
+@@ -169,10 +169,18 @@
+ 
+ # ---------------------------------------------------------------- note reader
+ def split_cells(line):
+-    """GFM cell split: unescaped `|` separates cells; `\\|` is a literal pipe."""
++    """GFM cell split: unescaped `|` separates cells; `\|` is a literal pipe.
++
++    Round-95 A4: `\\` is a literal backslash and is handled before `\|`, so a
++    cell ending in a literal backslash closes at the following `|`.
++    """
+     out, cur, i = [], [], 0
+     while i < len(line):
+         ch = line[i]
++        if ch == "\\" and i + 1 < len(line) and line[i + 1] == "\\":
++            cur.append("\\")
++            i += 2
++            continue
+         if ch == "\\" and i + 1 < len(line) and line[i + 1] == "|":
+             cur.append("|")
+             i += 2

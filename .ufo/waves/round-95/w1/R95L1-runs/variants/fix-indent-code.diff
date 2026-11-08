@@ -1,0 +1,46 @@
+--- base/measure-v94.py
++++ fix-indent-code.py
+@@ -56,7 +56,7 @@
+ """
+ import argparse, hashlib, html as htmlmod, io, json, os, re, shutil, subprocess, sys, tarfile
+ 
+-SELF_SHA256 = "5bd0f545da072b60bd3f1ea293cc3df6ee7d66b8a403240269f99808428dfd57"
++SELF_SHA256 = "27933873bc354accf0dffa572063ca8ef8def4433264bb25992d3735b0225bb3"
+ GATE_COMMIT = "f47ad6ba8d306f8125597401cb2ce45c1297a593"
+ GATE_SHA256 = "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30"
+ SELF_PIN_RE = rb'^SELF_SHA256 = "[0-9a-f]{64}"\n'
+@@ -197,14 +197,32 @@
+ 
+ 
+ def block_lines(text):
+-    """(orig_index, text) for every line outside a fenced code block (S322)."""
+-    vis, fence = [], None
++    """(orig_index, text) for every line outside a fenced code block (S322).
++
++    Round-95 A2: a line matching `^ {4,}\S` is a literal indented-code line
++    and is not visible, unless it continues a list item. `list_open` is set by
++    a visible non-blank list-marker line, survives blank lines, and closes on a
++    visible non-indented non-marker line.
++    """
++    list_item = re.compile(r"^ {0,3}(?:[-*+]|\d{1,9}[.)])\s")
++    indented = re.compile(r"^ {4,}\S")
++    vis, fence, list_open = [], None, False
+     for idx, raw in enumerate(text.split("\n")):
+         m = FENCE_RE.match(raw)
+         if fence is None:
+             if m:
+                 fence = (m.group(1)[0], len(m.group(1)))
+                 continue
++            if raw.strip() == "":
++                vis.append((idx, raw))
++                continue
++            if list_item.match(raw):
++                list_open = True
++            elif indented.match(raw):
++                if not list_open:
++                    continue
++            else:
++                list_open = False
+             vis.append((idx, raw))
+         else:
+             if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= fence[1] \

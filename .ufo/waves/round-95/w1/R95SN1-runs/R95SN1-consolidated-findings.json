@@ -1,0 +1,634 @@
+[
+ {
+  "id": "A01",
+  "title": "forge-replace-ref: refs/replace on the counter blob in the lane clone",
+  "observed": "exit=2 out=['DISPOSITION_SETUP replace-refs-present']",
+  "expected": "exit 2, DISPOSITION_SETUP replace-refs-present (plan C2 wording)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A02",
+  "title": "ambient GIT_DIR/GIT_WORK_TREE exported at the checker",
+  "observed": "exit=0 out_tail=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "the checker must read the --lane it was given (rows=19 findings=0), not the ambient repo",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A03",
+  "title": "ambient GIT_CONFIG_COUNT=1 core.replaceRefs=false injection",
+  "observed": "exit=0 out_tail=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "config injection must not change the verdict",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A04",
+  "title": "ambient GIT_OBJECT_DIRECTORY + GIT_ALTERNATE_OBJECT_DIRECTORIES",
+  "observed": "exit=0 out_tail=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "object-store redirection must not change the verdict",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A05",
+  "title": "--lane is a linked worktree of the lane repo (not a clone)",
+  "observed": "exit=0 out_tail=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "checker reads the lane at --rev regardless of the physical layout",
+  "severity": "NONE (informational)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A06",
+  "title": "plan control forge-handwritten: receipt hand-written, in the working tree ONLY (never committed), for the manifest state verdict_tables",
+  "observed": "exit=0 git_status='' findings=[]",
+  "expected": "exit 1 with the named finding receipt-absent-at-rev (plan C2 wording)",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "A07",
+  "title": "receipt for the `ids` row hand-written to CLAIM ids=false, no counter run",
+  "observed": "exit=0 out=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "the checker certifies that a committed receipt MOVED the conjunct; a hand-written file that merely asserts the conjunct is false is indistinguishable from a real receipt (plan declared limit; counter_sha binds to the counter blob, not to a run)",
+  "severity": "MEDIUM (declared limit)",
+  "verdict": "accepted-by-design"
+ },
+ {
+  "id": "A08",
+  "title": "two counter_sha= lines: a bogus one prepended before the honest one",
+  "observed": "exit=1 findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch verdict_tables: receipt hidden-c001 carries counter_sha='0000000000000000000000000000000000000000000000000000000000000000', counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e\"]",
+  "expected": "the first counter_sha= line is authoritative (documented); a bogus first line must be a mismatch finding",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A09.COUNTER_SHA=<hex>",
+  "title": "counter_sha label variant: COUNTER_SHA=<hex> (all caps)",
+  "observed": "exit=1 finding=mismatch",
+  "expected": "a counter_sha line the checker does not recognise must not be accepted as the honest digest",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A09.Counter_sha=<hex>",
+  "title": "counter_sha label variant: Counter_sha=<hex> (capital C)",
+  "observed": "exit=1 finding=mismatch",
+  "expected": "a counter_sha line the checker does not recognise must not be accepted as the honest digest",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A09.counter_sha",
+  "title": "counter_sha label variant: counter_sha = <hex> (space before =)",
+  "observed": "exit=1 finding=mismatch",
+  "expected": "a counter_sha line the checker does not recognise must not be accepted as the honest digest",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A10",
+  "title": "truncated counter_sha digest (63 hex chars)",
+  "observed": "exit=1 findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch verdict_tables: receipt hidden-c001 carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2', counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e\"]",
+  "expected": "a 63-hex digest must not match the 64-hex counter blob digest (SHA_RE fullmatch)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A11",
+  "title": "counter_sha= appears mid-line (not as a line-prefixed label)",
+  "observed": "exit=1 findings=['DISPOSITION_FINDING receipt-counter-sha-mismatch verdict_tables: receipt hidden-c001 carries counter_sha=None, counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e']",
+  "expected": "only a line whose stripped form starts with counter_sha= counts",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A12",
+  "title": "manifest state name with ../ traversal out of the receipts tree",
+  "observed": "exit=1 leak=False findings=['DISPOSITION_FINDING receipt-absent-at-rev ids: receipt absent from the object store at eb35d2e78f9c9eb37d62d230dfae9bceb13005c1 (looked for eb35d2e78f9c9eb37d62d230dfae9bceb13005c1:.ufo/evidence/round-95/pre-freeze/controls/../../../../etc/passwd.out)']",
+  "expected": "git pathspec traversal must not read outside the receipts tree",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A13",
+  "title": "--receipts overridden to a filesystem directory outside the object store",
+  "observed": "exit=1 rows=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=17'] findings=17",
+  "expected": "--receipts must still resolve inside the object store at --rev; a filesystem path must not become a readable receipt source",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A14",
+  "title": "replace ref present in the lane clone at the time of the check",
+  "observed": "exit=2 out=['DISPOSITION_SETUP replace-refs-present']",
+  "expected": "exit 2, DISPOSITION_SETUP replace-refs-present",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A15",
+  "title": "--rev '' : git resolves ':<path>' against the INDEX, not a commit",
+  "observed": "exit=64 rows_line=[] findings=1",
+  "expected": "an empty --rev must not grade staged-but-uncommitted bytes",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A15b",
+  "title": "--rev '' : git resolves ':<path>' against the INDEX (staged bytes)",
+  "observed": "exit=64 setup=['  * a committed setup refusal whose receipt shows the named `C1_SETUP` token'] leaked=False",
+  "expected": "an empty --rev must be refused outright, not resolved against the index",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A16",
+  "title": "counter blob edited in a later commit; receipts carry the older digest",
+  "observed": "exit=2 findings=0",
+  "expected": "receipts must be refused with receipt-counter-sha-mismatch when the counter at --rev differs",
+  "severity": "MEDIUM",
+  "verdict": "PARTIAL"
+ },
+ {
+  "id": "A17",
+  "title": "a committed receipt for a state the manifest does not name",
+  "observed": "exit=0 out=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "the checker grades only what the manifest names; an extra receipt is inert",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "A18",
+  "title": "manifest rewritten so every row is `unfalsifiable` (each with a digest anchor)",
+  "observed": "exit=1 rows=['DISPOSITION rows=19 falsifiable=0 unfalsifiable=19 findings=1']",
+  "expected": "--min-falsifiable 17 must produce the finding falsifiable-below-minimum",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "B01",
+  "title": "ambient GIT_DIR+GIT_WORK_TREE at the C1 counter",
+  "observed": "exit=1 out=['C1_SUMMARY rev=HEAD n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1', 'C1_R95_PASS=false']",
+  "expected": "the counter must read the --repo it was given; GIT_DIR must not redirect the read",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "B02",
+  "title": "ambient GIT_CONFIG_COUNT=1 core.replaceRefs=false at the C1 counter",
+  "observed": "exit=1 out=['C1_R95_PASS=false']",
+  "expected": "config injection must not change the counter's behaviour",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "B03",
+  "title": "refs/replace on the note blob inside the --repo clone",
+  "observed": "exit=2 out=['C1_SETUP replace-refs-present:lane', 'C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP replace-refs-present",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "B04",
+  "title": "refs/replace in the FLEET (gate) repo the counter executes from",
+  "observed": "exit=1 out=['C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP replace-refs-present:fleet (the counter checks both repos)",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "B05",
+  "title": "--repo is a linked worktree of the lane repo",
+  "observed": "exit=0 out=['C1_SUMMARY rev=HEAD n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1', 'C1_R95_PASS=true']",
+  "expected": "the counter must read the same objects from a worktree of the same repo",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "B06",
+  "title": "--rev '' : git resolves ':<path>' against the INDEX (staged bytes)",
+  "observed": "exit=1 staged_row_visible=True out=['C1_SUMMARY rev= n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=1 verdict_tables=1', 'C1_BADROWS stray-verdict:365:| C99 | x | KILLED | dif']",
+  "expected": "an empty --rev must not grade staged-but-uncommitted bytes",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "B07",
+  "title": "--work points at a non-empty directory",
+  "observed": "exit=2 out=['C1_SETUP work-not-empty-dir', 'C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP work-not-empty-dir",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "B08",
+  "title": "--repo given with .. path segments",
+  "observed": "exit=2 out=['C1_SETUP replace-list-failed:lane', 'C1_R95_PASS=false']",
+  "expected": "the counter must resolve --repo and behave as for the same repo named directly",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "B09",
+  "title": "second SELF_SHA256 line inserted before the __main__ guard",
+  "observed": "exit=2 out=['C1_SETUP self-pin-line-count', 'C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP self-pin-line-count (plan C1 control double-pin)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "B10",
+  "title": "second SELF_SHA256 line appended AFTER the __main__ guard",
+  "observed": "exit=2 out=['C1_SETUP self-pin-line-count', 'C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP self-pin-line-count (the line count is a whole-file property)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "B11",
+  "title": "counter edited to force ok=True with the SELF_SHA256 pin RECOMPUTED",
+  "observed": "exit=2 self_pin_passed=False claims_pass=False",
+  "expected": "the self-pin certifies the file's own bytes, not the executed bytes; identity is bound by kill rule (c) (the blob sha256 in claims.json)",
+  "severity": "MEDIUM (declared limit)",
+  "verdict": "accepted-by-design"
+ },
+ {
+  "id": "B12",
+  "title": "gate-identity constants are hand-copied into the counter's pinned bytes",
+  "observed": "GATE_COMMIT=f47ad6ba8d30 GATE_SHA256=3fb7261569f4",
+  "expected": "a foreign gate must be refused with gate-identity-mismatch (the constants anchor it)",
+  "severity": "INFO (defended)",
+  "verdict": "observed"
+ },
+ {
+  "id": "B13",
+  "title": "counter blob read from the lane working tree at HEAD (pin self-check)",
+  "observed": "exit=0 out=['C1_R95_PASS=true']",
+  "expected": "the counter must verify its own bytes before acting",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "B14",
+  "title": "objects/info/alternates in the --repo clone pointing at a foreign object store",
+  "observed": "exit=0 out=['C1_SUMMARY rev=HEAD n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1', 'C1_R95_PASS=true']",
+  "expected": "an alternates file must not let a foreign object store supply the graded bytes (git object ids are content-addressed)",
+  "severity": "NONE (defended by content addressing)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C01",
+  "title": "symlinked receipt path (<name>.out -> outside file): O_NOFOLLOW/O_EXCL",
+  "observed": "write_receipt raised=True outside_file_modified=False",
+  "expected": "the write must refuse the symlink (O_EXCL|O_NOFOLLOW) and never write through it",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C02",
+  "title": "receipt_path() candidate selection with a symlinked <name>.out present",
+  "observed": "chosen=ctlX.rerun-1.out is_symlink=False",
+  "expected": "receipt_path must skip the symlinked candidate (lexists) and choose a fresh name",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C03",
+  "title": "a pre-existing higher-index <name>.rerun-9.out in --outdir",
+  "observed": "receipt_path chose 'ctlX.out'",
+  "expected": "the fresh receipt must be <name>.out; a planted higher index must not outrank it",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C04",
+  "title": "driver grader vs writer: a planted <name>.rerun-9.out vs the fresh receipt",
+  "observed": "writer chose 'ctlX.out', grader read 'ctlX.rerun-9.out' (content 'STALE-PLANTED')",
+  "expected": "the grader must read the receipt the writer just wrote (the fresh one)",
+  "severity": "MEDIUM",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "C05",
+  "title": "grader opens the selected receipt with plain open() (symlink followed)",
+  "observed": "grader read 'ctlX.rerun-9.out' content='exit=1\\nC1_CONJUNCTS selfpin=false'",
+  "expected": "the graded content must come from a regular file inside --outdir",
+  "severity": "MEDIUM",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "C06",
+  "title": "--outdir given with .. path segments",
+  "observed": "receipt_path resolved under '/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c06/real' (intended '/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c06/real')",
+  "expected": "the receipt must land under the resolved outdir",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "C07",
+  "title": "receipt path containment: is the written receipt inside --outdir?",
+  "observed": "path='/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c07/out/ctlX.out' inside=True",
+  "expected": "every receipt must be written inside --outdir",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C08",
+  "title": "--work dir that is not empty",
+  "observed": "driver's own emptiness check refuses=True",
+  "expected": "the driver must refuse a non-empty --work dir",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C09",
+  "title": "--work is a symlink to a non-empty directory",
+  "observed": "realpath='/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c09/real' emptiness-refusal=True",
+  "expected": "the emptiness check must follow the symlink (realpath) and still refuse",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C10",
+  "title": "clone_at(): the fixture clone must be a distinct repo (not the source)",
+  "observed": "clone_at landed in /fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c10/dest, toplevel=/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c10/dest",
+  "expected": "the fixture identity may exist only inside the scratch clone; the clone must not be the lane repo or a worktree of it",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C11",
+  "title": "--repo given as a linked worktree of another repo",
+  "observed": "clone_from_worktree ok, toplevel=/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c11/dest",
+  "expected": "the driver must clone into its own fixture dir and assert the toplevel",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C12",
+  "title": "driver sealed_env(): inherited GIT_* scrub",
+  "observed": "GIT_* present=[] GLOBAL='/dev/null' NOSYSTEM='1'",
+  "expected": "the driver's git environment must carry no inherited GIT_* and pin the config sources",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C13",
+  "title": "temp-dir allocation: does the driver ever use the default /tmp?",
+  "observed": "mkdtemp without dir= at ['444:d = tempfile.mkdtemp(prefix=\"r94-canary-\")']",
+  "expected": "no committed tool may allocate outside the named --work/--outdir; /tmp may not be a cited receipt root",
+  "severity": "LOW",
+  "verdict": "observed"
+ },
+ {
+  "id": "D01",
+  "title": "every C2 receipt hand-written with the honest counter_sha and no counter run",
+  "observed": "exit=0 out=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "the checker certifies that a committed receipt MOVED the conjunct; a hand-written text file carrying the right digest and the right conjunct line is indistinguishable (plan declared limit: counter_sha binds the receipt to the counter blob, not to a run)",
+  "severity": "MEDIUM (declared limit, unchanged from round 94 F3)",
+  "verdict": "accepted-by-design"
+ },
+ {
+  "id": "D02",
+  "title": "counter blob at --rev with a recomputed pin and a conjunct key removed",
+  "observed": "exit=2 findings=[]",
+  "expected": "the checker must detect the manifest rows the counter no longer prints",
+  "severity": "MEDIUM",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "D03",
+  "title": "make-pins95.py --lane '' (empty): os.path.realpath('') is the process CWD",
+  "observed": "exit=1 wrote_into_cwd=False stdout=''",
+  "expected": "an empty --lane must be refused; realpath('') is the CWD, which for the fleet host guard is the fleet root (a git repo)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "D04",
+  "title": "make-pins95.py with a symlink at .ufo/evidence/round-95/c1/pins.json",
+  "observed": "exit=0 outside_target_overwritten=True",
+  "expected": "the write must not follow a symlink out of the lane (no O_EXCL/O_NOFOLLOW today)",
+  "severity": "MEDIUM",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "D05",
+  "title": "C2 checker --selftest: does the selftest run 11 cases and pass?",
+  "observed": "exit=0 line=['DISPOSITION_SELFTEST: 11/11 pass']",
+  "expected": "DISPOSITION_SELFTEST: 11/11 pass, exit 0 (plan C2 After)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "D06",
+  "title": "receipts carrying the counter_sha of the PREVIOUS counter revision",
+  "observed": "exit=2 findings=0",
+  "expected": "the checker must refuse with receipt-counter-sha-mismatch",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "D07",
+  "title": "C2 checker temp-dir allocation (default TMPDIR)",
+  "observed": "hits=['244:with tempfile.TemporaryDirectory(prefix=\"disposition-selftest-\") as base:', '363:with tempfile.TemporaryDirectory(prefix=\"disposition-counter-\") as d:']",
+  "expected": "the checker must not allocate in the default temp root without an explicit TMPDIR (round-94 F9 pattern)",
+  "severity": "LOW",
+  "verdict": "observed"
+ },
+ {
+  "id": "E01",
+  "title": "counter at --rev with a conjunct key REMOVED and the pin correctly recomputed",
+  "observed": "exit=1 setup=[] findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch selfpin: receipt selfpin-edit carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=be32cbd5622d9834e9cf786e022234d24aad01c54b9665dd7bbf07bd6a9c0c91\", \"DISPOSITION_FINDING receipt-counter-sha-mismatch pins: receipt pins-mutated carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=be32cbd5622d9834e9cf786e022234d24aad01c54b9665dd7bbf07bd6a9c0c91\", \"DISPOSITION_FINDING receipt-counter-sha-mismatch spec: receipt spec-shape carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=be32cbd5622d9834e9cf786e022234d24aad01c54b9665dd7bbf07bd6a9c0c91\"]",
+  "expected": "the manifest row for the removed conjunct must become a finding (unknown-key)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "E02",
+  "title": "counter at --rev with an EXTRA conjunct key, pin correctly recomputed",
+  "observed": "exit=1 findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch selfpin: receipt selfpin-edit carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=5ace6939bbc29039a7a1a807d3dce3a308fd11d1220dc43f25d9cce7add5bb4a\", \"DISPOSITION_FINDING receipt-counter-sha-mismatch pins: receipt pins-mutated carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=5ace6939bbc29039a7a1a807d3dce3a308fd11d1220dc43f25d9cce7add5bb4a\", \"DISPOSITION_FINDING receipt-counter-sha-mismatch spec: receipt spec-shape carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=5ace6939bbc29039a7a1a807d3dce3a308fd11d1220dc43f25d9cce7add5bb4a\"]",
+  "expected": "the manifest must be found incomplete (missing-row) for the new key",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "E03",
+  "title": "plan control forge-counter-sha: a COMMITTED receipt with counter_sha=0*64",
+  "observed": "exit=1 findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch verdict_tables: receipt hidden-c001 carries counter_sha='0000000000000000000000000000000000000000000000000000000000000000', counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e\"]",
+  "expected": "exit 1 with the named finding receipt-counter-sha-mismatch (plan C2 wording)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "E04",
+  "title": "counter edited at --rev WITHOUT a pin recompute: the counter's own self-pin refuses before the counter_sha binding is reached",
+  "observed": "exit=2 out=['DISPOSITION_SETUP counter-prints-no-conjunct-keys:C1_SETUP self-pin-mismatch']",
+  "expected": "a refusal is required; the named finding differs from receipt-counter-sha-mismatch because the counter's self-pin gate fires first (the counter_sha binding is a SECOND line of defence for the honest-counter case, exercised by E03)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "E05",
+  "title": "two receipts carrying the counter_sha of a DIFFERENT counter revision",
+  "observed": "exit=1 findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch verdict_tables: receipt hidden-c001 carries counter_sha='8b2926fcd6770b0971d138e3853899633fa9687f274108d177d368580ce57522', counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e\", \"DISPOSITION_FINDING receipt-counter-sha-mismatch ids: receipt renamed-result carries counter_sha='8b2926fcd6770b0971d138e3853899633fa9687f274108d177d368580ce57522', counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e\"]",
+  "expected": "exit 1 with receipt-counter-sha-mismatch",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "F01",
+  "title": "a hostile `git` earlier in PATH is executed by the C2 checker",
+  "observed": "exit=2 hijacked=True out=['DISPOSITION_SETUP replace-list-failed:HIJACKED-GIT -C /fast/scratch/hyaku/tameshi-r95/R95SN1/atk7/f01 replace -l']",
+  "expected": "the checker must resolve git from a pinned PATH (the C1 counter pins PATH=/usr/local/bin:/usr/bin:/bin); an inherited PATH lets a hostile git supply the graded bytes",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "F02",
+  "title": "--rev names a movable branch instead of a frozen 40-hex commit",
+  "observed": "exit=0 out=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "--rev must be pinned to an object id so the audited bytes cannot move under a ref name; the checker accepts any revspec",
+  "severity": "MEDIUM",
+  "verdict": "observed"
+ },
+ {
+  "id": "F03",
+  "title": "ambient PATH reaches the counter subprocess the C2 checker spawns",
+  "observed": "exit=2 out=['DISPOSITION_SETUP replace-list-failed:']",
+  "expected": "the checker's sealed_env should pin PATH the way the C1 counter's does",
+  "severity": "MEDIUM",
+  "verdict": "observed"
+ },
+ {
+  "id": "F04",
+  "title": "C2 checker sealed_env(): which ambient state survives into its git calls",
+  "observed": "keeps_non_GIT_ambient=True pins_PATH=False body=['    env[\"GIT_CONFIG_NOSYSTEM\"] = \"1\"', '    env[\"GIT_CONFIG_GLOBAL\"] = \"/dev/null\"', '    return env']",
+  "expected": "the counter's sealed_env replaces the whole environment; the checker's keeps everything except GIT_*, including PATH (which selects the git binary)",
+  "severity": "MEDIUM",
+  "verdict": "observed"
+ },
+ {
+  "id": "G01",
+  "title": "plan control forge-handwritten: a receipt for the manifest state verdict_tables that exists ONLY in the working tree (never committed)",
+  "observed": "exit=1 uncommitted_file_present=True git_status='?? .ufo/evidence/round-95/pre-freeze/controls/hidden-c001.out' findings=['DISPOSITION_FINDING receipt-absent-at-rev verdict_tables: receipt absent from the object store at 4b4f6105982651c212e2b77ff6e342700fe3a9bc (looked for 4b4f6105982651c212e2b77ff6e342700fe3a9bc:.ufo/evidence/round-95/pre-freeze/controls/hidden-c001.out)']",
+  "expected": "exit 1 with the named finding receipt-absent-at-rev (plan C2 wording)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "G02",
+  "title": "a hostile `git` earlier in PATH serves a FORGED counter blob to the checker",
+  "observed": "exit=1 rows=['DISPOSITION rows=1 falsifiable=17 unfalsifiable=2 findings=19'] unknown_key_findings=19 first=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch selfpin: receipt selfpin-edit carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e', counter blob sha256=e9ed0ef43b30e124b425b60a8b0ab74446f3b57765c52602ad2727c58d3465d1\"]",
+  "expected": "the C2 verdict must be computed from the counter blob at --rev; the checker resolves `git` from the inherited PATH, so a hostile git supplies the bytes (the C1 counter pins PATH=/usr/local/bin:/usr/bin:/bin)",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "G03",
+  "title": "control: a PATH proxy that behaves like real git (no tampering) must not change the verdict",
+  "observed": "exit=0 rows=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "the verdict must be unchanged when git behaves honestly",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "H01",
+  "title": "a hostile `git` earlier in PATH forges the counter, the manifest AND the receipts: the C2 verdict is computed from bytes that were never committed",
+  "observed": "exit=0 verdict=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0'] committed_receipts_at_rev='(NONE)' forged_verdict_green=True",
+  "expected": "the C2 verdict must be bound to the bytes committed at --rev; the checker resolves `git` from the inherited PATH, so a hostile git supplies the counter, the manifest and every receipt",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "H02",
+  "title": "control: the same forged evidence COMMITTED at --rev (the plan's declared limit: a hand-written receipt with the correct counter_sha is not certified)",
+  "observed": "exit=0 verdict=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "the checker accepts a committed hand-written receipt carrying the correct counter_sha (plan \u00a7C2 declared limits) \u2014 this is the baseline the PATH attack H01 reproduces WITHOUT requiring commit access",
+  "severity": "MEDIUM (declared limit)",
+  "verdict": "accepted-by-design"
+ },
+ {
+  "id": "I11",
+  "title": "counter edited to force ok=True with the SELF_SHA256 pin CORRECTLY RECOMPUTED",
+  "observed": "exit=0 self_pin_passed=True claims_C1_R95_PASS=true=True out=['C1_R95_PASS=true']",
+  "expected": "the self-pin certifies the file's OWN bytes, not the executed bytes; identity is bound by kill rule (c) (the counter blob's sha256 in claims.json), which no instrument check can substitute for",
+  "severity": "MEDIUM (declared limit)",
+  "verdict": "accepted-by-design"
+ },
+ {
+  "id": "I12",
+  "title": "a SECOND SELF_SHA256 line with the SAME digest as the first",
+  "observed": "exit=2 out=['C1_SETUP self-pin-line-count', 'C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP self-pin-line-count (the count, not the digest, must catch it)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "I13.no_spaces",
+  "title": "second pin line that the regex does not match: no spaces",
+  "observed": "exit=2 out=['C1_SETUP self-pin-mismatch', 'C1_R95_PASS=false']",
+  "expected": "the counter must refuse (exit 2): an unrecognised pin line either changes the executed constant or is inert, and either way the file's bytes changed, so the digest check must fire",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "I13.single_quotes",
+  "title": "second pin line that the regex does not match: single quotes",
+  "observed": "exit=2 out=['C1_SETUP self-pin-mismatch', 'C1_R95_PASS=false']",
+  "expected": "the counter must refuse (exit 2): an unrecognised pin line either changes the executed constant or is inert, and either way the file's bytes changed, so the digest check must fire",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "I13.trailing_spaces",
+  "title": "second pin line that the regex does not match: trailing spaces",
+  "observed": "exit=2 out=['C1_SETUP self-pin-mismatch', 'C1_R95_PASS=false']",
+  "expected": "the counter must refuse (exit 2): an unrecognised pin line either changes the executed constant or is inert, and either way the file's bytes changed, so the digest check must fire",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "I13.uppercase_hex",
+  "title": "second pin line that the regex does not match: uppercase hex",
+  "observed": "exit=2 out=['C1_SETUP self-pin-mismatch', 'C1_R95_PASS=false']",
+  "expected": "the counter must refuse (exit 2): an unrecognised pin line either changes the executed constant or is inert, and either way the file's bytes changed, so the digest check must fire",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "J04",
+  "title": "refs/replace on the GATE blob inside the FLEET repo the counter executes from (fleet clone carries 3f314620b2395eeb70d8)",
+  "observed": "exit=2 out=['C1_SETUP replace-refs-present:fleet', 'C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP replace-refs-present:fleet (the counter checks the fleet repo too)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "J05",
+  "title": "control: the same fleet-clone fixture WITHOUT a replace ref must proceed past the fleet replace check",
+  "observed": "exit=1 out=['C1_SUMMARY rev=HEAD n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1', 'C1_R95_PASS=false']",
+  "expected": "without a replace ref the counter must NOT print replace-refs-present:fleet",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "a13_receipts_dir_override",
+  "title": "ATTACK ERROR",
+  "observed": "TypeError(\"rmtree() got an unexpected keyword argument 'ignore_ok'\")",
+  "expected": "no exception",
+  "severity": "INFO",
+  "verdict": "error"
+ },
+ {
+  "id": "i04_fleet_replace_ref",
+  "title": "ATTACK ERROR",
+  "observed": "AssertionError('fleet clone lacks the gate blob')",
+  "expected": "no exception",
+  "severity": "INFO",
+  "verdict": "error"
+ }
+]

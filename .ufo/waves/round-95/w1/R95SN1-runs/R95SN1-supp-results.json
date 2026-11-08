@@ -1,0 +1,58 @@
+[
+ {
+  "id": "D01",
+  "title": "every C2 receipt hand-written with the honest counter_sha and no counter run",
+  "observed": "exit=0 out=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "the checker certifies that a committed receipt MOVED the conjunct; a hand-written text file carrying the right digest and the right conjunct line is indistinguishable (plan declared limit: counter_sha binds the receipt to the counter blob, not to a run)",
+  "severity": "MEDIUM (declared limit, unchanged from round 94 F3)",
+  "verdict": "accepted-by-design"
+ },
+ {
+  "id": "D02",
+  "title": "counter blob at --rev with a recomputed pin and a conjunct key removed",
+  "observed": "exit=2 findings=[]",
+  "expected": "the checker must detect the manifest rows the counter no longer prints",
+  "severity": "MEDIUM",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "D03",
+  "title": "make-pins95.py --lane '' (empty): os.path.realpath('') is the process CWD",
+  "observed": "exit=1 wrote_into_cwd=False stdout=''",
+  "expected": "an empty --lane must be refused; realpath('') is the CWD, which for the fleet host guard is the fleet root (a git repo)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "D04",
+  "title": "make-pins95.py with a symlink at .ufo/evidence/round-95/c1/pins.json",
+  "observed": "exit=0 outside_target_overwritten=True",
+  "expected": "the write must not follow a symlink out of the lane (no O_EXCL/O_NOFOLLOW today)",
+  "severity": "MEDIUM",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "D05",
+  "title": "C2 checker --selftest: does the selftest run 11 cases and pass?",
+  "observed": "exit=0 line=['DISPOSITION_SELFTEST: 11/11 pass']",
+  "expected": "DISPOSITION_SELFTEST: 11/11 pass, exit 0 (plan C2 After)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "D06",
+  "title": "receipts carrying the counter_sha of the PREVIOUS counter revision",
+  "observed": "exit=2 findings=0",
+  "expected": "the checker must refuse with receipt-counter-sha-mismatch",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "D07",
+  "title": "C2 checker temp-dir allocation (default TMPDIR)",
+  "observed": "hits=['244:with tempfile.TemporaryDirectory(prefix=\"disposition-selftest-\") as base:', '363:with tempfile.TemporaryDirectory(prefix=\"disposition-counter-\") as d:']",
+  "expected": "the checker must not allocate in the default temp root without an explicit TMPDIR (round-94 F9 pattern)",
+  "severity": "LOW",
+  "verdict": "observed"
+ }
+]

@@ -1,0 +1,652 @@
+{
+ "seat": "R95E4",
+ "round": 95,
+ "wave": "w1",
+ "instrument": {
+  "rev": "3ca1981a2265880ae3ce9b88d316e71741b02426",
+  "sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+  "source": "lane",
+  "counter_path": ".ufo/evidence/round-95/c1/measure-v95.py",
+  "lane_head": "3ca1981a2265880ae3ce9b88d316e71741b02426",
+  "lesson": {
+   "kind": "committed",
+   "sha": "33853057ef7e0d46b1046423774c8ef7b9d09da2dc190a9241f76d6f420192eb"
+  },
+  "spec_file": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-95/w1/R95E4-defects.txt",
+  "spec_sha": "df8d11d13f3f776721aff8809fe35d27f847ce95776c304aafbe0021eb3a3af0"
+ },
+ "spec_file": ".ufo/waves/round-95/w1/R95E4-defects.txt",
+ "spec_sha": "df8d11d13f3f776721aff8809fe35d27f847ce95776c304aafbe0021eb3a3af0",
+ "rows_total": 12,
+ "classification_counts": {
+  "subsumed": 8,
+  "invariant-pinned": 1,
+  "ungraded": 3
+ },
+ "rows": [
+  {
+   "id": "E04",
+   "rule": "green (pristine gate selftest twice returns 0 and prints selftest ok)",
+   "edits": [
+    {
+     "old": "    green = all(r[0] == 0 and b\"selftest ok\" in r[1] for r in green_runs)",
+     "new": "    green = True  # E04: green computation removed"
+    }
+   ],
+   "paired_battery_state": "timeout",
+   "battery_expect": [
+    1,
+    {
+     "inconclusive0": false
+    }
+   ],
+   "battery_baseline_exit": 1,
+   "battery_mutant_exit": 1,
+   "battery_grade": "MATCH",
+   "battery_moved": {
+    "canary": [
+     false,
+     true
+    ],
+    "green": [
+     false,
+     true
+    ]
+   },
+   "battery_receipt": "E04.out",
+   "probe": null,
+   "classification": "subsumed",
+   "enforced_by": [
+    "pins",
+    "inconclusive0",
+    "figure",
+    "mismatched0"
+   ],
+   "basis": "green is false only on the battery's timeout state (spec timeout_s=0.001); that state also fails pins (the spec bytes no longer match pins.json), figure, mismatched0 and inconclusive0, and the mutant's green=false->true moves none of them: exit 1 both, battery MATCH. The only lever that moves green without touching the pinned gate is a spec edit, which the pins conjunct refuses.",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": false,
+   "restored_note": "restored bytes hash to the pristine sha; the restored re-run reproduces every graded conjunct and every C1_ROW line but flips the intermittent `canary` value (F1) on the timeout state"
+  },
+  {
+   "id": "E05",
+   "rule": "canary (pinned gate + one inserted exit 97 line returns 97)",
+   "edits": [
+    {
+     "old": "    canary = selftest(cgp, work, to)[0] == 97",
+     "new": "    canary = True  # E05: canary computation removed"
+    }
+   ],
+   "paired_battery_state": "pos-real",
+   "battery_expect": [
+    0,
+    {
+     "__pass": true
+    }
+   ],
+   "battery_baseline_exit": 0,
+   "battery_mutant_exit": 0,
+   "battery_grade": "MATCH",
+   "battery_moved": {},
+   "battery_receipt": "E05.out",
+   "probe": {
+    "name": "B:gate-foreign",
+    "baseline_exit": 2,
+    "mutant_exit": 2,
+    "moved": {},
+    "baseline_false": [],
+    "mutant_false": [],
+    "baseline_grade": "no-expectation",
+    "mutant_grade": "no-expectation",
+    "receipt": "E05-gate-foreign.out",
+    "restored_stdout_matches_baseline": true,
+    "role": "isolation construction (not a battery state; no pre-registered expectation)"
+   },
+   "classification": "invariant-pinned",
+   "enforced_by": [
+    "GATE_COMMIT/GATE_SHA256 + gate-identity-mismatch"
+   ],
+   "basis": "The canary is computed from the gate bytes anchored by the self-pinned GATE_COMMIT f47ad6ba8d306f8125597401cb2ce45c1297a593 / GATE_SHA256 3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30. The construction attempt (battery gate-foreign: spec repointed at a foreign gate) is refused at setup with C1_SETUP gate-identity-mismatch (exit 2) for both the pristine and the mutant, so the rule cannot reach a foreign gate; on pos-real both print C1_R95_PASS=true. Caveat F1: the canary selftest can race the 0.001 s timeout state on an intermittent schedule (canary=false in three matrix receipts); it moves no graded conjunct.",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": true
+  },
+  {
+   "id": "E09",
+   "rule": "unstable0 (no UNSTABLE derived verdict)",
+   "edits": [
+    {
+     "old": "unstable0=unstable == 0",
+     "new": "unstable0=True"
+    }
+   ],
+   "paired_battery_state": "timeout",
+   "battery_expect": [
+    1,
+    {
+     "inconclusive0": false
+    }
+   ],
+   "battery_baseline_exit": 1,
+   "battery_mutant_exit": 1,
+   "battery_grade": "MATCH",
+   "battery_moved": {
+    "canary": [
+     false,
+     true
+    ]
+   },
+   "battery_receipt": "E09.out",
+   "probe": {
+    "name": "P:P09P10-alternating",
+    "baseline_exit": 1,
+    "mutant_exit": 1,
+    "moved": {
+     "unstable0": [
+      false,
+      true
+     ]
+    },
+    "baseline_false": [
+     "mismatched0",
+     "unstable0"
+    ],
+    "mutant_false": [
+     "mismatched0"
+    ],
+    "baseline_grade": "no-expectation",
+    "mutant_grade": "no-expectation",
+    "receipt": "E09-P09P10.out",
+    "restored_stdout_matches_baseline": true,
+    "role": "isolation construction (not a battery state; no pre-registered expectation)"
+   },
+   "classification": "subsumed",
+   "enforced_by": [
+    "mismatched0"
+   ],
+   "basis": "The battery's timeout state does not move unstable0 (both runs INCONCLUSIVE, no UNSTABLE). The isolation state P09P10 puts a deterministic alternating mutant (selftest run 1 exit 0, run 2 exit 1) in the spec: two runs derive UNSTABLE, so the pristine fails mismatched0 and unstable0; the mutant (unstable0=True) still fails mismatched0 (the note's twelve cells can only be KILLED/SURVIVED, so an UNSTABLE row can never match) -> exit 1 both.",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": false,
+   "restored_note": "restored bytes hash to the pristine sha; the restored re-run reproduces every graded conjunct and every C1_ROW line but flips the intermittent `canary` value (F1) on the timeout state"
+  },
+  {
+   "id": "E10",
+   "rule": "run count (spec runs_per_verdict, two runs per mutant)",
+   "edits": [
+    {
+     "old": "    runs = int(spec.get(\"runs_per_verdict\", 2))",
+     "new": "    runs = 1  # E10: run count forced to one"
+    }
+   ],
+   "paired_battery_state": "timeout",
+   "battery_expect": [
+    1,
+    {
+     "inconclusive0": false
+    }
+   ],
+   "battery_baseline_exit": 1,
+   "battery_mutant_exit": 1,
+   "battery_grade": "MATCH",
+   "battery_moved": {},
+   "battery_receipt": "E10.out",
+   "probe": {
+    "name": "P:P09P10-alternating",
+    "baseline_exit": 1,
+    "mutant_exit": 1,
+    "moved": {
+     "mismatched0": [
+      false,
+      true
+     ],
+     "unstable0": [
+      false,
+      true
+     ],
+     "witnessed": [
+      true,
+      false
+     ]
+    },
+    "baseline_false": [
+     "mismatched0",
+     "unstable0"
+    ],
+    "mutant_false": [
+     "witnessed"
+    ],
+    "baseline_grade": "no-expectation",
+    "mutant_grade": "no-expectation",
+    "receipt": "E10-P09P10.out",
+    "restored_stdout_matches_baseline": true,
+    "role": "isolation construction (not a battery state; no pre-registered expectation)"
+   },
+   "classification": "subsumed",
+   "enforced_by": [
+    "witnessed",
+    "mismatched0",
+    "unstable0"
+   ],
+   "basis": "On the same P09P10 state, forcing runs=1 makes C02 derive the first run's SURVIVED, which matches the note (mismatched0 true) and hides UNSTABLE (unstable0 true), but the mutant's validate-mode witness is unchanged ('same'), so witnessed (6 != 7) refuses: exit 1 both. The two-run pristine refuses via mismatched0+unstable0. Removing the second run changes the refusing conjunct, never the verdict.",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": false,
+   "restored_note": "restored bytes hash to the pristine sha; the restored re-run reproduces every graded conjunct and every C1_ROW line but flips the intermittent `canary` value (F1) on the timeout state"
+  },
+  {
+   "id": "E13",
+   "rule": "out-of-set rule (row id must be in the spec id set)",
+   "edits": [
+    {
+     "old": "            if first not in spec_ids:\n                bad.append(\"out-of-set:%d:%s\" % (ln + 1, first[:24]))\n                continue\n",
+     "new": "            pass  # E13: out-of-set rule removed\n"
+    }
+   ],
+   "paired_battery_state": "hidden-c001",
+   "battery_expect": [
+    1,
+    {
+     "verdict_tables": false
+    }
+   ],
+   "battery_baseline_exit": 1,
+   "battery_mutant_exit": 1,
+   "battery_grade": "MATCH",
+   "battery_moved": {},
+   "battery_receipt": "E13.out",
+   "probe": {
+    "name": "P:P13-out-of-set-in-table",
+    "baseline_exit": 1,
+    "mutant_exit": 1,
+    "moved": {},
+    "baseline_false": [
+     "ids"
+    ],
+    "mutant_false": [
+     "ids"
+    ],
+    "baseline_grade": "no-expectation",
+    "mutant_grade": "no-expectation",
+    "receipt": "E13-P13.out",
+    "restored_stdout_matches_baseline": true,
+    "role": "isolation construction (not a battery state; no pre-registered expectation)"
+   },
+   "classification": "subsumed",
+   "enforced_by": [
+    "ids (id-set equality half)"
+   ],
+   "basis": "P13 puts an out-of-set id (C99) inside the single verdict table: the pristine refuses with out-of-set (ids=false); the mutant keys C99, so set(note_rows) != spec_ids and the final ids_ok test still sets ids=false. Identical conjunct set and exit 1 in both runs: the id-set-equality half of the same conjunct enforces the property. The committed hidden-c001 state is refused by verdict_tables (second table) and ids in both.",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": true
+  },
+  {
+   "id": "E15",
+   "rule": "position rule (verdict token in the verdict column, exactly one)",
+   "edits": [
+    {
+     "old": "            if len(toks) != 1 or vcol >= len(cells) or cells[vcol] not in VERDICTS:\n                bad.append(\"position:%d:%s\" % (ln + 1, first))\n                continue\n",
+     "new": "            if False:  # E15: position rule removed\n                bad.append(\"position:%d:%s\" % (ln + 1, first))\n                continue\n"
+    }
+   ],
+   "paired_battery_state": "position",
+   "battery_expect": [
+    1,
+    {
+     "ids": false
+    }
+   ],
+   "battery_baseline_exit": 1,
+   "battery_mutant_exit": 1,
+   "battery_grade": "MATCH",
+   "battery_moved": {},
+   "battery_receipt": "E15.out",
+   "probe": {
+    "name": "P:P15-position-nodup",
+    "baseline_exit": 1,
+    "mutant_exit": 1,
+    "moved": {
+     "ids": [
+      false,
+      true
+     ]
+    },
+    "baseline_false": [
+     "ids",
+     "mismatched0"
+    ],
+    "mutant_false": [
+     "mismatched0"
+    ],
+    "baseline_grade": "no-expectation",
+    "mutant_grade": "no-expectation",
+    "receipt": "E15-P15.out",
+    "restored_stdout_matches_baseline": true,
+    "role": "isolation construction (not a battery state; no pre-registered expectation)"
+   },
+   "classification": "subsumed",
+   "enforced_by": [
+    "dup (committed state)",
+    "mismatched0 (isolation)"
+   ],
+   "basis": "The committed position state carries the extra C12 row, so the duplicate rule refuses first (ids=false both; pristine bad rows include position:21:C12 and dup:21:C12, the mutant's only dup:21:C12). P15 removes the duplicate and gives every row its token out of the verdict column: the pristine refuses via position (ids=false); the mutant keys cells[vcol]='differs' as the verdict, so no note cell equals the derived verdict and mismatched0=false. Exit 1 both.",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": true
+  },
+  {
+   "id": "E16",
+   "rule": "width rule (row cell count vs header, remainder-row refusal)",
+   "edits": [
+    {
+     "old": "            if len(cells) != len(header):",
+     "new": "            if False:  # E16: width rule removed"
+    }
+   ],
+   "paired_battery_state": "sharp-width-lastrow",
+   "battery_expect": [
+    1,
+    {
+     "ids": false
+    }
+   ],
+   "battery_baseline_exit": 1,
+   "battery_mutant_exit": 1,
+   "battery_grade": "MATCH",
+   "battery_moved": {},
+   "battery_receipt": "E16.out",
+   "probe": {
+    "name": "P:P16-width-nodup",
+    "baseline_exit": 1,
+    "mutant_exit": 1,
+    "moved": {},
+    "baseline_false": [
+     "ids",
+     "mismatched0"
+    ],
+    "mutant_false": [
+     "ids",
+     "mismatched0"
+    ],
+    "baseline_grade": "no-expectation",
+    "mutant_grade": "no-expectation",
+    "receipt": "E16-P16.out",
+    "restored_stdout_matches_baseline": true,
+    "role": "isolation construction (not a battery state; no pre-registered expectation)"
+   },
+   "classification": "subsumed",
+   "enforced_by": [
+    "position (isolation)",
+    "position/dup (committed state)"
+   ],
+   "basis": "The committed sharp-width-lastrow row is also a duplicate C12, refused by dup. P16 uses a non-duplicate over-wide last row carrying two verdict tokens: the pristine refuses by width, the mutant by position (len(toks)!=1) - ids=false and exit 1 in both.",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": true
+  },
+  {
+   "id": "E20",
+   "rule": "figure regex anchoring (^measured: ... killed$ per line)",
+   "edits": [
+    {
+     "old": "        heads = re.findall(r\"^measured: (\\d+)/(\\d+) killed\\s*$\", block, re.M)",
+     "new": "        heads = re.findall(r\"measured: (\\d+)/(\\d+) killed\", block, re.M)  # E20: anchors removed"
+    }
+   ],
+   "paired_battery_state": "pos-fixture",
+   "battery_expect": [
+    0,
+    {
+     "__pass": true
+    }
+   ],
+   "battery_baseline_exit": 0,
+   "battery_mutant_exit": 0,
+   "battery_grade": "MATCH",
+   "battery_moved": {},
+   "battery_receipt": "E20.out",
+   "probe": {
+    "name": "P:P20-figure-embed",
+    "baseline_exit": 1,
+    "mutant_exit": 0,
+    "moved": {
+     "figure": [
+      false,
+      true
+     ]
+    },
+    "baseline_false": [
+     "figure"
+    ],
+    "mutant_false": [],
+    "baseline_grade": "no-expectation",
+    "mutant_grade": "no-expectation",
+    "receipt": "E20-P20.out",
+    "restored_stdout_matches_baseline": true,
+    "role": "isolation construction (not a battery state; no pre-registered expectation)"
+   },
+   "classification": "ungraded",
+   "enforced_by": [],
+   "basis": "No battery state embeds the figure in a longer visible line (pos-fixture passes both). P20 replaces the measured line with 'The run recorded measured: 5/12 killed overall': the anchored pristine finds no figure (figure=false, exit 1) while the unanchored mutant finds it (figure=true, exit 0, C1_R95_PASS=true). The rule is load-bearing and no other check refuses this state, so the battery's state set is the gap (round-94 B4 state still absent).",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": true
+  },
+  {
+   "id": "E26",
+   "rule": "coverage own-cell rule (QUALITY 164: path is its own cell, not a substring)",
+   "edits": [
+    {
+     "old": "            return first == \"knowledge/mutation-case-fleet-sources-census.md\"",
+     "new": "            return \"knowledge/mutation-case-fleet-sources-census.md\" in c  # E26: substring, not own cell"
+    }
+   ],
+   "paired_battery_state": "pos-real",
+   "battery_expect": [
+    0,
+    {
+     "__pass": true
+    }
+   ],
+   "battery_baseline_exit": 0,
+   "battery_mutant_exit": 0,
+   "battery_grade": "MATCH",
+   "battery_moved": {},
+   "battery_receipt": "E26.out",
+   "probe": {
+    "name": "P:P26-coverage-longer-path",
+    "baseline_exit": 0,
+    "mutant_exit": 1,
+    "moved": {
+     "coverage": [
+      true,
+      false
+     ]
+    },
+    "baseline_false": [],
+    "mutant_false": [
+     "coverage"
+    ],
+    "baseline_grade": "no-expectation",
+    "mutant_grade": "no-expectation",
+    "receipt": "E26-P26.out",
+    "restored_stdout_matches_baseline": true,
+    "role": "isolation construction (not a battery state; no pre-registered expectation)"
+   },
+   "classification": "ungraded",
+   "enforced_by": [],
+   "basis": "No battery state names a longer path containing the note path (pos-real passes both). P26 appends a LAST corpus/README.md row '`knowledge/mutation-case-fleet-sources-census.md.bak` ... not admitted': the own-cell pristine ignores it (coverage=true, exit 0) while the substring mutant picks it as the last naming row and reads the denial (coverage=false, exit 1). No other check refuses this state: the battery's state set is the gap (round-94 B4 state still absent).",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": true
+  },
+  {
+   "id": "E29",
+   "rule": "trivial detector: the lrc is None / gawk failed / syntax error arms",
+   "edits": [
+    {
+     "old": "        if lrc == 2 or lrc is None or b\"gawk failed\" in lerr or b\"syntax error\" in lerr:",
+     "new": "        if lrc == 2:  # E29: timeout and stderr arms dropped"
+    }
+   ],
+   "paired_battery_state": "timeout",
+   "battery_expect": [
+    1,
+    {
+     "inconclusive0": false
+    }
+   ],
+   "battery_baseline_exit": 1,
+   "battery_mutant_exit": 1,
+   "battery_grade": "MATCH",
+   "battery_moved": {
+    "canary": [
+     false,
+     true
+    ]
+   },
+   "battery_receipt": "E29.out",
+   "probe": {
+    "name": "P:P29-validate-timeout",
+    "baseline_exit": 1,
+    "mutant_exit": 1,
+    "moved": {},
+    "baseline_false": [
+     "figure",
+     "mismatched0",
+     "witnessed"
+    ],
+    "mutant_false": [
+     "figure",
+     "mismatched0",
+     "witnessed"
+    ],
+    "baseline_grade": "no-expectation",
+    "mutant_grade": "no-expectation",
+    "receipt": "E29-P29.out",
+    "restored_stdout_matches_baseline": true,
+    "role": "isolation construction (not a battery state; no pre-registered expectation)"
+   },
+   "classification": "subsumed",
+   "enforced_by": [
+    "figure",
+    "mismatched0",
+    "witnessed",
+    "inconclusive0"
+   ],
+   "basis": "The battery's timeout state moves nothing but the intermittent canary (F1). P29 makes C01's validate hang on the clean-lane path: the pristine marks it trivial (trivial0=false, exit 1). Without the rc-is-None arm the mutant is measured, but a selftest-green hang mutant derives SURVIVED against the note's KILLED cell, so figure and mismatched0 and witnessed still refuse (exit 1); a global hang would derive INCONCLUSIVE and inconclusive0 would refuse. No construction of this arm lets the mutant pass its state.",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": true
+  },
+  {
+   "id": "E30",
+   "rule": "one-verdict-column rule (len(vcols) == 1)",
+   "edits": [
+    {
+     "old": "        if len(vcols) != 1:",
+     "new": "        if False:  # E30: verdict-column count rule removed"
+    }
+   ],
+   "paired_battery_state": "sharp-two-verdict-cols",
+   "battery_expect": [
+    1,
+    {
+     "ids": false
+    }
+   ],
+   "battery_baseline_exit": 1,
+   "battery_mutant_exit": 1,
+   "battery_grade": "MATCH",
+   "battery_moved": {},
+   "battery_receipt": "E30.out",
+   "probe": {
+    "name": "P:P30-two-verdict-cols",
+    "baseline_exit": 1,
+    "mutant_exit": 0,
+    "moved": {
+     "ids": [
+      false,
+      true
+     ]
+    },
+    "baseline_false": [
+     "ids"
+    ],
+    "mutant_false": [],
+    "baseline_grade": "no-expectation",
+    "mutant_grade": "no-expectation",
+    "receipt": "E30-P30.out",
+    "restored_stdout_matches_baseline": true,
+    "role": "isolation construction (not a battery state; no pre-registered expectation)"
+   },
+   "classification": "ungraded",
+   "enforced_by": [],
+   "basis": "The committed sharp-two-verdict-cols state builds a 5-cell header over note_text()'s 4-cell delimiter, so the delimiter rule refuses first (pristine bad rows verdict-cols:7:2 + delim:7; both runs ids=false). P30 builds a five-cell delimiter for the five-cell header, rows carrying one token in the first verdict column: the pristine refuses via verdict-cols (ids=false, exit 1) while the mutant keys all twelve rows and passes (exit 0, C1_R95_PASS=true). No other check refuses this state: the battery state is still the masked B2 defect.",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": true
+  },
+  {
+   "id": "E32",
+   "rule": "spec-count half (len(spec mutants) == N_MIN)",
+   "edits": [
+    {
+     "old": "    spec_ok = (len(spec.get(\"mutants\", [])) == N_MIN and len(spec_ids) == N_MIN",
+     "new": "    spec_ok = (True  # E32: spec-count half removed\n               and len(spec_ids) == N_MIN"
+    }
+   ],
+   "paired_battery_state": "short-spec",
+   "battery_expect": [
+    1,
+    {
+     "n_min": false
+    }
+   ],
+   "battery_baseline_exit": 1,
+   "battery_mutant_exit": 1,
+   "battery_grade": "MATCH",
+   "battery_moved": {},
+   "battery_receipt": "E32.out",
+   "probe": {
+    "name": "B:spec-shape",
+    "baseline_exit": 1,
+    "mutant_exit": 1,
+    "moved": {},
+    "baseline_false": [
+     "ids",
+     "mismatched0",
+     "pins",
+     "spec"
+    ],
+    "mutant_false": [
+     "ids",
+     "mismatched0",
+     "pins",
+     "spec"
+    ],
+    "baseline_grade": "no-expectation",
+    "mutant_grade": "no-expectation",
+    "receipt": "E32-spec-shape.out",
+    "restored_stdout_matches_baseline": true,
+    "role": "isolation construction (not a battery state; no pre-registered expectation)"
+   },
+   "classification": "subsumed",
+   "enforced_by": [
+    "spec (unique-id half: len(spec_ids)==N_MIN)"
+   ],
+   "basis": "On short-spec (11 mutants) the mutant still fails spec because len(spec_ids)==N_MIN fails; on spec-shape (12 entries, one duplicate id) both pristine and mutant fail spec via the same unique-id half (and ids/mismatched0/pins). The removed count half is redundant with the unique-id half.",
+   "restored_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "pristine_sha": "5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e",
+   "restored_stdout_matches_baseline": true
+  }
+ ],
+ "findings": {
+  "F1": "The timeout state's canary is not a constant under the matrix's mixed load: E04 (baseline), E09 (baseline), E10 (baseline) and E29 (baseline) receipts print canary=false while every other conjunct and all 12 C1_ROW lines are identical; the corresponding mutant or restored arms print canary=true. 24 controlled reruns of the same state bytes (6 sequential, 12 concurrent, 8 pos-real + 6 timeout mixed) all printed canary=true, so this is an intermittent host-scheduling artefact of the 0.001 s timeout, not a deterministic state property. No graded conjunct moved and all 12 battery rows still matched. Receipts: E04.out, E09.out, E10.out, E29.out, F1-canary-race.out.",
+  "F2": "0 of the 12 survivors is killed by the v95 battery. The five states added over round 94's 45 are four PASS presentation fixtures and one setup refusal; none names a verdict/reader rule, so a permissive single-edit removal still satisfies them. The battery's 50 states do not grade any of the twelve rules under test.",
+  "F3": "Three rules remain ungraded by the committed battery and by every other check: E20 (figure anchoring), E26 (coverage own-cell) and E30 (one-verdict-column). The isolation states P20/P26/P30 each pass the mutant where the pristine refuses (or the reverse), so these are state-coverage gaps (round-94 B2/B4), not subsumption and not pin invariance.",
+  "F4": "The committed masking defects B1-B3 still hold: position is masked by dup, width by position, and one-verdict-column by the delimiter rule. E13/E15/E16 are nevertheless genuinely subsumed (another check refuses the isolating state); E30 is only masked and the isolating state passes the mutant."
+ },
+ "note": "Classification is measured against the v95 battery's own expectations and, where the battery is blind, against purpose-built isolation states P09/P10/P13/P15/P16/P20/P26/P29/P30/P32. 'ungraded' marks a rule that no committed v95 battery state and no other check refuses; the isolation receipt shows the discriminating state missing from the battery (round-94 B2/B4 routing)."
+}

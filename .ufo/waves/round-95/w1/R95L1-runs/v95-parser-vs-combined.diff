@@ -1,0 +1,110 @@
+### block_lines
+--- fix-combined.py:block_lines
++++ measure-v95 snapshot:block_lines
+@@ -1,13 +1,13 @@
+ def block_lines(text):
+-    """(orig_index, text) for every line outside a fenced code block (S322).
++    """(orig_index, text) for every visible line (S322, S323 §4.4).
+ 
+-    Round-95 A2: a line matching `^ {4,}\S` is a literal indented-code line
+-    and is not visible, unless it continues a list item. `list_open` is set by
+-    a visible non-blank list-marker line, survives blank lines, and closes on a
+-    visible non-indented non-marker line.
++    Fenced handling is unchanged from round 94. Round-95 A2: a line matching
++    `^ {4,}\\S` is a literal indented-code line and is not visible unless it
++    continues a list item. `list_open` is set by a visible non-blank list-item
++    line, survives blank lines, and closes on a visible non-blank line at
++    indent < 4 that is not itself a list item (the next block-level structure
++    ends the list, S321).
+     """
+-    list_item = re.compile(r"^ {0,3}(?:[-*+]|\d{1,9}[.)])\s")
+-    indented = re.compile(r"^ {4,}\S")
+     vis, fence, list_open = [], None, False
+     for idx, raw in enumerate(text.split("\n")):
+         m = FENCE_RE.match(raw)
+@@ -18,13 +18,15 @@
+             if raw.strip() == "":
+                 vis.append((idx, raw))
+                 continue
+-            if list_item.match(raw):
++            if LIST_RE.match(raw):
+                 list_open = True
+-            elif indented.match(raw):
+-                if not list_open:
+-                    continue
+-            else:
+-                list_open = False
++                vis.append((idx, raw))
++                continue
++            if INDENT_CODE_RE.match(raw):
++                if list_open:
++                    vis.append((idx, raw))
++                continue
++            list_open = False
+             vis.append((idx, raw))
+         else:
+             if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= fence[1] \
+
+### split_cells
+--- fix-combined.py:split_cells
++++ measure-v95 snapshot:split_cells
+@@ -1,18 +1,15 @@
+ def split_cells(line):
+-    """GFM cell split: unescaped `|` separates cells; `\|` is a literal pipe.
++    """GFM cell split: unescaped `|` separates cells.
+ 
+-    Round-95 A4: `\\` is a literal backslash and is handled before `\|`, so a
+-    cell ending in a literal backslash closes at the following `|`.
++    Round-95 A4: `\\` (two backslashes) is one literal backslash and `\\|` is one
++    literal pipe; both escapes are consumed two characters at a time, so a cell
++    whose bytes end in `\\\\` before the cell boundary keeps the boundary.
+     """
+     out, cur, i = [], [], 0
+     while i < len(line):
+         ch = line[i]
+-        if ch == "\\" and i + 1 < len(line) and line[i + 1] == "\\":
+-            cur.append("\\")
+-            i += 2
+-            continue
+-        if ch == "\\" and i + 1 < len(line) and line[i + 1] == "|":
+-            cur.append("|")
++        if ch == "\\" and i + 1 < len(line) and line[i + 1] in "\\|":
++            cur.append(line[i + 1])
+             i += 2
+             continue
+         if ch == "|":
+
+### self_pin_state
+--- fix-combined.py:self_pin_state
++++ measure-v95 snapshot:self_pin_state
+@@ -1,8 +1,9 @@
+ def self_pin_state():
+-    """QUALITY 150 + round-95 A3: exactly one pin line, then the digest.
++    """QUALITY 150 + round-95 A3: exactly one pin line, before any other action.
+ 
+-    The check runs before any other action, on the file's own bytes. A second
+-    pin line is a setup refusal (`self-pin-line-count`), not a stripped no-op.
++    The check runs on the file's own bytes. A second pin line is refused
++    (`self-pin-line-count`) before any digest is compared, so the normalisation
++    must remove exactly the one pinned line.
+     """
+     try:
+         with open(os.path.abspath(__file__), "rb") as f:
+
+### DELIM_RE
+IDENTICAL
+
+### LIST_RE
+--- fix-combined.py:LIST_RE
++++ measure-v95 snapshot:LIST_RE
+@@ -1 +1 @@
+-<absent>
++LIST_RE = re.compile(r"^ {0,3}(?:[-*+]|\d{1,9}[.)])\s")
+
+### INDENT_CODE_RE
+--- fix-combined.py:INDENT_CODE_RE
++++ measure-v95 snapshot:INDENT_CODE_RE
+@@ -1 +1 @@
+-<absent>
++INDENT_CODE_RE = re.compile(r"^ {4,}\S")
+

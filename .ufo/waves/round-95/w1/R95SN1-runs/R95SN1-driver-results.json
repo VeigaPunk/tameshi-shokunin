@@ -1,0 +1,106 @@
+[
+ {
+  "id": "C01",
+  "title": "symlinked receipt path (<name>.out -> outside file): O_NOFOLLOW/O_EXCL",
+  "observed": "write_receipt raised=True outside_file_modified=False",
+  "expected": "the write must refuse the symlink (O_EXCL|O_NOFOLLOW) and never write through it",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C02",
+  "title": "receipt_path() candidate selection with a symlinked <name>.out present",
+  "observed": "chosen=ctlX.rerun-1.out is_symlink=False",
+  "expected": "receipt_path must skip the symlinked candidate (lexists) and choose a fresh name",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C03",
+  "title": "a pre-existing higher-index <name>.rerun-9.out in --outdir",
+  "observed": "receipt_path chose 'ctlX.out'",
+  "expected": "the fresh receipt must be <name>.out; a planted higher index must not outrank it",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C04",
+  "title": "driver grader vs writer: a planted <name>.rerun-9.out vs the fresh receipt",
+  "observed": "writer chose 'ctlX.out', grader read 'ctlX.rerun-9.out' (content 'STALE-PLANTED')",
+  "expected": "the grader must read the receipt the writer just wrote (the fresh one)",
+  "severity": "MEDIUM",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "C05",
+  "title": "grader opens the selected receipt with plain open() (symlink followed)",
+  "observed": "grader read 'ctlX.rerun-9.out' content='exit=1\\nC1_CONJUNCTS selfpin=false'",
+  "expected": "the graded content must come from a regular file inside --outdir",
+  "severity": "MEDIUM",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "C06",
+  "title": "--outdir given with .. path segments",
+  "observed": "receipt_path resolved under '/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c06/real' (intended '/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c06/real')",
+  "expected": "the receipt must land under the resolved outdir",
+  "severity": "INFO",
+  "verdict": "observed"
+ },
+ {
+  "id": "C07",
+  "title": "receipt path containment: is the written receipt inside --outdir?",
+  "observed": "path='/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c07/out/ctlX.out' inside=True",
+  "expected": "every receipt must be written inside --outdir",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C08",
+  "title": "--work dir that is not empty",
+  "observed": "driver's own emptiness check refuses=True",
+  "expected": "the driver must refuse a non-empty --work dir",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C09",
+  "title": "--work is a symlink to a non-empty directory",
+  "observed": "realpath='/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c09/real' emptiness-refusal=True",
+  "expected": "the emptiness check must follow the symlink (realpath) and still refuse",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C10",
+  "title": "clone_at(): the fixture clone must be a distinct repo (not the source)",
+  "observed": "clone_at landed in /fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c10/dest, toplevel=/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c10/dest",
+  "expected": "the fixture identity may exist only inside the scratch clone; the clone must not be the lane repo or a worktree of it",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C11",
+  "title": "--repo given as a linked worktree of another repo",
+  "observed": "clone_from_worktree ok, toplevel=/fast/scratch/hyaku/tameshi-r95/R95SN1/atk3/c11/dest",
+  "expected": "the driver must clone into its own fixture dir and assert the toplevel",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C12",
+  "title": "driver sealed_env(): inherited GIT_* scrub",
+  "observed": "GIT_* present=[] GLOBAL='/dev/null' NOSYSTEM='1'",
+  "expected": "the driver's git environment must carry no inherited GIT_* and pin the config sources",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "C13",
+  "title": "temp-dir allocation: does the driver ever use the default /tmp?",
+  "observed": "mkdtemp without dir= at ['444:d = tempfile.mkdtemp(prefix=\"r94-canary-\")']",
+  "expected": "no committed tool may allocate outside the named --work/--outdir; /tmp may not be a cited receipt root",
+  "severity": "LOW",
+  "verdict": "observed"
+ }
+]

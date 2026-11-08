@@ -1,0 +1,31 @@
+# R95M1 fixture revision — commands, exit codes, bytes
+$(git clone -q --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r95/R95M1/x) exit=0
+$ git -C x rev-parse --show-toplevel -> /fast/scratch/hyaku/tameshi-r95/R95M1/x (asserted)
+$ git -C x log -1 --format=%H%x20%s -> 14926289a67efe866642b020d8d70f90be2ce0aa r95m1 instrument rev 2: final v95 counter and battery
+$ sha256sum x/.ufo/evidence/round-95/c1/measure-v95.py
+5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e  /fast/scratch/hyaku/tameshi-r95/R95M1/x/.ufo/evidence/round-95/c1/measure-v95.py
+$ sha256sum x/.ufo/evidence/round-95/c1/census-mutants.json x/.ufo/evidence/round-95/c1/pins.json
+ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290  /fast/scratch/hyaku/tameshi-r95/R95M1/x/.ufo/evidence/round-95/c1/census-mutants.json
+688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4  /fast/scratch/hyaku/tameshi-r95/R95M1/x/.ufo/evidence/round-95/c1/pins.json
+$ diff -q lane/measure-v95.py x/measure-v95.py ; echo exit=$?
+identical
+$ git -C x rev-parse HEAD
+14926289a67efe866642b020d8d70f90be2ce0aa
+
+# honest counter read at the fixture rev (exit 0)
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=14926289a67efe866642b020d8d70f90be2ce0aa n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=true ids=true mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R95_PASS=true

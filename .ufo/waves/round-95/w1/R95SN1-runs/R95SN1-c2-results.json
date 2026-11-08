@@ -1,0 +1,146 @@
+[
+ {
+  "id": "A01",
+  "title": "forge-replace-ref: refs/replace on the counter blob in the lane clone",
+  "observed": "exit=2 out=['DISPOSITION_SETUP replace-refs-present']",
+  "expected": "exit 2, DISPOSITION_SETUP replace-refs-present (plan C2 wording)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A02",
+  "title": "ambient GIT_DIR/GIT_WORK_TREE exported at the checker",
+  "observed": "exit=0 out_tail=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "the checker must read the --lane it was given (rows=19 findings=0), not the ambient repo",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A03",
+  "title": "ambient GIT_CONFIG_COUNT=1 core.replaceRefs=false injection",
+  "observed": "exit=0 out_tail=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "config injection must not change the verdict",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A04",
+  "title": "ambient GIT_OBJECT_DIRECTORY + GIT_ALTERNATE_OBJECT_DIRECTORIES",
+  "observed": "exit=0 out_tail=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "object-store redirection must not change the verdict",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A05",
+  "title": "--lane is a linked worktree of the lane repo (not a clone)",
+  "observed": "exit=0 out_tail=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "checker reads the lane at --rev regardless of the physical layout",
+  "severity": "NONE (informational)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A06",
+  "title": "forge-handwritten: receipt written in the working tree only (not committed)",
+  "observed": "exit=0 out_tail=['DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0']",
+  "expected": "exit 1, finding receipt-absent-at-rev (plan C2 wording)",
+  "severity": "HIGH",
+  "verdict": "VULNERABLE"
+ },
+ {
+  "id": "A07",
+  "title": "counter_sha= copied from the honest counter while the receipt BODY is forged",
+  "observed": "exit=0 findings=[]",
+  "expected": "the receipt must show the conjunct FALSE; a body carrying only some conjuncts is a finding",
+  "severity": "MEDIUM",
+  "verdict": "PARTIAL"
+ },
+ {
+  "id": "A08",
+  "title": "two counter_sha= lines: a bogus one prepended before the honest one",
+  "observed": "exit=1 findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch verdict_tables: receipt hidden-c001 carries counter_sha='0000000000000000000000000000000000000000000000000000000000000000', counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e\"]",
+  "expected": "the first counter_sha= line is authoritative (documented); a bogus first line must be a mismatch finding",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A09.counter_sha",
+  "title": "counter_sha label variant: counter_sha = <hex> (space before =)",
+  "observed": "exit=1 finding=mismatch",
+  "expected": "a counter_sha line the checker does not recognise must not be accepted as the honest digest",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A09.Counter_sha=<hex>",
+  "title": "counter_sha label variant: Counter_sha=<hex> (capital C)",
+  "observed": "exit=1 finding=mismatch",
+  "expected": "a counter_sha line the checker does not recognise must not be accepted as the honest digest",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A09.COUNTER_SHA=<hex>",
+  "title": "counter_sha label variant: COUNTER_SHA=<hex> (all caps)",
+  "observed": "exit=1 finding=mismatch",
+  "expected": "a counter_sha line the checker does not recognise must not be accepted as the honest digest",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A10",
+  "title": "truncated counter_sha digest (63 hex chars)",
+  "observed": "exit=1 findings=[\"DISPOSITION_FINDING receipt-counter-sha-mismatch verdict_tables: receipt hidden-c001 carries counter_sha='5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2', counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e\"]",
+  "expected": "a 63-hex digest must not match the 64-hex counter blob digest (SHA_RE fullmatch)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A11",
+  "title": "counter_sha= appears mid-line (not as a line-prefixed label)",
+  "observed": "exit=1 findings=['DISPOSITION_FINDING receipt-counter-sha-mismatch verdict_tables: receipt hidden-c001 carries counter_sha=None, counter blob sha256=5f0d177034173971439be06eb5fbf32dfa8fec4b35a856fc617999e4554ccc2e']",
+  "expected": "only a line whose stripped form starts with counter_sha= counts",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A12",
+  "title": "manifest state name with ../ traversal out of the receipts tree",
+  "observed": "exit=1 leak=False findings=['DISPOSITION_FINDING receipt-absent-at-rev ids: receipt absent from the object store at eb35d2e78f9c9eb37d62d230dfae9bceb13005c1 (looked for eb35d2e78f9c9eb37d62d230dfae9bceb13005c1:.ufo/evidence/round-95/pre-freeze/controls/../../../../etc/passwd.out)']",
+  "expected": "git pathspec traversal must not read outside the receipts tree",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "a13_receipts_dir_override",
+  "title": "ATTACK ERROR",
+  "observed": "TypeError(\"rmtree() got an unexpected keyword argument 'ignore_ok'\")",
+  "expected": "no exception",
+  "severity": "INFO",
+  "verdict": "error"
+ },
+ {
+  "id": "A14",
+  "title": "replace ref present in the lane clone at the time of the check",
+  "observed": "exit=2 out=['DISPOSITION_SETUP replace-refs-present']",
+  "expected": "exit 2, DISPOSITION_SETUP replace-refs-present",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A15",
+  "title": "--rev '' : git resolves ':<path>' against the INDEX, not a commit",
+  "observed": "exit=64 rows_line=[] findings=1",
+  "expected": "an empty --rev must not grade staged-but-uncommitted bytes",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "A16",
+  "title": "counter blob edited in a later commit; receipts carry the older digest",
+  "observed": "exit=2 findings=0",
+  "expected": "receipts must be refused with receipt-counter-sha-mismatch when the counter at --rev differs",
+  "severity": "MEDIUM",
+  "verdict": "PARTIAL"
+ }
+]

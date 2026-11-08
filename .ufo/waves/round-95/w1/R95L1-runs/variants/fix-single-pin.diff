@@ -1,0 +1,60 @@
+--- base/measure-v94.py
++++ fix-single-pin.py
+@@ -56,7 +56,7 @@
+ """
+ import argparse, hashlib, html as htmlmod, io, json, os, re, shutil, subprocess, sys, tarfile
+ 
+-SELF_SHA256 = "5bd0f545da072b60bd3f1ea293cc3df6ee7d66b8a403240269f99808428dfd57"
++SELF_SHA256 = "5e29bef4e3aeb33317fe525a33fb405449027c5f4b52db73b53158dfaafc1857"
+ GATE_COMMIT = "f47ad6ba8d306f8125597401cb2ce45c1297a593"
+ GATE_SHA256 = "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30"
+ SELF_PIN_RE = rb'^SELF_SHA256 = "[0-9a-f]{64}"\n'
+@@ -81,15 +81,23 @@
+                  "rejected")
+ 
+ 
+-def self_pin_ok():
+-    """QUALITY 150: the check runs before any other action, on the file's own bytes."""
++def self_pin_state():
++    """QUALITY 150 + round-95 A3: exactly one pin line, then the digest.
++
++    The check runs before any other action, on the file's own bytes. A second
++    pin line is a setup refusal (`self-pin-line-count`), not a stripped no-op.
++    """
+     try:
+         with open(os.path.abspath(__file__), "rb") as f:
+             b = f.read()
+     except OSError:
+-        return False
++        return "self-pin-mismatch"
++    if len(re.findall(SELF_PIN_RE, b, flags=re.M)) != 1:
++        return "self-pin-line-count"
+     norm = re.sub(SELF_PIN_RE, b"", b, flags=re.M)
+-    return hashlib.sha256(norm).hexdigest() == SELF_SHA256
++    if hashlib.sha256(norm).hexdigest() != SELF_SHA256:
++        return "self-pin-mismatch"
++    return "ok"
+ 
+ 
+ def die(msg):
+@@ -351,14 +359,16 @@
+ 
+ def main():
+     if "--conjuncts" in sys.argv:
+-        if not self_pin_ok():
+-            die("self-pin-mismatch")
++        _pin_state = self_pin_state()
++        if _pin_state != "ok":
++            die(_pin_state)
+         print("C1_CONJUNCT_KEYS " + " ".join(CONJUNCT_KEYS))
+         print("C1_R94_PASS=keys-only")
+         sys.exit(0)
+-    selfpin = self_pin_ok()
++    _pin_state = self_pin_state()
++    selfpin = _pin_state == "ok"
+     if not selfpin:
+-        die("self-pin-mismatch")
++        die(_pin_state)
+     ap = argparse.ArgumentParser()
+     ap.add_argument("--repo", required=True)
+     ap.add_argument("--rev", required=True)

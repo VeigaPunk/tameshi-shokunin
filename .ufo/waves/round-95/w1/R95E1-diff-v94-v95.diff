@@ -1,0 +1,197 @@
+--- .ufo/evidence/round-94/c1/measure-v94.py	2026-11-08 05:48:00.776201686 -0300
++++ .ufo/evidence/round-95/c1/measure-v95.py	2026-11-08 07:41:25.132373501 -0300
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Round-94 successor counter (QUALITY 163-166; fifth attempt).
++"""Round-95 successor counter (QUALITY 163-166; round-95 A2-A5).
+ 
+ Fifth attempt at certifying Round-90's fleet-gate mutation case
+ (scripts/sources-census.sh @ f47ad6ba8d306f8125597401cb2ce45c1297a593 under
+@@ -41,34 +41,45 @@
+   * QUALITY 166 (M8) - the eight rule-level states from R93M1 are battery
+     members, each moving its named rule.
+ 
++Round-95 changes (plans/round-95.plan.md §A2-A5; nothing else moved):
++  * A2 (S323 §4.4) - `block_lines` treats a line matching `^ {4,}\\S` as a
++    literal indented-code line, visible only while a list item is open
++    (`list_open`); fenced handling is unchanged.
++  * A3 - `self_pin_state()` certifies exactly ONE pin line before hashing, so a
++    second `SELF_SHA256` line is refused as `self-pin-line-count`.
++  * A4 - `split_cells` unescapes `\\` and `\\|` (backslash first), so a cell may
++    end in a literal backslash followed by the cell boundary.
++  * A5 - a GFM delimiter cell accepts one or more hyphens (`-{1,}`).
++
+ Seal (QUALITY 139, unchanged): every git call carries GIT_NO_REPLACE_OBJECTS=1
+ plus a scrubbed GIT_*; a non-empty `git replace -l` in the lane repo or the
+ fleet repo refuses setup (exit 2).
+ 
+ Checks (identical condition in the predicate and the receipt label
+-C1_R94_PASS=true), in print order:
++C1_R95_PASS=true), in print order:
+   selfpin pins spec pin green canary valid0 trivial0 inconclusive0 unstable0
+   note verdict_tables ids mismatched0 figure witnessed source coverage n_min
+ 
+-Usage: python3 -I measure-v94.py --repo LANE --rev REV --work EMPTY_DIR
+-       python3 -I measure-v94.py --conjuncts
++Usage: python3 -I measure-v95.py --repo LANE --rev REV --work EMPTY_DIR
++       python3 -I measure-v95.py --conjuncts
+ Exit: 0 PASS; 1 not PASS; 2 setup refusal.
+ """
+ import argparse, hashlib, html as htmlmod, io, json, os, re, shutil, subprocess, sys, tarfile
+ 
+-SELF_SHA256 = "5bd0f545da072b60bd3f1ea293cc3df6ee7d66b8a403240269f99808428dfd57"
++SELF_SHA256 = "fe5beb47aaffdb6ae3f6a318f284d101fea82445ce71ff1d99a8faca10134663"
+ GATE_COMMIT = "f47ad6ba8d306f8125597401cb2ce45c1297a593"
+ GATE_SHA256 = "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30"
+ SELF_PIN_RE = rb'^SELF_SHA256 = "[0-9a-f]{64}"\n'
+ 
+-SPEC_PATH = ".ufo/evidence/round-94/c1/census-mutants.json"
+-PINS_PATH = ".ufo/evidence/round-94/c1/pins.json"
++SPEC_PATH = ".ufo/evidence/round-95/c1/census-mutants.json"
++PINS_PATH = ".ufo/evidence/round-95/c1/pins.json"
+ NOTE_PATH = "corpus/knowledge/mutation-case-fleet-sources-census.md"
+-LESSON_PATH = "corpus/lessons/round-94.md"
++LESSON_PATH = "corpus/lessons/round-95.md"
+ SOURCE_ROWS = {
+-    "S320": ".ufo/evidence/round-94/sources/s320.html",
+-    "S321": ".ufo/evidence/round-94/sources/s321.html",
+-    "S322": ".ufo/evidence/round-94/sources/s322.html",
++    "S320": ".ufo/evidence/round-95/sources/s320.html",
++    "S321": ".ufo/evidence/round-95/sources/s321.html",
++    "S322": ".ufo/evidence/round-95/sources/s322.html",
++    "S323": ".ufo/evidence/round-95/sources/s323.html",
+ }
+ N_MIN = 12
+ VERDICTS = ("KILLED", "SURVIVED")
+@@ -76,25 +87,36 @@
+                  "inconclusive0", "unstable0", "note", "verdict_tables", "ids", "mismatched0",
+                  "figure", "witnessed", "source", "coverage", "n_min")
+ FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+-DELIM_RE = re.compile(r"^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$")
++LIST_RE = re.compile(r"^ {0,3}(?:[-*+]|\d{1,9}[.)])\s")
++INDENT_CODE_RE = re.compile(r"^ {4,}\S")
++DELIM_RE = re.compile(r"^\s*\|?\s*:?-{1,}:?\s*(?:\|\s*:?-{1,}:?\s*)+\|?\s*$")
+ DENIAL_TOKENS = ("not admitted", "not-admitted", "uncertified", "withdrawn", "refused",
+                  "rejected")
+ 
+ 
+-def self_pin_ok():
+-    """QUALITY 150: the check runs before any other action, on the file's own bytes."""
++def self_pin_state():
++    """QUALITY 150 + round-95 A3: exactly one pin line, before any other action.
++
++    The check runs on the file's own bytes. A second pin line is refused
++    (`self-pin-line-count`) before any digest is compared, so the normalisation
++    must remove exactly the one pinned line.
++    """
+     try:
+         with open(os.path.abspath(__file__), "rb") as f:
+             b = f.read()
+     except OSError:
+-        return False
++        return "self-pin-mismatch"
++    if len(re.findall(SELF_PIN_RE, b, flags=re.M)) != 1:
++        return "self-pin-line-count"
+     norm = re.sub(SELF_PIN_RE, b"", b, flags=re.M)
+-    return hashlib.sha256(norm).hexdigest() == SELF_SHA256
++    if hashlib.sha256(norm).hexdigest() != SELF_SHA256:
++        return "self-pin-mismatch"
++    return "ok"
+ 
+ 
+ def die(msg):
+     print("C1_SETUP " + msg)
+-    print("C1_R94_PASS=false")
++    print("C1_R95_PASS=false")
+     sys.exit(2)
+ 
+ 
+@@ -169,12 +191,17 @@
+ 
+ # ---------------------------------------------------------------- note reader
+ def split_cells(line):
+-    """GFM cell split: unescaped `|` separates cells; `\\|` is a literal pipe."""
++    """GFM cell split: unescaped `|` separates cells.
++
++    Round-95 A4: `\\` (two backslashes) is one literal backslash and `\\|` is one
++    literal pipe; both escapes are consumed two characters at a time, so a cell
++    whose bytes end in `\\\\` before the cell boundary keeps the boundary.
++    """
+     out, cur, i = [], [], 0
+     while i < len(line):
+         ch = line[i]
+-        if ch == "\\" and i + 1 < len(line) and line[i + 1] == "|":
+-            cur.append("|")
++        if ch == "\\" and i + 1 < len(line) and line[i + 1] in "\\|":
++            cur.append(line[i + 1])
+             i += 2
+             continue
+         if ch == "|":
+@@ -197,14 +224,34 @@
+ 
+ 
+ def block_lines(text):
+-    """(orig_index, text) for every line outside a fenced code block (S322)."""
+-    vis, fence = [], None
++    """(orig_index, text) for every visible line (S322, S323 §4.4).
++
++    Fenced handling is unchanged from round 94. Round-95 A2: a line matching
++    `^ {4,}\\S` is a literal indented-code line and is not visible unless it
++    continues a list item. `list_open` is set by a visible non-blank list-item
++    line, survives blank lines, and closes on a visible non-blank line at
++    indent < 4 that is not itself a list item (the next block-level structure
++    ends the list, S321).
++    """
++    vis, fence, list_open = [], None, False
+     for idx, raw in enumerate(text.split("\n")):
+         m = FENCE_RE.match(raw)
+         if fence is None:
+             if m:
+                 fence = (m.group(1)[0], len(m.group(1)))
+                 continue
++            if raw.strip() == "":
++                vis.append((idx, raw))
++                continue
++            if LIST_RE.match(raw):
++                list_open = True
++                vis.append((idx, raw))
++                continue
++            if INDENT_CODE_RE.match(raw):
++                if list_open:
++                    vis.append((idx, raw))
++                continue
++            list_open = False
+             vis.append((idx, raw))
+         else:
+             if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= fence[1] \
+@@ -351,14 +398,16 @@
+ 
+ def main():
+     if "--conjuncts" in sys.argv:
+-        if not self_pin_ok():
+-            die("self-pin-mismatch")
++        state = self_pin_state()
++        if state != "ok":
++            die(state)
+         print("C1_CONJUNCT_KEYS " + " ".join(CONJUNCT_KEYS))
+-        print("C1_R94_PASS=keys-only")
++        print("C1_R95_PASS=keys-only")
+         sys.exit(0)
+-    selfpin = self_pin_ok()
++    selfpin_state = self_pin_state()
++    selfpin = selfpin_state == "ok"
+     if not selfpin:
+-        die("self-pin-mismatch")
++        die(selfpin_state)
+     ap = argparse.ArgumentParser()
+     ap.add_argument("--repo", required=True)
+     ap.add_argument("--rev", required=True)
+@@ -552,7 +601,7 @@
+         print("C1_BADROWS " + " ".join(bad[:40]))
+     print("C1_SOURCE " + " ".join(source_detail))
+     print("C1_CONJUNCTS " + " ".join("%s=%s" % (k, str(v).lower()) for k, v in conj.items()))
+-    print("C1_R94_PASS=" + ("true" if ok else "false"))
++    print("C1_R95_PASS=" + ("true" if ok else "false"))
+     sys.exit(0 if ok else 1)
+ 
+ 

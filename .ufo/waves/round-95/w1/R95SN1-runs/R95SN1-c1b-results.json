@@ -1,0 +1,58 @@
+[
+ {
+  "id": "i04_fleet_replace_ref",
+  "title": "ATTACK ERROR",
+  "observed": "AssertionError('fleet clone lacks the gate blob')",
+  "expected": "no exception",
+  "severity": "INFO",
+  "verdict": "error"
+ },
+ {
+  "id": "I11",
+  "title": "counter edited to force ok=True with the SELF_SHA256 pin CORRECTLY RECOMPUTED",
+  "observed": "exit=0 self_pin_passed=True claims_C1_R95_PASS=true=True out=['C1_R95_PASS=true']",
+  "expected": "the self-pin certifies the file's OWN bytes, not the executed bytes; identity is bound by kill rule (c) (the counter blob's sha256 in claims.json), which no instrument check can substitute for",
+  "severity": "MEDIUM (declared limit)",
+  "verdict": "accepted-by-design"
+ },
+ {
+  "id": "I12",
+  "title": "a SECOND SELF_SHA256 line with the SAME digest as the first",
+  "observed": "exit=2 out=['C1_SETUP self-pin-line-count', 'C1_R95_PASS=false']",
+  "expected": "exit 2, C1_SETUP self-pin-line-count (the count, not the digest, must catch it)",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "I13.uppercase_hex",
+  "title": "second pin line that the regex does not match: uppercase hex",
+  "observed": "exit=2 out=['C1_SETUP self-pin-mismatch', 'C1_R95_PASS=false']",
+  "expected": "the counter must refuse (exit 2): an unrecognised pin line either changes the executed constant or is inert, and either way the file's bytes changed, so the digest check must fire",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "I13.single_quotes",
+  "title": "second pin line that the regex does not match: single quotes",
+  "observed": "exit=2 out=['C1_SETUP self-pin-mismatch', 'C1_R95_PASS=false']",
+  "expected": "the counter must refuse (exit 2): an unrecognised pin line either changes the executed constant or is inert, and either way the file's bytes changed, so the digest check must fire",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "I13.no_spaces",
+  "title": "second pin line that the regex does not match: no spaces",
+  "observed": "exit=2 out=['C1_SETUP self-pin-mismatch', 'C1_R95_PASS=false']",
+  "expected": "the counter must refuse (exit 2): an unrecognised pin line either changes the executed constant or is inert, and either way the file's bytes changed, so the digest check must fire",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ },
+ {
+  "id": "I13.trailing_spaces",
+  "title": "second pin line that the regex does not match: trailing spaces",
+  "observed": "exit=2 out=['C1_SETUP self-pin-mismatch', 'C1_R95_PASS=false']",
+  "expected": "the counter must refuse (exit 2): an unrecognised pin line either changes the executed constant or is inert, and either way the file's bytes changed, so the digest check must fire",
+  "severity": "NONE (defended)",
+  "verdict": "defended"
+ }
+]
