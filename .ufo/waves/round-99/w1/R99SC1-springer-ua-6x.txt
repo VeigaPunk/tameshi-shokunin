@@ -1,0 +1,54 @@
+# seat: R99SC1 (scout) — tameshi round 99 wave w1
+# scratch: /fast/scratch/hyaku/tameshi-r99/R99SC1  (bytes kept in scratch; digests copied here)
+# cwd for repo commands: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# scope: Springer UA discrimination — 3x default curl UA vs 3x browser UA, same URL, same minute
+# question: is the 3038 B challenge page a property of the USER-AGENT or of fetch order?
+# (the landed lesson corpus/lessons/round-99.md:22-24 attributes it to 'curl' on the first fetch)
+
+$ for i in 1 2 3; do curl -sSL -o sp.def$i.html -w "default run$i http=%{http_code} bytes=%{size_download}\n" 'https://link.springer.com/article/10.3758/s13428-015-0664-2'; done; for i in 1 2 3; do curl -sSL -A 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36' -o sp.ua$i.html -w "browserUA run$i http=%{http_code} bytes=%{size_download}\n" 'https://link.springer.com/article/10.3758/s13428-015-0664-2'; done
+default run1 http=200 bytes=467680
+default run2 http=200 bytes=467714
+default run3 http=200 bytes=467680
+browserUA run1 http=200 bytes=3038
+browserUA run2 http=200 bytes=3038
+browserUA run3 http=200 bytes=3038
+rc=0
+
+$ for f in sp.def1.html sp.def2.html sp.def3.html sp.ua1.html sp.ua2.html sp.ua3.html; do printf '%-14s ' $f; grep -o -m1 '<title>[^<]*</title>' $f; done
+sp.def1.html   <title>The prevalence of statistical reporting errors in psychology (1985–2013) | Behavior Research Methods | Springer Nature Link</title>
+sp.def2.html   <title>The prevalence of statistical reporting errors in psychology (1985–2013) | Behavior Research Methods | Springer Nature Link</title>
+sp.def3.html   <title>The prevalence of statistical reporting errors in psychology (1985–2013) | Behavior Research Methods | Springer Nature Link</title>
+sp.ua1.html    <title>Client Challenge</title>
+sp.ua2.html    <title>Client Challenge</title>
+sp.ua3.html    <title>Client Challenge</title>
+rc=0
+
+$ sha256sum sp.def1.html sp.def2.html sp.def3.html sp.ua1.html sp.ua2.html sp.ua3.html
+48ff61798b700a8a7882c4bcbe7753980952b6936b5ed99127313f56bf85eb32  sp.def1.html
+d07b9a4b5678879adfafbcc4bc71128027ae59a30b942656425d928ce557073e  sp.def2.html
+dd1e7762026d7390d49c96264a40be40079b3f4d9ed632ca3c34b6e008b8cf39  sp.def3.html
+32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea  sp.ua1.html
+32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea  sp.ua2.html
+32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea  sp.ua3.html
+rc=0
+
+$ python3 - <<'EOF'
+import re,html
+for f in ('sp.def1.html','sp.def3.html','sp.ua1.html'):
+    raw=open(f,encoding='utf-8',errors='replace').read()
+    s=re.sub(r'(?is)<script.*?</script>',' ',raw); s=re.sub(r'(?is)<style.*?</style>',' ',s)
+    s=re.sub(r'(?s)<[^>]+>',' ',s); s=html.unescape(s); s=re.sub(r'\s+',' ',s)
+    q='half of all published psychology papers that use NHST'
+    print(f,'quote_present=',q in s,'| challenge_markers=',len(re.findall(r'(?i)client challenge|enable javascript|_fs-ch-',raw)))
+EOF
+sp.def1.html quote_present= True | challenge_markers= 0
+sp.def3.html quote_present= True | challenge_markers= 0
+sp.ua1.html quote_present= False | challenge_markers= 7
+rc=0
+
+$ grep -n -A3 'Client Challenge' corpus/lessons/round-99.md
+23:  3038 B JavaScript "Client Challenge" page to curl; a second fetch with redirects followed served
+24-  the article (467714 B). The Europe PMC record is the row's anchor because it is a stable JSON
+25-  field; no row was written for the landing page (same work).
+26-- **S325 (new, tier A, admit)** — statcheck web FAQ `http://statcheck.io/`, accessed 2026-11-08
+rc=0

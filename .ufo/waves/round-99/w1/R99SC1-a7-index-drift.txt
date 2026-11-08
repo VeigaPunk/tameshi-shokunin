@@ -1,0 +1,19 @@
+# seat: R99SC1 (scout) — tameshi round 99 wave w1
+# scratch: /fast/scratch/hyaku/tameshi-r99/R99SC1  (bytes kept in scratch; digests copied here)
+# cwd for repo commands: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# scope: A7's index-drift narrowing of the mined mistake, verified by parsing SELFTEST_CASES
+#         and the frozen-vs-operative battery counts in claims.json at R
+
+$ for c in 6b1428c8 764aca97 d32043ec 3b7ae127 ab598d03 808a4377; do printf '%-10s ' $c; git show $c:tools/control-assertion-audit.py 2>/dev/null | python3 -c "import sys,ast; src=sys.stdin.read(); t=ast.parse(src); [print('n=%2d index7=%r index11=%r'%(len(v),v[7][0],v[11][0] if len(v)>11 else None)) for n in ast.walk(t) if isinstance(n,ast.Assign) and any(getattr(x,'id',None)=='SELFTEST_CASES' for x in n.targets) for v in [ast.literal_eval(n.value)]]"; done
+6b1428c8   n= 9 index7='loop-site' index11=None
+764aca97   n= 9 index7='loop-site' index11=None
+d32043ec   n= 9 index7='loop-site' index11=None
+3b7ae127   n=15 index7='augassign' index11='loop-site'
+ab598d03   n=15 index7='augassign' index11='loop-site'
+808a4377   n=15 index7='augassign' index11='loop-site'
+rc=0
+
+$ git show 808a4377:.ufo/waves/round-99/claims.json | python3 -c "import json,sys; d=json.load(sys.stdin); [print(k, 'wording_battery:', [s for s in ('17/17','25/25','27/27','38/38') if s in d['claims'][k]['wording']], '| battery_predicate:', d['claims'][k]['battery_predicate'], '| battery_predicate_frozen:', d['claims'][k]['battery_predicate_frozen']) for k in ('C1','C2')]"
+C1 wording_battery: ['17/17'] | battery_predicate: TALLY_RECONCILE_SELFTEST: 25/25 pass | battery_predicate_frozen: TALLY_RECONCILE_SELFTEST: 17/17 pass
+C2 wording_battery: ['27/27'] | battery_predicate: CONTROL_ASSERT_V2_SELFTEST: 38/38 pass | battery_predicate_frozen: CONTROL_ASSERT_V2_SELFTEST: 27/27 pass
+rc=0

@@ -1,0 +1,66 @@
+# seat: R99SC1 (scout) — tameshi round 99 wave w1
+# scratch: /fast/scratch/hyaku/tameshi-r99/R99SC1  (bytes kept in scratch; digests copied here)
+# cwd for repo commands: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# scope: frozen C1/C2 re-derivation at the RECORDS REVISION R (not the freeze rev)
+# R = 808a43778701cf1b05762584954d435481dc6fa2
+
+$ python3 -I tools/tally-reconcile.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --record corpus/lessons/round-93.md --record plans/round-93.plan.md --record corpus/lessons/round-94.md --record plans/round-94.plan.md --record corpus/lessons/round-95.md --record plans/round-95.plan.md --record corpus/lessons/round-96.md --record plans/round-96.plan.md --record corpus/lessons/round-97.md --record plans/round-97.plan.md --record corpus/lessons/round-98.md --record plans/round-98.plan.md | tail -2
+TALLY uncited plans/round-98.plan.md:185 token REGISTRY_IMMUTABLE_SELFTEST claimed=10/10 receipt=- observed=- detail=no-citation
+TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19
+rc=0
+
+$ python3 -I tools/tally-reconcile.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --record corpus/lessons/round-94.md
+TALLY mismatched corpus/lessons/round-94.md:66 token DISPOSITION_SELFTEST claimed=8/8 receipt=.ufo/evidence/round-94/pre-freeze/c2-selftest.out observed=9/9 detail=differs
+TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=0 mismatched=1 unbound=0 uncited=0
+rc=1
+
+$ python3 -I tools/tally-reconcile.py --selftest | tail -2
+SELFTEST PASS worktree-edit-ignored rc=1
+TALLY_RECONCILE_SELFTEST: 25/25 pass
+rc=0
+
+$ python3 -I tools/control-assertion-audit-v2.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --driver .ufo/evidence/round-99/c2/alias-driver.py | tail -3
+CONTROL_ASSERT_SITE line=29 name=alias-literal measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record
+CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1
+rc=0
+
+$ python3 -I tools/control-assertion-audit.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --driver .ufo/evidence/round-99/c2/alias-driver.py | tail -1
+CONTROL_ASSERT sites=2 measured=2 literal=0 unmeasured=0
+rc=0
+
+$ python3 -I tools/control-assertion-audit-v2.py --selftest | tail -1
+CONTROL_ASSERT_V2_SELFTEST: 38/38 pass
+rc=0
+
+$ python3 -I tools/control-assertion-audit.py --selftest | tail -1
+CONTROL_ASSERT_SELFTEST: 18/18 pass
+rc=0
+
+$ python3 -I tools/control-assertion-audit.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --driver .ufo/evidence/round-98/controls98.py | grep '^CONTROL_ASSERT_SITE' > /fast/scratch/hyaku/tameshi-r99/R99SC1/v1R.sites; python3 -I tools/control-assertion-audit-v2.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --driver .ufo/evidence/round-98/controls98.py | grep '^CONTROL_ASSERT_SITE' > /fast/scratch/hyaku/tameshi-r99/R99SC1/v2R.sites; diff /fast/scratch/hyaku/tameshi-r99/R99SC1/v1R.sites /fast/scratch/hyaku/tameshi-r99/R99SC1/v2R.sites && echo SITE_LINES_EQUAL; wc -l < /fast/scratch/hyaku/tameshi-r99/R99SC1/v1R.sites; python3 -I tools/control-assertion-audit.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --driver .ufo/evidence/round-98/controls98.py | tail -1; python3 -I tools/control-assertion-audit-v2.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --driver .ufo/evidence/round-98/controls98.py | tail -1
+SITE_LINES_EQUAL
+15
+CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0
+CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0
+rc=0
+
+$ python3 -I tools/control-assertion-audit.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --driver .ufo/evidence/round-97/controls97.py | grep '^CONTROL_ASSERT_SITE' > /fast/scratch/hyaku/tameshi-r99/R99SC1/v1R.sites; python3 -I tools/control-assertion-audit-v2.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --driver .ufo/evidence/round-97/controls97.py | grep '^CONTROL_ASSERT_SITE' > /fast/scratch/hyaku/tameshi-r99/R99SC1/v2R.sites; diff /fast/scratch/hyaku/tameshi-r99/R99SC1/v1R.sites /fast/scratch/hyaku/tameshi-r99/R99SC1/v2R.sites && echo SITE_LINES_EQUAL; wc -l < /fast/scratch/hyaku/tameshi-r99/R99SC1/v1R.sites; python3 -I tools/control-assertion-audit.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --driver .ufo/evidence/round-97/controls97.py | tail -1; python3 -I tools/control-assertion-audit-v2.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --driver .ufo/evidence/round-97/controls97.py | tail -1
+SITE_LINES_EQUAL
+15
+CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1
+CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1
+rc=0
+
+$ sha256sum tools/tally-reconcile.py tools/control-assertion-audit-v2.py tools/control-assertion-audit.py .ufo/evidence/round-99/c2/alias-driver.py
+a1c50bb41599cfd663749855c7924c03360a46be2811812fb66f25c37b09b482  tools/tally-reconcile.py
+7527e40fd021505d9f0c4c028c797596efb4b13a9958269ce1ff12f5a9626368  tools/control-assertion-audit-v2.py
+82c2e54b24bab55e9f01bb3f15afcb2c3b2654c3486bf6de29a06981cc5c0cd4  tools/control-assertion-audit.py
+e01fce0dc84a24cbc529075edfcd3c5317fdac1316f2ba84a93c93890c1bb82f  .ufo/evidence/round-99/c2/alias-driver.py
+rc=0
+
+$ cat .ufo/waves/round-99/records-rev.txt; echo '--- committed records receipts ---'; grep -H -E 'SELFTEST: [0-9]+/[0-9]+' <(git show HEAD:.ufo/evidence/round-99/records/c1-selftest.out) <(git show HEAD:.ufo/evidence/round-99/records/c2-v2-selftest.out) 2>/dev/null || (git show HEAD:.ufo/evidence/round-99/records/c1-selftest.out | grep 'SELFTEST: '; git show HEAD:.ufo/evidence/round-99/records/c2-v2-selftest.out | grep 'SELFTEST: ')
+808a43778701cf1b05762584954d435481dc6fa2
+--- committed records receipts ---
+/dev/fd/63:TALLY_RECONCILE_SELFTEST: 25/25 pass
+/dev/fd/62:CONTROL_ASSERT_V2_SELFTEST: 38/38 pass
+rc=0
