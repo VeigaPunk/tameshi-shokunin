@@ -798,3 +798,16 @@ evidence, not a new frontier ground: F1–F11 are unchanged (F1 partly held, F2 
 held, F3–F11 as before). The registry in-place cell class (round-97 D-1) is now measured
 by `tools/registry-cell-immutability.py`; its live red pair prints the two `anchor`
 findings and its selftest is 10/10.
+
+## Round 99 — tally-receipt reconciliation (calibration) and recorder-alias sites (coverage)
+
+Appended; rows above keep their line numbers. QUALITY 7: the new note gets its row
+in the same round.
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/tally-receipt-reconciliation.md` | a recorded selftest tally is re-read from the receipt its line cites: the same-line pairing grammar, the four verdicts, the twelve-record measurement (2 of 28 tallies confirmed, the round-94 mismatch found, 6 unbound limits, 19 uncited), and statcheck's lesson that silence outside a declared grammar is not agreement | S324, S325 (opened 2026-11-08); S326 rejected; `tools/tally-reconcile.py`; `.ufo/evidence/round-99/records/` |
+
+The recorder-alias site audit (`tools/control-assertion-audit-v2.py`) widens the round-98
+audit's site set to aliases and partials; it is coverage of an edge class on the lane's own
+audit, not a new frontier ground: F1–F11 are unchanged.

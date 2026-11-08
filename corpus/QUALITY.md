@@ -2818,3 +2818,39 @@ on the landed bytes (`c2-landed-battery.txt`).
     instrument (round-98 A5): every pre-call assignment in the call's scope chain must
     be measured; a call spelled `run` may still be a stub, which the limits declare. (`lessons/round-98.md`; round-97
     spot-check D-2; S012.)
+
+178. A record line that states a selftest tally **cites, on the same line, a receipt the
+    lane's reconciler can resolve**, and the tally equals every line of that receipt
+    carrying the token. A tally with no citation on its line is counted, never graded; a
+    citation that resolves to no path or to several is `unbound` and makes the reconciler
+    exit nonzero; a cited receipt whose `TOKEN: n/m` differs is a **mismatch the round
+    routes** (remedy: criterion 169's append-only erratum, never an edit of the frozen
+    line). Able to fail: at the round-99 records revision `808a4377`,
+    `python3 -I tools/tally-reconcile.py --repo . --rev 808a43778701cf1b05762584954d435481dc6fa2 --record corpus/lessons/round-94.md`
+    prints `TALLY mismatched corpus/lessons/round-94.md:66 token DISPOSITION_SELFTEST
+    claimed=8/8 … observed=9/9` and `records=1 tallies=1 pairs=1 matched=0 mismatched=1`,
+    exit 1 (`.ufo/evidence/round-99/records/c1-r94-only.out`), while the round-93 lesson
+    alone prints `matched=1 mismatched=0`, exit 0 (`records/c1-r93-only.out`); over the
+    twelve round-93..98 lessons and plans the line is
+    `TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19`
+    (`records/c1-population.out`); `--selftest` 25/25 (`records/c1-selftest.out`). The
+    reconciler recognises only `TOKEN: N/M pass` and `selftest … N/M` within 12 characters,
+    resolves only tree paths and the record's own round dirs, and refuses a non-UTF-8 blob;
+    a figure outside that grammar is unchecked, not consistent (S325). The rule reads one
+    repository, so a fleet-repo report sentence is outside it. (`lessons/round-99.md`;
+    round-94 closure defect 1; round-98 spot-check D2; S324, S325.)
+
+179. A static audit's **site set is stated as the exact binding grammar it walks**, and every
+    binding form the sentence names has a selftest arm that fails under the predecessor or a
+    mutant. A recorder reached through a spelling the walker does not see is a declared
+    non-site, never silently "covered". Able to fail: at `808a4377`,
+    `tools/control-assertion-audit-v2.py` on `.ufo/evidence/round-99/c2/alias-driver.py`
+    prints `CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1` exit 1 where the
+    round-98 audit prints `sites=2 measured=2 literal=0 unmeasured=0` exit 0
+    (`records/c2-v{2,1}-alias-driver.out`); the renamed (`log_entry`) and chain (`rec2`)
+    fixtures give the same v2 summary (`records/c2-v2-alias-driver-{renamed,chain}.out`);
+    nine of the eleven round-99 amendment arms fail under the frozen v2
+    (`records-aux/a1-a9-discrimination.out`, `DISCRIM_V2 discriminates=9 armour=2`); v1/v2
+    site and summary lines agree on both committed drivers
+    (`records-aux/c2-site-diff-controls{98,97}.out`, empty diff). (`lessons/round-99.md` M3;
+    `w1/R99R2.md`.)

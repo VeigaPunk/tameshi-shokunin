@@ -276,6 +276,8 @@ written and are superseded here:
 | control-assertion audit | classify every `add(...)` site of a control driver by the provenance of its recorded code (measured / literal / unresolved) from committed bytes, refusing an absent or unparsable driver at setup | `python3 -I tools/control-assertion-audit.py --repo . --rev d32043ec… --driver .ufo/evidence/round-98/controls98.py` → `CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0`, exit 0; the r97 driver → `measured=14 literal=1 unmeasured=1`, exit 1; `--selftest` → 12/12 (`.ufo/evidence/round-98/pre-freeze/c1-audit-*.out`) | round 98 |
 | guard refusal battery | drive a frozen tool through all six declared `GUARD_SETUP` refusal classes from committed bytes, one manifest fixture per class, with a positive and a red arm that must miss | `python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane . --rev d32043ec… --tool-sha 634997d0… --work <empty>` → `GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok`, exit 0; `--red state-unbuildable` → `refused=5 wrong=1`, exit 1; `--selftest` → 9/9 | round 98 |
 | registry cell audit | compare two revisions of `corpus/SOURCES.md` and flag any immutable-cell change or row removal, parsing 0-3-space rows and reading blobs, refusing a malformed or zero-row registry | `python3 -I tools/registry-cell-immutability.py --repo . --from 0b19af5f… --to 29734beb…` → two `anchor` findings (`changed=2`), exit 1; the green pair → `changed=0 removed=0 added=0`, exit 0; `--selftest` → 10/10 | round 98 |
+| tally-receipt reconciler | find every recorded selftest tally in a set of committed records, pair it with the receipt its line cites (tree path or the record's round dirs), and grade matched / mismatched / unbound / uncited from blobs at one revision, refusing non-UTF-8 blobs and non-isolated runs | `python3 -I tools/tally-reconcile.py --repo . --rev 808a4377… --record <12 round-93..98 lessons/plans>` → `TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19`, exit 1, the round-94 lesson line 66 named; `--selftest` → 25/25 (`.ufo/evidence/round-99/records/c1-*.out`) | round 99 |
+| recorder-alias site audit | count control-driver sites registered through recorder aliases (plain/annotated/walrus/tuple/conditional bindings, chains, partials) and grade them with the round-98 rules, marking ambiguous and partial recorders unresolved | `python3 -I tools/control-assertion-audit-v2.py --repo . --rev 808a4377… --driver .ufo/evidence/round-99/c2/alias-driver.py` → `CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1`, exit 1 (round-98 audit: `sites=2 …`, exit 0); `--selftest` → 38/38 (`.ufo/evidence/round-99/records/c2-*.out`) | round 99 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout. The three round-81 capabilities above now live here rather than only in `## Round 81 — capabilities entered` (the round-81 closure's routed defect 6); each is a live self-state row from round 82 (`tools/selfstate-freshness.json` rows `closure-defect-bind`, `standing-pin-audit`, `selftest-text-pin`).
 
@@ -5892,3 +5894,41 @@ with the right payload is still accepted (receipt provenance is a declared limit
 the guard matrix's manifest rows remain a human declaration the digest pin fixes but does not
 validate, and the new audit is blind to a driver that registers through a renamed recorder.
 No claim is pre-approved here.
+
+## Round 99 — two claims: tally-receipt reconciliation (calibration) and recorder-alias sites (coverage)
+
+Base `ff93fa16a1f65e66385b7c7f564f03b218d91ea2`; instruments `46651051`; freeze `ab598d03`;
+wave spec `27a5e49e`; records revision R `808a43778701cf1b05762584954d435481dc6fa2`. One v1 wave
+`w1`, 13 seats (executor 3, reviewer 2, critic 2, mutation-tester 1, sentinel 1, connector 1,
+revenger 1, scout 1, scribe 1; attack seats by the §8 set — reviewer×2, critic×2,
+mutation-tester, sentinel, connector, revenger — 8/13). Amendments A1-A11 from wave artifacts
+before the records run (`plans/round-99.plan.md` §Amendments).
+
+| Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|---|---|
+| R99-C1 | calibration (lowest non-retired, pinned 8) | at base `ff93fa16` no committed tool prints a `TALLY_RECONCILE` line (`git grep` exit 1; `.ufo/evidence/round-99/records-aux/c1-before-token.out`); the round-94 and round-98 tally mismatches were found only by non-author closures | `TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19`, exit 1, the only mismatched pair `corpus/lessons/round-94.md:66 … claimed=8/8 … observed=9/9`; round-94-only `mismatched=1` exit 1; out-of-set round-93-only `matched=1` exit 0 (A5); selftest 25/25 (A2/A3/A6/A9) | **verified under the amended wording (A2-A6, A9-A11)** | `python3 -I tools/tally-reconcile.py --repo . --rev <R> --record corpus/lessons/round-93.md --record plans/round-93.plan.md … --record corpus/lessons/round-98.md --record plans/round-98.plan.md` | freeze `ab598d03` (pre-freeze receipts at `46651051`); R `808a4377` (`.ufo/evidence/round-99/records/c1-*.out`) |
+| R99-C2 | coverage | at base no committed tool prints `CONTROL_ASSERT_RECORDERS` (`git grep` exit 1); the round-98 audit counts two sites on the alias fixture and exits 0 (round-98 declared limit: a renamed recorder is zero-site) | v2 on the alias fixture `CONTROL_ASSERT_RECORDERS aliases=1 … names=add,record`, `CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1`, exit 1; v1 `sites=2 …` exit 0; renamed and chain fixtures (A5) give the same v2 summary; v1/v2 site and summary lines equal on `controls98.py`/`controls97.py`; selftest 38/38 (A1) | **verified under the amended wording (A1, A5, A8, A10, A11)** | `python3 -I tools/control-assertion-audit-v2.py --repo . --rev <R> --driver .ufo/evidence/round-99/c2/alias-driver.py` | freeze `ab598d03`; R `808a4377` (`.ufo/evidence/round-99/records/c2-*.out`) |
+
+Every tool receipt at R binds: `tools/receipt-bytes-bind.py --root .ufo/evidence/round-99/records`
+→ `RECEIPT_BIND: receipts=16 bound=16 corrected=0 design=0 unbound=0`, exit 0
+(`records-aux/receipt-bytes-bind.out`). The amendment arms discriminate: 4 of 8 new
+reconciler arms and 9 of 11 new v2 arms fail under the frozen tool bytes
+(`records-aux/a1-a9-discrimination.out`).
+
+Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0). Capability rows entered:
+`tally-receipt reconciler`, `recorder-alias site audit` (`## Capabilities`).
+
+**Correction (round-98 spot-check D1, append-only).** The round-94 row `R94-C1` above had its
+verdict cell rewritten in place by round 98 (`fa2d2169`) from `**verified under the amended
+wording**` to `**verified under the amended wording (A3-A10)**`. Round 94 had amendments A1-A8
+only, so the parenthetical is false. The operative round-94 verdict text is
+`**verified under the amended wording**`; the rewritten cell is left as landed and is
+superseded by this note (rewriting it a second time would repeat the defect).
+
+**Retired:** none. **Saturation:** unchanged.
+
+**Planned (round 100):** the declared limits this round leaves live — the reconciler's
+per-line pairing and two-spelling grammar (19 of 28 tallies uncited), the two citation
+grammars and two binding walkers the lane now holds (A8), `add` rebinding invisible to both
+audits, and no `tools/registry.json` row for the round-98/99 audits. No claim is pre-approved
+here.

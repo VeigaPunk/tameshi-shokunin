@@ -5257,3 +5257,35 @@ Base `034240a591575167f0747ad7372a1f4b9cd33a58`; instruments `d32043ec`; freeze
   112, 16-word quote) and cited by `corpus/knowledge/control-assertion-anchoring.md`; S009
   probed and refused a verdict from a 403 challenge page (stays `queued`); no new row; census
   exit 0 before and after, rows 183, mined 149. QUALITY 177; README round-98 row.
+
+## Round 99 (2026-11-08) — tally-receipt reconciliation (C1) and recorder-alias sites (C2)
+
+Base `ff93fa16a1f65e66385b7c7f564f03b218d91ea2`; instruments `46651051`; freeze `ab598d03`;
+records revision `808a4377` (`.ufo/waves/round-99/records-rev.txt`); one v1 wave `w1`, 13 seats.
+
+- **R99-C1 (calibration).** Motivating evidence: two non-author closures found a recorded
+  selftest tally contradicted by the receipt it cites — round 94 (`DISPOSITION_SELFTEST: 8/8`
+  beside a `9/9` receipt, `corpus/lessons/round-94.md:66`) and round 98 (D2: `18/18` "at the
+  freeze" beside a `12/12` receipt) — and `considerthese/2026-11-08.md` idea 1 proposed the
+  reconciler. `tools/tally-reconcile.py` pairs every `TOKEN: N/M pass` / `selftest … N/M` tally
+  with the receipt its own line cites and grades it from blobs at one revision. Over the twelve
+  round-93..98 lessons and plans at R it prints `TALLY_RECONCILE records=12 tallies=28 pairs=9
+  matched=2 mismatched=1 unbound=6 uncited=19` exit 1, the round-94 line the only mismatch;
+  round-94 alone exits 1, round-93 alone exits 0; selftest 25/25. The wave falsified the
+  grading and citation sentences (R99R1, R99SN1) and the do-nothing taxonomy (R99C1); A2-A6 and
+  A9-A11 repaired or narrowed each before the records run. Sources S324/S325 (statcheck) ground
+  the knowledge entry `corpus/knowledge/tally-receipt-reconciliation.md`; S326 (GRIM) is the
+  round's reject.
+- **R99-C2 (coverage).** Motivating evidence: the round-98 declared limit — a driver that
+  registers through a renamed recorder is zero-site and passes the round-98 audit vacuously.
+  `tools/control-assertion-audit-v2.py` widens the site set to recorder aliases and partials and
+  grades them with the round-98 rules. At R the alias fixture prints `sites=4 measured=3
+  literal=1 unmeasured=1` exit 1 where the round-98 audit prints `sites=2 …` exit 0; the renamed
+  and chain fixtures agree; v1/v2 lines equal on both committed drivers; selftest 38/38. The
+  wave falsified the binding/fixpoint/partial sentences (R99R2, R99E2, R99M1) → A1.
+- **Routed defects.** D1 corrected append-only in SCORECARD; D2 erratum in the lesson and
+  report; D3 every round-99 receipt records its command line, and records receipts carry the
+  round-78 triple and bind 16/16 (A11); D4 the round-98 registry pairs re-run byte-identically by
+  non-author seat R99E3; D5 carried limits restated.
+- **Mistakes** M1-M6 in `corpus/lessons/round-99.md` (M1 mined from round 98: the v1
+  `loop-site-count` arm's index drift at `3b7ae127`).
