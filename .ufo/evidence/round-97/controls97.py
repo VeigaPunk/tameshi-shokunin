@@ -122,32 +122,24 @@ def main():
     r = commit(st, "drop pos-real from index", add=False)
     code, out = run([sys.executable, "-I", binder, "--lane", st, "--rev", r])
     add("c1-forge-worktree-only", code, out, 1)
-    # (b) counter_sha edit -> mismatched
-    git(st, "reset", "-q", "--hard", r)
-    txt = open(os.path.join(st, c), encoding="utf-8").read()
-    ntxt = re.sub(r"counter_sha=[0-9a-f]{64}", "counter_sha=" + "0" * 64, txt, count=1)
-    assert ntxt != txt
-    open(os.path.join(st, c), "w", encoding="utf-8").write(ntxt)
-    r = commit(st, "counter-sha edit")
-    code, out = run([sys.executable, "-I", binder, "--lane", st, "--rev", r])
-    add("c1-forge-counter-sha", code, out, 1)
-    # (c) exit edit -> mismatched
-    git(st, "reset", "-q", "--hard", r)
-    body = open(os.path.join(st, c), encoding="utf-8").read()
-    open(os.path.join(st, c), "w", encoding="utf-8").write(
-        re.sub(r"exit=\d+", "exit=7", body, count=1))
-    r = commit(st, "exit edit")
-    code, out = run([sys.executable, "-I", binder, "--lane", st, "--rev", r])
-    add("c1-forge-exit", code, out, 1)
-    # (d) conjunct flip -> mismatched
-    git(st, "reset", "-q", "--hard", r)
-    body = open(os.path.join(st, c), encoding="utf-8").read()
-    assert "C1_R96_PASS=true" in body
-    open(os.path.join(st, c), "w", encoding="utf-8").write(
-        body.replace("C1_R96_PASS=true", "C1_R96_PASS=false", 1))
-    r = commit(st, "pass-payload edit")
-    code, out = run([sys.executable, "-I", binder, "--lane", st, "--rev", r])
-    add("c1-forge-payload", code, out, 1)
+    # Each body-edit forgery starts from the PRISTINE receipt at a.rev, so exactly one
+    # field differs: building one on top of the previous commit let the digest check
+    # fire first and never reached the exit=/payload paths (recorded as M4).
+    def forge(name, mutate, msg):
+        git(st, "reset", "-q", "--hard", a.rev)
+        body = orig
+        nbody = mutate(body)
+        assert nbody != body, name
+        open(os.path.join(st, c), "w", encoding="utf-8").write(nbody)
+        rev = commit(st, msg)
+        code, out = run([sys.executable, "-I", binder, "--lane", st, "--rev", rev])
+        add(name, code, out, 1)
+    forge("c1-forge-counter-sha",
+          lambda b: re.sub(r"counter_sha=[0-9a-f]{64}", "counter_sha=" + "0" * 64, b, count=1),
+          "counter-sha edit")
+    forge("c1-forge-exit", lambda b: re.sub(r"exit=\d+", "exit=7", b, count=1), "exit edit")
+    forge("c1-forge-payload",
+          lambda b: b.replace("C1_R96_PASS=true", "C1_R96_PASS=false", 1), "pass-payload edit")
     # (e) driver digest mismatch at the real lane (pin not equal)
     code, out = run([sys.executable, "-I", binder, "--lane", lane, "--rev", a.rev,
                      "--driver-sha", "0" * 64])
