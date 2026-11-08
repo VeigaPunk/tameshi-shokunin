@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <script type="application/shiny-singletons"></script>
+  <script type="application/html-dependencies">jquery[3.6.0];shiny-sass[1.10.0];shiny-busy-indicators[1.10.0];shiny-javascript[1.10.0];bootstrap[5.2.2];bs3compat[0.4.2];htmltools-fill[0.5.8.1];htmlwidgets[1.6.4];datatables-css[0.0.0];datatables-binding[0.33];crosstalk[1.2.1]</script>
+<script src="jquery-3.6.0/jquery.min.js"></script>
+<link href="shiny-sass-1.10.0/shiny-sass.css" rel="stylesheet" />
+<link href="shiny-busy-indicators-1.10.0/busy-indicators.css" rel="stylesheet" />
+<script src="shiny-javascript-1.10.0/shiny.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<link href="bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet" />
+<script src="bootstrap-5.2.2/bootstrap.bundle.min.js"></script>
+<script src="bs3compat-0.4.2/transition.js"></script>
+<script src="bs3compat-0.4.2/tabs.js"></script>
+<script src="bs3compat-0.4.2/bs3compat.js"></script>
+<link href="htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="datatables-binding-0.33/datatables.js"></script>
+<link href="crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+<script src="crosstalk-1.2.1/js/crosstalk.min.js"></script>  <title>statcheck // web</title>
+  <link rel="stylesheet" type="text/css" href="css/styles.css"/>
+  <script src="https://kit.fontawesome.com/0c3170759b.js" crossorigin="anonymous"></script>
+<script src="__assets__/sockjs.min.js"></script>
+<script src="__assets__/shiny-server-client.min.js"></script>
+<script>preShinyInit({reconnect:true,disableProtocols:[]});</script>
+<link rel="stylesheet" type="text/css" href="__assets__/shiny-server.css"/>
+
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-2615" data-bs-toggle="collapse" data-bs-target="#navbar-collapse-2615">
+          <span class="sr-only visually-hidden">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <span class="navbar-brand">statcheck // web</span>
+      </div>
+      <div class="navbar-collapse collapse" id="navbar-collapse-2615">
+        <ul class="nav navbar-nav" data-tabsetid="4469">
+          <li class="nav-item">
+            <a href="#tab-4469-1" data-toggle="tab" data-bs-toggle="tab" data-value="Home" class="nav-link active">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="#tab-4469-2" data-toggle="tab" data-bs-toggle="tab" data-value="FAQ" class="nav-link">FAQ</a>
+          </li>
+          <li class="nav-item">
+            <a href="#tab-4469-3" data-toggle="tab" data-bs-toggle="tab" data-value="Contact" class="nav-link">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a href="#tab-4469-4" data-toggle="tab" data-bs-toggle="tab" data-value="Contributors" class="nav-link">Contributors</a>
+          </li>
+          <li class="nav-item">
+            <a href="#tab-4469-5" data-toggle="tab" data-bs-toggle="tab" data-value="Software/Packages" class="nav-link">Software/Packages</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container-fluid">
+    <div class="row"></div>
+    <div class="tab-content" data-tabsetid="4469">
+      <div class="tab-pane active" data-value="Home" id="tab-4469-1">
+        <div class="container">
+          <div class="center">
+            <img src="./img/statcheck-cropped.png" title="statcheck" style="max-width: 500px"/>
+            <p class="fw-bold fs-4">statcheck on the web</p>
+          </div>
+          <p>To check a PDF, DOCX or HTML file for errors in statistical 
+          reporting, upload it below. See the FAQ page for more information 
+          about what statcheck can and cannot do.</p>
+          <hr/>
+          <div class="form-group shiny-input-container">
+            <label class="control-label" id="files-label" for="files">Upload files (pdf, html, or docx):</label>
+            <div class="input-group">
+              <label class="input-group-btn input-group-prepend">
+                <span class="btn btn-default btn-file">
+                  Browse...
+                  <input id="files" class="shiny-input-file" name="files" type="file" style="position: absolute !important; top: -99999px !important; left: -99999px !important;" multiple="multiple" accept="pdf,htm,html,doc,docx"/>
+                </span>
+              </label>
+              <input type="text" class="form-control" placeholder="No file selected" readonly="readonly"/>
+            </div>
+            <div id="files_progress" class="progress active shiny-file-input-progress">
+              <div class="progress-bar"></div>
+            </div>
+          </div>
+          <h5 class="settings">Settings:</h5>
+          <div class="form-group shiny-input-container" style="width:100%;">
+            <div class="checkbox">
+              <label>
+                <input id="one_tail" type="checkbox" class="shiny-input-checkbox" checked="checked"/>
+                <span>Try to identify and correct for one-tailed tests</span>
+              </label>
+            </div>
+          </div>
+          <hr/>
+          <div id="downloadButtonTxt" class="shiny-html-output"></div>
+          <div id="downloadButtonUI" class="shiny-html-output"></div>
+          <br><br>
+          <div class="shiny-panel-conditional" data-display-if="!output.error" data-ns-prefix="">
+            <div class="datatables html-widget html-widget-output shiny-report-size html-fill-item" id="table" style="width:100%;height:auto;"></div>
+            <div id="sessionInfo" class="shiny-text-output"></div>
+          </div>
+          <div class="shiny-panel-conditional" data-display-if="output.error" data-ns-prefix="">
+            <div class="text-danger fw-bold">
+              <div id="error" class="shiny-text-output"></div>
+            </div>
+          </div>
+          <div class="shiny-panel-conditional" data-display-if="output.error" data-ns-prefix="">
+            <div class="mt-3">
+              <div id="sessionInfo2" class="shiny-text-output"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane" data-value="FAQ" id="tab-4469-2">
+        <div class="container"><h2 class="mb-3">FAQ</h2>
+
+<div class="accordion" id="FAQ">
+
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ1">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ1-collapse"
+        aria-expanded="false" aria-controls="FAQ1-collapse">
+        What is statcheck?
+      </button>
+    </span>
+    <div id="FAQ1-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ1">
+      <div class="accordion-body">
+        <p>
+          statcheck is a "spellchecker" for statistics. It checks whether your
+          <i>p</i>-values match their accompanying test statistic and degrees
+          of freedom.
+        </p>
+        <p>
+          statcheck searches for null-hypothesis significance test (NHST) in APA
+          style (e.g., t(28) = 2.2, <i>p</i> < .05). It recalculates the <i>p</i>-value
+            using the reported test statistic and degrees of freedom. If the
+            reported and computed <i>p</i>-values don't match, statcheck will flag
+            the result as an error.
+        </p>
+        <div id="infographic">
+          <img id="faq-consistent" src="./img/faq-consistent.png" title="A consistent result">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ2">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ2-collapse"
+        aria-expanded="false" aria-controls="FAQ2-collapse">
+        Which results does statcheck detect?
+      </button>
+    </span>
+    <div id="FAQ2-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ2">
+      <div class="accordion-body">
+        <p>statcheck recognizes correlations (r) and t, F, &chi;<sup>2</sup>, Z tests and Q tests, as long as they are
+          reported completely (test statistic [a.k.a. test value], degrees of freedom if applicable, and p-value) and in <a
+            href="https://apastyle.apa.org/instructional-aids/numbers-statistics-guide.pdf" target="_blank">APA
+            Style</a>. Statcheck usually can't find statistics in tables.</p>
+
+        <p>statcheck takes into account that test statistics and p values may be exactly (=) or inexactly (< or>)
+            reported. Different spacing has also been taken into account.
+        </p>
+
+        <div id="infographic">
+          <img id="faq-stat-types" src="./img/faq-stat-types.png" title="What does statcheck check?">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ3">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ3-collapse"
+        aria-expanded="false" aria-controls="FAQ3-collapse">
+        How does statcheck flag (in)consistencies?
+      </button>
+    </span>
+    <div id="FAQ3-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ3">
+      <div class="accordion-body">
+        <p>statcheck searches for null-hypothesis significance test (NHST) in APA style (e.g., t(28) = 2.2, p < .05). It
+            recalculates the p-value using the reported test statistic and degrees of freedom. If the reported and
+            computed p-values don't match, statcheck will flag the result as an inconsistency. If the reported p-value
+            is statistically significant (&alpha;=.05) and the recomputed p-value is not, or vice versa, the result is
+            flagged as a decision inconsistency.</p>
+
+            <div id="infographic">
+              <img id="faq-inconsistent" src="./img/faq-inconsistent.png" title="An inconsistent result">
+            </div>
+
+            <div id="infographic">
+              <img id="faq-decision-inconsistent" src="./img/faq-decision-inconsistent.png"
+                title="A decision inconsistency">
+            </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ4">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ4-collapse"
+        aria-expanded="false" aria-controls="FAQ4-collapse">
+        How do I correct an inconsistency?
+      </button>
+    </span>
+    <div id="FAQ4-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ4">
+      <div class="accordion-body">
+        <p>To fix any errors, go to your statistical software to check which of the three numbers (test statistic,
+          degrees of freedom, and/or p-value) you need to correct in your document.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ5">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ5-collapse"
+        aria-expanded="false" aria-controls="FAQ5-collapse">
+        How does statcheck "try to identify and correct for one-tailed tests"?
+      </button>
+    </span>
+    <div id="FAQ5-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ5">
+      <div class="accordion-body">
+        <p>
+          By default, statcheck treats all tests as two-tailed. If you want to take into account one-tailed tests, you
+          can check the box "Correct for one-tailed tests".
+        </p>
+        <p>
+          When this box is ticked, statcheck will search the entire text for the keywords "one-tailed", "one-sided", and
+          "directional" (taking spacing issues etc. into account). When statcheck finds at least one of those keywords
+          AND an initially inconsistent result would be consistent if it was a one-tailed test, then statcheck treats
+          this case as a one-tailed test and counts it as consistent.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ6">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ6-collapse"
+        aria-expanded="false" aria-controls="FAQ6-collapse">
+        Why doesn't statcheck detect my statistics?
+      </button>
+    </span>
+    <div id="FAQ6-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ6">
+      <div class="accordion-body">
+        <p>
+          Some common reasons why statcheck doesn't detect some results:
+        </p>
+
+        <ul>
+          <li>The result was not reported according to APA style. This includes minor deviations such as square brackets
+            instead of parentheses, or a semi-colon instead of a comma.
+          </li>
+          <li>The result was not reported completely. statcheck needs three ingredients to detect a result and
+            recalculate the p-value: the reported test statistic, degrees of freedom, and p-value. If one or more of
+            these are missing, statcheck will not pick it up.
+          </li>
+          <li>The result is reported in a table.
+          </li>
+        </ul>
+
+        <div id="infographic">
+          <img id="faq-stat-types" src="./img/faq-stat-types.png" title="What does statcheck check?">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ7">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ7-collapse"
+        aria-expanded="false" aria-controls="FAQ7-collapse">
+        Why does statcheck say my result is consistent when I think it's not?
+      </button>
+    </span>
+    <div id="FAQ7-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ7">
+      <div class="accordion-body">
+        <p>
+          Note that a seemingly inconsistent p value can still be correct when we take into account that the test
+          statistic might have been rounded after calculating the corresponding p value. For instance, a reported t-value of 2.35 could correspond to an actual value of 2.345 to 2.354 with a range of p values that can slightly
+          deviate from the recomputed p value. statcheck will not count cases like this as errors.
+        </p>
+
+        <p>If you think that statcheck wrongly passed one of your results, please contact us (see below). For more
+          information about statcheck's accuracy, see below.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ8">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ8-collapse"
+        aria-expanded="false" aria-controls="FAQ8-collapse">
+        Why does statcheck say my result is inconsistent when I think it's not?
+      </button>
+    </span>
+    <div id="FAQ8-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ8">
+      <div class="accordion-body">
+        <p>
+          statcheck flags result as an error when the reported p-value does not match the recalculated p-value. However,
+          there may be cases in which you deliberately reported an inconsistent result. For example, when you conducted
+          a one-tailed test, reported a Bonferroni corrected p-value, or corrected degrees of freedom.
+        </p>
+
+        <p>
+          Of course it is also possible that statcheck really made a mistake and erroneously flagged a result as
+          inconsistent. For example, the conversion from PDF (and sometimes also HTML) to plain text and extraction of
+          statistics can result in errors. Some statistical values can be missed, especially if the notation is
+          unconventional.
+        </p>
+
+        <p>
+          If you think that statcheck wrongly flagged one of your results, please contact us (see below). For more
+          information about statcheck's accuracy, see the next section.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ9">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ9-collapse"
+        aria-expanded="false" aria-controls="FAQ9-collapse">
+        How accurate is statcheck?
+      </button>
+    </span>
+    <div id="FAQ9-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ9">
+      <div class="accordion-body">
+        <p>
+          In typical psychology journals, statcheck detects about 60% of the null hypothesis significance tests. In
+          classifying extracted results as consistent or inconsistent, statcheck has an accuracy between 96.2% and
+          99.9%, depending on its settings. See <a href="https://psyarxiv.com/tcxaj/" target="_blank">Nuijten et al.,
+            2017</a> for details.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ10">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ10-collapse"
+        aria-expanded="false" aria-controls="FAQ10-collapse">
+        Do you maintain a copy of analyzed papers or results?
+      </button>
+    </span>
+    <div id="FAQ10-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ10">
+      <div class="accordion-body">
+        <p>
+          No. Neither the uploaded files nor the results of statcheck are stored anywhere.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ11">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ11-collapse"
+        aria-expanded="false" aria-controls="FAQ11-collapse">
+        Something is broken. Who can help me?
+      </button>
+    </span>
+    <div id="FAQ11-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ11">
+      <div class="accordion-body">
+        <p>
+          See our contact page.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <span class="accordion-header" id="FAQ12">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#FAQ12-collapse"
+        aria-expanded="false" aria-controls="FAQ12-collapse">
+        Where can I find more information about statcheck?
+      </button>
+    </span>
+    <div id="FAQ12-collapse" class="accordion-collapse collapse" aria-labelledby="FAQ12">
+      <div class="accordion-body">
+        <ul>
+          <li>
+            <a href="https://rpubs.com/michelenuijten/statcheckmanual" target="_blank">The
+              manual</a>: A detailed instruction manual with information on what
+            statcheck can and cannot do, information on how to install and use
+            the statcheck R package, and more.
+          </li>
+          <li>
+            <a href="http://cran.r-project.org/web/packages/statcheck/" target="_blank">The R
+              package</a>: The R package has additional functionality which
+            allows you to change more settings and to scan entire folders of
+            papers.
+          </li>
+          <li>
+            <a href="https://doi.org/10.3758/s13428-015-0664-2" target="_blank">
+              The paper</a>: The seminal paper in which statcheck was introduced.
+            We ran statcheck on over 30,000 psychology papers and report
+            general inconsistency-prevalences over time and per journal.
+          </li>
+          <li>
+            <a href="https://psyarxiv.com/tcxaj/" target="_blank">The validity study</a>: We
+            compared statcheck's performance with manual checks and assessed
+            its accuracy in classifying results as consistent/inconsistent
+          </li>
+          <li>
+            <a href="https://github.com/MicheleNuijten/statcheck" target="_blank">The GitHub
+              page</a>: Here you can find statcheck's latest developments.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div></div>
+      </div>
+      <div class="tab-pane" data-value="Contact" id="tab-4469-3">
+        <div class="container">
+<h2 class="mb-3">Contact</h2>
+
+<div class="card" style="max-width: 18rem;">
+  <div class="card-header">
+    Michèle B. Nuijten
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+		  <span class="fa-stack fa-lg">
+			  <i class="fa fa-globe fa-stack-1x"></i>
+			</span>
+		  <a href="http://mbnuijten.com/" target="_blank">mbnuijten.com</a>
+		</p>
+		<p class="card-text">
+		  <span class="fa-stack fa-lg">
+			  <i class="fa fa-github fa-stack-1x"></i>
+			</span>
+		  <a href="http://github.com/MicheleNuijten/" target="_blank">
+			github.com/MicheleNuijten
+			</a>
+		</p>
+  </div>
+</div></div>
+      </div>
+      <div class="tab-pane" data-value="Contributors" id="tab-4469-4">
+        <div class="container">
+<h2 class="mb-3">Contributors</h2>
+
+<p>The statcheck web app is based on the R package <code>statcheck</code> by </p>
+
+<ul class="ctrbs">
+  <li>
+    <span>Michèle B. Nuijten:</span>
+    <span class="ctrb ctrb-author">author</span>
+    <span class="ctrb ctrb-creator">creator</span>
+  </li>
+  <li>
+    <span>Sacha Epskamp:</span>
+    <span class="ctrb ctrb-author">author</span></li>
+</ul>
+
+
+<p><code>statcheck</code> is made possible thanks to the following amazing people!</p>
+  
+<ul class="ctrbs">
+  <li>
+    <span>Sean Rife:</span>
+    <span class="ctrb ctrb-contributor">contributor</span>
+    </li>
+  <li>
+    <span>Willem Sleegers:</span>
+    <span class="ctrb ctrb-contributor">contributor</span>
+    </li>
+  <li>
+    <span>Paul van der Laken:</span>
+    <span class="ctrb ctrb-contributor">contributor</span>
+    </li>
+    <li>
+    <span>Edoardo Costantini:</span>
+    <span class="ctrb ctrb-contributor">contributor</span>
+    </li>
+  <li><span>Chris Hartgerink:</span>
+  <span class="ctrb ctrb-contributor">contributor</span>
+  </li>
+  <li>
+    <span>John Sakaluk:</span>
+    <span class="ctrb ctrb-contributor">contributor</span>
+    </li>
+</ul>
+
+<h2 class="mb-3">Citation</h2>
+
+<div id="text">
+  <p>You can cite <code>statcheck</code> as follows:</p>
+
+  <p>Nuijten, M. B. & Epskamp, S. (2024). statcheck: Extract statistics from articles and recompute p-values. R package version 1.5.0. Web implementation at https://statcheck.io.</p>
+
+</div>
+</div>
+      </div>
+      <div class="tab-pane" data-value="Software/Packages" id="tab-4469-5">
+        <div class="container"><h2 class="mb-3">Software/Packages</h2>
+
+<div class="accordion" id="software">
+
+<div class="accordion-item">
+    <span class="accordion-header" id="R">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#R-collapse"
+        aria-expanded="false" aria-controls="R-collapse">
+        R
+      </button>
+    </span>
+    <div id="R-collapse" class="accordion-collapse collapse" aria-labelledby="R">
+      <div class="accordion-body">
+         <p>Originally, statcheck is written as an R package. The R package statcheck can be found on <a href="https://cran.r-project.org/web/packages/statcheck/index.html" target="_blank">CRAN</a>. Additional functionality in the package as compared to the web version are for example:</p>
+          
+          <ul>
+          <li>scan entire folders of articles</li>
+          <li>changing options, such as the assumed alpha level or whether or not to consider p = .000 as incorrect</li>
+          <li>visualizing the detected results and inconsistencies</li>
+          </ul>
+          
+          <p>The latest updates to the code can be found on statcheck's <a href="https://github.com/MicheleNuijten/statcheck" target="_blank"> GitHub page</a>.</p>
+        
+      </div>
+    </div>
+  </div>
+  
+  <div class="accordion-item">
+    <span class="accordion-header" id="word">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#word-collapse"
+        aria-expanded="false" aria-controls="word-collapse">
+        MS Word
+      </button>
+    </span>
+    <div id="word-collapse" class="accordion-collapse collapse" aria-labelledby="word">
+      <div class="accordion-body">
+       <div class="alert alert-primary" role="alert">
+        Coming soon: a statcheck add-in for MS Word!
+        </div>
+        <p>Check your manuscript for statistical typos while you're writing.</p>
+        <img id="addin" src="./img/addin.png" title = "MS Word add-in">
+        <div id=text>
+          <h3>Try out the beta version!</h3>
+          <p>You can already install and try out the beta version of the statcheck Word add-in! You can find step-by-step installation instructions <a href="https://github.com/WillemSleegers/statcheck-word/wiki/How-To-Be-a-Tester" target="_blank">here</a>.</p>
+  
+          <h3>Contact</h3>
+          <p>For questions about the statcheck Word add-in, contact <a href="https://github.com/willemsleegers" target="_blank">Willem Sleegers</a> or <a href="https://github.com/MicheleNuijten" target="_blank">Michèle Nuijten</a>.</p>
+          
+          <h3>Privacy statement</h3>
+          <p>The statcheck MS Word add-in does not collect or transmit any user information or   files. The add-in code is available on <a href="https://github.com/WillemSleegers  /statcheck-word" target="_blank">GitHub</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+<div class="accordion-item">
+    <span class="accordion-header" id="python">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#python-collapse"
+        aria-expanded="false" aria-controls="python-collapse">
+        Python
+      </button>
+    </span>
+    <div id="python-collapse" class="accordion-collapse collapse" aria-labelledby="python">
+      <div class="accordion-body">
+        <p> Statcheck has been translated into a Python implementation by Hubert Plisiecki. You can find the package on his GitHub page: <a href="https://github.com/hplisiecki/statcheck_python" target="_blank">https://github.com/hplisiecki/statcheck_python</a>. Please note that the Python version is an independent project that may not always be up to date with the latest version of the R package.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <span class="accordion-header" id="text">
+      <button class="accordion-button collapsed text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#text-collapse"
+        aria-expanded="false" aria-controls="text-collapse">
+        Text
+      </button>
+    </span>
+    <div id="text-collapse" class="accordion-collapse collapse" aria-labelledby="text">
+      <div class="accordion-body">
+        <p> Steve Haroz created a web app in which you can let statcheck scan plain text: <a href="https://statcheck.steveharoz.com/">https://statcheck.steveharoz.com/</a>. Please note that the plain text version is an independent project that may not always be up to date with the latest version of the R package.
+        </p>
+      </div>
+    </div>
+  </div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
