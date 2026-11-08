@@ -225,3 +225,20 @@ Measured with the round-94 counter at `6a2a1fdd`
 `stray-verdict:365`), `escaped-backslash-pipe` exit 1 (`ids=false`, `width:9:cells=4`),
 `two-hyphen-delimiter` exit 1 (`ids=false`), `double-pin` exit 0 (`C1_R94_PASS=true`).
 This is the frozen `c1-nowork-v94` control: it does not meet the after-target.
+
+### A4 — C1's three summary values are a values claim, not a literal order (R95C1 F11)
+
+The C1 wording prints `with verdict_tables=1 badrows=0 mismatched=0`; the counter's
+`C1_SUMMARY` line prints `mismatched=0 badrows=0 verdict_tables=1` (the three values, in
+the instrument's own order). The claim is the three values; the amendment fixes the reading
+in `claims.json` to `verdict_tables=1, badrows=0, mismatched=0 as values on the C1_SUMMARY
+line`. No predicate or target change; nothing is widened.
+
+### A5 — C2's positive is run at the revision that carries the receipts (R95C1 F4/C2-1b)
+
+The C2 wording says "at the instrument revision the checker prints … against the committed
+manifest and the receipts it names". An instruments-only revision has no receipts, so the
+same predicate is false there by construction (17 × `receipt-absent-at-rev`, measured by
+C1-1b). The claim is therefore read as: **at the pre-freeze records revision** — the
+commit that carries the instrument, the manifest and the 50 battery receipts — the checker
+prints the frozen line. The forged-set runs use that same revision. No target change.
