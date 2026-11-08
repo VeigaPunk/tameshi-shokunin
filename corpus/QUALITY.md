@@ -2627,3 +2627,41 @@ on the landed bytes (`c2-landed-battery.txt`).
     Able to fail: `.ufo/evidence/round-93/pre-freeze/controls-firstrun/pos-honest-a13.out`
     (`badrows=3`, `C1_R93_PASS=false`) against the fixed receipt in
     `pre-freeze/controls/`. (`lessons/round-93.md` M1.)
+
+## Criteria appended — round 94
+
+163. A certificate whose seal is the artifact under test certifies self-consistency, not
+    identity. The instrument must anchor the certified subject's identity in its own
+    self-pinned bytes and **refuse at setup** when the derived identity disagrees — never
+    report a pin conjunct false while going on to execute the foreign subject. Round 93's
+    counter compared the spec's declared digest to the blob the same spec named, and a single
+    lane commit that repointed the spec and regenerated `pins.json` made it materialise and
+    run a foreign gate while printing `pin=true pins=true green=true canary=true`. Able to
+    fail: `.ufo/evidence/round-94/c1/controls-v94.py` state `gate-foreign` (spec
+    `gate.path` repointed to `scripts/shokunin-watchdog.sh` with its real sha) →
+    `C1_SETUP gate-identity-mismatch`, exit 2. (`lessons/round-94.md` M1; R93SN1 F1; A3.)
+164. A documentation-linkage scan that skips fenced blocks in one place must skip them in
+    every place, and must match its quoted path as a cell token, not as a substring: a fenced
+    README row is literal text (S322) and a substring test also matches a longer filename.
+    Round 93's note reader honoured fences while its `coverage` conjunct read every README
+    line, so a fenced denial row flipped a committed assertion. Able to fail:
+    `.ufo/evidence/round-94/c1/controls-v94.py` states `pos-coverage-fenced-denial`
+    (`C1_R94_PASS=true`) and `coverage-denial`/`coverage-absent` (`coverage=false`, exit 1).
+    (`lessons/round-94.md` M2; R93R1 finding 2; A1.)
+165. A table reader that checks a header against a delimiter must read the delimiter row: a
+    window function that returns only data rows compares the header to the first data row and
+    never sees a malformed delimiter, so a GFM-invalid table is keyed. And the remainder-row
+    policy must be declared: S321 pads short rows with empty cells and ignores excess, so a
+    reader may accept a short row when its one verdict token sits in the verdict column and
+    must refuse it when the verdict-bearing cells are ambiguous. Able to fail:
+    `.ufo/evidence/round-94/c1/controls-v94.py` states `sharp-delim-5-4`
+    (`delim: header=4,delimiter=2` → `ids=false`), `sharp-width-firstrow`,
+    `sharp-width-lastrow`. (`lessons/round-94.md` M3; R93R1 finding 1; A2.)
+166. An `unfalsifiable` disposition reason is sound only when it names a concrete battery
+    state or a pin digest; a mechanism word alone ("the pin forbids it") is a substring test
+    that a zero-state manifest satisfies. Freeze both the reason test and a minimum
+    falsifiable count, and keep the mechanism-word cheat as a selftest case that must
+    produce a finding. Able to fail:
+    `.ufo/evidence/round-94/conjunct-disposition-v94.py --selftest` case
+    `a4-mechanism-word-cheat` (finding) against `a4-digest-named` (clean), and
+    `--min-falsifiable 17` rejecting `falsifiable=0`. (`lessons/round-94.md` M4; R93SN1 F8; A4.)
