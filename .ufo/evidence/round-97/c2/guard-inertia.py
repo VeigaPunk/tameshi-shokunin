@@ -22,7 +22,8 @@ fixture committed in a scratch git repo.
 
 Usage:
   python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane LANE --rev REV \
-      [--checker PATH] [--manifest PATH] [--checker-sha SHA] [--selftest]
+      [--checker PATH] [--manifest PATH] [--checker-sha SHA] \
+      [--manifest-sha SHA] [--selftest]
 
 Exit: 0 every row observed its expectation and none survived; 1 a survived row
 or an unmet row; 2 setup (checker/manifest absent at rev, digest mismatch,
@@ -304,6 +305,7 @@ def main():
     ap.add_argument("--checker", default=CHECKER)
     ap.add_argument("--manifest", default=MANIFEST)
     ap.add_argument("--checker-sha", default=None)
+    ap.add_argument("--manifest-sha", default=None)
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
     if a.selftest:
@@ -327,10 +329,17 @@ def main():
     manifest_b = blob_at(a.lane, a.rev, a.manifest, env)
     if manifest_b is None:
         sys.exit(die("manifest-absent-at-rev"))
+    if a.manifest_sha is not None:
+        if not re.fullmatch(r"[0-9a-f]{64}", a.manifest_sha or ""):
+            sys.exit(die("manifest-sha-invalid"))
+        if hashlib.sha256(manifest_b).hexdigest() != a.manifest_sha:
+            sys.exit(die("manifest-sha-mismatch"))
     try:
         manifest = json.loads(manifest_b)
     except Exception:
         sys.exit(die("manifest-unparsable"))
+    if not manifest.get("rows"):
+        sys.exit(die("manifest-empty"))
     os.makedirs(os.path.join(SCRATCH_ROOT, "tameshi-r97"), exist_ok=True)
     tag = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, "tameshi-r97"), prefix="guard-inertia-")
     try:

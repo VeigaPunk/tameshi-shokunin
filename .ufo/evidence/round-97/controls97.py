@@ -95,13 +95,13 @@ def main():
 
     # ---- C1 nowork: nothing at the base prints the line -------------------
     g = sh([GIT, "-C", lane, "grep", "-c", "BATTERY states=", a.base], check=False)
-    add("c1-nowork-bind-absent", 0,
-        "git grep BATTERY-states at base %s: rc=%d out=%r" % (a.base, g.returncode, g.stdout.strip()), 0)
-    add("c1-nowork-summary-absent", 0,
+    add("c1-nowork-bind-absent", g.returncode,
+        "git grep BATTERY-states at base %s: rc=%d out=%r" % (a.base, g.returncode, g.stdout.strip()), 1)
+    _cf = git(lane, "cat-file", "-e", "8ed9c5262bd2f36f3cc8a64550897f4d1adb3a3b:"
+               ".ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt", check=False)
+    add("c1-nowork-summary-absent", _cf.returncode,
         "git cat-file -e %s:.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt: rc=%d"
-        % ("8ed9c5262bd2f36f3cc8a64550897f4d1adb3a3b",
-           git(lane, "cat-file", "-e", "8ed9c5262bd2f36f3cc8a64550897f4d1adb3a3b:"
-               ".ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt", check=False).returncode), 0)
+        % ("8ed9c5262bd2f36f3cc8a64550897f4d1adb3a3b", _cf.returncode), 128)
 
     # ---- C1 positive at the instrument rev --------------------------------
     binder = os.path.join(T, "c1/battery-bind.py")
@@ -158,7 +158,9 @@ def main():
     add("c2-nowork-absent", 0,
         "git grep GUARD_INERTIA at base %s: rc=%d out=%r" % (a.base, g.returncode, g.stdout.strip()), 0)
     tool = os.path.join(T, "c2/guard-inertia.py")
-    code, out = run([sys.executable, "-I", tool, "--lane", lane, "--rev", a.rev])
+    man_sha = hashlib.sha256(open(os.path.join(T, "c2/guard-inertia.json"), "rb").read()).hexdigest()
+    code, out = run([sys.executable, "-I", tool, "--lane", lane, "--rev", a.rev,
+                     "--manifest-sha", man_sha])
     add("c2-positive", code, out, 0)
     code, out = run([sys.executable, "-I", tool, "--selftest"])
     add("c2-selftest", code, out, 0)
@@ -174,7 +176,8 @@ def main():
     _lim.pop("limit_mechanism", None)
     open(os.path.join(st2, mp), "w", encoding="utf-8").write(json.dumps(flipped, indent=1) + "\n")
     r = commit(st2, "flip expectation")
-    code, out = run([sys.executable, "-I", tool, "--lane", st2, "--rev", r])
+    code, out = run([sys.executable, "-I", tool, "--lane", st2, "--rev", r,
+                     "--manifest-sha", man_sha])
     add("c2-forge-flipped-expect", code, out, 1)
     # (b) a no-op edit -> GUARD_SETUP edit-no-op, exit 2
     git(st2, "reset", "-q", "--hard", r)
@@ -182,8 +185,27 @@ def main():
     noop["rows"][0]["edit"]["new"] = noop["rows"][0]["edit"]["old"]
     open(os.path.join(st2, mp), "w", encoding="utf-8").write(json.dumps(noop, indent=1) + "\n")
     r = commit(st2, "no-op edit")
-    code, out = run([sys.executable, "-I", tool, "--lane", st2, "--rev", r])
+    code, out = run([sys.executable, "-I", tool, "--lane", st2, "--rev", r,
+                     "--manifest-sha", man_sha])
     add("c2-forge-noop", code, out, 2)
+    # (c) a substituted manifest under the pinned digest -> manifest-sha-mismatch
+    git(st2, "reset", "-q", "--hard", r)
+    subst = json.loads(json.dumps(man))
+    subst["rows"][0]["edit"]["old"] = "DISPOSITION rows="
+    subst["rows"][0]["edit"]["new"] = "DISPOSITION rowz="
+    open(os.path.join(st2, mp), "w", encoding="utf-8").write(json.dumps(subst, indent=1) + "\n")
+    r = commit(st2, "substituted manifest")
+    code, out = run([sys.executable, "-I", tool, "--lane", st2, "--rev", r,
+                     "--manifest-sha", man_sha])
+    add("c2-forge-manifest-subst", code, out, 2)
+    # (d) an empty manifest -> manifest-empty
+    git(st2, "reset", "-q", "--hard", r)
+    open(os.path.join(st2, mp), "w", encoding="utf-8").write(json.dumps({"rows": {}}, indent=1) + "\n")
+    r = commit(st2, "empty manifest")
+    code, out = run([sys.executable, "-I", tool, "--lane", st2, "--rev", r,
+                     "--manifest-sha", hashlib.sha256(
+                         json.dumps({"rows": {}}, indent=1).encode() + b"\n").hexdigest()])
+    add("c2-forge-manifest-empty", code, out, 2)
 
     bad = 0
     for name, code, body, want in receipts:

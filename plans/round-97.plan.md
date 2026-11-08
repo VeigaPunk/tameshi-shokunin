@@ -82,19 +82,21 @@ receipts and the claims).
   `.ufo/evidence/round-97/c2/guard-inertia.json`, applied to the round-96 checker blob
   `.ufo/evidence/round-96/conjunct-disposition-v96.py` at `--rev`.
 - **Wording (frozen after A9-A11):** at the records revision R,
-  `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev R --checker-sha <64 hex>`
+  `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev R --checker-sha <64 hex> --manifest-sha <64 hex>`
   prints `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0` and exits 0; for each of
   the 10 manifest rows it applies exactly one exact-string edit to the checker blob at R
   (refusing a no-op with `GUARD_SETUP edit-no-op`, an ambiguous anchor with
-  `GUARD_SETUP edit-ambiguous`, an unbuildable state with `GUARD_SETUP state-unbuildable` and
-  a `limit` row with no declared mechanism with `GUARD_SETUP limit-mechanism-missing`, each
+  `GUARD_SETUP edit-ambiguous`, an unbuildable state with `GUARD_SETUP state-unbuildable`, a
+  `limit` row with no declared mechanism with `GUARD_SETUP limit-mechanism-missing`, a
+  manifest blob whose sha256 differs from `--manifest-sha` with `GUARD_SETUP
+  manifest-sha-mismatch`, and a manifest with no rows with `GUARD_SETUP manifest-empty`, each
   exit 2), runs the pristine and the mutant checker against the same fresh fixture store and
   the same arguments, and reports `killed` only when the pristine run exits with the row's
   declared exit and prints its declared token and the mutant run's exit differs or loses that
   token, and `limit` only when the two runs are identical in exit and declared token; a row
   whose observed class differs from its frozen `expect` makes `unmet` nonzero and exits 1; at
   base `07e50d6d` `git grep -c 'GUARD_INERTIA'` prints nothing.
-- **Counter:** `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev RECORDS_REV --checker-sha <64 hex>`
+- **Counter:** `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev RECORDS_REV --checker-sha <64 hex> --manifest-sha <64 hex>`
 - **Battery:** `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --selftest`
 - **Predicate:** `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0` (exit 0)
 - **Before:** at base `07e50d6d` no committed tool prints a `GUARD_INERTIA` line; round 96's
@@ -165,6 +167,9 @@ controls, not a scored positive; the records run postdates every row here).
 | A8 | `w1/R97R1.md` F3 (the plan still read "each print a nonzero `mismatched` count") | A1's plan-sync claim | the plan §C1 sentence is rewritten (this table's A1 is superseded on that point); no target or predicate moved. |
 | A9 | `w1/R97L1.md` §5/§9; `w1/R97R2.md` F1; round-96 `.ufo/waves/round-96/w1/R96L1.md` (`partly refuted`) and its M5 correction `d8f135d2` | C2's Before "the revenger probe R96L1 delivered nothing (spot-check D-b)" | replaced by: a late seat report with no committed runnable matrix, and the round-96 M5 correction of the premature dead-seat call; C2 is the first committed matrix. Predicate/counter/target unchanged. |
 | A10 | `w1/R97R2.md` F5 (the plan's C2 command omitted `--checker-sha` while `claims.json` carried it) | plan/C2 command-line sync | the plan's C2 wording and counter now name `--checker-sha <64 hex>`. |
+| A12 | `w1/R97C1.md` §1 skip 3 and §2 (`05`, `06`): a substituted 10-row non-guard manifest prints the exact predicate, and the manifest was not digest-pinned | C2's "the 10 manifest rows" universal (any coherent manifest at R produced the line) | tool gains `--manifest-sha`: a manifest blob whose sha256 differs is `GUARD_SETUP manifest-sha-mismatch` exit 2, an empty manifest is `GUARD_SETUP manifest-empty` exit 2; the claim's counter and wording now name the pin. Manifest rows and counts unchanged; `verify-quiet`'s mechanism text now states both forms (pristine rc 1, mutant rc 128). |
+| A13 | `w1/R97C1.md` §In-flight (`11`): a non-guard manifest still printed the predicate on the repaired bytes | the manifest's rows are a human declaration | added to C2's declared limits (the pin fixes which rows are measured, not whether each edit is a guard). |
+| A14 | `w1/R97C1.md` §1/§3 (`02`): `controls97.py` graded the wrapper's rc 0 for the two no-work controls, so their pre-registered inner rc could not fail | the control's own assertion | `c1-nowork-bind-absent` now records the grep rc (1) and `c1-nowork-summary-absent` the `cat-file` rc (128); both are graded against those values. Two new C2 controls added: `c2-forge-manifest-subst` (pinned digest vs substituted manifest → exit 2) and `c2-forge-manifest-empty` (exit 2). Controls 16/16. |
 | A11 | `w1/R97R2.md` F3/F4, `w1/R97E2.md` F2 | nothing — instrument hardening | tool repaired: an unbuildable state is `GUARD_SETUP state-unbuildable` exit 2, a `limit` row with no declared mechanism is `GUARD_SETUP limit-mechanism-missing` exit 2, and both selftests create their scratch root before `mkdtemp`. Selftests still 7/7; the manifest and the 10 rows are unchanged. |
 
 Post-repair instrument digests: C1 `battery-bind.py` and C2 `guard-inertia.py` are re-pinned in

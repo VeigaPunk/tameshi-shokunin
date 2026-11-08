@@ -36,15 +36,15 @@
    "axis": "operability",
    "type": "measured",
    "surface": ".ufo/evidence/round-97/c2/guard-inertia.py + the committed manifest .ufo/evidence/round-97/c2/guard-inertia.json, applied to the round-96 checker blob .ufo/evidence/round-96/conjunct-disposition-v96.py at --rev",
-   "wording": "at the records revision R, python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev R --checker-sha <64 hex> prints GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0 and exits 0; for each of the 10 manifest rows it applies exactly one exact-string edit to the checker blob at R (refusing a no-op with GUARD_SETUP edit-no-op, an ambiguous anchor with GUARD_SETUP edit-ambiguous, an unbuildable state with GUARD_SETUP state-unbuildable and a limit row with no declared mechanism with GUARD_SETUP limit-mechanism-missing, each exit 2), runs the pristine and the mutant checker against the same fresh fixture store and the same arguments, and reports killed only when the pristine run exits with the row's declared exit and prints its declared token and the mutant run's exit differs or loses that token, and limit only when the two runs are identical in exit and declared token; a row whose observed class differs from its frozen expect makes unmet nonzero and exits 1; at base 07e50d6d git grep -c 'GUARD_INERTIA' prints nothing",
-   "counter": "python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev RECORDS_REV --checker-sha 02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80",
+   "wording": "at the records revision R, python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev R --checker-sha <64 hex> --manifest-sha <64 hex> prints GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0 and exits 0; for each of the 10 manifest rows it applies exactly one exact-string edit to the checker blob at R (refusing a no-op with GUARD_SETUP edit-no-op, an ambiguous anchor with GUARD_SETUP edit-ambiguous, an unbuildable state with GUARD_SETUP state-unbuildable, a limit row with no declared mechanism with GUARD_SETUP limit-mechanism-missing, a manifest blob whose sha256 differs from --manifest-sha with GUARD_SETUP manifest-sha-mismatch, and a manifest with no rows with GUARD_SETUP manifest-empty, each exit 2), runs the pristine and the mutant checker against the same fresh fixture store and the same arguments, and reports killed only when the pristine run exits with the row's declared exit and prints its declared token and the mutant run's exit differs or loses that token, and limit only when the two runs are identical in exit and declared token; a row whose observed class differs from its frozen expect makes unmet nonzero and exits 1; at base 07e50d6d git grep -c 'GUARD_INERTIA' prints nothing",
+   "counter": "python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev RECORDS_REV --checker-sha 02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80 --manifest-sha 9de0b7e9649e0e267d05489a9d14b4075424e16ae80a8a6b27ae34870fe094da",
    "battery": "python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --selftest",
    "predicate": "GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0",
    "battery_predicate": "GUARD_INERTIA_SELFTEST: 7/7 pass",
    "before": "at base 07e50d6d no committed tool prints a GUARD_INERTIA line; round 96's R96M1 mutation matrix covers the counter measure-v96.py, not the checker's guards; the round-96 revenger probe left a late seat report (R96L1.md, partly refuted) but no committed runnable matrix, and the round-96 record's own M5 corrected the spot-check's premature dead-seat call (D-b); C2 is the first committed matrix over the checker's guard edits",
    "after": "the predicate line at R, exit 0; the selftest 7/7; a manifest whose killed row is declared limit prints survived=1 and exits 1; a no-op edit is refused exit 2",
-   "instrument_sha256": "1decd746fde49a417343357156357e2b54cc3c4ce3598b5bc00eda189914374b",
-   "manifest_sha256": "1a1d9d903ca971ef3b881b6f3687dd083db079baaa3b7083292449b38c42dac8",
+   "instrument_sha256": "634997d09d2dba5cd87df12e2844962b3517ede798ab0ce04303807b6db042c8",
+   "manifest_sha256": "9de0b7e9649e0e267d05489a9d14b4075424e16ae80a8a6b27ae34870fe094da",
    "checker_sha256": "02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80",
    "kill": [
     "a: the pristine and the mutant run against different stores, revisions or arguments",
@@ -52,11 +52,13 @@
     "c: a row whose two runs are identical is counted killed",
     "d: a limit row names no measured mechanism",
     "e: the checker blob at R is not the one the manifest was measured against (digest pin)",
-    "f: the tool prints the summary without running every row"
+    "f: the tool prints the summary without running every row",
+    "g: a substituted or empty manifest is graded instead of refused"
    ],
    "limits": [
     "the fixture store is four files (a counter stub, a manifest, a claims digest and receipts); a guard whose effect needs the real 50-state receipts is out of scope",
-    "the matrix measures one exact edit per guard, not two-edit combinations; a guard killed only by a combination is not counted (git-absolute and verify-quiet are measured limit for that reason)"
+    "the matrix measures one exact edit per guard, not two-edit combinations; a guard killed only by a combination is not counted (git-absolute and verify-quiet are measured limit for that reason)",
+    "the manifest's choice of rows is a human declaration; the tool measures the declared edits and the --manifest-sha pin fixes which rows are measured, not whether each edit is a guard (R97C1 \u00a72: a coherent substitute manifest yields the same line when its digest is passed)"
    ]
   }
  }
