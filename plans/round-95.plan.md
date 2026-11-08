@@ -188,3 +188,40 @@ Attack share 7/12 by role. The L1 holds the planner seat (§3 mapping: planner �
 
 No sibling gate code is edited; no fleet-root script or template is touched; no MANIFEST
 entry; no `.scratch/` write; no host sysctl change; no pacman transaction (paused).
+
+---
+
+## Amendments (pre-data, before any scored receipt)
+
+### A1 — `escaped-backslash-pipe` fixture precision (L1 before-state control)
+
+The first construction (a four-column note whose witness cell ended `C:\\` before a
+space-separated delimiter) does **not** discriminate: the round-94 counter pads the short
+row, the verdict stays in its column, and it prints `C1_R94_PASS=true`
+(`.ufo/evidence/round-95/pre-freeze/before-v94/escaped-backslash-pipe.out` from the first
+run was replaced). The discriminating fixture is a **five-column** note
+`| id | arm | path | verdict | witness |` whose C01 row is
+`| C01 | fixture arm | C:\\|KILLED | differs |`: the v95 split gives five cells with the
+verdict in column 4; the v94 split swallows the delimiter and gives four cells
+(`width:9:cells=4`), so it prints `C1_R94_PASS=false`, exit 1. The claim wording, predicate
+and expected after-line are unchanged; only the fixture construction is pinned here.
+
+### A2 — `double-pin` fixture precision (the decoy goes before the real pin line)
+
+A second `SELF_SHA256` line inserted **after** the real constant is the one Python executes,
+so the counter dies `self-pin-mismatch` and the state does not discriminate (measured:
+`.ufo/evidence/round-95/pre-freeze/before-v94/double-pin.out` records the corrected run;
+the after-insert variant printed `C1_SETUP self-pin-mismatch`, exit 2). The fixture is the
+decoy line `SELF_SHA256 = "000…0"` inserted **before** the real pin line: the executed
+constant stays the real digest, v94 prints `C1_R94_PASS=true`, exit 0, and the v95 count
+rule refuses with `C1_SETUP self-pin-line-count`. Claim wording, predicate and after-line
+unchanged.
+
+### A3 — before-column re-measured (L1 do-nothing control, committed receipts)
+
+Measured with the round-94 counter at `6a2a1fdd`
+(`.ufo/evidence/round-95/pre-freeze/before-v94/*.out`): `indent-code-row` exit 1
+(`verdict_tables=false`, `dup:` badrows), `indent-token` exit 1 (`ids=false`,
+`stray-verdict:365`), `escaped-backslash-pipe` exit 1 (`ids=false`, `width:9:cells=4`),
+`two-hyphen-delimiter` exit 1 (`ids=false`), `double-pin` exit 0 (`C1_R94_PASS=true`).
+This is the frozen `c1-nowork-v94` control: it does not meet the after-target.
