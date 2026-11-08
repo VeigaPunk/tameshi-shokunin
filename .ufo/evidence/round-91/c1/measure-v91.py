@@ -108,26 +108,41 @@ def build_witness(d, w):
 
 
 
-def parse_note(nt, ids):
+def parse_note(nt):
+    """Header-agnostic, unambiguous note parser (QUALITY 140).
+
+    Finds the header row whose cells contain "verdict"; the verdict index is that
+    cell's position in the full pipe-split. Every data row keyed by an id in the
+    spec must carry exactly KILLED or SURVIVED at that index; a duplicate id, a
+    missing/renamed header, or a row whose cell at that index is missing or out
+    of vocabulary makes the note ambiguous -> ids=false, never a skip. Fenced
+    code blocks (```) are skipped so a code sample can never pose as a row."""
     vcol = None
     rows = {}
     ambiguous = []
-    for line in nt.split("\n"):
-        cells = [c.strip() for c in line.split("|")]
-        if len(cells) < 5:
+    in_fence = False
+    for raw in nt.split("\n"):
+        line = raw.strip()
+        if line.startswith("```"):
+            in_fence = not in_fence
             continue
-        headers = [c.lower() for c in cells]
-        if "verdict" in headers and cells[0] == "":
-            vcol = headers.index("verdict")
+        if in_fence:
             continue
-        m = re.match(r"^\|\s*(C\d\d)\s*\|", line)
+        cells = [c.strip() for c in raw.split("|")]
+        if len(cells) < 3:
+            continue
+        low = [c.lower() for c in cells]
+        if vcol is None and "verdict" in low:
+            vcol = low.index("verdict")
+            continue
+        m = re.match(r"^\|\s*(C\d\d)\s*\|", raw)
         if not m:
             continue
         cid = m.group(1)
-        if vcol is None or vcol >= len(cells) - 1:
+        if vcol is None or vcol >= len(cells):
             ambiguous.append(cid)
             continue
-        v = cells[vcol + 1]
+        v = cells[vcol]
         if v not in ("KILLED", "SURVIVED"):
             ambiguous.append(cid)
             continue
@@ -136,7 +151,6 @@ def parse_note(nt, ids):
             continue
         rows[cid] = v
     return rows, ambiguous
-
 
 def main():
     ap = argparse.ArgumentParser()
@@ -246,7 +260,7 @@ def main():
     note_rows = {}
     if note is not None:
         nt = note.decode("utf-8", errors="replace")
-        note_rows, ambiguous = parse_note(nt, ids)
+        note_rows, ambiguous = parse_note(nt)
         ids_ok = (len(ambiguous) == 0) and sorted(note_rows) == sorted(ids)
         mism = sum(1 for r in rows if note_rows.get(r["id"]) != r["derived"])
         heads = re.findall(r"^measured: (\d+)/(\d+) killed\s*$", nt, re.M)

@@ -28,7 +28,7 @@ def sh(*a, cwd=None):
     return p.stdout
 
 
-def note_text(rows=None, measured="5/12", sid="S999", drop=None):
+def note_text(rows=None, measured="5/12", sid="S318", drop=None):
     rows = dict(DERIVED if rows is None else rows)
     out = ["source: %s fixture row (positive control only)" % sid, "", "# fixture note", "",
            "measured: %s killed" % measured, "", "| id | arm | verdict | witness |", "|---|---|---|---|"]
@@ -41,7 +41,7 @@ def note_text(rows=None, measured="5/12", sid="S999", drop=None):
 
 def pos_files(lane):
     src = open(os.path.join(lane, "corpus/SOURCES.md"), encoding="utf-8").read()
-    row = ("| S999 | Fixture — https://fixture.invalid/r90 | docs | B | fixture | §1 | positive-control fixture row "
+    row = ("| S318 | Fixture — https://fixture.invalid/r90 | docs | B | fixture | §1 | positive-control fixture row "
            "| mined | 2026-11-06 | 90d | %s |\n" % NOTE)
     # insert after the last registry row (line starting with | S)
     lines = src.split("\n")
@@ -69,7 +69,7 @@ def controls(lane):
     C["CTL2-flip"] = dict(P, **{NOTE: note_text(rows=dict(DERIVED, C02="KILLED"))})
     C["CTL3-figure"] = dict(P, **{NOTE: note_text(measured="6/12")})
     C["CTL4-ids"] = dict(P, **{NOTE: note_text(drop="C12")})
-    C["CTL10-source"] = dict(P, **{NOTE: note_text(sid="S998")})
+    C["CTL10-source"] = dict(P, **{NOTE: note_text(sid="S997")})
     C["CTL16-oldsource"] = dict(P, **{NOTE: note_text(sid="S315")})
     C["CTL15-coverage"] = {k: v for k, v in P.items() if k != "corpus/README.md"}
     # Round-91 sealed additions (QUALITY 140): ambiguous and draft-column note variants.
