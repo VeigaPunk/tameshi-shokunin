@@ -43,7 +43,25 @@ MECHANISM = ("pin", "sealed", "seal", "gate bytes", "GIT_", "pinned", "replace")
 # test accepts "the pin forbids it"; the new test requires a state name or a
 # 64-hex digest (or a short-prefix digest >=12 hex) or a backtick-quoted
 # artifact. See check() and --selftest case 7 (the A4 cheat) which must fail.
-MECHANISM_STATE = re.compile(r"state[:\s]+[A-Za-z0-9_\-\.]+|[0-9a-f]{64}|[0-9a-f]{12,} |PINS_PATH|SPEC_PATH|GATE_")
+DIGEST_RE = re.compile(r"[0-9a-f]{64}|[0-9a-f]{12,}")
+
+
+def names_a_state_or_digest(reason, receipt_dir):
+    """Round-94 A4 (rev 2): the reason must name a DECLARED battery state (the word
+    `state` followed by a receipt name that exists in the receipt dir) or a hex digest.
+    The word `state` in prose is not a state: the first rev matched `state exists` and
+    let a 96-character mechanism-only reason through (control receipt
+    pre-freeze/c2-cheat-mechanism-word.out, rev 1)."""
+    if DIGEST_RE.search(reason):
+        return True
+    try:
+        names = {f[:-4] for f in os.listdir(receipt_dir) if f.endswith(".out")}
+    except OSError:
+        names = set()
+    for m in re.finditer(r"state[s]?\s+([A-Za-z0-9_.-]+)", reason):
+        if m.group(1).strip(".,;:`") in names:
+            return True
+    return False
 
 
 def die(msg):
@@ -84,9 +102,9 @@ def check(keys, rows, receipt_dir):
             elif not any(tok.lower() in reason.lower() for tok in MECHANISM):
                 findings.append(("reason-names-no-mechanism", k,
                                  "the reason names no seal/pin mechanism: " + reason[:80]))
-            elif not MECHANISM_STATE.search(reason):
+            elif not names_a_state_or_digest(reason, receipt_dir):
                 findings.append(("reason-names-no-state-or-digest", k,
-                                 "the reason must name a battery state or a pin digest, not only a mechanism word: " + reason[:80]))
+                                 "the reason must name a declared battery state (state <name>) or a hex digest, not only a mechanism word: " + reason[:80]))
             continue
         mode = row.get("mode")
         state = row.get("state")
@@ -150,7 +168,7 @@ def selftest():
         open(os.path.join(d, "st-token.out"), "w").write("exit=2\nC1_SETUP spec-absent-at-rev\n")
         clean = {"alpha": {"state": "st-alpha", "mode": "conjunct-false"},
                  "beta": {"state": "st-token", "mode": "setup-refusal", "token": "spec-absent-at-rev"},
-                 "gamma": {"unfalsifiable": "needs a nondeterministic gate, which the sealed pin at state timeout forbids"}}
+                 "gamma": {"unfalsifiable": "needs a nondeterministic gate, which the sealed pin at state st-alpha forbids"}}
         cases.append(("clean", clean, 0))
         m = dict(clean)
         del m["beta"]
@@ -171,6 +189,10 @@ def selftest():
         m = dict(clean)
         m["gamma"] = {"unfalsifiable": "the sealed pin forbids it"}
         cases.append(("a4-mechanism-word-cheat", m, 1))
+        m = dict(clean)
+        m["gamma"] = {"unfalsifiable": "the sealed pin and the pinned gate bytes forbid any committed "
+                                       "falsifier, so no such state exists and none can be built"}
+        cases.append(("a4-prose-state-word-cheat", m, 1))
         m = dict(clean)
         m["gamma"] = {"unfalsifiable": "the sealed pin at state timeout with digest 3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30 forbids it"}
         cases.append(("a4-digest-named", m, 0))
