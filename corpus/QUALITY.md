@@ -2784,7 +2784,7 @@ on the landed bytes (`c2-landed-battery.txt`).
     re-grades the committed receipts with the committed oracle is the minimum that turns an
     attested count into a measurement. Able to fail: the round-96 record cites
     `.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt`, absent at `8ed9c526`
-    (`git cat-file -e` exit 1), while round 97's reader prints
+    (`git cat-file -e` exit 128), while round 97's reader prints
     `BATTERY states=50 matched=50 mismatched=0 missing=0` at the records revision, and the
     five forgeries each move the line or the exit
     (`.ufo/evidence/round-97/pre-freeze/c1-forge-*.out`). (`lessons/round-97.md`;

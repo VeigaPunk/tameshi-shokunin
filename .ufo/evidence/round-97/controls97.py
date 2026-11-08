@@ -144,6 +144,12 @@ def main():
     code, out = run([sys.executable, "-I", binder, "--lane", lane, "--rev", a.rev,
                      "--driver-sha", "0" * 64])
     add("c1-forge-driver-sha", code, out, 2)
+    # A4's own receipts: an empty and a short (non-64-hex) pin are refused as invalid
+    for _val, _name in (("", "c1-forge-driver-sha-empty"),
+                        ("0" * 10, "c1-forge-driver-sha-short")):
+        code, out = run([sys.executable, "-I", binder, "--lane", lane, "--rev", a.rev,
+                         "--driver-sha", _val])
+        add(_name, code, out, 2)
 
     # ---- C2 nowork + positive + controls ---------------------------------
     g = sh([GIT, "-C", lane, "grep", "-c", "GUARD_INERTIA", a.base], check=False)

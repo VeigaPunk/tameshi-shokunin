@@ -5177,7 +5177,7 @@ mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 4/13 = 31 % by th
 
 - **Shape.** Base `07e50d6d`; instruments `917d7109`; frozen plan and pre-freeze controls
   `997ce0c4`; claims freeze `e72a0c8b`; A1 `136e98a8`; A2 `43acfe81`; wave w1 spec + dispatch
-  `f5ace66a`; A3-A11 `6f080522`; A12-A14 `406119cd`; controls 16/16 and records base `2a57b42f`;
+  `f5ace66a`; A3-A11 `6f080522`; A12-A14 `406119cd`; controls 18/18 and records base `2a57b42f`;
   records positives `2170db76`. Records revision: `2a57b42f`.
 - **R97-C1 (calibration).** The round-96 spot-check's D-a: the report cited
   `.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt`, which is absent at `8ed9c526`.

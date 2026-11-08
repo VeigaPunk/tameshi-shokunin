@@ -5797,7 +5797,7 @@ a limit; nothing was smoothed.
 
 Base `07e50d6d0142b21e8443b5417b8edc4d1dd76455`; instruments `917d7109`; pre-freeze controls and
 frozen plan `997ce0c4`; claims freeze `e72a0c8b` (+ A1 `136e98a8`, A2 `43acfe81`); wave spec and
-dispatch `f5ace66a`; A3-A11 `6f080522`; A12-A14 `406119cd`; controls 16/16 and records base
+dispatch `f5ace66a`; A3-A11 `6f080522`; A12-A14 `406119cd`; controls 18/18 and records base
 `2a57b42f`; records positives `2170db76`.
 One v1 wave `w1`, 12 seats (executor 3, scribe 1, scout 1, reviewer 2, critic 1, mutation-tester 1,
 sentinel 1, connector 1, revenger 1; attack 4/12 = 33 % by the §6 named set (reviewer×2, critic,
