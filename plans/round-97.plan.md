@@ -63,6 +63,11 @@ receipts and the claims).
   receipt is still a producer's claim: a hand-written receipt carrying the right
   `counter_sha=` and payload cannot be distinguished from a real run without re-executing
   the state (round-96 F1, unchanged).
+- The reader is new work over data that already existed at the base: run from the worktree
+  against `07e50d6d` it prints the predicate (measured 2026-11-08, exit 0, rc 0), so the
+  after-state is a committed reader, not new receipts. The base does not carry the tool
+  (`git cat-file -e 07e50d6d:.ufo/evidence/round-97/c1/battery-bind.py` exit 128) and no
+  committed tool prints the line there.
 
 ### C2 — operability: the guard-inertia matrix
 
@@ -139,4 +144,5 @@ Pre-data; no claim receipt existed when each row was written.
 
 | id | artifact | falsified sentence | amendment |
 |---|---|---|---|
+| A2 | base-rev run (`BATTERY states=50 matched=50 mismatched=0 missing=0`, rc 0) and `git cat-file -e 07e50d6d:.ufo/evidence/round-97/c1/battery-bind.py` exit 128 | nothing — disclosure, not a narrowing | C1's declared limits gain the base-rev reachability sentence; the predicate, counter and target are unchanged. |
 | A1 | `.ufo/evidence/round-97/pre-freeze/c1-forge-worktree-only.out` (`BATTERY states=50 matched=49 mismatched=0 missing=1`, rc 1) | C1's "the four edits each print a nonzero `mismatched` count" | a receipt dropped from the index (left in the working tree) is counted `missing`, not `mismatched`; the sentence now names the field per edit ("a nonzero `missing` count" for the de-index case, `mismatched` for the three receipt-body edits). The plan wording already read "mismatched or missing"; the claims file is aligned to it, and the counter is unchanged. |
