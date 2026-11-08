@@ -278,7 +278,7 @@ def main():
 
     if not a.states_only:
         mts = mutant_edits(blob.stdout.decode())
-        mut_sel = [n for n in sel if n in mts]
+        mut_sel = [n for n in sel if n in mts] if a.only else list(mts)
         false_note = note_text(rows={k: ("SURVIVED" if v == "KILLED" else "KILLED")
                                      for k, v in DERIVED.items()})
         # state 1: honest note committed, replace ref maps the honest blob to the false note
