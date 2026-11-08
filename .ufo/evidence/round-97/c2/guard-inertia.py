@@ -209,6 +209,8 @@ def run_matrix(checker_bytes, manifest, tag):
     for i, row in enumerate(manifest["rows"]):
         base = os.path.join(tag, "row%02d-%s" % (i, row["id"]))
         os.makedirs(base, exist_ok=True)
+        if row["expect"] == "limit" and len(str(row.get("limit_mechanism", "")).strip()) < 40:
+            raise SystemExit(_setup_text("limit-mechanism-missing:" + row["id"]))
         old, new = row["edit"]["old"], row["edit"]["new"]
         count = checker_bytes.count(old.encode())
         if count != 1:
@@ -219,7 +221,10 @@ def run_matrix(checker_bytes, manifest, tag):
         mpath = os.path.join(tag, "checker-%s.py" % row["id"])
         with open(mpath, "wb") as f:
             f.write(mb)
-        repo, rev, extra, env_over = build_state(row["state"], base, env)
+        try:
+            repo, rev, extra, env_over = build_state(row["state"], base, env)
+        except Exception as exc:  # noqa: BLE001 - an unbuildable state is setup
+            raise SystemExit(_setup_text("state-unbuildable:%s:%s" % (row["id"], str(exc)[:120])))
         rev = row.get("rev") or rev
         pristine = run_checker(cpath, repo, rev, extra, env_over)
         mutant = run_checker(mpath, repo, rev, extra, env_over)
@@ -244,6 +249,7 @@ def _setup_text(msg):
 
 
 def selftest():
+    os.makedirs(os.path.join(SCRATCH_ROOT, "tameshi-r97"), exist_ok=True)
     base = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, "tameshi-r97"), prefix="guard-selftest-")
     checker = ("import sys\nGUARD = 'x'\nif len(sys.argv) > 1 and sys.argv[1] == 'boom':\n"
                "    print('REFUSED boom')\n    sys.exit(2)\nprint('OK')\nsys.exit(0)\n")
@@ -325,6 +331,7 @@ def main():
         manifest = json.loads(manifest_b)
     except Exception:
         sys.exit(die("manifest-unparsable"))
+    os.makedirs(os.path.join(SCRATCH_ROOT, "tameshi-r97"), exist_ok=True)
     tag = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, "tameshi-r97"), prefix="guard-inertia-")
     try:
         rc = run_matrix(checker, manifest, tag)

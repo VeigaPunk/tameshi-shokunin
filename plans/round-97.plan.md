@@ -32,17 +32,20 @@ receipts and the claims).
   `EXPECT_EXTRA` are the oracle), the frozen counter
   `.ufo/evidence/round-96/c1/measure-v96.py` (its sha256 is the `counter=self` digest) and
   the 50 receipts under `.ufo/evidence/round-96/pre-freeze/controls/`.
-- **Wording (frozen):** at the records revision R,
-  `python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev R` prints
-  `BATTERY states=50 matched=50 mismatched=0 missing=0` and exits 0; it reads the 50
-  receipts as blobs at R (a receipt present only in the working tree is absent) and takes
-  its expectations from the committed driver's `states()` and `EXPECT_EXTRA` at R; a
-  receipt deleted from the index (but left in the working tree), a `counter_sha=` edit, an
-  `exit=` edit and a `C1_R96_PASS=true` payload edit each print a nonzero `mismatched`
-  count and exit 1; a `--driver-sha` value unequal to the driver blob's sha256 is refused
-  `BATTERY_SETUP driver-sha-mismatch`, exit 2; at base `07e50d6d`
+- **Wording (frozen after A3-A8):** at the records revision R,
+  `python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev R --driver-sha <64 hex>`
+  prints `BATTERY states=50 matched=50 mismatched=0 missing=0` and exits 0; it reads the 50
+  receipts as blobs at R (a receipt absent from the tree at R is absent even when the file
+  stays on disk; an uncommitted index deletion is not seen) and takes its expectations from
+  the committed driver's `states()` and `EXPECT_EXTRA` at R; a receipt removed from the tree
+  at R by a commit while the file stays on disk prints a nonzero `missing` count and exits 1;
+  a `counter_sha=` edit on a receipt that does **not** carry a `mutant=D<nn>` line, an
+  `exit=` edit, and a `C1_R96_PASS=true` payload edit on a `__pass` receipt each print a
+  nonzero `mismatched` count and exit 1; a `--driver-sha` that is not 64 hex is refused
+  `BATTERY_SETUP driver-sha-invalid` and a 64-hex value unequal to the driver blob's sha256 is
+  refused `BATTERY_SETUP driver-sha-mismatch`, each exit 2; at base `07e50d6d`
   `git grep -c 'BATTERY states='` prints nothing and
-  `C1-summary.txt` is absent at `8ed9c526` (`git cat-file -e` exit 1).
+  `C1-summary.txt` is absent at `8ed9c526` (`git cat-file -e` exit 128).
 - **Counter:** `python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev RECORDS_REV`
 - **Battery:** `python3 -I .ufo/evidence/round-97/c1/battery-bind.py --selftest`
 - **Predicate:** `BATTERY states=50 matched=50 mismatched=0 missing=0` (exit 0)
@@ -62,7 +65,10 @@ receipts and the claims).
   that the receipts satisfy it, not that the driver's expectations are the right ones. A
   receipt is still a producer's claim: a hand-written receipt carrying the right
   `counter_sha=` and payload cannot be distinguished from a real run without re-executing
-  the state (round-96 F1, unchanged).
+  the state (round-96 F1, unchanged). A receipt carrying a `mutant=D<nn>` line is exempt from
+  the digest check by construction (the mutant's digest cannot be pinned before the run), so
+  a pure `counter_sha=` edit on such a receipt is not detected (A3: `R97E3-forgeries.txt`
+  E2e), and any receipt can opt out of the digest check with one `mutant=D<nn>` line (E2d).
 - The reader is new work over data that already existed at the base: run from the worktree
   against `07e50d6d` it prints the predicate (measured 2026-11-08, exit 0, rc 0), so the
   after-state is a committed reader, not new receipts. The base does not carry the tool
@@ -75,24 +81,28 @@ receipts and the claims).
 - **Surface:** `.ufo/evidence/round-97/c2/guard-inertia.py` + the committed manifest
   `.ufo/evidence/round-97/c2/guard-inertia.json`, applied to the round-96 checker blob
   `.ufo/evidence/round-96/conjunct-disposition-v96.py` at `--rev`.
-- **Wording (frozen):** at the records revision R,
-  `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev R` prints
-  `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0` and exits 0; for each of the
-  10 manifest rows it applies exactly one exact-string edit to the checker blob at R
-  (refusing a no-op with `GUARD_SETUP edit-no-op` and an ambiguous anchor with
-  `GUARD_SETUP edit-ambiguous`, each exit 2), runs the pristine and the mutant checker
-  against the same fresh fixture store and the same arguments, and reports `killed` only
-  when the pristine run exits with the row's declared exit and prints its declared token
-  and the mutant run's exit differs or loses that token, and `limit` only when the two runs
-  are identical in exit and declared token; a row whose observed class differs from its
-  frozen `expect` makes `unmet` nonzero and exits 1; at base `07e50d6d`
-  `git grep -c 'GUARD_INERTIA'` prints nothing.
-- **Counter:** `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev RECORDS_REV`
+- **Wording (frozen after A9-A11):** at the records revision R,
+  `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev R --checker-sha <64 hex>`
+  prints `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0` and exits 0; for each of
+  the 10 manifest rows it applies exactly one exact-string edit to the checker blob at R
+  (refusing a no-op with `GUARD_SETUP edit-no-op`, an ambiguous anchor with
+  `GUARD_SETUP edit-ambiguous`, an unbuildable state with `GUARD_SETUP state-unbuildable` and
+  a `limit` row with no declared mechanism with `GUARD_SETUP limit-mechanism-missing`, each
+  exit 2), runs the pristine and the mutant checker against the same fresh fixture store and
+  the same arguments, and reports `killed` only when the pristine run exits with the row's
+  declared exit and prints its declared token and the mutant run's exit differs or loses that
+  token, and `limit` only when the two runs are identical in exit and declared token; a row
+  whose observed class differs from its frozen `expect` makes `unmet` nonzero and exits 1; at
+  base `07e50d6d` `git grep -c 'GUARD_INERTIA'` prints nothing.
+- **Counter:** `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev RECORDS_REV --checker-sha <64 hex>`
 - **Battery:** `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --selftest`
 - **Predicate:** `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0` (exit 0)
-- **Before:** at base no committed tool prints a `GUARD_INERTIA` line; round 96's R96M1
-  mutation matrix covers the counter (`measure-v96.py`), not the checker's guards, and the
-  revenger probe R96L1 delivered nothing (spot-check D-b).
+- **Before:** at base `07e50d6d` no committed tool prints a `GUARD_INERTIA` line; round 96's
+  R96M1 mutation matrix covers the counter (`measure-v96.py`), not the checker's guards; the
+  round-96 revenger probe left a late seat report (`.ufo/waves/round-96/w1/R96L1.md`,
+  "partly refuted") but no committed runnable matrix, and the round-96 record's own M5
+  corrected the spot-check's premature dead-seat call (D-b). C2 is the first committed
+  matrix over the checker's guard edits.
 - **After:** the line above at R, exit 0; the selftest 7/7; a manifest whose killed row is
   declared `limit` prints `survived=1` and exits 1; a no-op edit is refused exit 2.
 - **Kill rules:**
@@ -140,9 +150,23 @@ Receipts: `.ufo/evidence/round-97/pre-freeze/*.out`.
 
 ## Amendments
 
-Pre-data; no claim receipt existed when each row was written.
+Pre-data; no claim receipt existed when each row was written (the pre-freeze controls are
+controls, not a scored positive; the records run postdates every row here).
 
 | id | artifact | falsified sentence | amendment |
 |---|---|---|---|
-| A2 | base-rev run (`BATTERY states=50 matched=50 mismatched=0 missing=0`, rc 0) and `git cat-file -e 07e50d6d:.ufo/evidence/round-97/c1/battery-bind.py` exit 128 | nothing — disclosure, not a narrowing | C1's declared limits gain the base-rev reachability sentence; the predicate, counter and target are unchanged. |
-| A1 | `.ufo/evidence/round-97/pre-freeze/c1-forge-worktree-only.out` (`BATTERY states=50 matched=49 mismatched=0 missing=1`, rc 1) | C1's "the four edits each print a nonzero `mismatched` count" | a receipt dropped from the index (left in the working tree) is counted `missing`, not `mismatched`; the sentence now names the field per edit ("a nonzero `missing` count" for the de-index case, `mismatched` for the three receipt-body edits). The plan wording already read "mismatched or missing"; the claims file is aligned to it, and the counter is unchanged. |
+| A1 | `.ufo/evidence/round-97/pre-freeze/c1-forge-worktree-only.out` (`BATTERY states=50 matched=49 mismatched=0 missing=1`, rc 1) | C1's "the four edits each print a nonzero `mismatched` count" | the de-index case is counted `missing`, not `mismatched`; the sentence names the field per edit. **A8 corrects A1's own claim** that "the plan wording already read 'mismatched or missing'" — it did not; the plan sentence is rewritten at A8. The counter is unchanged. |
+| A2 | base-rev run (`BATTERY states=50 matched=50 mismatched=0 missing=0`, rc 0) and `git cat-file -e 07e50d6d:…/battery-bind.py` exit 128 | nothing — disclosure, not a narrowing | C1's declared limits gain the base-rev reachability sentence; the predicate, counter and target are unchanged. |
+| A3 | `w1/R97E3-forgeries.txt` E2e (`D01.out` digest → 64 zeros: `matched=50`, rc 0), E2d (`pos-real.out` zero digest + forged `mutant=D99`: `matched=50`); `w1/R97R1.md` cases 06/28 | C1's "a `counter_sha=` edit … prints a nonzero `mismatched` count" | narrowed to a receipt that does **not** carry a `mutant=D<nn>` line; the exemption (and the one-line opt-out) is added to C1's declared limits. Structural: a mutant's digest cannot be pinned before the run. Tool unchanged. |
+| A4 | `w1/R97R1.md` F2, case 13 (`--driver-sha ''` → predicate, rc 0) | C1's "a `--driver-sha` value unequal … is refused … exit 2" | tool repaired: a non-64-hex `--driver-sha` (including the empty string) is `BATTERY_SETUP driver-sha-invalid` exit 2; a 64-hex unequal value stays `driver-sha-mismatch`. The sentence now names both refusals. |
+| A5 | `w1/R97R1.md` F5, case 30 (`C1_R96_PASS=true` edit on a conjunct-graded receipt ignored) | C1's "a `C1_R96_PASS=true` payload edit … prints a nonzero `mismatched` count" | narrowed to "on a `__pass` receipt" — the payload line is graded only where the driver's expectation is `__pass`. Tool unchanged. |
+| A6 | `w1/R97R1.md` F6, case 17 (`git cat-file -e` → rc 128); `.ufo/evidence/round-97/pre-freeze/c1-nowork-summary-absent.out` (`rc=128`) | C1's "(`git cat-file -e` exit 1)" | corrected to "exit 128". |
+| A7 | `w1/R97R1.md` F4, case 04 (index-only deletion, uncommitted, run at the base rev → `matched=50`) | C1's "a receipt deleted from the index (but left in the working tree) prints a nonzero `missing` count" | narrowed to a deletion **committed into the tree at R** while the file stays on disk; an uncommitted index deletion is not seen because the reader reads blobs at R. |
+| A8 | `w1/R97R1.md` F3 (the plan still read "each print a nonzero `mismatched` count") | A1's plan-sync claim | the plan §C1 sentence is rewritten (this table's A1 is superseded on that point); no target or predicate moved. |
+| A9 | `w1/R97L1.md` §5/§9; `w1/R97R2.md` F1; round-96 `.ufo/waves/round-96/w1/R96L1.md` (`partly refuted`) and its M5 correction `d8f135d2` | C2's Before "the revenger probe R96L1 delivered nothing (spot-check D-b)" | replaced by: a late seat report with no committed runnable matrix, and the round-96 M5 correction of the premature dead-seat call; C2 is the first committed matrix. Predicate/counter/target unchanged. |
+| A10 | `w1/R97R2.md` F5 (the plan's C2 command omitted `--checker-sha` while `claims.json` carried it) | plan/C2 command-line sync | the plan's C2 wording and counter now name `--checker-sha <64 hex>`. |
+| A11 | `w1/R97R2.md` F3/F4, `w1/R97E2.md` F2 | nothing — instrument hardening | tool repaired: an unbuildable state is `GUARD_SETUP state-unbuildable` exit 2, a `limit` row with no declared mechanism is `GUARD_SETUP limit-mechanism-missing` exit 2, and both selftests create their scratch root before `mkdtemp`. Selftests still 7/7; the manifest and the 10 rows are unchanged. |
+
+Post-repair instrument digests: C1 `battery-bind.py` and C2 `guard-inertia.py` are re-pinned in
+`claims.json` at the commit that carries this table; the checker, manifest, driver and counter
+blobs are unchanged.

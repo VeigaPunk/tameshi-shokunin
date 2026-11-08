@@ -167,7 +167,11 @@ def main():
     mp = ".ufo/evidence/round-97/c2/guard-inertia.json"
     # (a) a killed row declared limit -> survived, exit 1
     flipped = json.loads(json.dumps(man))
-    flipped["rows"][0]["expect"] = "limit"
+    # flip a measured `limit` row to `killed`: its two runs are identical, so the
+    # observation must contradict the pre-registered expectation (survived, exit 1).
+    _lim = [r for r in flipped["rows"] if r["expect"] == "limit"][0]
+    _lim["expect"] = "killed"
+    _lim.pop("limit_mechanism", None)
     open(os.path.join(st2, mp), "w", encoding="utf-8").write(json.dumps(flipped, indent=1) + "\n")
     r = commit(st2, "flip expectation")
     code, out = run([sys.executable, "-I", tool, "--lane", st2, "--rev", r])

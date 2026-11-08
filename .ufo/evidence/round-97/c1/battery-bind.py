@@ -15,11 +15,11 @@ What it reads, all at `--rev` from the object store (never the worktree):
   * the committed driver `<driver>` (its `states()` and `grade()` are the
     oracle; `EXPECT_EXTRA` carries the four states the driver builds itself).
 
-A state whose receipt blob is absent, that carries no `counter_sha=<64 hex>`
-line, or whose `counter_sha` differs from the counter blob's sha256 while the
-receipt does not name a `mutant=D<nn>` row, is `missing`. A receipt whose
-`exit=` differs from the expectation, fails the driver's own `grade()`
-conjunct/`__pass`/`__setup` check, is `mismatched`.
+A state whose receipt blob is absent or that carries no `counter_sha=<64 hex>`
+line is `missing`. A receipt whose `counter_sha` differs from the counter blob's
+sha256 while it does not name a `mutant=D<nn>` row, or whose `exit=` differs from
+the expectation, or that fails the driver's own `grade()` conjunct/`__pass`/
+`__setup` check, is `mismatched`.
 
 Usage:
   python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane LANE --rev REV \
@@ -122,8 +122,11 @@ def bind(lane, rev, driver_path, counter_path, receipts_path, driver_sha_pin, ta
     driver_blob = blob_at(lane, rev, driver_path, env)
     if driver_blob is None:
         return die("driver-absent-at-rev"), None
-    if driver_sha_pin and hashlib.sha256(driver_blob).hexdigest() != driver_sha_pin:
-        return die("driver-sha-mismatch"), None
+    if driver_sha_pin is not None:
+        if not SHA_RE.fullmatch(driver_sha_pin or ""):
+            return die("driver-sha-invalid"), None
+        if hashlib.sha256(driver_blob).hexdigest() != driver_sha_pin:
+            return die("driver-sha-mismatch"), None
     counter_blob = blob_at(lane, rev, counter_path, env)
     if counter_blob is None:
         return die("counter-absent-at-rev"), None
@@ -172,8 +175,9 @@ def bind(lane, rev, driver_path, counter_path, receipts_path, driver_sha_pin, ta
 def selftest():
     """Fixture battery: a real git repo, four states, expectations the reader
     must reproduce; each planted cheat must move the verdict."""
-    base = tempfile.mkdtemp(dir=os.path.join(os.environ.get("HYAKU_SCRATCH", "/fast/scratch/hyaku"),
-                                              "tameshi-r97"), prefix="battery-selftest-")
+    _root = os.path.join(os.environ.get("HYAKU_SCRATCH", "/fast/scratch/hyaku"), "tameshi-r97")
+    os.makedirs(_root, exist_ok=True)
+    base = tempfile.mkdtemp(dir=_root, prefix="battery-selftest-")
     env = sealed_env(os.path.join(base, "home"))
     repo = os.path.join(base, "lane")
     os.makedirs(repo)
@@ -307,8 +311,9 @@ def main():
     if r.returncode != 0:
         sys.exit(die("rev-unresolvable"))
     a.rev = r.stdout.decode().strip()
-    tag = tempfile.mkdtemp(dir=os.path.join(os.environ.get("HYAKU_SCRATCH", "/fast/scratch/hyaku"),
-                                            "tameshi-r97"), prefix="battery-bind-")
+    _root = os.path.join(os.environ.get("HYAKU_SCRATCH", "/fast/scratch/hyaku"), "tameshi-r97")
+    os.makedirs(_root, exist_ok=True)
+    tag = tempfile.mkdtemp(dir=_root, prefix="battery-bind-")
     try:
         rc, _ = bind(os.path.realpath(a.lane), a.rev, a.driver, a.counter, a.receipts,
                      a.driver_sha, tag)
