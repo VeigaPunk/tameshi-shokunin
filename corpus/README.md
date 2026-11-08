@@ -743,3 +743,15 @@ carries the round-92 certificate block. Admission remains the non-author closure
 |---|---|---|
 | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); certificate under round 92's sealed counter; admission pending | S316, S317 (opened 2026-11-06); S320 (opened 2026-11-08); `.ufo/evidence/round-92/` |
 
+## Round 93 — verdict-content certificate position of the fleet-gate case note
+
+Appended; every earlier row is unchanged. Round 93's successor counter reads the note's
+verdict table by its own header (QUALITY 154/155) instead of by id shape, so an id-keyed
+impact table no longer refuses an honest note; the map position stays Core / recorded case
+and the note carries the round-93 certificate block. Admission remains the non-author
+closure's.
+
+| Entry | Map position | Grounding |
+|---|---|---|
+| `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); verdict-content certificate under round 93's sealed counter; admission pending | S316, S317 (opened 2026-11-06); S320, S321, S322 (opened 2026-11-08); `.ufo/evidence/round-93/` |
+

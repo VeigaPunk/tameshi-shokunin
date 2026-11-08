@@ -274,3 +274,22 @@ refuse on verdict content, not on id shape. Digest semantics of the self-pin: S3
 (`sha256sum(1)`, opened 2026-11-08, https://man.archlinux.org/man/sha256sum.1.en).
 **Not admitted.**
 
+## Certification attempt (appended round 93) — the verdict-content reader
+
+Appended; the entry and the round-92 block above are unchanged. Round 92's counter was
+killed by its own rule: it refused this note when the §2b impact table below was
+reformatted so its ids became cells of their own, because the reader keyed every
+id-shaped row instead of the rows that assert a verdict. Round 93's successor,
+`.ufo/evidence/round-93/c1/measure-v93.py`, reads the note by table shape: a table is a
+verdict table only when its header row carries a `verdict` cell (GFM tables: one header
+row and one delimiter row, S321), fenced blocks are literal content and not block
+structure (CommonMark, S322), and only the rows inside that one table are keyed. An
+id-keyed table that asserts no verdict is not a verdict table and does not refuse this
+note; a second table that carries verdict tokens under any header does. The control
+battery commits both honest states (this note with an id-keyed impact table appended, this
+note with a data cell whose text is exactly `verdict`) and the hostile states that must be
+refused.
+
+The twelve verdict cells above are the cells the counter reads; it certifies those cells
+and nothing about how they were obtained. Admission is the non-author closure's.
+
