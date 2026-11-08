@@ -8,10 +8,10 @@ W = L + "/.ufo/waves/round-92/w1"
 E = L + "/.ufo/evidence/round-92"
 SC = "/fast/scratch/hyaku/tameshi-r92"
 BASE = "63172b9889475103aeca976d37389d204010dd11"
-INSTR_REV = "884a4dc11a61434f8733683fdc691d997d5625ac"   # A: counter + battery + S320 + lesson gate
-DRIVER_REV = "3119c0ea42062538fa13bc5637132c1f6d7fd831"   # A2: control driver syntax repair
+INSTR_REV = "84904d41a31fb5ddde49e8bf1ad6fc2b489671a0"   # A3: counter (self-pin) + battery + S320 + lesson gate
+DRIVER_REV = "f0ece7a3c74e7e2504dd3994d0efe0e88c3dcfb0"   # driver of record (A3 + mutant-phase repairs)
 FREEZE = "25f976625501663f2ea3336cc3e40499580ea59c"                             # B: plan + claims.json + control receipts
-COUNTER_SHA = "a6adf4a6c89feb35f8633a2942c0bfcd729aa3ccbdc57e10fef98ce9b8cc2fe3"
+COUNTER_SHA = "be5a9221b36983d6c45e983c398ee9c9c088b374d36fb17e2ae67f50ad749ea9"
 PIN = "f47ad6ba8d306f8125597401cb2ce45c1297a593"
 GOD = ("/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n"
        "3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n"

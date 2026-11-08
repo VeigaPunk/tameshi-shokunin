@@ -1,0 +1,238 @@
+# T92M1 — defect spec for the round-92 C1 counter (pre-registered)
+# written 2026-11-08, before any counter run of this seat.
+#
+# Mutant base bytes: .ufo/evidence/round-92/c1/measure-v92.py at revision
+#   84904d41a31fb5ddde49e8bf1ad6fc2b489671a0 (A3 instrument), raw sha256
+#   be5a9221b36983d6c45e983c398ee9c9c088b374d36fb17e2ae67f50ad749ea9,
+#   pin-normalized sha256 723562ed5b20e1a914d9addbce9007b8edf1c962c8237592dbac3b39e5509c2c.
+#   (Dispatch named 884a4dc1 / a6adf4a6: that is the pre-freeze A commit whose
+#   conjunct printed selfpin as a literal. L1 corrected the constant; the A3 bytes
+#   above are what is mutated here.)
+#
+# Each defect is ONE edit against those bytes. After the edit the SELF_SHA256 line
+# is recomputed for the mutated bytes so the mutant can run: the self-pin is a seal
+# against accidental drift, not a defence against a deliberate mutation study (the
+# plan says the same for D01/D02/D03). The frozen bytes are never modified.
+#
+# Score: KILLED = the mutant's receipt on the exposing state differs from the frozen
+# counter's receipt on the SAME state (same clone, same rev, different --work dir).
+# SURVIVED = byte-identical receipt (exit, C1_ROW lines, C1_SUMMARY, C1_CONJUNCTS,
+# C1_R92_PASS) — a coverage finding, not permission to change any contract.
+#
+# Block grammar: '### <id> | <check> | state=<state> | expect=<KILLED|SURVIVED>'
+# then '--- OLD' <lines> '--- NEW' <lines> '--- END'. OLD must occur exactly once.
+
+### M01 | self-pin assert (QUALITY 144) removed | state=selfpin-edit | expect=KILLED
+--- OLD
+    selfpin = self_pin_ok()
+    if not selfpin:
+        die("self-pin-mismatch")
+--- NEW
+    selfpin = True  # T92M1 M01: the pinned-bytes assert is removed
+--- END
+
+### M02 | spec-bytes pin (QUALITY 139/140) hardcoded | state=spec-edit | expect=KILLED
+--- OLD
+    spec_pinned = hashlib.sha256(spec_bytes).hexdigest() == SPEC_SHA
+--- NEW
+    spec_pinned = True  # T92M1 M02: the spec pin is no longer compared
+--- END
+
+### M03 | gate-blob pin hardcoded | state=pin-mismatch | expect=KILLED
+--- OLD
+    pin = hashlib.sha256(gate_bytes).hexdigest() == g["sha256"]
+--- NEW
+    pin = True  # T92M1 M03: the gate pin is no longer compared
+--- END
+
+### M04 | lane replace-list seal (QUALITY 139) removed | state=replace-honest | expect=KILLED
+--- OLD
+    for r, label in ((repo, "lane"),):
+        p = git(r, "replace", "-l", check=False)
+        if p.returncode != 0:
+            die("replace-list-failed:" + label)
+        if p.stdout.strip():
+            die("replace-refs-present:" + label)
+--- NEW
+    pass  # T92M1 M04: the lane replace-list gate is removed
+--- END
+
+### M05 | unreadable-gate-blob refusal removed | state=gate-commit-bogus | expect=KILLED
+--- OLD
+    if gate_bytes is None:
+        die("gate-blob-unreadable")
+--- NEW
+    # T92M1 M05: the unreadable-gate-blob guard is removed
+--- END
+
+### M06 | work-not-empty-dir refusal removed | state=work-not-empty | expect=KILLED
+--- OLD
+    if os.path.isdir(work) and os.listdir(work):
+        die("work-not-empty-dir")
+--- NEW
+    # T92M1 M06: a non-empty work dir is accepted
+--- END
+
+### M07 | header count ==1 relaxed to >=1 (QUALITY 143) | state=header-2 | expect=KILLED
+--- OLD
+    ids_ok = (not bad) and headers == 1 and sorted(note_rows) == sorted(ids)
+--- NEW
+    ids_ok = (not bad) and headers >= 1 and sorted(note_rows) == sorted(ids)
+--- END
+
+### M08 | id-shape rule narrowed to the known ids (QUALITY 143) | state=c13-row | expect=KILLED
+--- OLD
+ID_SHAPE = re.compile(r"^[A-Za-z]{1,4}[_-]?[0-9]{1,4}$")
+--- NEW
+ID_SHAPE = re.compile(r"^C(0[1-9]|1[0-2])$")
+--- END
+
+### M09 | unkeyed-row refusal removed (QUALITY 143) | state=unkeyed-row | expect=KILLED
+--- OLD
+        if not shaped:
+            bad.append("unkeyed:" + first[:40])
+            continue
+--- NEW
+        if not shaped:
+            continue
+--- END
+
+### M10 | position rule: "exactly one verdict token" dropped | state=two-token | expect=KILLED
+--- OLD
+        if len(toks) != 1 or vcol is None or vcol >= len(cells) or cells[vcol] not in VERDICTS:
+--- NEW
+        if vcol is None or vcol >= len(cells) or cells[vcol] not in VERDICTS:
+--- END
+
+### M11 | duplicate-key refusal disabled | state=dup-row | expect=KILLED
+--- OLD
+        if first in rows:
+            bad.append("dup:" + first)
+            continue
+--- NEW
+        if first in rows and False:  # T92M1 M11: a duplicate key overwrites
+            bad.append("dup:" + first)
+            continue
+--- END
+
+### M12 | figure denominator no longer checked | state=figure-denominator | expect=KILLED
+--- OLD
+        figure_ok = len(heads) == 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n
+--- NEW
+        figure_ok = len(heads) == 1 and int(heads[0][0]) == killed  # T92M1 M12
+--- END
+
+### M13 | source row must be "mined" — status check dropped | state=source-queued | expect=KILLED
+--- OLD
+        if len(c) >= 13 and c[1] == SOURCE_SID and c[8] == "mined" \
+                and LESSON_PATH in c[11]:
+--- NEW
+        if len(c) >= 13 and c[1] == SOURCE_SID and True \
+                and LESSON_PATH in c[11]:
+--- END
+
+### M14 | coverage-row conjunct hardcoded | state=coverage-row-gone | expect=KILLED
+--- OLD
+    coverage_ok = any(l.lstrip().startswith("|") and "knowledge/mutation-case-fleet-sources-census.md" in l
+                      for l in readme.split("\n"))
+--- NEW
+    coverage_ok = True  # T92M1 M14: the README coverage row is no longer required
+--- END
+
+### M15 | witness rule "differs iff (rc,stdout) differ" forced | state=witness-same | expect=KILLED
+--- OLD
+            witness = "differs" if (p1[0], p1[1]) != (p2[0], p2[1]) else "same"
+--- NEW
+            witness = "differs"  # T92M1 M15: every survivor is called witnessed
+--- END
+
+### M16 | mismatched0 weakened to note-presence | state=note-inverted | expect=KILLED
+--- OLD
+                mismatched0=(note is not None and mism == 0), figure=figure_ok,
+--- NEW
+                mismatched0=(note is not None), figure=figure_ok,
+--- END
+
+### M17 | invalid0 hardcoded true | state=noop-mutant | expect=KILLED
+--- OLD
+                invalid0=invalid == 0, trivial0=trivial == 0, inconclusive0=inconclusive == 0,
+--- NEW
+                invalid0=True, trivial0=trivial == 0, inconclusive0=inconclusive == 0,
+--- END
+
+### M18 | trivial0 hardcoded true | state=trivial-mutant | expect=KILLED
+--- OLD
+                invalid0=invalid == 0, trivial0=trivial == 0, inconclusive0=inconclusive == 0,
+--- NEW
+                invalid0=invalid == 0, trivial0=True, inconclusive0=inconclusive == 0,
+--- END
+
+### M19 | inconclusive0 hardcoded true | state=honest | expect=SURVIVED
+--- OLD
+trivial0=trivial == 0, inconclusive0=inconclusive == 0,
+--- NEW
+trivial0=trivial == 0, inconclusive0=True,
+--- END
+
+### M20 | unstable0 hardcoded true | state=honest | expect=SURVIVED
+--- OLD
+                unstable0=unstable == 0, note=note is not None, ids=ids_ok,
+--- NEW
+                unstable0=True, note=note is not None, ids=ids_ok,
+--- END
+
+### M21 | note-presence conjunct hardcoded true | state=note-absent | expect=KILLED
+--- OLD
+note=note is not None, ids=ids_ok,
+--- NEW
+note=True, ids=ids_ok,
+--- END
+
+### M22 | n_min floor hardcoded true | state=spec-11 | expect=KILLED
+--- OLD
+n_min=n >= N_MIN)
+--- NEW
+n_min=True)
+--- END
+
+### M23 | two-run rule weakened to one run per verdict | state=honest | expect=KILLED
+--- OLD
+    runs = int(spec.get("runs_per_verdict", 2))
+--- NEW
+    runs = 1  # T92M1 M23: one run per verdict
+--- END
+
+### M24 | pristine green run once instead of twice | state=honest | expect=SURVIVED
+--- OLD
+    green_runs = [selftest(gp, work, to) for _ in range(2)]
+--- NEW
+    green_runs = [selftest(gp, work, to)]  # T92M1 M24: pristine runs once
+--- END
+
+### M25 | canary no longer demands exit 97 | state=honest | expect=SURVIVED
+--- OLD
+    canary = selftest(cgp, work, to)[0] == 97
+--- NEW
+    canary = True  # T92M1 M25: the 97 exit is no longer demanded
+--- END
+
+### M26 | C1_R92_PASS no longer derived from the conjuncts | state=figure-denominator | expect=KILLED
+--- OLD
+    ok = all(conj.values())
+--- NEW
+    ok = True  # T92M1 M26: PASS is not derived from the conjuncts
+--- END
+
+### M27 | exit code no longer tracks PASS | state=figure-denominator | expect=KILLED
+--- OLD
+    sys.exit(0 if ok else 1)
+--- NEW
+    sys.exit(0)  # T92M1 M27: the exit code no longer tracks PASS
+--- END
+
+### M28 | green no longer demands the "selftest ok" literal | state=honest | expect=SURVIVED
+--- OLD
+    green = all(r[0] == 0 and b"selftest ok" in r[1] for r in green_runs)
+--- NEW
+    green = all(r[0] == 0 for r in green_runs)  # T92M1 M28: the ok-literal is dropped
+--- END

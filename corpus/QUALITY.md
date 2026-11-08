@@ -2526,3 +2526,67 @@ on the landed bytes (`c2-landed-battery.txt`).
     and D02 (`GIT_NO_REPLACE_OBJECTS`), because `V4-replace`'s receipt is `C1_SETUP` exit 2 and
     a refusal is not scored as a kill under the pre-registered rule.
     (`lessons/round-91.md` `## Mistakes` M7.)
+
+150. A counter's self-pin is the sha256 of its own bytes with the pin line removed by a stated
+    normalisation rule, re-derivable with one command, and checked before any other action; the
+    conjunct a receipt prints is the result of that check, never a literal. Able to fail: the
+    A3 diff `.ufo/evidence/round-92/c1/measure-v92.py` (`selfpin=True` -> `selfpin = self_pin_ok()`;
+    `git show 84904d41`) and `.ufo/evidence/round-92/pre-freeze/controls/selfpin-edit.out`
+    (`C1_SETUP self-pin-mismatch`, exit 2, on the counter with one appended comment).
+    (`lessons/round-92.md` `## Mistakes` M2.)
+151. A note reader keyed by a fixed id set refuses every verdict-shaped table row that is not
+    exactly one spec id carrying exactly one verdict token in the header-named column: an
+    id-shaped first cell outside the set, a verdict token on a non-id row, a token outside the
+    named column, a duplicate id, a second `verdict` header. The header count is its own defence,
+    not a formality. Able to fail: `.ufo/evidence/round-92/pre-freeze/controls/out-of-set.out`
+    (`ids=false`, `badrows=12`), `out-of-set-letters.out`, `dup-row.out`, `position.out`,
+    `unkeyed-row.out`; D03's first construction was refused by the header count alone
+    (`badrows=0 headers=2`) before the D03 mutant relaxed it. (`lessons/round-92.md` M3.)
+152. A control battery's summary is derived from the receipts on disk and enumerates every
+    pre-registered state; a state the run did not select cannot be counted as matched, and a
+    receipt the run did not write is a missing row, not a pass. Able to fail: round 92's first
+    full run printed `C1_CONTROLS states=20 matched=20` while its three removal mutants and the
+    do-nothing base had never been selected (driver repairs A5/A6); the committed run prints
+    `states=25 matched=25`. (`lessons/round-92.md` M1.)
+153. Every new counter is linted before its freeze against the lane's inherited-hardening list,
+    and the lint is shown able to fail on an earlier counter. Considerthese `2026-11-07.md` idea 1,
+    applied. Able to fail: `.ufo/evidence/round-92/hardening/lint-v91.out`
+    (`defences=5/8 missing=self-pin,refuse-out-of-set-ids,refuse-unkeyed-verdict`, exit 1) against
+    `.../lint-v92.out` (`defences=8/8`, exit 0).
+
+154. A note reader refuses a row on its **verdict content**, never on its id shape alone: an
+    id-keyed table that asserts no verdict is not a verdict table and must not refuse a note
+    that holds the true cells. Round 92's counter refused an honest note whose §2b impact
+    table was reformatted to key its ids (`ids=false`, `badrows=5`, exit 1) — the one defect
+    that killed R92-C1 under its own rule (a) branch 2. Able to fail:
+    `.ufo/waves/round-92/w1/T92C1-A13-id-keyed-2b-reformat.out` (honest note, refused) and
+    `.../T92C1-A12-id-keyed-impact.out` (the same, appended instead of reformatted).
+    (`lessons/round-92.md` `## Claim and kill`.)
+155. A verdict header is recognised only from a row whose first cell is `id` (or the
+    population-id header the spec names); a data cell equal to `verdict` must not create a
+    second header and refuse the note. Round 92's header rule counted any row with a
+    `verdict` cell, so an honest witness cell holding that word (`headers=2`) refused.
+    Able to fail: `.ufo/waves/round-92/w1/T92R1-probe.out` (`witness==verdict headers: 2`).
+    (`lessons/round-92.md` M6; T92R1 SF-2.)
+156. A kill rule and the declared limits may not contradict each other on one presentation
+    class: a presentation the limits declare unkeyed (fenced block, HTML table, prose) is a
+    limit, never an item in the kill rule's "a committed state ... while the note presents
+    different verdicts" list. Round 92 froze both readings at once (rule (a) named "a
+    fenced table"; the limits said fences are not keyed), and a fenced inverted table PASSed
+    (`T92C1` A1) — a reviewer can kill the claim from either text. Able to fail:
+    `plans/round-92.plan.md` §claim rule (a) vs §declared limits, and
+    `T92C1-A1-fenced-second-table.out`. (`lessons/round-92.md` M7.)
+157. A documentation-linkage conjunct (coverage map, source citation) must reject the
+    decoy that denies or merely names its object: a README row that says the note is **not
+    admitted** satisfies "a row names the note", and a lesson line `S320 <URL>` satisfies an
+    id+URL source check without a located quote. Round 92's A10/A11 passed on exactly those
+    decoys. Able to fail: `T92C1-A10-coverage-decoy.out`, `T92C1-A11-source-decoy.out`.
+    (`lessons/round-92.md` `## Claim and kill`.)
+158. Every conjunct of a counter is falsifiable by a committed battery state, or it is
+    declared unfalsifiable with the reason at the freeze; a mutation matrix that leaves a
+    conjunct survivable and unstated is an unmeasured surface. Round 92's matrix scored
+    25/30: M19 (no timeout control) is killable and missing, M20/M24/M25/M28 are not
+    falsifiable under the pinned gate's own selftest (no inconclusive, unstable or non-green
+    state is constructible). Able to fail: `.ufo/waves/round-92/w1/T92M1.md` §5.
+    (`lessons/round-92.md` M8.)
+

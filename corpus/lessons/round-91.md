@@ -126,3 +126,13 @@ The round's instruments — `.ufo/evidence/round-91/c1/measure-v91.py`,
 Registry). `controls-summary.py` is the one piece that should survive as a `tools/` row if a
 later round regenerates control summaries generally (QUALITY 147); route that decision to
 r92 rather than registering a counter whose claim was killed.
+
+## Correction appended in round 92 (r91 routed defect 1)
+
+The Learning-trends sentence above says the kills "became QUALITY 143-148". The round-91 landing
+commit `63172b98` carries **QUALITY 143-149** and **Mistakes M1-M7**: the M7 row (the battery does not
+test the seal) and QUALITY 149 (a refusal conjunct is tested by a removal control) were added in that
+same commit and are named in `plans/round-91.plan.md` §Amendments A1/A2 as the round's deliverable.
+The frozen plan's own `:201` cell ("QUALITY 143-148") stands unedited, as a frozen plan must; the
+round-92 lesson records it.
+

@@ -1,0 +1,65 @@
+T92M1 mutation matrix — frozen counter sha256 be5a9221b36983d6c45e983c398ee9c9c088b374d36fb17e2ae67f50ad749ea9 (pin-normalized 723562ed5b20e1a914d9addbce9007b8edf1c962c8237592dbac3b39e5509c2c)
+states built from lane rev 84904d41a31fb5ddde49e8bf1ad6fc2b489671a0; base rev 63172b9889475103aeca976d37389d204010dd11 for the setup probes
+defect specs: T92M1-defects.txt
+score = frozen receipt vs mutant receipt on the SAME state clone and rev
+
+id    state                expect    verdict      evidence
+M19   honest               SURVIVED  SURVIVED     receipt byte-identical
+
+T92M1_MUTANT_VERDICT killed=0/1 survived=1 inconclusive=0
+T92M1_SURVIVORS M19
+T92M1_EXTRA M19 state=timeout verdict=KILLED
+
+## frozen baselines (the receipt a mutant must differ from)
+
+### baseline state=honest rev=c0dac7b5d527 expect={'__pass': True} ok=True sha=3ef2cbefece29389583d9e98df419992b841c08dd05630f590e3f365e1eb1ddf
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=c0dac7b5d527ca405d63dba18ca5f3c21ba08939 n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 headers=1
+C1_CONJUNCTS selfpin=true pin=true spec=true green=true canary=true invalid0=true trivial0=true inconclusive0=true unstable0=true note=true ids=true mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R92_PASS=true
+
+### baseline state=timeout rev=cd9239afe435 expect={'cond': {'inconclusive0': False}} ok=True sha=879baa2bbbbe6e2dab27f757a148f96f15eab7e120b0ebe3f9b03fff2de85991
+C1_ROW C01 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=INCONCLUSIVE runs=INCONCLUSIVE,INCONCLUSIVE note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=cd9239afe435f71ff9082786580bb0c90d3cc981 n=12 killed=0 survived=0 inconclusive=12 unstable=0 invalid=0 trivial=0 witnessed=0/0 note=present mismatched=12 badrows=0 headers=1
+C1_CONJUNCTS selfpin=true pin=true spec=false green=false canary=true invalid0=true trivial0=true inconclusive0=false unstable0=true note=true ids=true mismatched0=false figure=false witnessed=true source=true coverage=true n_min=true
+C1_R92_PASS=false
+
+## mutant receipts (diff vs the frozen baseline of the same state)
+
+### M19 state=honest verdict=SURVIVED receipt_sha=3ef2cbefece29389583d9e98df419992b841c08dd05630f590e3f365e1eb1ddf mutant_sha=87cd9a54135b71730c761f9375913480abdf972d27d2b2d5dfaa49fe88e8008c pin=c9f1cf0c6ff63169ea21674161031916e7e5b9b86ea4d72ed95cccec3b6a0479
+--- frozen
++++ M19
+@@ -332,3 +332,3 @@
+     conj = dict(selfpin=selfpin, pin=pin, spec=spec_pinned, green=green, canary=canary,
+-                invalid0=invalid == 0, trivial0=trivial == 0, inconclusive0=inconclusive == 0,
++                invalid0=invalid == 0, trivial0=trivial == 0, inconclusive0=True,
+                 unstable0=unstable == 0, note=note is not None, ids=ids_ok,
+(receipt byte-identical)
+
+## restoration
+restored bytes sha256=be5a9221b36983d6c45e983c398ee9c9c088b374d36fb17e2ae67f50ad749ea9 (frozen=be5a9221b36983d6c45e983c398ee9c9c088b374d36fb17e2ae67f50ad749ea9) equal=True
+restored run on state=honest exit=0 receipt_sha=3ef2cbefece29389583d9e98df419992b841c08dd05630f590e3f365e1eb1ddf baseline_receipt_sha=3ef2cbefece29389583d9e98df419992b841c08dd05630f590e3f365e1eb1ddf equal=True
+
+wall_secs=192

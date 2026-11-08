@@ -731,3 +731,15 @@ unchanged from the round-90 row above — Core, recorded cases, not a ledger leg
 | Entry | Map position | Grounding |
 |---|---|---|
 | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases; **not admitted** as a certified case — the round-90 counter was killed by its own rule, and round 91's successor was killed too) | S316, S317 (opened 2026-11-06); `.ufo/evidence/round-90/`; `.ufo/waves/round-91/` |
+
+## Round 92 — certification position of the fleet-gate case note
+
+Appended; every earlier row is unchanged. Round 92's sealed successor counter certified the
+case note's twelve verdicts under a self-pinned instrument and a 25-state control battery
+(`.ufo/evidence/round-92/`); the map position stays Core / recorded case, and the note
+carries the round-92 certificate block. Admission remains the non-author closure's.
+
+| Entry | Map position | Grounding |
+|---|---|---|
+| `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); certificate under round 92's sealed counter; admission pending | S316, S317 (opened 2026-11-06); S320 (opened 2026-11-08); `.ufo/evidence/round-92/` |
+

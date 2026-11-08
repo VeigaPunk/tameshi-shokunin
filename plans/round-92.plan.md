@@ -181,3 +181,90 @@ round-91 counter as the state shown to fail (5/8: no self-pin, no id-set refusal
   names the instrument revision `84904d41…` and the driver revision `f0ece7a3…` — the
   revisions whose bytes every receipt certifies — and this plan names the same two; the
   plan-filing commit is their child, so the two cannot disagree.
+
+## Amendments (post-wave, pre-file) — freeze-integrity corrections
+
+The frozen claim, predicate, counter and expectations are unchanged. The three sentences
+below were wrong about the record's own mechanics; each is corrected here, citing the
+artifact that falsified it (T92R2's freeze-conformance report,
+`.ufo/waves/round-92/w1/T92R2.md`). This is the §8 narrowing applied to the record, not to
+the claim.
+
+### A1 — the receipts are committed *in* the freeze commit, not before it (T92R2 defect 1)
+
+The § Controls sentence "pre-freeze, committed before this file" is false as written:
+T92R2 row 1c shows no receipt exists at any ancestor of `25f97662` and all 26 control files
+were added by that commit. Correction: the receipts were **produced** before the plan was
+written (their instrument revision `84904d41` is a strict ancestor of the freeze:
+`git merge-base --is-ancestor 84904d41 25f97662` → 0) and were **committed with** the plan
+in the freeze commit. What the freeze ordering must guarantee — that no receipt is produced
+after a claim has been scored and that the instrument bytes predate every receipt — holds;
+what it must not pretend is that the commit order was receipts-then-plan. It was not.
+
+### A2 — the driver of record is A7, not A6 (T92R2 defect 2)
+
+The header and kill rule (c) name driver `f0ece7a3` (A6), but the freeze tree ships A7
+`f144da2b4332425909c120c5129d50b1d0ca028e` (sha256
+`02ed403a41bd41a59d9aa0b46c1907cc657d6429ef8f4224a4b3eb5c8fc19731`) and the committed
+`selfpin-edit` state exists only in A7. Correction: the driver of record is
+**`f144da2b` / `02ed403a…`**. Receipt provenance, named: the 18 state receipts and
+`nowork-base`, `D01`, `D01D02` were produced by the A6 driver; `selfpin-edit`,
+`replace-honest`, `replace-false-sealed`, `D03` and the summary by the A7 driver. The
+A6→A7 diff (`git diff f0ece7a3 f144da2b -- .ufo/evidence/round-92/c1/controls-v92.py`)
+touches only the mutant-control branch (the D03 header relaxation, the selfpin-edit block)
+and the expectation table; the state phase that produces every C-state receipt and the
+counter that produces every verdict are byte-identical. Kill rule (c) reads: the counter at
+`84904d41` and the driver at `f0ece7a3`/`f144da2b` as named above.
+
+### A3 — the r91 count corrections land in the records commit, not the freeze tree (T92R2 defect 3)
+
+The § Records sentence is corrected: routed defect 1's append-only corrections are in
+`LOG.md` and `corpus/lessons/round-91.md` in the **records commit** that closes this round
+(the round's landing tree), not in the freeze commit; they were worktree-only when T92R2
+audited the freeze. The freeze tree is the instrument + plan + claims + receipts, by
+design.
+
+### A4 — the driver's own witness is committed (T92R2 defect 4)
+
+T92R2 row 4c: the `CONTROL_INSTRUMENT sha256=…` and `C1_CONTROLS …` lines had no committed
+witness. The driver's stdout of the summary-only re-derivation is committed at
+`.ufo/evidence/round-92/pre-freeze/controls/C1-run.log` (`CONTROL_INSTRUMENT
+sha256=be5a9221…`, `C1_CONTROLS states=25 matched=25 mismatches=0`, exit 0).
+
+### A5 — R92-C1 withdrawn (coverage) -> honest stop
+
+The claim's own kill rule (a), second clause, is fired by this round's wave. T92C1 built
+state `A13`: the committed note with its own §2b impact table reformatted so the id sits in
+its own cell (`| C12 | used-by trim | 20 | 1695 false E11 findings … |`), no content and no
+verdict changed — the twelve verdict rows are byte-identical to the passing note's. The
+frozen counter refuses it (`ids=false`, `badrows=5`, `mismatched=0`, exit 1;
+`.ufo/waves/round-92/w1/T92C1-A13-id-keyed-2b-reformat-note.md`,
+`T92C1-A13-id-keyed-2b-reformat.out`). T92R1's SF-2 records the same class for a data cell
+exactly equal to `verdict` and for bolded ids. An honest note refused by a rule stated
+above is a kill: **C1 does not verify, no axis score moves, and the SCORECARD records
+`not admitted (honest stop)`.**
+
+Also recorded, same rule: T92R1 SF-1 — the kill rule lists "a fenced table" while the
+declared limits say fenced blocks are not keyed; a fenced inverted second table PASSes
+(T92C1 A1), as do the HTML (A2) and prose (A3) presentations. The parenthetical list in
+rule (a) names presentations that leave the state holding the true verdicts; it belongs in
+the declared limits, and the kill rule's first branch should read "a state whose *keyed*
+verdict table is not the twelve true verdicts". The plan's sentence "any post-freeze edit
+of the instrument is inert" is corrected too: the self-pin is an edit detector, its
+recomputation is exactly what a mutation study does, and the certified binding is rule
+(c)'s committed sha256 (T92R1 N-1).
+
+Enforceable successor properties (round 93, QUALITY 154-158): a note reader refuses on
+**verdict content, not id shape** — an id-keyed row with no verdict token is not a verdict
+row and must not refuse; a `verdict` header is keyed only from a row whose first cell is
+`id`; `coverage` must reject a row that denies certification ("not admitted"); `source`
+must require a located quote from the source, not an id+URL pair; every conjunct the
+battery cannot falsify is either given a state or declared unfalsifiable with its reason
+(T92M1's M19/M20/M24/M25/M28).
+
+What survives as evidence, not as a claim: the twelve verdicts reproduce outside the
+counter (T92E1 `reproduced-12/12`); the 25-state battery reproduces from committed bytes
+with stable lines equal (T92E3 `reproduced`); the parser premise holds on the real note
+(T92S2 `premise-holds`); no standing sweep regressed (T92E2 `no-regression`); the counter's
+two new refusals hold on their own states (T92R1).
+

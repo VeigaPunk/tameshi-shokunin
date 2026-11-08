@@ -5613,3 +5613,34 @@ machine-checkable admission block, running its checker from a pinned blob under 
 coverage-row citation (round-90 routed items 1-2), and `corpus/README.md`'s round-91 map position
 for the note. The round-90 manifest's third row (`corpus/lessons/round-90.md` receipt addendum) is
 **dropped**: `w1/T91R2.md` §3.3 shows no routed defect stands behind it.
+
+## Round 92 — one coverage claim: the sealed self-pinned counter, killed by its own rule (honest stop)
+
+Base `63172b9889475103aeca976d37389d204010dd11`; instrument revision
+`84904d41a31fb5ddde49e8bf1ad6fc2b489671a0`; battery driver of record
+`f144da2b4332425909c120c5129d50b1d0ca028e` (A7; the state and D01/D01D02 receipts were
+produced by A6 `f0ece7a3`); freeze `25f976625501663f2ea3336cc3e40499580ea59c`; wave
+`r92-w1`, 11 seats (executor 3, scribe 1, scout 2, reviewer 2, critic 1,
+mutation-tester 1, sentinel 1; attack 5/11 = 45 %), all settled, no dead seat.
+
+| Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|---|---|
+| R92-C1 | coverage (verdict-only axis; third attempt) | at base: `C1_SETUP spec-absent-at-rev`, exit 2 (`.ufo/evidence/round-92/pre-freeze/controls/nowork-base.out`) | `C1_R92_PASS=true`, exit 0, 17/17 conjuncts, `badrows=0 headers=1` at the freeze; battery `C1_CONTROLS states=25 matched=25 mismatches=0` (`.ufo/evidence/round-92/pre-freeze/measure-at-freeze.txt`, `.../controls/C1-summary.txt`) | **predicate met; killed by its own rule (a) branch 2** — the counter refuses an honest note whose impact table keys its ids (`.ufo/waves/round-92/w1/T92C1-A13-id-keyed-2b-reformat.out`), and its kill rule contradicted its limits on fenced tables (T92R1 SF-1/SF-2). **Not admitted**; no score moves | `python3 -I .ufo/evidence/round-92/c1/measure-v92.py --repo <lane> --rev <REV> --work <empty dir>`; battery `python3 -I .ufo/evidence/round-92/c1/controls-v92.py --lane <lane> --rev 84904d41… --base 63172b98… --work <empty> --outdir <dir> --jobs 5` | instrument `84904d41`; freeze `25f97662`; landing: the records commit of this round (report § Before → after) |
+
+Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0). No capability row
+enters (the sealed-counter behaviour and the battery reproduction are evidence; their claim
+was killed). No retirement or saturation change. The nudge premise still holds (10/8/9 ≥ 8;
+no capability admitted since round 82).
+
+What the round landed regardless of the kill: the sealed successor counter and its
+25-state battery (both committed); `tools/hardening-lint.py` (considerthese 2026-11-07
+idea 1) with its receipts; S320; QUALITY 150-158; and the narrowing that fixes the goal
+for round 93 — **refuse on verdict content, not on id shape**, key the verdict header only
+from an `id`-first row, reject decoy coverage/source rows, and give every conjunct a state
+or a declared unfalsifiable reason.
+
+**Planned (round 93):** a fourth-attempt counter that refuses honest-note refusal by
+construction (QUALITY 154-155) with the A12/A13 states in its pre-freeze battery; a
+`timeout_s` state for M19; the decoy states for A10/A11 (QUALITY 157); and the derived
+spec constants (M5). No claim is pre-approved here.
+

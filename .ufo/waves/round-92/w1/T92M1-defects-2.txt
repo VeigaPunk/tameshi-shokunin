@@ -1,0 +1,36 @@
+# T92M1 — defect spec, BATCH 2 (registered after batch 1 ran, before this batch runs;
+# disclosed in the deliverable: batch 1 = T92M1-defects.txt, 28 defects, 23 killed / 5 survived)
+#
+# Two guards that batch 1 left unmeasured:
+#   M29  the absent-spec refusal at the base rev — the receipt this lane calls the
+#        "do-nothing receipt" (C1_SETUP spec-absent-at-rev, exit 2).
+#   M30  the FLEET copy of the replace-list seal (batch 1's M04 removed the lane copy).
+#        The fleet repo is read-only for this seat, so the state is a scratch clone of
+#        the fleet repo with one replace ref, reached through a spec whose gate.repo
+#        points at that clone. That spec edit also breaks the spec pin
+#        (spec=false in the receipt of both counters): the probe measures the REFUSAL,
+#        not a clean PASS. Disclosed as a residual ambiguity in the deliverable.
+#
+# Mutant base bytes are the same A3 counter (raw sha256 be5a9221…, pin-normalized
+# 723562ed…); the SELF_SHA256 line is recomputed per mutant as in batch 1.
+
+### M29 | absent-spec refusal at the base rev removed | state=spec-absent | expect=KILLED
+--- OLD
+    spec_bytes = blob(repo, rev, SPEC_PATH)
+    if spec_bytes is None:
+        die("spec-absent-at-rev")
+--- NEW
+    spec_bytes = blob(repo, rev, SPEC_PATH)
+    # T92M1 M29: the absent-spec refusal is removed
+--- END
+
+### M30 | fleet replace-list seal removed | state=fleet-replace | expect=KILLED
+--- OLD
+    p = git(fleet, "replace", "-l", check=False)
+    if p.returncode != 0:
+        die("replace-list-failed:fleet")
+    if p.stdout.strip():
+        die("replace-refs-present:fleet")
+--- NEW
+    pass  # T92M1 M30: the fleet replace-list gate is removed
+--- END

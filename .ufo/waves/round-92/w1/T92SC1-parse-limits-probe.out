@@ -1,0 +1,59 @@
+counter=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-92/c1/measure-v92.py
+counter_sha256=be5a9221b36983d6c45e983c398ee9c9c088b374d36fb17e2ae67f50ad749ea9
+self_pin_ok=True
+SELF_SHA256=723562ed5b20e1a914d9addbce9007b8edf1c962c8237592dbac3b39e5509c2c
+ID_SHAPE='^[A-Za-z]{1,4}[_-]?[0-9]{1,4}$'
+VERDICTS=('KILLED', 'SURVIVED')
+note_rev=dae295de396dd6eaa20315a9289f7310afe28826
+note_bytes=21150
+
+-- honest note --
+rows=12 bad=0 headers=1 ids=True
+bad_detail=[]
+
+-- limit and refusal classes (parse_note over a fragment) --
+
+L1-fenced-table
+  expect: not keyed (fence skipped) -> headers=0 rows=0
+  rows=0 bad=0 headers=0 ids_ok=False
+
+L2-html-table
+  expect: not keyed (no pipe-delimited markdown row) -> rows=0
+  rows=0 bad=0 headers=0 ids_ok=False
+
+L3-prose-verdict
+  expect: not keyed (prose is not a table row) -> rows=0
+  rows=0 bad=0 headers=0 ids_ok=False
+
+L4-predictions-not-receipts
+  expect: keyed and accepted — the parser cannot see provenance
+  rows=12 bad=0 headers=1 ids_ok=True
+  cells=['KILLED', 'SURVIVED', 'SURVIVED', 'KILLED', 'KILLED', 'SURVIVED', 'KILLED', 'SURVIVED', 'SURVIVED', 'SURVIVED', 'KILLED', 'SURVIVED']
+
+R1-out-of-set-ids
+  expect: REFUSED (ids=false) — bad rows out-of-set
+  rows=12 bad=12 headers=2 ids_ok=False
+  bad=['out-of-set:C001', 'out-of-set:C002', 'out-of-set:C003', 'out-of-set:C004']
+  cells=['KILLED', 'SURVIVED', 'SURVIVED', 'KILLED', 'KILLED', 'SURVIVED', 'KILLED', 'SURVIVED', 'SURVIVED', 'SURVIVED', 'KILLED', 'SURVIVED']
+
+R1b-out-of-set-letters
+  expect: REFUSED (ids=false)
+  rows=12 bad=12 headers=2 ids_ok=False
+  bad=['out-of-set:X1', 'out-of-set:X2', 'out-of-set:X3', 'out-of-set:X4']
+  cells=['KILLED', 'SURVIVED', 'SURVIVED', 'KILLED', 'KILLED', 'SURVIVED', 'KILLED', 'SURVIVED', 'SURVIVED', 'SURVIVED', 'KILLED', 'SURVIVED']
+
+R2-unkeyed-verdict-row
+  expect: REFUSED (ids=false) — bad row unkeyed
+  rows=12 bad=1 headers=1 ids_ok=False
+  bad=['unkeyed:n/a']
+  cells=['KILLED', 'SURVIVED', 'SURVIVED', 'KILLED', 'KILLED', 'SURVIVED', 'KILLED', 'SURVIVED', 'SURVIVED', 'SURVIVED', 'KILLED', 'SURVIVED']
+
+-- L4: are the prediction-copied and receipt-copied parses distinguishable? --
+predictions_rows=['KILLED', 'SURVIVED', 'SURVIVED', 'KILLED', 'KILLED', 'SURVIVED', 'KILLED', 'SURVIVED', 'SURVIVED', 'SURVIVED', 'KILLED', 'SURVIVED']
+receipt_rows=['KILLED', 'SURVIVED', 'SURVIVED', 'KILLED', 'KILLED', 'SURVIVED', 'KILLED', 'SURVIVED', 'SURVIVED', 'SURVIVED', 'KILLED', 'SURVIVED']
+identical_cells=True identical_parse=True
+VERDICT: limit classes executed
+
+-- note front-matter `source:` lines --
+count=1
+counter_reads_note_source_line=False

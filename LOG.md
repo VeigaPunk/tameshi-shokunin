@@ -4989,3 +4989,38 @@ critic 2, mutation-tester, connector, sentinel); attack share 5/14.
 - **Upkeep (not a claim).** The case note's admission marker and coverage citation (round-90
   routed items 1-2) and `corpus/README.md`'s round-91 map position; the round-90 manifest's
   third row is dropped as having no routed defect behind it (`T91R2` §3.3).
+
+## Correction appended in round 92 — round-91 count mentions (r91 routed defect 1)
+
+The round-91 entry above ends "QUALITY 143-148. Mistakes M1-M6": at `63172b98` the round-91 commit
+actually adds **QUALITY 143-149** and **Mistakes M1-M7** (`git show 63172b98 --stat`; the M7 row and
+QUALITY 149 are in that commit, and `plans/round-91.plan.md` §Amendments names the M7/149 pair).
+`corpus/lessons/round-91.md` carried the same stale "143-148" at its Learning-trends sentence and now
+carries a `## Correction appended in round 92` block. The frozen `plans/round-91.plan.md:201` cell
+("QUALITY 143-148") is **not edited**: a frozen plan is never rewritten; this line is its record.
+
+## Round 92 (2026-11-08) — one coverage claim: predicate met, killed by its own rule (honest stop)
+
+- **Shape.** One v1 wave `r92-w1`, 11 seats (executor 3, scribe 1, scout 2, reviewer 2,
+  critic 1, mutation-tester 1, sentinel 1; attack 5/11 = 45 %), all settled. Base
+  `63172b98`; instrument `84904d41`; driver of record `f144da2b`; freeze `25f97662`.
+- **R92-C1 (coverage) predicate met, killed.** The sealed successor counter reproduced the
+  twelve fleet-gate verdicts at the freeze (`C1_R92_PASS=true`, exit 0, 17/17 conjuncts,
+  `badrows=0 headers=1`), and its 25-state control battery printed
+  `C1_CONTROLS states=25 matched=25 mismatches=0` — including a hidden `C001`-`C012` table
+  refused (`ids=false`) and a post-freeze instrument edit refused (`self-pin-mismatch`).
+  Killed by its own rule (a) branch 2: T92C1 `A13` reformats the note's §2b impact table so
+  its ids are cells of their own — no verdict changed — and the counter refuses it
+  (`ids=false badrows=5`); T92R1 SF-1/SF-2 add the fenced-table contradiction (the kill rule
+  lists it, the limits exclude it) and the `verdict`-word header. Not admitted.
+- **Survived as evidence.** 12/12 verdicts reproduced outside the counter (T92E1); the
+  battery reproduces from committed bytes with equal stable lines (T92E3); the parser
+  premise holds on the real note (T92S2); no standing sweep regressed (T92E2); 25/30
+  counter mutants killed with the five survivors named (T92M1).
+- **Records.** QUALITY 150-158; Mistakes M1-M8 in `corpus/lessons/round-92.md`; the r91
+  count corrections appended to `LOG.md` and `corpus/lessons/round-91.md`; the note carries
+  its not-admitted certificate block; `corpus/README.md` gains the round-92 map position.
+- **Frontier.** S320 (sha256sum(1)) mined and cited by the round's claim; rows 179 -> 180.
+  `tools/hardening-lint.py` lands (considerthese 2026-11-07 idea 1) with lint-v91 5/8 as
+  its failing case and lint-v92 8/8 as its positive case.
+

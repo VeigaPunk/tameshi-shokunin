@@ -1,0 +1,34 @@
+== H2a: is the SPEC pin a precondition? ==
+spec_pinned = hashlib.sha256(spec_bytes).hexdigest() == SPEC_SHA
+    spec = json.loads(spec_bytes)
+    g = spec["gate"]
+    fleet = g["repo"]
+    p = git(fleet, "replace", "-l", check=False)
+    if p.returncode != 0:
+        die("replace-list-failed:fleet")
+    if p.stdout.strip():
+        die("replace-refs-present:fleet")
+    gate_bytes = blob(fleet, g["commit"], g["path"])
+    if gate_bytes is None:
+        die("ga
+
+== H2b: build_witness() with an unpinned witness path ==
+build_witness returned lane dir: /fast/scratch/hyaku/tameshi-r92/T92SN1/specescape/w-l33u83n5/w-shokunin
+ESCAPED_DIR created outside the witness dir?  True
+ESCAPED_FILE created outside the witness dir? True
+witness dir contents: []
+
+== H2c: does the driver derive fixtures from the working tree? ==
+  driver:70: def spec_edit(lane, fn):
+  driver:71:     s = json.load(open(os.path.join(lane, SPEC), encoding="utf-8"))
+  driver:111:     C["spec-mutated"] = dict(files={SPEC: spec_edit(lane, lambda s: mut(s, "C03").update(
+  driver:113:     C["noop-mutant"] = dict(files={SPEC: spec_edit(lane, lambda s: mut(s, "C02").update(
+  driver:115:     C["syntax-mutant"] = dict(files={SPEC: spec_edit(lane, lambda s: mut(s, "C11").update(
+  driver:117:     C["trivial-mutant"] = dict(files={SPEC: spec_edit(lane, lambda s: mut(s, "C10").update(
+  driver:120:     C["witness-same"] = dict(files={SPEC: spec_edit(lane, lambda s: mut(s, "C02")["witness"].update(
+  driver:123:     C["pin-mismatch"] = dict(files={SPEC: spec_edit(lane, lambda s: s["gate"].update(
+  driver reads the lane worktree spec, and the counter reads the spec at --rev: True
+
+== H2d: does the counter refuse a spec that fails the pin? (dry, no run) ==
+  spec_pinned is assigned, then spec is used unconditionally;
+  'die(' occurrences after the assignment: 3

@@ -247,3 +247,30 @@ the measured table. Round 91's sealed successor that was to re-certify this note
 was itself killed (`.ufo/waves/round-91/w1/T91C1.md` §1,
 `corpus/lessons/round-91.md`), so this note stays a measurement without a
 standing certificate.
+
+## Certification attempt (appended round 92) — not admitted
+
+Appended; the entry above is unchanged. Round 92 built a sealed successor counter,
+`.ufo/evidence/round-92/c1/measure-v92.py` (sha256
+`be5a9221b36983d6c45e983c398ee9c9c088b374d36fb17e2ae67f50ad749ea9`), which pins its own
+sha256 in `plans/round-92.plan.md` and refuses at setup on any post-freeze edit, and whose
+note reader refuses any verdict-bearing table row outside the spec's twelve ids. It
+reproduced the twelve cells above under its own selftest (`C1_R92_PASS=true`, exit 0,
+`badrows=0 headers=1`, `.ufo/evidence/round-92/pre-freeze/measure-at-freeze.txt`), and its
+25-state control battery prints `C1_CONTROLS states=25 matched=25 mismatches=0`,
+including a hidden `C001`-`C012` table refused with `ids=false` and a post-freeze
+instrument edit refused with `C1_SETUP self-pin-mismatch`.
+
+**The round's own wave killed the certificate.** The counter refuses an honest note whose
+impact table keys its ids: T92C1 `A13` reformats this note's §2b table so the id is its own
+cell, changes no verdict, and the counter refuses it (`ids=false`, `badrows=5`, exit 1,
+`.ufo/waves/round-92/w1/T92C1-A13-id-keyed-2b-reformat.out`); T92R1's SF-2 adds the same
+class for a `verdict`-word cell. Its kill rule also listed "a fenced table" while its
+declared limits said fenced blocks are not keyed, and a fenced inverted table PASSes
+(T92C1 A1, T92R1 SF-1). Both are QUALITY 154-156. So the twelve cells remain a measurement
+without a standing certificate — the third round in a row in which the certifying
+instrument, not the measured table, failed — and the successor property is now fixed:
+refuse on verdict content, not on id shape. Digest semantics of the self-pin: S320
+(`sha256sum(1)`, opened 2026-11-08, https://man.archlinux.org/man/sha256sum.1.en).
+**Not admitted.**
+
