@@ -44,7 +44,7 @@ Exit: 0 PASS; 1 not PASS; 2 setup refusal.
 """
 import argparse, hashlib, html as htmlmod, io, json, os, re, shutil, subprocess, sys, tarfile
 
-SELF_SHA256 = "90d2e3ae25b6c4c1d935ac5aa0ad6f2f3ac1a3c789ecf3c92df149ade9d3c986"
+SELF_SHA256 = "9a073d351dd23de2f61af95436e5cac1fa871193f7d52e0728553e9034cb99e2"
 SELF_PIN_RE = rb'^SELF_SHA256 = "[0-9a-f]{64}"\n'
 
 SPEC_PATH = ".ufo/evidence/round-93/c1/census-mutants.json"
@@ -247,17 +247,13 @@ def parse_note(nt, spec_ids):
     for oi, header, drows in tables(nt):
         low = [norm_cell(c) for c in header]
         vcols = [k for k, c in enumerate(low) if c == "verdict"]
-        consumed.add(oi)
-        consumed.update(ln for ln, _, _ in drows)
         if vcols:
+            consumed.add(oi)
+            consumed.update(ln for ln, _, _ in drows)
             vtables.append((oi, header, drows, vcols))
-            continue
-        for ln, cells, isdelim in drows:
-            if isdelim:
-                continue
-            toks = [c for c in cells if c in VERDICTS]
-            if toks:
-                bad.append("stray-verdict:%d:%s" % (ln + 1, cells[0][:24] if cells else ""))
+    # One rule, one place: every block line outside the verdict table that carries
+    # a verdict token and at least two pipes is a presented verdict row - whether
+    # it sits in another table or in a pseudo-table paragraph.
     for oi, raw in block_lines(nt):
         if oi in consumed or raw.count("|") < 2:
             continue
