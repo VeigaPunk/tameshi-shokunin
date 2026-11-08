@@ -373,6 +373,23 @@ def receipt_path(outdir, name):
     return os.path.join(outdir, "%s.rerun-%d.out" % (name, n))
 
 
+WRITTEN = {}
+_WRITE_LOCK = None
+
+
+def write_named(outdir, name, body):
+    """Write this run's receipt for `name` and remember its path (A9)."""
+    global _WRITE_LOCK
+    if _WRITE_LOCK is None:
+        import threading
+        _WRITE_LOCK = threading.Lock()
+    path = receipt_path(outdir, name)
+    write_receipt(path, body)
+    with _WRITE_LOCK:
+        WRITTEN[name] = path
+    return path
+
+
 def write_receipt(path, body):
     # O_NOFOLLOW: refuse a symlink rather than write through it (M9).
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0), 0o644)
@@ -396,7 +413,7 @@ def run_ctl(name, spec, lane, rev, counter, counter_sha, scratch, outdir):
                             "--work", work], capture_output=True, text=True)
         body = ("control=%s clone_rev=%s parent=%s\ncounter_sha=%s\nexit=%d\n"
                 % (name, crev, rev, counter_sha, p.returncode) + p.stdout + p.stderr)
-        write_receipt(receipt_path(outdir, name), body)
+        write_named(outdir, name, body)
         return name, p.returncode, p.stdout
     finally:
         shutil.rmtree(d, ignore_errors=True)
@@ -541,8 +558,7 @@ def main():
         os.makedirs(w2, exist_ok=True)
         p = subprocess.run([sys.executable, "-I", counter, "--repo", lane, "--rev", a.base,
                             "--work", w2], capture_output=True, text=True)
-        write_receipt(receipt_path(a.outdir, "nowork-base"),
-              "control=nowork-base rev=%s\ncounter_sha=%s\nexit=%d\n"
+        write_named(a.outdir, "nowork-base", "control=nowork-base rev=%s\ncounter_sha=%s\nexit=%d\n"
               % (a.base, counter_sha, p.returncode)
               + p.stdout + p.stderr)
     if sel is None or "selfpin-edit" in sel:
@@ -552,8 +568,7 @@ def main():
         os.makedirs(pw, exist_ok=True)
         p = subprocess.run([sys.executable, "-I", pe, "--repo", lane, "--rev", a.rev,
                             "--work", pw], capture_output=True, text=True)
-        write_receipt(receipt_path(a.outdir, "selfpin-edit"),
-                      "control=selfpin-edit edit=appended-comment exit-bound-to-the-pin\n"
+        write_named(a.outdir, "selfpin-edit", "control=selfpin-edit edit=appended-comment exit-bound-to-the-pin\n"
                       "counter_sha=%s\nexit=%d\n"
                       % (counter_sha, p.returncode) + p.stdout + p.stderr)
     if sel is None or "double-pin" in sel:
@@ -571,8 +586,7 @@ def main():
         os.makedirs(pw, exist_ok=True)
         p = subprocess.run([sys.executable, "-I", dp, "--repo", lane, "--rev", a.rev,
                             "--work", pw], capture_output=True, text=True)
-        write_receipt(receipt_path(a.outdir, "double-pin"),
-                      "control=double-pin edit=decoy-self-pin-line-before-real "
+        write_named(a.outdir, "double-pin", "control=double-pin edit=decoy-self-pin-line-before-real "
                       "exit-bound-to-the-pin\ncounter_sha=%s\nexit=%d\n"
                       % (counter_sha, p.returncode) + p.stdout + p.stderr)
     if sel is None or "replace-honest" in sel:
@@ -588,8 +602,7 @@ def main():
         srev = sh("git", "-C", st, "rev-parse", "HEAD").strip()
         p = subprocess.run([sys.executable, "-I", counter, "--repo", st, "--rev", srev,
                             "--work", w], capture_output=True, text=True)
-        write_receipt(receipt_path(a.outdir, "replace-honest"),
-                      "control=replace-honest\ncounter_sha=%s\nexit=%d\n"
+        write_named(a.outdir, "replace-honest", "control=replace-honest\ncounter_sha=%s\nexit=%d\n"
                       % (counter_sha, p.returncode) + p.stdout + p.stderr)
         shutil.rmtree(st, ignore_errors=True)
     if sel is None or any(n.startswith("D0") for n in (sel or ["D01"])):
@@ -621,10 +634,10 @@ def main():
             mrev = sh("git", "-C", repo, "rev-parse", "HEAD").strip()
             p = subprocess.run([sys.executable, "-I", mp, "--repo", repo, "--rev", mrev,
                                 "--work", mw], capture_output=True, text=True)
-            write_receipt(receipt_path(a.outdir, n),
-                          "mutant=%s state=%s\ncounter_sha=%s\nexit=%d\n" % (
-                              n, state_name, hashlib.sha256(open(mp, "rb").read()).hexdigest(),
-                              p.returncode) + p.stdout + p.stderr)
+            write_named(a.outdir, n,
+                        "mutant=%s state=%s\ncounter_sha=%s\nexit=%d\n" % (
+                            n, state_name, hashlib.sha256(open(mp, "rb").read()).hexdigest(),
+                            p.returncode) + p.stdout + p.stderr)
         shutil.rmtree(st, ignore_errors=True)
 
     # summary derived from the receipts on disk; every pre-registered control must
@@ -636,12 +649,7 @@ def main():
     for n in sorted(expectations):
         if sel is not None and n not in sel:
             continue
-        found = None
-        for cand in [n + ".out"] + ["%s.rerun-%d.out" % (n, i) for i in range(1, 50)]:
-            p = os.path.join(a.outdir, cand)
-            if os.path.lexists(p):
-                found = p
-                break
+        found = WRITTEN.get(n)
         if found is None:
             missing.append(n)
             lines.append("%s MISSING" % n)
@@ -663,6 +671,10 @@ def main():
         except OSError:
             missing.append(n)
             lines.append("%s NONREGULAR-REFUSED" % n)
+            continue
+        if not re.search(r"^counter_sha=[0-9a-f]{64}$", body, re.M):
+            missing.append(n)
+            lines.append("%s NO-COUNTER-SHA" % n)
             continue
         m = re.search(r"exit=(\d+)", body)
         code = int(m.group(1)) if m else -1
