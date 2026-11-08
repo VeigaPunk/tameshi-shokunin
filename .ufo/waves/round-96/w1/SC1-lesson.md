@@ -141,30 +141,37 @@ Every number below is a line a committed receipt printed at the revision named.
   `c2-pins-empty-lane.out`: `PINS_SETUP lane-empty` exit 2; `c2-pins-symlink.out`:
   `PINS_SETUP pins-symlink-refused` exit 2 with `target_before == target_after ==
   9660b330…`.
-- **C2 driver.** `c2-rerun-plant.out`: a planted `pos-real.out` carrying
-  `counter_sha=000…0` sits beside the driver's own `pos-real.rerun-1.out`, and the driver
-  prints `pos-real MATCH exit=0 states=1 matched=1` — it graded its own write.
-  `c2-receipt-symlink.out`: the same, with `pos-real.out` a symlink to an outside file
-  (`FORGED` untouched). `c2-outdir-symlink.out`: `outdir-symlink-refused`, exit 1.
+- **C2 driver.** The driver grades **its own write**: `c2-rerun-plant.out` prints
+  `pos-real MATCH exit=0` and `C1_CONTROLS states=1 matched=1 mismatches=0 missing=0`,
+  exit 0, while the planted receipt it did **not** grade is carried by
+  `w1/R96R2-out-rerun9-planted.out` (`counter_sha=000000…0`, `exit=1`,
+  `C1_CONJUNCTS pass=false verdict_tables=false`); a symlinked receipt is refused —
+  `w1/R96R2-out-symlink-summary.txt` prints `pos-real SYMLINK-REFUSED`, and
+  `c2-receipt-symlink.out` records the same run with the outside file's sha256
+  (`outside_sha=8dfa71ca…`). `c2-outdir-symlink.out`: `outdir-symlink-refused`, exit 1.
 - **C2 battery.** The full run at the records revision prints
-  `C1_CONTROLS states=50 matched=50 mismatches=0 missing=0`, exit 0
-  (`.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt`); every one of the fifty
-  receipts carries a `counter_sha=` line equal to the counter blob
+  `C1_CONTROLS states=50 matched=50 mismatches=0 missing=0`, exit 0 — **re-derived by this
+  seat** by re-grading all fifty committed receipts with the driver's own `grade()` and its
+  own expectations table (`.ufo/waves/round-96/w1/R96SC1-regrade.txt`); every one of the
+  fifty receipts carries a `counter_sha=` line equal to the counter blob
   (`69ee68b6…`, or the mutant's own digest for `D01`-`D05`).
 - **Census.** `census-before.txt` and `census-after.txt` both exit 0; rows 183, mined 149,
   queued 23, rejected 11, unchanged.
 
-> **Note on the battery receipt pointer.** The lesson's landing names
-> `.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt`. At `ffb41c8f` that path is
-> **not** in the tree (`git ls-files .ufo/evidence/round-96/pre-freeze/controls/` lists the
-> fifty `<state>.out` receipts and no summary file), so the pointer as landed does not resolve.
-> The number it carries is corroborated from two places that do resolve: the fifty committed
-> receipts under that directory (each carries `counter_sha=` and a `C1_SUMMARY` line), and
-> the wave replay `.ufo/waves/round-96/w1/R96E4-battery-replay.out`, which prints
+> **Note on the battery receipt pointer.** The landed lesson names
+> `.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt` for the
+> `states=50 matched=50` line. That path is **not** in the tree
+> (`git ls-files .ufo/evidence/round-96/pre-freeze/controls/` lists the fifty
+> `<state>.out` receipts and no summary file — the driver writes its summary into a scratch
+> outdir), so the pointer as landed does not resolve. This seat therefore **re-derived the
+> number**: re-grading all fifty committed receipts with the driver's own `grade()` and its
+> own expectations table, at a clone of the records revision, prints
+> `C1_CONTROLS states=50 matched=50 mismatches=0 missing=0`
+> (`.ufo/waves/round-96/w1/R96SC1-regrade.txt`) — the number is sound, its pointer is not.
+> For contrast, the wave replay `.ufo/waves/round-96/w1/R96E4-battery-replay.out` prints
 > `independent_match=44/50 mismatches=6` for the **pre-A6** driver and names the six
-> mismatches (`D01`-`D05`, `replace-honest`) — the defect A6 repaired. The L1 should either
-> land the summary file or point at a receipt that exists; this seat does not claim the
-> `states=50 matched=50` line independently, because the receipt it names is absent.
+> mismatches (`D01`-`D05`, `replace-honest`) — the defect A6 repaired. The L1 should land
+> the summary file or point at a receipt that exists.
 
 ## Wave
 
