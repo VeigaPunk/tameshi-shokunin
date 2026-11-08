@@ -105,7 +105,9 @@ def run_ctl(name, files, lane, scratch, measure, outdir):
         os.makedirs(os.path.dirname(fp), exist_ok=True)
         open(fp, "w", encoding="utf-8").write(text)
     if name == "CTL15-coverage":
-        pass
+        # the control holds a note and a source row but no README row; the positive
+        # fixture must NOT land a README row here, or the counter cannot tell.
+        files = {k: v for k, v in files.items() if k != "corpus/README.md"}
     sh("git", "-C", repo, "add", "-A")
     sh("git", "-C", repo, "-c", "user.name=r90-fixture", "-c", "user.email=r90-fixture@invalid",
        "commit", "-q", "-m", "r90 control " + name)
