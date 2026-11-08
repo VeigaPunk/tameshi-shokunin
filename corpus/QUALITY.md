@@ -2770,8 +2770,11 @@ on the landed bytes (`c2-landed-battery.txt`).
     writing nothing; a symlink at `pins.json` prints `PINS_SETUP pins-symlink-refused` exit
     2 with the outside target's sha256 unchanged (`9660b330…` before and after;
     `.ufo/evidence/round-96/landing/c2-pins-{empty-lane,symlink}.out`); the driver grades
-    `pos-real.rerun-1.out` — its own write — while a planted `pos-real.out` with
-    `counter_sha=000…0` sits beside it (`c2-rerun-plant.out`), and refuses a symlinked
-    `--outdir` (`outdir-symlink-refused`, `c2-outdir-symlink.out`). The pre-amendment
+    own write — `c2-rerun-plant.out` prints `pos-real MATCH exit=0` and
+    `C1_CONTROLS states=1 matched=1 mismatches=0 missing=0`, exit 0, while the planted
+    receipt it did not grade is carried by `w1/R96R2-out-rerun9-planted.out`
+    (`counter_sha=000000…0`, `exit=1`, `pass=false verdict_tables=false`); a symlinked
+    receipt is refused (`w1/R96R2-out-symlink-summary.txt`: `pos-real SYMLINK-REFUSED`),
+    and so is a symlinked `--outdir` (`outdir-symlink-refused`, `c2-outdir-symlink.out`). The pre-amendment
     round-95 tool wrote through the symlink and into the CWD (`w1/R96R2.md`; `w1/R96SN1.md`
     F4/F9). (`lessons/round-96.md`; `plans/round-96.plan.md` §A7, A9.)

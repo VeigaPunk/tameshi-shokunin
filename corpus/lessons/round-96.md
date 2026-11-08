@@ -42,11 +42,14 @@ anchored at §Get a commit. Rows re-opened: S320, S321, S322, S323 — status un
 | M1 | **wrong-path default**: the successor checker's `COUNTER` constant still named round 95's `measure-v95.py`, which does not exist in round 96, so every run of the documented command died `counter-absent-at-rev` — kill rule (d)-class, found by the round's own reviewer before any positive existed. | `w1/R96R1.md` FALSIFIES-WORDING #1 (`R96R1-probe1-positive-default.out`: `DISPOSITION_SETUP counter-absent-at-rev`, exit 2); the constant was at `conjunct-disposition-v96.py:53`. | the plan's own counter command (`plans/round-96.plan.md` §C1) was never executed at the freeze — no pre-freeze run of the documented command existed. | A1 repaired the constant; QUALITY 173 now requires the printed instrument line to name the revision and the digest the verdict was read at, so a wrong default is visible in the receipt. |
 | M2 | **inherited label**: the round-95 to round-96 copy carried `C1_R95_`, `round-95/` paths and a `--rev` string into the new instruments; the path rewrites were mechanical and left `measure-v95.py` and a `v95` name in prose and code. | `git show 10d8fa5d:.ufo/evidence/round-96/conjunct-disposition-v96.py` line 53; `w1/R96C1.md` C1.1. | none — the copy step had no post-copy assertion that every `round-95`/`v95` token had been replaced or deliberately kept. | A1; the round-96 instruments now carry a `ROUND = 96` constant and the receipts prove the run (`counter_sha=` on every graded body, validated by the driver since A9). |
 | M3 | **no-op selftest cases**: the two print statements added for the new cases asserted nothing that could fail, so kill rule (c) was tripped by the shipped selftest itself. | `w1/R96C1.md` C1.8 (`selftest.txt` 13/13 while a reverted seal would still pass); the block was `selftest()` cases 12-13. | the plan's kill rule (c) was written but not read against the new cases before the freeze. | A5 rewrote them to run the real main path — `hostile-path-cheat` under a poisoned `PATH`, `branch-revspec-cheat` with `--rev master` — and both now fail if the seal or the guard is removed. |
+| M4 | **renderer drift**: the Gate's cited line numbers did not follow from the rendering the Gate itself named. The first landed preamble said the numbers come from a rendering where each tag is replaced by one space; under *that* rendering the S321/S322/S323 quotes sit at 4512/4605/2723/2463, while the lesson printed 4403/4496/2618/2358 — the numbers the canonical lane renderer (script/style and comments removed as well) produces. A reader following the lesson's own stated convention landed 109 lines off on every quote with a script block before it. | `w1/SC1-lesson.md` and `w1/SC1-sources.append.md` (renderer-variants and locate receipts); the round-95 spot-check's D1. | the round-95 D1 rule existed but was checked against the numbers, not against the preamble that claimed to produce them. | the preamble now names the canonical renderer (`.ufo/waves/round-93/w1/R93S1-tagstrip.py`), wrapped quotes are located by span, and the registry's S323 `anchor` cell moves `2355` -> `2358` (QUALITY 172: a cited line is one the named rendering shows carrying the sentence). |
 
 ## Registry changes
 
-No row added this round (no uncovered ground was opened). S320-S323 carry `used-by` for
-this lesson, appended in `corpus/SOURCES.md` before the freeze (`scripts/sources-census.sh
+No row added this round (no uncovered ground was opened). One cell changed: the S323 row's
+`anchor` column, `line 2355` -> `line 2358`, with the convention parenthetical corrected to
+the renderer that produces it (M4; one cell of one row, 11 columns preserved, census exit 0
+after). S320-S323 carry `used-by` for this lesson, appended in `corpus/SOURCES.md` before the freeze (`scripts/sources-census.sh
 validate --root /home/vgpnk/Projects/shokunin tameshi` exit 0; rows 183, mined 149, queued
 23, rejected 11, unchanged before -> after).
 
@@ -82,9 +85,10 @@ Every number below is a line a committed receipt printed at the revision named.
   `c2-pins-empty-lane.out`: `PINS_SETUP lane-empty` exit 2; `c2-pins-symlink.out`:
   `PINS_SETUP pins-symlink-refused` exit 2 with `target_before == target_after ==
   9660b330…`.
-- **C2 driver.** `c2-rerun-plant.out`: a planted `pos-real.out` carrying
-  `counter_sha=000…0` sits beside the driver's own `pos-real.rerun-1.out`, and the driver
-  prints `pos-real MATCH exit=0 states=1 matched=1` — it graded its own write.
+- **C2 driver.** `c2-rerun-plant.out` prints `pos-real MATCH exit=0` and
+  `C1_CONTROLS states=1 matched=1 mismatches=0 missing=0`, exit 0: the planted receipt
+  (`w1/R96R2-out-rerun9-planted.out`, `counter_sha=000000…0`, `exit=1`,
+  `pass=false verdict_tables=false`) sat beside the driver's own write and was not graded.
   `c2-receipt-symlink.out`: the same, with `pos-real.out` a symlink to an outside file
   (`FORGED` untouched). `c2-outdir-symlink.out`: `outdir-symlink-refused`, exit 1.
 - **C2 battery.** The full run at the records revision prints

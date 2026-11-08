@@ -1,0 +1,38 @@
+=== amended counter rev-parse block (lines 412-432) ===
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--repo", required=True)
+    ap.add_argument("--rev", required=True)
+    ap.add_argument("--work", required=True)
+    a = ap.parse_args()
+    repo = os.path.realpath(a.repo)
+    rev = a.rev
+    if not re.fullmatch(r"[0-9a-f]{40}", rev):
+        die("rev-not-a-commit-id")
+    _resolved = git(repo, "rev-parse", rev, check=False)
+    if _resolved.returncode != 0:
+        die("rev-unresolvable")
+    rev = _resolved.stdout.decode().strip()
+    if not re.fullmatch(r"[0-9a-f]{40}", rev):
+        die("rev-unresolvable")
+    work = os.path.realpath(a.work)
+    if os.path.isdir(work) and os.listdir(work):
+        die("work-not-empty-dir")
+    os.makedirs(work, exist_ok=True)
+    for r, label in ((repo, "lane"),):
+        p = git(r, "replace", "-l", check=False)
+
+=== amended checker with a BOGUS --counter (guard must fire) ===
+DISPOSITION_SETUP counter-absent-at-rev
+exit=2
+
+=== claims.json pins vs HEAD blobs ===
+claims C1.instrument_sha256 = 6c38dacd3cd76d3da5ff1c796d63aa985c6b1b5365f00972e77591ebe9fa55f7
+claims C1.manifest_sha256  = 31e4667b41c82b3eb0495932cf6b0d8fba0c8bb8b90ae8f114198ff05dc46785
+claims C2.instrument_sha256 = 876a75feafeab885973e5b66d4c35c97de67f9f019e2203a43754135b45b1702
+claims C2.driver_sha256    = efce312d9bee89556fa147a95e9950da13c05f3d455d8bff8c8f4409fdaf9e9e
+claims C2.counter_sha256   = e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1
+HEAD .ufo/evidence/round-96/conjunct-disposition-v96.py   02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80
+HEAD .ufo/evidence/round-96/conjunct-disposition.json     31e4667b41c82b3eb0495932cf6b0d8fba0c8bb8b90ae8f114198ff05dc46785
+HEAD .ufo/evidence/round-96/c1/make-pins96.py             544166e1b2b58f4c9caec88f2f01d38a59457f30f2decbfe167d636bbed67138
+HEAD .ufo/evidence/round-96/c1/controls-v96.py            0d5f14627d492b9f059c2f6de4dfa7218ccf4ec77b9214aa4b1c31fef05a9fc0
+HEAD .ufo/evidence/round-96/c1/measure-v96.py             69ee68b6fa230e29ef5ddc4e02d619562d5fe5f3620fb2355903c7f9f09a18d9

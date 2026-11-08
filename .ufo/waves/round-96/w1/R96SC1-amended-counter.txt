@@ -1,0 +1,26 @@
+=== amended COUNTER (HEAD blob 933df676) rev arms ===
+--- --rev ''
+C1_SETUP rev-not-a-commit-id
+C1_R96_PASS=false
+exit=2
+--- --rev 'master'
+C1_SETUP rev-not-a-commit-id
+C1_R96_PASS=false
+exit=2
+--- --rev 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
+C1_SETUP spec-absent-at-rev
+C1_R96_PASS=false
+exit=2
+--- --rev 'be6c22b6d8a94f07eee6b0fa79edab7df228c0b0'
+C1_SUMMARY rev=be6c22b6d8a94f07eee6b0fa79edab7df228c0b0 n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_R96_PASS=true
+exit=0
+
+=== amended checker --selftest ===
+SELFTEST a4-digest-named PASS findings=0 want=clean 
+SELFTEST worktree-only-receipt-cheat PASS findings=1 want=receipt-absent-at-rev receipt-absent-at-rev
+SELFTEST counter-sha-cheat PASS findings=1 want=receipt-counter-sha-mismatch receipt-counter-sha-mismatch
+SELFTEST hostile-path-cheat PASS exit=2 (identical to honest PATH)
+SELFTEST branch-revspec-cheat PASS exit=2 (rev-not-a-commit-id)
+DISPOSITION_SELFTEST: 13/13 pass
+exit=0
