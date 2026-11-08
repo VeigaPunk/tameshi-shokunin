@@ -79,3 +79,33 @@ mechanism-word cheat (a finding under the new reason test; the round-93 checker 
     → `tameshi ok …/corpus/SOURCES.md`, exit 0 (before and after; W04 duplicate-URL warnings unchanged)
 
 Rows: 182 content rows before → 182 after (`grep -cE '^ {0,3}\| S[0-9]{3,}' corpus/SOURCES.md`).
+
+## Wave
+
+One v1 wave `r94-w1`, 12 seats (executor 3, scribe 1, scout 2, reviewer 2, critic 1,
+mutation-tester 1, sentinel 1, connector 1). Eleven reports settled: R94E1
+`reproduced-12/12` (every mutant reproduced outside the counter), R94E2 `no-regression`
+(all standing sweeps identical at base and at the instrument revision; `hardening-lint`
+8/8), R94E3 `reproduced` (the 45-state battery replayed twice from committed bytes into
+one outdir, `states=45 matched=45` both times, stable lines identical, run 2 wrote
+`.rerun-1.out` files without modifying any `.out`), R94R1 `findings:4`, R94R2
+`conforms-with-findings` (hashes, predicate and all 19 disposition rows conform; the two
+provenance gaps it found were closed by `4dc919ac` and `b98b0864`), R94S1 `agree`,
+R94S2 `premise-holds`, R94C1 `killed:(a)` (indented-code refusal), R94M1 `killed:26/38`
+(12 rule-level survivors), R94SN1 `findings:9`, R94CN1 `no-overlap`. R94SC1's report is
+recorded in the seat table of the round report.
+
+The wave did not move a number: the battery stayed 45/45 and the disposition 19/17/2/0.
+It falsified **six sentences of the record** — four presentation classes the limit list did
+not name (indented code, a second pin line, `\\|` cells, a short delimiter) and two C2
+provenance readings (receipts read from the working tree; the reason test's rev-1 weakness)
+— each now an amendment (A1-A8) citing its artifact, plus the twelve rule-level survivors
+as a calibration limit (A8), and nine sentinel findings routed to round 95.
+
+## Mistakes (appended at the records commit)
+
+| id | class | evidence pointer | captured-by | fix |
+|---|---|---|---|---|
+| M5 | **the C2 checker's default manifest pointed at another round's file.** Rev 1/2 read `tools/conjunct-disposition.json` (round 93's) while the plan and claim name the round-94 manifest, so the reason test ran on bytes the claim does not describe — and printed `findings=0` on the round-93 manifest's shorter reasons. | `.ufo/evidence/round-94/pre-freeze/c2-pos.rev1.out` (rev 1: `findings=0` reading the wrong manifest) vs `c2-pos.out` (rev 3); fix `6a2a1fdd` | the reason test's own refusal when given the real manifest | a checker that takes a `--rev` must also default every surface it grades to that round's path; the default is now asserted by the selftest's clean case. |
+| M6 | **an instrument repair after the freeze was not recorded before it ran.** The C2 checker changed three times (rev 1 → rev 2 → rev 3) after `claims.json` had named rev 1; the receipts were re-run at rev 3 and the amendment (A1) written afterwards. | `claims.json` `C2.instrument_sha256` = `8ec7924e…` vs the rev-3 blob `6d4d2706…`; `.ufo/evidence/round-94/pre-freeze/c2-cheat-mechanism-word.rev1.out` | nothing — QUALITY 144's "a repair after the freeze is a successor" has no pre-commit check in this lane | add the freeze-time check to round 95: every `instrument_sha256` in `claims.json` must equal the working-tree blob of the file it names, and any change after the freeze commit must land with its amendment in the same commit. |
+| M7 | **the wave-spec generator's drift check read the wrong record.** It compared the spec pin against `claims.json`, which never carries it, and refused the first run (`SPEC_CONST_DRIFT spec`). | first run of `.ufo/waves/round-94/make-spec.py`; fix in `33279f40` | the generator itself | a drift check names the file each pinned value's home is; the spec pin lives in `pins.json` (derived), the two instrument pins in `claims.json`. |
