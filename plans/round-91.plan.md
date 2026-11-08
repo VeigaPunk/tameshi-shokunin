@@ -155,3 +155,48 @@ Assimilation: none this round (no staged `merge/tameshi/` theme serves a
 fleet-gate successor case). considerthese: `2026-11-05.md` idea 4 (mutation-
 survivor table, round 90's application) stays the standing reading — no new
 proposal this round, and this plan names none.
+
+## Amendments (post-wave, pre-file) — the §8 narrowing, applied at the freeze-side check
+
+The frozen text above is not rewritten. Both claims are withdrawn to honest stop by the
+artifacts this round's own wave committed; each amendment names the artifact that falsifies
+the wording and the property that would remain enforceable.
+
+### A1 — R91-C1 withdrawn (coverage) → honest stop
+
+Falsified by `.ufo/waves/round-91/w1/T91C1.md` §1 (committed scratch state `34a92bbf`
+reaches `C1_R91_PASS=true` while the note's presented verdict table is inverted on all
+twelve mutants, the true values hidden in a second table under `C001`-`C012` that
+`^\|\s*(C\d\d)\s*\|` cannot see) and by `.ufo/waves/round-91/w1/T91R1.md` F1/F2 (the
+counter at the frozen rev `50e59d59` reads `cells[vcol + 1]` — one cell past the
+header-named `verdict` — and refuses every honest note; the repair landed at `0b63b85e`
+after the freeze, so every `CTL*.out` certifies bytes the plan does not name).
+
+What survives as evidence, not as a claim: the twelve verdicts reproduce outside the
+counter (`.ufo/waves/round-91/w1/T91E1.md`, `VERDICT: reproducible`), and the seal behaves
+as designed when the shipped bytes run (`T91E4.md`, `VERDICT: sealed-holds`).
+Enforceable successor property (round 92, QUALITY 143-144, 146): refuse **any**
+verdict-shaped row whose id is outside the spec's id set, and pin the counter's own sha256
+in the freeze commit and assert it at run time. No score moves; SCORECARD records
+`not admitted`.
+
+### A2 — R91-C2 withdrawn (calibration) → honest stop
+
+Falsified by `.ufo/waves/round-91/w1/T91C2.md` (three clone states, three PASSes: the
+honest one and two forged — tokens quoted as *rejected* readings, and a false kill reason)
+and by `.ufo/waves/round-91/w1/T91R2.md` §2.3 (the `toolpin` conjunct hashes one file
+against itself; `toolpin=ok` on every receipt) and `.ufo/waves/round-91/w1/T91SN1.md` F1-F4
+(the counter runs the candidate's own checker tool; no seal; abbreviated rev pin).
+
+What stands as upkeep, not as a claim: the two genuinely routed record repairs land
+(note admission marker; note's coverage-row citation) and the invented third manifest row
+is dropped (`.ufo/waves/round-91/w1/T91R2.md` §3.3 — no routed defect behind it). The
+landed state therefore prints `rows=fail` on that dropped row, which is the honest state.
+Enforceable successor property (round 92, QUALITY 145, 148): a machine-checkable admission
+block whose values are checked, checker run from a pinned blob under the seal.
+
+### Consequence for the round
+
+Both claims `unprovable` / not admitted; no axis harmed (scores unchanged 10/8/9). The
+round's deliverable is this narrowing plus QUALITY 143-148, each with a committed state
+shown able to fail.
