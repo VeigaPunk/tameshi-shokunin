@@ -111,3 +111,13 @@ CWD; no scratch trap on failure paths). Routed below.
 - discernment: improved — the wave killed both claims **before** the report, with committed
   counterexamples, and those kills became QUALITY 143-148, each with a state shown able to
   fail. That is the behaviour the fleet's §8 ledger exists to force.
+
+## Routed addendum (retained instruments)
+
+The round's instruments — `.ufo/evidence/round-91/c1/measure-v91.py`,
+`c1/controls-v91.py`, `c2/measure-c2-v91.sh`, `c2/controls-c2-v91.sh`, `c2/fixes-v91.py`,
+`controls-summary.py` — live under the round's evidence tree, not `tools/`, matching rounds
+88-90: a killed instrument is not admitted to the lane's tool registry (Gate standard,
+Registry). `controls-summary.py` is the one piece that should survive as a `tools/` row if a
+later round regenerates control summaries generally (QUALITY 147); route that decision to
+r92 rather than registering a counter whose claim was killed.
