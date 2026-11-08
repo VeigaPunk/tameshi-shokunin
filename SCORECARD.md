@@ -5670,3 +5670,44 @@ fence-aware `coverage` (A1), a real delimiter-width rule and a decided remainder
 plus a reason test naming a state or digest (A4), a fixture-assembly assertion (M1),
 `O_NOFOLLOW` receipt writes and a run-scoped outdir (M9), `GIT_*` scrubbing in the driver with
 its canary (M10), and the eight rule-level states (M8). No claim is pre-approved here.
+
+## Round 94 — two claims: the self-anchored gate identity (coverage) and the state/digest disposition (calibration)
+
+Base `a8f0e14bd400002324793d82030431696435d9a7`; instrument revision
+`7084358c732ebe1334c2eb9a352c3ed96b547f7c`; freeze `fdbd18c672afb0474a72ad90f9ba6604ddc34001`;
+pre-freeze records `33279f40`; amendment A1 (pre-data C2 checker repair) `67b1ab85`.
+One v1 wave `r94-w1`, 12 seats (executor 3, scribe 1, scout 2, reviewer 2, critic 1,
+mutation-tester 1, sentinel 1, connector 1; attack 4/12 = 33 % by the policy's role set,
+6/12 = 50 % including sentinel and connector).
+
+| Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|---|---|
+| R94-C1 | coverage (fifth attempt) | at base `a8f0e14b`: `C1_SETUP spec-absent-at-rev`, exit 2 (`.ufo/evidence/round-94/pre-freeze/controls/nowork-base.out`) | `C1_R94_PASS=true`, exit 0 at the instrument revision (`pos-real`); battery `C1_CONTROLS states=45 matched=45 mismatches=0 missing=0`, exit 0, `CONTROL_INSTRUMENT sha256=a22563b0…` (`.ufo/evidence/round-94/pre-freeze/controls-run.log`); `gate-foreign` refuses at setup with `gate-identity-mismatch` | **verified under the amended wording** | `python3 -I .ufo/evidence/round-94/c1/measure-v94.py --repo . --rev <REV> --work <empty dir>`; battery `controls-v94.py --lane . --rev 7084358c --base a8f0e14b --work <dir> --outdir <dir> --jobs 12` | instrument `7084358c`; receipts `4dc919ac`, `b98b0864` |
+| R94-C2 | calibration | at base: `DISPOSITION_SETUP counter-absent-at-rev`, exit 2 (`.ufo/evidence/round-94/pre-freeze/c2-nowork-base.out`) | `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`, exit 0 under `--min-falsifiable 17`; `DISPOSITION_SELFTEST: 9/9 pass`; the rev-1 mechanism-word cheat printed `findings=0` while rev 3 prints 19 state/digest findings | **verified at the mapping/counts level** | `python3 -I .ufo/evidence/round-94/conjunct-disposition-v94.py --lane . --rev <REV> --min-falsifiable 17`; `--selftest` | checker rev3 `6d4d2706` (`6a2a1fdd`); receipts `2ad7ebb0`, `cdf669cf` |
+
+Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0); the nudge premise still
+holds (10/8/9 ≥ 8) and round 93 entered a capability inside the window, so the nudge does
+not fire. One capability row is already present (`conjunct-disposition audit`, round 93) and
+is re-demonstrated at rev 3 with 9/9; no new row enters.
+
+**Retired:** none. **Saturation:** unchanged.
+
+**Wave.** `r94-w1`, 12 seats, 11 reports settled at the time of this record with R94SC1's
+report outstanding (see the report's seat table for the final count): R94E1
+`reproduced-12/12`, R94E2 `no-regression`, R94E3 `reproduced` (battery replayed twice from
+committed bytes, `states=45 matched=45` both times), R94R1 `findings:4`, R94R2
+`conforms-with-findings`, R94S1 `agree`, R94S2 `premise-holds`, R94C1 `killed:(a)`
+(indented-code refusal), R94M1 `killed:26/38` (12 rule-level survivors), R94SN1
+`findings:9`, R94CN1 `no-overlap`.
+
+**What the wave changed in the record (not in the claim's numbers):** A2 indented-code
+keying, A3 self-pin strip-all, A4 double-backslash cells, A5 short delimiter — all four
+falsified presentation-class sentences of the plan's limit list and are now stated; A7 C2
+receipt provenance; A8 the twelve rule-level survivors. No hostile-state expectation moved;
+no counter blob changed after the freeze.
+
+**Planned (round 95):** the eight routed fixes — `^ {4,}` indented-code immunity plus the
+`pos-indented-literal` control (A2), a single-pin-line assert (A3), `\\` before `\|` in
+`split_cells` (A4), `-{1,}` delimiters (A5), per-receipt `counter_sha=` lines (A6), a sealed
+C2 checker reading receipts from the object store with a hand-written-receipt control (A7),
+and one discriminating state per survivor rule (A8). No claim is pre-approved here.
