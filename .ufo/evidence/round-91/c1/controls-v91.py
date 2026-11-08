@@ -12,7 +12,7 @@ Usage: python3 -I controls.py --lane LANE --scratch DIR [--only NAME ...]
 import argparse, json, os, re, shutil, subprocess, sys
 from concurrent.futures import ThreadPoolExecutor
 
-A_REV = "87d1635c8a1a90a405eb348da5ba3e8f93b4ae83"
+A_REV = "ace200b50fe8cea1e05cde88dabf8fe075f86116"
 BASE = "87d1635c8a1a90a405eb348da5ba3e8f93b4ae83"
 SPEC = ".ufo/evidence/round-91/c1/census-mutants.json"
 NOTE = "corpus/knowledge/mutation-case-fleet-sources-census.md"
