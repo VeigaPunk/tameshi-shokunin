@@ -120,10 +120,12 @@ def states(lane):
     a13 = real_note.replace(
         "| survivor | lanes hit | effect on live registries |\n|---|---|---|\n| C12 used-by trim |",
         "| id | survivor | lanes hit | effect on live registries |\n|---|---|---|---|\n"
-        "| C12 | used-by trim |")
-    for k in ("C03", "C09", "C10"):
-        a13 = a13.replace("| %s " % k, "| %s | " % k, 1)
-    a13 = a13.replace("| C02, C06, C08 |", "| C02 | C06, C08 |")
+        "| C12 |  used-by trim |")
+    for old, new in (("| C03 supersedes width |", "| C03 | supersedes width |"),
+                     ("| C09 fragment strip |", "| C09 | fragment strip |"),
+                     ("| C10 spaced cadence |", "| C10 | spaced cadence |"),
+                     ("| C02, C06, C08 |", "| C02 | C06, C08 |")):
+        a13 = a13.replace(old, new, 1)
     vcell = real_note + ("\n| survivor | witness | note |\n|---|---|---|\n"
                          "| C02 | differs | verdict |\n| **C03** | differs | bold id |\n")
     C = {}
