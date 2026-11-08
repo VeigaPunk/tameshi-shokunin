@@ -8,35 +8,17 @@ before data in `plans/round-95.plan.md` and `.ufo/waves/round-95/claims.json`.
 ## Gate
 
 Sources opened for this round's rows (all four fetched 2026-11-08; the snapshot paths are
-the bytes the round-95 counter reads). The quote on each line is the located sentence the
-row's `teaches` rests on, with its line in the tag-stripped snapshot (tags replaced by
-spaces, entities unescaped, whitespace collapsed — the counter's `norm_text`).
+the bytes the round-95 counter reads). Each sid line below carries its located quote on the
+same line — the counter's `located_quotes` collects a quoted span only from a line naming
+its sid. Line numbers are in the tag-stripped snapshot (tags replaced by spaces, entities
+unescaped, whitespace collapsed: the counter's `norm_text`).
 
-- S320 sha256sum(1) — `https://man.archlinux.org/man/sha256sum.1.en`, fetched 2026-11-08
-  (HTTP date Sun, 08 Nov 2026 08:53:29 GMT; snapshot
-  `.ufo/evidence/round-95/sources/s320.html`, sha256 `b968bc09…`), line 85:
-  "Print or check SHA256 (256-bit) checksums." — the digest the `SELF_SHA256` pin
-  computes and the audit compares is a sha256 of the counter bytes.
-- S321 GitHub Flavored Markdown Spec — `https://github.github.com/gfm/`, fetched
-  2026-11-08 (HTTP date Sun, 08 Nov 2026 08:53:23 GMT; snapshot
-  `.ufo/evidence/round-95/sources/s321.html`, sha256 `b153d814…`), line 4400:
-  "The delimiter row consists of cells whose only content are hyphens ( - ), and
-  optionally, a leading or trailing colon ( : )" — one hyphen is a legal delimiter cell,
-  which is the round-95 A5 rule. Also line 4393: "a single header row, a delimiter row
-  separating the header from the data, and zero or more data rows" (the table shape the
-  reader keys), and line 4493: "The table is broken at the first empty line, or beginning
-  of another block-level structure" (why an indented chunk ends a table).
-- S322 CommonMark Spec 0.31.2 — Fenced code blocks — `https://spec.commonmark.org/0.31.2/`,
-  fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 08:53:28 GMT; snapshot
-  `.ufo/evidence/round-95/sources/s322.html`, sha256 `c85f56cc…`), line 2616:
-  "A fenced code block begins with a code fence, preceded by up to three spaces of
-  indentation." — a fence opens literal text, the declared limit the reader already held.
-- S323 CommonMark Spec 0.31.2 — Indented code blocks — `https://spec.commonmark.org/0.31.2/`,
-  fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 10:41:46 GMT; snapshot
-  `.ufo/evidence/round-95/sources/s323.html`, sha256 `c85f56cc…`, the same page bytes as
-  S322), line 2355: "An indented code block is composed of one or more indented chunks
-  separated by blank lines." — an indented chunk is literal text, so a presented verdict
-  row inside one is not a keyed row; this is the round-95 A2 rule.
+- S320 sha256sum(1) `https://man.archlinux.org/man/sha256sum.1.en` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 08:53:29 GMT; `.ufo/evidence/round-95/sources/s320.html` sha256 `b968bc09…`), line 85: "Print or check SHA256 (256-bit) checksums." (6 words) — the digest the `SELF_SHA256` pin computes and the audit compares is a sha256 of the counter bytes.
+- S321 GFM Tables `https://github.github.com/gfm/` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 08:53:23 GMT; `.ufo/evidence/round-95/sources/s321.html` sha256 `b153d814…`), line 4400: "The delimiter row consists of cells whose only content are hyphens ( - ), and optionally, a leading or trailing colon ( : )" (20 words) — one hyphen is a legal delimiter cell, which is the round-95 A5 rule.
+- S321 GFM Tables, line 4393: "a single header row, a delimiter row separating the header from the data, and zero or more data rows" (20 words) — the table shape the reader keys, which is why an indented row outside a table is not a verdict row.
+- S321 GFM Tables, line 4493: "The table is broken at the first empty line, or beginning of another block-level structure" (15 words) — a following indented chunk ends a table, so it cannot extend an earlier verdict table.
+- S322 CommonMark 0.31.2 Fenced code blocks `https://spec.commonmark.org/0.31.2/` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 08:53:28 GMT; `.ufo/evidence/round-95/sources/s322.html` sha256 `c85f56cc…`), line 2616: "A fenced code block begins with a code fence, preceded by up to three spaces of indentation." (17 words) — a fence opens literal text, the declared limit the reader already held.
+- S323 CommonMark 0.31.2 Indented code blocks `https://spec.commonmark.org/0.31.2/` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 10:41:46 GMT; `.ufo/evidence/round-95/sources/s323.html` sha256 `c85f56cc…`, the same page bytes as S322), line 2355: "An indented code block is composed of one or more indented chunks separated by blank lines." (15 words) — an indented chunk is literal text, so a presented verdict row inside one is not a keyed row; this is the round-95 A2 rule.
 
 Rejected this round: none. Rows re-opened: S320, S321, S322 (status unchanged, `mined`;
 `used-by` appended). Row added: S323 (`mined`, `used-by` = this lesson).
