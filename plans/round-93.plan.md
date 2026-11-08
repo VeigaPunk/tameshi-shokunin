@@ -71,7 +71,7 @@ missing receipt is a `MISSING` row and fails the run.
 **Claim wording (the sentence the closure measures):** at the instrument revision the
 committed note yields `C1_R93_PASS=true`, exit 0, with `verdict_tables=1 badrows=0
 mismatched=0`; each of the three positive states `pos-real`, `pos-honest-a13`,
-`pos-honest-verdict-cell` yields `C1_R93_PASS=true`, exit 0; and each of the twenty-five
+`pos-honest-verdict-cell` yields `C1_R93_PASS=true`, exit 0; and each of the twenty-three
 hostile states named in § Controls yields `C1_R93_PASS=false`, exit 1, with **the conjunct
 named for that state** false. No other state is claimed.
 
@@ -82,7 +82,7 @@ Kill rule (any one kills C1):
 - (a) an honest note state — the committed note, the committed note with an id-keyed table
   that asserts no verdict, or the committed note with a data cell equal to `verdict` — is
   refused by a rule stated in this plan;
-- (b) one of the twenty-five named states fails to reach `C1_R93_PASS=false`/exit 1 with its
+- (b) one of the twenty-three named states fails to reach `C1_R93_PASS=false`/exit 1 with its
   named conjunct false;
 - (c) the counter blob at `855f0c1c` differs from the stated sha256, or any receipt was
   produced by bytes other than that counter and the driver at `69d377a0`;
