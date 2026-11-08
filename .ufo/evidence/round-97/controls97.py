@@ -174,19 +174,21 @@ def main():
     _lim = [r for r in flipped["rows"] if r["expect"] == "limit"][0]
     _lim["expect"] = "killed"
     _lim.pop("limit_mechanism", None)
-    open(os.path.join(st2, mp), "w", encoding="utf-8").write(json.dumps(flipped, indent=1) + "\n")
+    flipped_b = (json.dumps(flipped, indent=1) + "\n").encode()
+    open(os.path.join(st2, mp), "wb").write(flipped_b)
     r = commit(st2, "flip expectation")
     code, out = run([sys.executable, "-I", tool, "--lane", st2, "--rev", r,
-                     "--manifest-sha", man_sha])
+                     "--manifest-sha", hashlib.sha256(flipped_b).hexdigest()])
     add("c2-forge-flipped-expect", code, out, 1)
     # (b) a no-op edit -> GUARD_SETUP edit-no-op, exit 2
     git(st2, "reset", "-q", "--hard", r)
     noop = json.loads(json.dumps(man))
     noop["rows"][0]["edit"]["new"] = noop["rows"][0]["edit"]["old"]
-    open(os.path.join(st2, mp), "w", encoding="utf-8").write(json.dumps(noop, indent=1) + "\n")
+    noop_b = (json.dumps(noop, indent=1) + "\n").encode()
+    open(os.path.join(st2, mp), "wb").write(noop_b)
     r = commit(st2, "no-op edit")
     code, out = run([sys.executable, "-I", tool, "--lane", st2, "--rev", r,
-                     "--manifest-sha", man_sha])
+                     "--manifest-sha", hashlib.sha256(noop_b).hexdigest()])
     add("c2-forge-noop", code, out, 2)
     # (c) a substituted manifest under the pinned digest -> manifest-sha-mismatch
     git(st2, "reset", "-q", "--hard", r)
