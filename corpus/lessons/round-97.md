@@ -72,7 +72,7 @@ subject).
 
 Every number below is a line a committed receipt printed at the revision named.
 
-- **C1 positive at the records revision `35db02e9`.**
+- **C1 positive at the records revision `2a57b42f`.**
   `.ufo/evidence/round-97/landing/c1-positive-1.out` reads
   `BATTERY states=50 matched=50 mismatched=0 missing=0`, rc 0; runs 2 and 3 are byte-identical
   (sha256 `54c6f667…`). `.ufo/evidence/round-97/repeat/c1-run-{1,2,3}.txt` are the same bytes.
@@ -82,7 +82,7 @@ Every number below is a line a committed receipt printed at the revision named.
   a non-64-hex `--driver-sha` prints `BATTERY_SETUP driver-sha-invalid` (measured by R97R1 case
   13 and re-run at A4).
 - **C1 selftest.** `c1-selftest.out`: `BATTERY_SELFTEST: 7/7 pass`, rc 0.
-- **C2 positive at `35db02e9`.** `.ufo/evidence/round-97/landing/c2-positive-1.out` reads
+- **C2 positive at `2a57b42f`.** `.ufo/evidence/round-97/landing/c2-positive-1.out` reads
   `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0`, rc 0; runs 2 and 3 are
   byte-identical (sha256 `254536aa…`). The per-row lines show `rev-hex`, `rev-unresolvable`
   (token-only kill), `replace-refs`, `counter-sha`, `receipt-absent`, `no-flip`, `unknown-key`,

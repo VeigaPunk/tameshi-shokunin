@@ -5798,15 +5798,15 @@ a limit; nothing was smoothed.
 Base `07e50d6d0142b21e8443b5417b8edc4d1dd76455`; instruments `917d7109`; pre-freeze controls and
 frozen plan `997ce0c4`; claims freeze `e72a0c8b` (+ A1 `136e98a8`, A2 `43acfe81`); wave spec and
 dispatch `f5ace66a`; A3-A11 `6f080522`; A12-A14 `406119cd`; controls 16/16 and records base
-`35db02e9`; records positives `2170db76`.
+`2a57b42f`; records positives `2170db76`.
 One v1 wave `w1`, 12 seats (executor 3, scribe 1, scout 1, reviewer 2, critic 1, mutation-tester 1,
 sentinel 1, connector 1, revenger 1; attack 4/12 = 33 % by the §6 named set (reviewer×2, critic,
 mutation-tester), 7/12 = 58 % including sentinel, connector and revenger).
 
 | Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
 |---|---|---|---|---|---|---|
-| R97-C1 | calibration | at base `07e50d6d` no committed tool prints a `BATTERY states=` line (`git grep -c` empty, rc 1; `.ufo/evidence/round-97/pre-freeze/c1-nowork-bind-absent.out`), the base does not carry the reader (`git cat-file -e` rc 128) and the `C1-summary.txt` the round-96 report cites is absent at `8ed9c526` (`c1-nowork-summary-absent.out`, rc 128) | `BATTERY states=50 matched=50 mismatched=0 missing=0`, exit 0; five refusals rc 1/2; selftest `7/7` | **verified under the amended wording (A1-A8)** | `python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev <REV> --driver-sha 88bcca86…` | `35db02e9` |
-| R97-C2 | operability | at base no committed tool prints a `GUARD_INERTIA` line (`c2-nowork-absent.out`, rc 1); round 96's R96M1 matrix covers the counter, not the checker's guards; the round-96 revenger probe left a late seat report (`R96L1.md`, partly refuted) but no committed runnable matrix (A9) | `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0`, exit 0; eight killed + two measured limits; flipped expectation `survived=1` rc 1; no-op anchor, substituted manifest, empty manifest rc 2; selftest `7/7` | **verified under the amended wording (A9-A14)** | `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev <REV> --checker-sha 02a5482a… --manifest-sha 9de0b7e9…` | `35db02e9` |
+| R97-C1 | calibration | at base `07e50d6d` no committed tool prints a `BATTERY states=` line (`git grep -c` empty, rc 1; `.ufo/evidence/round-97/pre-freeze/c1-nowork-bind-absent.out`), the base does not carry the reader (`git cat-file -e` rc 128) and the `C1-summary.txt` the round-96 report cites is absent at `8ed9c526` (`c1-nowork-summary-absent.out`, rc 128) | `BATTERY states=50 matched=50 mismatched=0 missing=0`, exit 0; five refusals rc 1/2; selftest `7/7` | **verified under the amended wording (A1-A8)** | `python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev <REV> --driver-sha 88bcca86…` | `2a57b42f` |
+| R97-C2 | operability | at base no committed tool prints a `GUARD_INERTIA` line (`c2-nowork-absent.out`, rc 1); round 96's R96M1 matrix covers the counter, not the checker's guards; the round-96 revenger probe left a late seat report (`R96L1.md`, partly refuted) but no committed runnable matrix (A9) | `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0`, exit 0; eight killed + two measured limits; flipped expectation `survived=1` rc 1; no-op anchor, substituted manifest, empty manifest rc 2; selftest `7/7` | **verified under the amended wording (A9-A14)** | `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev <REV> --checker-sha 02a5482a… --manifest-sha 9de0b7e9…` | `2a57b42f` |
 
 Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0); the nudge premise holds
 (10/8/9 >= 8). Two capability rows enter: `committed-battery binder` (the 50 committed receipts

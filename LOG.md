@@ -5177,13 +5177,13 @@ mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 4/13 = 31 % by th
 
 - **Shape.** Base `07e50d6d`; instruments `917d7109`; frozen plan and pre-freeze controls
   `997ce0c4`; claims freeze `e72a0c8b`; A1 `136e98a8`; A2 `43acfe81`; wave w1 spec + dispatch
-  `f5ace66a`; A3-A11 `6f080522`; A12-A14 `406119cd`; controls 16/16 and records base `35db02e9`;
-  records positives `2170db76`. Records revision: `35db02e9`.
+  `f5ace66a`; A3-A11 `6f080522`; A12-A14 `406119cd`; controls 16/16 and records base `2a57b42f`;
+  records positives `2170db76`. Records revision: `2a57b42f`.
 - **R97-C1 (calibration).** The round-96 spot-check's D-a: the report cited
   `.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt`, which is absent at `8ed9c526`.
   `battery-bind.py` re-grades the 50 committed receipts against the committed driver's own
   `states()`/`EXPECT_EXTRA` (read as blobs at `--rev`, driver pinned with `--driver-sha`), and
-  prints `BATTERY states=50 matched=50 mismatched=0 missing=0`, exit 0 at `35db02e9`, in seconds
+  prints `BATTERY states=50 matched=50 mismatched=0 missing=0`, exit 0 at `2a57b42f`, in seconds
   and without re-running a state. Five forgeries each move the line (de-index committed →
   `missing=1`; `counter_sha=` / `exit=` / `__pass` payload edits → `mismatched=1`) and a
   non-64-hex or unequal driver pin is refused at setup. Selftest `7/7`.
@@ -5192,7 +5192,7 @@ mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 4/13 = 31 % by th
   exact-string edits to the round-96 checker (uniqueness and no-op refused before any run), run
   pristine and mutant against the same four-file fixture store, and classify `killed` only on a
   measured verdict difference and `limit` only on an identical pair. Predicate
-  `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0`, exit 0 at `35db02e9`; the checker
+  `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0`, exit 0 at `2a57b42f`; the checker
   and manifest are digest-pinned, a substituted manifest and an empty manifest are refused, and a
   flipped expectation prints `survived=1`, exit 1. Selftest `7/7`.
 - **Motivating evidence.** The round's own wave falsified twelve atomic assertions pre-data
