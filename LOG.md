@@ -5172,3 +5172,42 @@ mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 4/13 = 31 % by th
   not to a run) and F2 (an alternates file lets a lane with no commits of its own answer
   the reads) are the next frontier; the round-96 wording is narrowed to the properties the
   instrument enforces, and neither is claimed.
+
+## Round 97 (2026-11-08) — two claims: the committed battery is re-derivable (calibration) and the guard edits are measured (operability)
+
+- **Shape.** Base `07e50d6d`; instruments `917d7109`; frozen plan and pre-freeze controls
+  `997ce0c4`; claims freeze `e72a0c8b`; A1 `136e98a8`; A2 `43acfe81`; wave w1 spec + dispatch
+  `f5ace66a`; A3-A11 `6f080522`; A12-A14 `406119cd`; controls 16/16 and records base `35db02e9`;
+  records positives `2170db76`. Records revision: `35db02e9`.
+- **R97-C1 (calibration).** The round-96 spot-check's D-a: the report cited
+  `.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt`, which is absent at `8ed9c526`.
+  `battery-bind.py` re-grades the 50 committed receipts against the committed driver's own
+  `states()`/`EXPECT_EXTRA` (read as blobs at `--rev`, driver pinned with `--driver-sha`), and
+  prints `BATTERY states=50 matched=50 mismatched=0 missing=0`, exit 0 at `35db02e9`, in seconds
+  and without re-running a state. Five forgeries each move the line (de-index committed →
+  `missing=1`; `counter_sha=` / `exit=` / `__pass` payload edits → `mismatched=1`) and a
+  non-64-hex or unequal driver pin is refused at setup. Selftest `7/7`.
+- **R97-C2 (operability).** The round-96 spot-check's D-b: the "are the guards inert?" probe had
+  no committed measurement. `guard-inertia.py` + `guard-inertia.json` apply ten pre-registered
+  exact-string edits to the round-96 checker (uniqueness and no-op refused before any run), run
+  pristine and mutant against the same four-file fixture store, and classify `killed` only on a
+  measured verdict difference and `limit` only on an identical pair. Predicate
+  `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0`, exit 0 at `35db02e9`; the checker
+  and manifest are digest-pinned, a substituted manifest and an empty manifest are refused, and a
+  flipped expectation prints `survived=1`, exit 1. Selftest `7/7`.
+- **Motivating evidence.** The round's own wave falsified twelve atomic assertions pre-data
+  (R97R1 F1-F6: the `mutant=` digest exemption, the empty `--driver-sha`, the `__pass` scope,
+  the `cat-file -e` rc, the index-only deletion, the plan sync; R97E3 FW-C1-1; R97C1 §1/§2: the
+  substituted non-guard manifest and the unpinned manifest; R97L1 §9 and R97R2 F1: the
+  dead-seat provenance). Each became an amendment A3-A14 with its artifact cited in
+  `plans/round-97.plan.md` §Amendments; the predicate, counter and target never moved after data.
+- **Frontier.** S159 and S006 re-opened with located quotes; a duplicate-URL row (S324) was
+  withdrawn before the freeze (S160 already holds the URL) and recorded as M3; S009's UCL page
+  was a Cloudflare challenge on two fetches, so it was not re-opened. Census exit 0 before and
+  after, rows 183, mined 149, queued 23, rejected 11. QUALITY 175-176. Mistakes M1-M3 in
+  `corpus/lessons/round-97.md`.
+- **Routed to round 98.** The declared limits this round leaves live: a receipt's provenance is
+  unbound (a hand-written receipt with the right payload is accepted; `mutant=D<nn>` opts out of
+  the digest check), and the guard matrix's manifest is a human declaration that the digest pin
+  fixes but does not validate (a coherent non-guard manifest yields the same line when its digest
+  is passed). Neither is claimed.

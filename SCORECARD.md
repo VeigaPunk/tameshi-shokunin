@@ -5792,3 +5792,44 @@ break), R96M1 `41/41 rows` (mutation matrix over the counter), R96E1/E2/E3 `hold
 (counter, driver read side, pins tool), R96CN1 `diverges/absent` sweep, R96S1 `agree`
 (4 sources, census), R96L1 probe. Every finding was amended pre-data (A1-A9) or declared as
 a limit; nothing was smoothed.
+
+## Round 97 — two claims: the committed battery is re-derivable (calibration) and the guard edits are measured (operability)
+
+Base `07e50d6d0142b21e8443b5417b8edc4d1dd76455`; instruments `917d7109`; pre-freeze controls and
+frozen plan `997ce0c4`; claims freeze `e72a0c8b` (+ A1 `136e98a8`, A2 `43acfe81`); wave spec and
+dispatch `f5ace66a`; A3-A11 `6f080522`; A12-A14 `406119cd`; controls 16/16 and records base
+`35db02e9`; records positives `2170db76`.
+One v1 wave `w1`, 12 seats (executor 3, scribe 1, scout 1, reviewer 2, critic 1, mutation-tester 1,
+sentinel 1, connector 1, revenger 1; attack 4/12 = 33 % by the §6 named set (reviewer×2, critic,
+mutation-tester), 7/12 = 58 % including sentinel, connector and revenger).
+
+| Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|---|---|
+| R97-C1 | calibration | at base `07e50d6d` no committed tool prints a `BATTERY states=` line (`git grep -c` empty, rc 1; `.ufo/evidence/round-97/pre-freeze/c1-nowork-bind-absent.out`), the base does not carry the reader (`git cat-file -e` rc 128) and the `C1-summary.txt` the round-96 report cites is absent at `8ed9c526` (`c1-nowork-summary-absent.out`, rc 128) | `BATTERY states=50 matched=50 mismatched=0 missing=0`, exit 0; five refusals rc 1/2; selftest `7/7` | **verified under the amended wording (A1-A8)** | `python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev <REV> --driver-sha 88bcca86…` | `35db02e9` |
+| R97-C2 | operability | at base no committed tool prints a `GUARD_INERTIA` line (`c2-nowork-absent.out`, rc 1); round 96's R96M1 matrix covers the counter, not the checker's guards; the round-96 revenger probe left a late seat report (`R96L1.md`, partly refuted) but no committed runnable matrix (A9) | `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0`, exit 0; eight killed + two measured limits; flipped expectation `survived=1` rc 1; no-op anchor, substituted manifest, empty manifest rc 2; selftest `7/7` | **verified under the amended wording (A9-A14)** | `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev <REV> --checker-sha 02a5482a… --manifest-sha 9de0b7e9…` | `35db02e9` |
+
+Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0); the nudge premise holds
+(10/8/9 >= 8). Two capability rows enter: `committed-battery binder` (the 50 committed receipts
+re-graded by the committed driver's own expectations in seconds; `.ufo/evidence/round-97/landing/
+c1-positive-{1,2,3}.out` byte-identical, sha256 `54c6f667…`) and `guard-inertia matrix` (ten checker
+edits measured on a four-file fixture store with a digest-pinned checker and manifest;
+`.ufo/evidence/round-97/landing/c2-positive-{1,2,3}.out` byte-identical, sha256 `254536aa…`).
+
+**Retired:** none. **Saturation:** unchanged.
+
+**Wave.** `w1`, 12 seats. `<WAVE>` R97E1 reproduced C1 (50/50, five refusals, a same-class body
+swap accepted — declared provenance limit); R97E2 reproduced C2 (all 10 rows, both limit rows
+re-measured, the exact-anchor counts); R97E3 probed C1's oracle boundary and found the
+`mutant=D<nn>` digest exemption (FW-C1-1, A3) and the one-line opt-out; R97R1 falsified six C1
+clauses (A3-A8); R97R2 held all nine C2 wording clauses and falsified the Before clause (A9);
+R97C1 found the unpinned manifest (A12/A13) and the shadowed control rc (A14); R97M1 mutated the
+two instruments (11/12 killed = 91.7 %); R97CN1 found no duplicate implementation (the nearest
+surfaces diverge on the claim axis); R97L1 reproduced six guards independently and compared them
+row by row with C2. Every finding became an amendment with its artifact cited; nothing was
+smoothed.
+
+**Planned (round 98):** the declared limits this round leaves live — receipt provenance (a
+hand-written receipt with the right payload is accepted; a `mutant=D<nn>` line opts out of the
+digest check) and the manifest's row choice (a coherent non-guard manifest prints the same line
+when its digest is passed); plus the round-96 F2 alternates-file defect. No claim is pre-approved
+here.
