@@ -1,0 +1,72 @@
+{
+ "lane": "tameshi",
+ "round": 98,
+ "base": "034240a591575167f0747ad7372a1f4b9cd33a58",
+ "instrument": "d32043ec836ca097e93ae0b095faa7cae4125697",
+ "claims": {
+  "C1": {
+   "axis": "calibration",
+   "type": "measured",
+   "surface": "tools/control-assertion-audit.py at the records revision R, reading the committed driver blobs .ufo/evidence/round-97/controls97.py and .ufo/evidence/round-98/controls98.py at R through git cat-file; plus the repaired driver's end-to-end run",
+   "wording": "at the records revision R, python3 -I tools/control-assertion-audit.py --repo . --rev R --driver .ufo/evidence/round-98/controls98.py prints CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0 and exits 0, and the same command with --driver .ufo/evidence/round-97/controls97.py prints CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1 and exits 1, naming the literal site at line 156 (c2-nowork-absent); the audit reads the driver blob at R through git cat-file (never the worktree), counts static add(...) call sites (a site inside a loop counts once), and classifies a recorded code as measured only when its expression derives from a runner call (sh, git, run, subprocess.run): a constant, a constant bound through a name, a loop variable, a plain call, or a returncode attribute on a value not assigned from a runner call is unmeasured; the diagnosed repair, c2-nowork-absent in controls98.py, grades the measured git grep rc (1 at base 07e50d6d) instead of the literal 0, and the repaired driver's full run (python3 -I .ufo/evidence/round-98/controls98.py --lane . --base 07e50d6d0142b21e8443b5417b8edc4d1dd76455 --rev R --work <empty dir> --outdir <dir>) prints CONTROLS98 states=18 matched=18 mismatched=0 and exits 0, with c2-nowork-absent.out carrying outer rc=1 where the round-97 receipt carries outer rc=0",
+   "counter": "python3 -I tools/control-assertion-audit.py --repo . --rev RECORDS_REV --driver .ufo/evidence/round-98/controls98.py",
+   "battery": "python3 -I tools/control-assertion-audit.py --selftest",
+   "predicate": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0",
+   "battery_predicate": "CONTROL_ASSERT_SELFTEST: 12/12 pass",
+   "red": "python3 -I tools/control-assertion-audit.py --repo . --rev RECORDS_REV --driver .ufo/evidence/round-97/controls97.py prints CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1 and exits 1",
+   "before": "at base 034240a5 no committed tool prints a CONTROL_ASSERT line (git grep -c 'CONTROL_ASSERT' 034240a5 -- . prints nothing, exit 1); the round-97 driver's c2-nowork-absent is add(\"c2-nowork-absent\", 0, ...) and its committed receipt carries outer rc=0 while the wrapped git grep returns 1 (round-97 spot-check D-2)",
+   "after": "the two audit lines and exits, the selftest tally, and CONTROLS98 states=18 matched=18 mismatched=0, all at R",
+   "instrument_sha256": "774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c",
+   "driver_sha256": "f1c1db0edb670fdefdb1b27a193b315db8da90f4580cc7c4c225648f3fbf924b",
+   "kill": [
+    "a: a constant, or a name bound to a constant, is reported measured",
+    "b: a returncode attribute on a value not assigned from a runner call is reported measured",
+    "c: the round-97 driver reports unmeasured=0 or a literal count other than 1",
+    "d: a call site is skipped, or a site inside a loop is counted more than once",
+    "e: the audit reads the worktree instead of the blob at R",
+    "f: the repaired driver's run cannot fail (a wrong recorded code still prints mismatched=0)"
+   ],
+   "limits": [
+    "the audit is static: it classifies add(...) call sites, not the runtime state set; a driver registering through a differently named recorder is zero-site and passes vacuously (R98L1 probes the boundary)",
+    "measured means the expression derives from a runner call somewhere in its name chain, not that the runner ran the command the state claims (a sh([\"true\"]).returncode passes while running nothing relevant); the claim is provenance, not command identity",
+    "the repaired driver's --base is the round-97 base 07e50d6d because its two no-work states are round-97 states; at the round-98 tip both tokens exist, so the same driver run with --base 034240a5 prints mismatched=2 by design (.ufo/evidence/round-98/pre-freeze/controls98-at-round-base.out)"
+   ]
+  },
+  "C2": {
+   "axis": "operability",
+   "type": "measured",
+   "surface": ".ufo/evidence/round-98/refusals/guard-refusals.py at the records revision R, driving the frozen tool blob .ufo/evidence/round-97/c2/guard-inertia.py at R",
+   "wording": "at the records revision R, python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane . --rev R --tool .ufo/evidence/round-97/c2/guard-inertia.py --tool-sha 634997d09d2dba5cd87df12e2844962b3517ede798ab0ce04303807b6db042c8 --work <empty dir> prints GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok and exits 0; it reads the frozen tool as a blob at R and refuses a --tool-sha that is not 64 hex or does not equal the blob's sha256 (setup exit 2); it builds one manifest fixture per class in a scratch clone and runs the tool's public CLI once per class with the fixture's own digest, requiring exit 2 and a line of the tool's own stdout equal to GUARD_SETUP <class> or prefixed by GUARD_SETUP <class>: for each of edit-no-op, edit-ambiguous, state-unbuildable, limit-mechanism-missing, manifest-sha-mismatch and manifest-empty; the committed manifest is run once and must print GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0 with exit 0; with --red state-unbuildable the positive manifest replaces that class's fixture and the battery prints GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable and exits 1; at the base 034240a5, git grep -c 'GUARD_SETUP state-unbuildable' and git grep -c 'GUARD_SETUP limit-mechanism-missing' over .ufo/evidence each print nothing and exit 1",
+   "counter": "python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane . --rev RECORDS_REV --tool .ufo/evidence/round-97/c2/guard-inertia.py --tool-sha 634997d09d2dba5cd87df12e2844962b3517ede798ab0ce04303807b6db042c8 --work <empty dir>",
+   "battery": "python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --selftest",
+   "predicate": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok",
+   "battery_predicate": "GUARD_REFUSALS_SELFTEST: 9/9 pass",
+   "red": "the same command with --red state-unbuildable prints GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable and exits 1",
+   "before": "at base 034240a5 no committed tool prints a GUARD_REFUSALS line; the two class tokens appear in no committed receipt (git grep rc 1 each); the round-97 record receipted four classes and left state-unbuildable and limit-mechanism-missing code-only (round-97 spot-check D-6)",
+   "after": "the battery line at R, exit 0; the six per-class runs in the transcript; the red line and exit 1",
+   "instrument_sha256": "4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872",
+   "tool_sha256": "634997d09d2dba5cd87df12e2844962b3517ede798ab0ce04303807b6db042c8",
+   "kill": [
+    "a: a class counted refused when its run's exit is not 2",
+    "b: a class token accepted from anything but a line of the tool's own stdout",
+    "c: the red arm still counts the substituted class refused (the battery cannot fail)",
+    "d: the tool is read from the worktree or a blob whose sha256 is not the pinned value",
+    "e: the positive is not run, or its predicate is not the exact line with exit 0",
+    "f: the summary is printed without all six fixtures and the positive run"
+   ],
+   "limits": [
+    "the battery measures that the frozen tool refuses each fixture with the declared token, not that the refusal is semantically the right one (a tool refusing every manifest at its first row with the right token would pass all six; R98R2 verifies each fixture reaches its declared branch in the tool's order)",
+    "the tool's wording is the frozen round-97 wording; this round adds receipts, not a re-declaration",
+    "the six fixtures share the frozen tool's four-file store limit"
+   ]
+  }
+ },
+ "controls": {
+  "dir": ".ufo/evidence/round-98/pre-freeze",
+  "states": 12,
+  "expected": "c1-audit-r97-driver rc1 literal1; c1-audit-controls98 rc0; c1-audit-selftest 12/12; controls98 18/18; controls98-at-round-base 16/18; c2-refusals-positive refused6 rc0; c2-refusals-red refused5 rc1; c2-refusals-selftest 9/9; registry-red changed2 rc1; registry-green changed0 rc0; registry-selftest 10/10; before-tokens rc1"
+ },
+ "axes": ["calibration (C1, lowest non-retired, pinned 8)", "operability (C2)"],
+ "routed_defects": ["D-1", "D-3", "D-4", "D-5", "D-7"],
+ "note": "two claims, distinct axes; C1 is the lowest-axis claim; pre-freeze controls committed before this freeze; wave artifacts amend wording before the records run"
+}
