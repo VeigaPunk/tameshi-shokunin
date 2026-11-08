@@ -62,5 +62,53 @@ recorded in the round report with its exit code.
 
 ## Measurements
 
-Filled at the records commit from the committed receipts; every number below is a line a
-command printed, never a projection.
+Every number is a line a committed receipt printed at the revision named; nothing is
+projected.
+
+- **C1 before (round-94 counter at `6a2a1fdd`, the five fixtures).**
+  `.ufo/evidence/round-95/pre-freeze/before-v94/{indent-code-row,indent-token,escaped-backslash-pipe,two-hyphen-delimiter,double-pin}.out`
+  print exit 1 / 1 / 1 / 1 / 0 (`double-pin` prints `C1_R94_PASS=true`): the two indented
+  fixtures are refused (`verdict_tables=false` with `dup:` badrows; `ids=false` with
+  `stray-verdict`), the escaped-pipe fixture is refused `ids=false` (`width:9:cells=4`),
+  the two-hyphen fixture is refused `ids=false` (stray verdicts), and the double-pinned
+  counter runs to `C1_R94_PASS=true`.
+- **C1 after (v95 battery, `--rev f219fb0c`, `--jobs 6`).**
+  `.ufo/evidence/round-95/pre-freeze/controls-run.log:52` prints
+  `C1_CONTROLS states=50 matched=50 mismatches=0 missing=0`, exit 0. The five added
+  receipts print `.ufo/evidence/round-95/pre-freeze/controls/<state>.out`:
+  `indent-code-row` exit 0 `C1_R95_PASS=true`; `indent-token` exit 0
+  `C1_R95_PASS=true`; `escaped-backslash-pipe` exit 0 `C1_R95_PASS=true`;
+  `two-hyphen-delimiter` exit 0 `C1_R95_PASS=true`; `double-pin` exit 2
+  `C1_SETUP self-pin-line-count`. Every state receipt carries a `counter_sha=` line equal
+  to the counter blob at the records revision (`.ufo/evidence/round-95/pre-freeze/controls/`).
+- **C1 honest note at the pre-freeze records revision `4bd1e88f`.**
+  `.ufo/evidence/round-95/landing/c1-at-records.out`: `C1_SUMMARY rev=4bd1e88f n=12
+  killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7
+  note=present mismatched=0 badrows=0 verdict_tables=1`; `C1_SOURCE S320=row:1,quote:1
+  S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1`; `C1_R95_PASS=true`, exit 0.
+- **C1 do-nothing control.** `c1-nowork-base`
+  (`.ufo/evidence/round-95/pre-freeze/nowork/c1-nowork-base.out`) at base `02ff6290`
+  prints `C1_SETUP spec-absent-at-rev`, exit 2 — the target is not reachable without the
+  round's work.
+- **C2 before (round-94 checker at `6a2a1fdd`).** The forge matrix
+  (`.ufo/evidence/round-95/pre-freeze/c2/forge-matrix.txt`) prints `findings=0`, exit 0 on
+  `forge-handwritten` and `forge-counter-sha`; on `forge-replace-ref` it prints
+  `DISPOSITION_INSTRUMENT sha256=5f0d1770…` — the substituted counter bytes are read.
+- **C2 after.** `.ufo/evidence/round-95/pre-freeze/c2/c2-pos.out` at `4bd1e88f` prints
+  `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`, exit 0.
+  `c2-selftest.out` prints `DISPOSITION_SELFTEST: 11/11 pass`, exit 0. The forge matrix
+  prints: `forge-handwritten` exit 1 `DISPOSITION_FINDING receipt-absent-at-rev figure`;
+  `forge-counter-sha` exit 1 `DISPOSITION_FINDING receipt-counter-sha-mismatch
+  mismatched0`; `forge-replace-ref` exit 2 `DISPOSITION_SETUP replace-refs-present`;
+  summary `8 checks, 0 failed`.
+- **C2 do-nothing control.** `c2-nowork-base`
+  (`.ufo/evidence/round-95/pre-freeze/nowork/c2-nowork-base.out`) at base `02ff6290`
+  prints `DISPOSITION_SETUP counter-absent-at-rev`, exit 2.
+- **Wave.** `w1`, 13 seats (executor 4, scribe 1, scout 1, reviewer 2, critic 1,
+  mutation-tester 1, sentinel 1, connector 1, revenger 1); all settled, no dead seat;
+  `.ufo/waves/round-95/w1-results.json` records 13 results with `output: null` after the
+  orchestrator kernel restart — the seat reports in `.ufo/waves/round-95/w1/` are the
+  retained evidence.
+- **Registry.** 182 → 183 rows; tiers A=164→165, B=14, C=4; status mined=148→149,
+  queued=23, rejected=11; census exit 0 before and after
+  (`.ufo/waves/round-95/census-before.txt`; the round report carries the after block).

@@ -5711,3 +5711,51 @@ no counter blob changed after the freeze.
 `split_cells` (A4), `-{1,}` delimiters (A5), per-receipt `counter_sha=` lines (A6), a sealed
 C2 checker reading receipts from the object store with a hand-written-receipt control (A7),
 and one discriminating state per survivor rule (A8). No claim is pre-approved here.
+
+## Round 95 — two claims: the reader's literal classes (coverage) and the audit's receipt bytes (calibration)
+
+Base `02ff6290945dde18062a366799a774abb50fb365`; freeze declarations `0d3fc99b`; instruments
+`0685c358`; lesson Gate reflow `20fabad4`; lesson anchor `f219fb0c`; claims freeze
+`3ca1981a`; records fix `16cf0d58`; pre-freeze records `4bd1e88f`; landing `3610b46c`.
+One v1 wave `w1`, 13 seats (executor 4, scribe 1, scout 1, reviewer 2, critic 1,
+mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 5/13 = 38 % by the policy's
+role set, 7/13 = 54 % including sentinel and connector), all settled, no dead seat.
+
+| Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|---|---|
+| R95-C1 | coverage (five presentation classes) | round-94 counter at `6a2a1fdd` on the five fixtures: exit 1 / 1 / 1 / 1 / 0 (`double-pin` prints `C1_R94_PASS=true`) — `.ufo/evidence/round-95/pre-freeze/before-v94/`; the v95 counter at base: `C1_SETUP spec-absent-at-rev`, exit 2 (`.ufo/evidence/round-95/pre-freeze/nowork/c1-nowork-base.out`) | battery `C1_CONTROLS states=50 matched=50 mismatches=0 missing=0`, exit 0 (`.ufo/evidence/round-95/pre-freeze/controls-run.log:52`); the five added receipts print exit 0 / 0 / 0 / 0 / 2 with their frozen lines (`.ufo/evidence/round-95/pre-freeze/controls/`); honest note at `4bd1e88f`: `C1_R95_PASS=true`, `mismatched=0 badrows=0 verdict_tables=1`, `quote:1` on S320-S323 (`.ufo/evidence/round-95/landing/c1-at-records.out`) | **verified under the amended wording (A1-A4, A9)** | `python3 -I .ufo/evidence/round-95/c1/measure-v95.py --repo . --rev <REV> --work <empty dir>`; battery `controls-v95.py --lane . --rev f219fb0c --base 02ff6290 --work <dir> --outdir <dir> --jobs 6` | instruments `0685c358`; reflow `20fabad4`; records `4bd1e88f` |
+| R95-C2 | calibration (receipt bytes) | round-94 checker at `6a2a1fdd`: `findings=0`, exit 0 on `forge-handwritten` and `forge-counter-sha`; the replace-ref artifact executes the substituted counter (`DISPOSITION_INSTRUMENT sha256=5f0d1770…`) — `.ufo/evidence/round-95/pre-freeze/c2/forge-matrix.txt`; the v95 checker at base: `DISPOSITION_SETUP counter-absent-at-rev`, exit 2 | `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`, exit 0 at `4bd1e88f`; `DISPOSITION_SELFTEST: 11/11 pass`; forgeries exit 1 with `receipt-absent-at-rev` / `receipt-counter-sha-mismatch`, replace-ref exits 2 `replace-refs-present`; forge matrix `8 checks, 0 failed` | **verified under the amended wording (A5-A7)** | `python3 -I .ufo/evidence/round-95/conjunct-disposition-v95.py --lane . --rev <REV> --min-falsifiable 17`; `--selftest`; `c2-forge.py --lane . --work <dir> --outdir <dir> --instrument-rev <REV>` | instrument `0685c358`; receipts `4bd1e88f`; landing `3610b46c` |
+
+Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0); the nudge premise holds
+(10/8/9 >= 8) and capabilities entered inside the window. A capability row enters:
+`literal-class certification` — the note reader now certifies the note's twelve cells under
+indented code, a literal backslash before a cell boundary, a one-hyphen delimiter, and a
+single self-pin line; evidence: `C1_CONTROLS states=50 matched=50` and the five receipts in
+`.ufo/evidence/round-95/pre-freeze/controls/`; first-working round 95.
+
+**Retired:** none. **Saturation:** unchanged.
+
+**Wave.** `w1`, 13 seats, all settled: R95E1 `reproduced` (five changes, self-pin +
+refusals), R95E2 `reproduced` (50/50, pin check), R95E3 `reproduced` (11/11, forge matrix
+8/8), R95E4 `classified` (12 survivors: 8 subsumed, 1 invariant-pinned, 0 killed-by-state,
+3 ungraded), R95SC1 `drafted` (S323 row, lesson, 169-172, LOG; three live record defects
+found), R95S1 `agree` (four sources, quotes, census before), R95R1 `FALSIFIES-WORDING`
+(Gate layout at 0685c358; fixed at 20fabad4, re-scored exit 0 on all five), R95R2
+`conforms-with-findings` (five frozen behaviours reproduced; seal attacks hit declared
+limits), R95C1 `falsified 2 / holds 9` (Gate layout A9; token order A4), R95M1
+`killed:26/38` (12 survivors unchanged; no v95 state isolates one), R95SN1 `findings:12`
+(F1/F8 HIGH environment trust, F2-F7 driver/tool, F9-F10 declared limits, F11-F12), R95CN1
+`diverges` (six sibling parsers fail on `\\|`; no duplicate implementation), R95L1
+`inert:4/4` (every parser fix byte-identical on the honest note).
+
+**What the wave changed in the record (not in the claim's numbers):** A1/A2 fixture
+precision, A4 the summary token order, A5 the receipts revision, A6 the `selfpin` subject,
+A7 the environment-trust limits, A8 the seat count, A9 the Gate-layout falsifier. No
+frozen predicate or target moved after data; no instrument blob changed after the claims
+freeze.
+
+**Planned (round 96):** the sentinel's driver/tool defects — `.rerun-N` selection vs
+writing rank (F3), symlinked receipt followed (F4), `make-pins95.py` symlink write and
+`--lane ''` CWD (F5, F6), movable revspec (F7), `--rev ''` reads the index (F2), hostile
+`PATH`/ambient env (F1, F8); plus `unstable0`'s unfalsifiability if a deterministic
+two-run disagreement can be constructed. No claim is pre-approved here.

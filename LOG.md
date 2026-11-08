@@ -5090,3 +5090,45 @@ carries a `## Correction appended in round 92` block. The frozen `plans/round-91
 - **Frontier.** S320, S321 and S322 re-opened (all three byte-identical snapshots) for the
   digest, delimiter/remainder and fence ground; registry rows 182 → 182. QUALITY
   163-167. Mistakes M1-M4 in `corpus/lessons/round-94.md`.
+
+## Round 95 (2026-11-08) — two claims: the reader's literal classes (coverage) and the audit's receipt bytes (calibration)
+
+- **Shape.** One v1 wave `w1`, 13 seats: executor 4, reviewer 2, scribe 1, scout 1, critic
+  1, mutation-tester 1, sentinel 1, connector 1, revenger 1 (the count is
+  `.ufo/waves/round-95/w1-dispatch.json` `counts.total` = 13); attack share 7/13. Base
+  `02ff6290`; freeze declarations `0d3fc99b`; instruments `0685c358`; lesson Gate reflow
+  `20fabad4`; lesson anchor `f219fb0c`; claims freeze `3ca1981a`; records fix `16cf0d58`;
+  pre-freeze records `4bd1e88f`; landing receipts `3610b46c`. All seats settled, no dead
+  seat; `w1-results.json` carries 13 results with `output: null` after the orchestrator
+  kernel restart, so the reports in the wave dir are the evidence.
+- **R95-C1 (coverage) — the note reader governs five presentation states it did not
+  govern.** The successor reader adds the indented-code class (S323), the escaped
+  backslash before a pipe, the one/two-hyphen delimiter (S321), and the exactly-one-pin-line
+  rule. The five added states are `indent-code-row`, `indent-token`,
+  `escaped-backslash-pipe`, `two-hyphen-delimiter` and `double-pin`; the battery prints
+  `C1_CONTROLS states=50 matched=50 mismatches=0 missing=0`, and the honest note prints
+  `C1_R95_PASS=true`, `mismatched=0 badrows=0 verdict_tables=1`, `quote:1` on S320-S323.
+  The before column (round-94 counter at `6a2a1fdd`) refuses the four note fixtures and
+  executes the double-pinned copy to `C1_R94_PASS=true`.
+- **R95-C2 (calibration).** The disposition checker reads receipts from the object store at
+  `--rev`, binds every manifest state receipt to `counter_sha=` = the counter blob, refuses
+  a working-tree-only receipt (`receipt-absent-at-rev`) and a wrong digest
+  (`receipt-counter-sha-mismatch`), and refuses at setup on a `refs/replace` entry; the
+  round-94 checker prints `findings=0` on both forged sets. Positive
+  `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`, selftest 11/11, forge
+  matrix 8/8.
+- **Motivating evidence.** The round-94 closure and spot-check routed eight record and
+  eight instrument items (`plans/round-94.plan.md` §A2-A8); this round answered all of
+  them, and its own wave falsified two claim sentences before filing (the Gate quote
+  layout: A9; the summary token order: A4) — both amended, not smoothed.
+- **Frontier.** S320, S321 and S322 re-opened; S323 admitted (CommonMark §4.4, indented
+  code) with a located quote in this lesson; registry rows 182 → 183, mined 148 → 149,
+  census exit 0 before and after. QUALITY 169-172. Mistakes M1-M3 in
+  `corpus/lessons/round-95.md`; the S323 duplicate-URL warning (same page as S322, a
+  different scope) is the census's existing W04 class and does not fail the gate.
+- **Routed to round 96.** The sentinel's driver/tool defects: receipt selection ranks the
+  highest-index `.rerun-N.out` while its writer picks the lowest, a symlinked receipt is
+  followed, `make-pins95.py` writes through a symlink and resolves `--lane ''` to the CWD,
+  the checker accepts a movable revspec, and the counter accepts `--rev ''` (the index);
+  the environment-trust limits (hostile `PATH`, ambient non-`GIT_*` variables) are
+  declared in `plans/round-95.plan.md` §A6-A7.

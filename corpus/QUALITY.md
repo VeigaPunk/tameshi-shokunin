@@ -2682,3 +2682,67 @@ on the landed bytes (`c2-landed-battery.txt`).
     `D01.out` as `exit=1`, `C1_R93_PASS=false`, while every committed `D01.out` (both the
     first-run and the fixed-state copy, sha256 `63fd5f80…`) reads `exit=0`,
     `C1_R93_PASS=true` (`lessons/round-94.md`, erratum; R94SC1). (`lessons/round-94.md` M8.)
+
+## Criteria appended — round 95
+
+169. A frozen self-assessment tally is reconciled by an **append-only erratum** naming
+    the superseded sentence — never by editing the frozen file. The tally's operative
+    value is the one the receipt prints, and the erratum names every place the
+    superseded sentence is recorded, so a reader who finds the old number also finds the
+    correction beside it. Round 94's C2 claim was filed `unprovable` because the frozen
+    plan, the LOG and the lesson all said `DISPOSITION_SELFTEST: 8/8 pass` while the
+    operative receipt printed `9/9 pass`; the frozen files are history and an in-place
+    edit would have destroyed the evidence that the drift happened. Able to fail:
+    `plans/round-94.plan.md:165`, `LOG.md:5085` and `corpus/lessons/round-94.md:66`
+    still read `8/8`, while `.ufo/evidence/round-94/pre-freeze/c2-selftest.out:10`
+    reads `9/9 pass` — the erratum in `corpus/lessons/round-95.md` § Erratum is the only
+    thing that reconciles them, and it edits none of the three. (`lessons/round-95.md`
+    M1; round-94 closure routed defect 1.)
+
+170. A receipt a verdict is read from is bound to **a revision and a counter digest**,
+    not to a filesystem path. A receipt that exists only in the working tree, or whose
+    `counter_sha=` line is absent or differs from the digest of the counter blob at the
+    revision it claims, is refused — the audit's evidence binding is the identity of
+    the bytes, not the presence of a file with the right name. Round 94's checker read
+    its receipts from the filesystem and never read a `counter_sha=` line, so both
+    forged receipt sets passed it; the successor reads the receipts out of the object
+    store at `--rev` and compares each `counter_sha=` against the counter blob it
+    actually grades. Able to fail: `.ufo/evidence/round-95/pre-freeze/c2/forge-matrix.txt`
+    — `forge-handwritten` (a receipt present only in the working tree) → exit 1,
+    `receipt-absent-at-rev`; `forge-counter-sha` (a committed receipt whose
+    `counter_sha=` is 64 zeros) → exit 1, `receipt-counter-sha-mismatch`; both print
+    `findings=0` under the round-94 checker at `6a2a1fdd` in the same matrix. The
+    round-94 checker has zero `counter_sha` occurrences (`grep -c counter_sha
+    .ufo/evidence/round-94/conjunct-disposition-v94.py` → 0). The declared limit: a
+    hand-written receipt carrying the honest digest is still accepted (plan §A6).
+    (`lessons/round-95.md` M1; round-94 closure routed defect 1; `plans/round-95.plan.md`
+    §C2.)
+
+171. A reader's declared literal-block class names **every** Markdown literal class it
+    relies on — fenced **and** indented — or the note it certifies must avoid the
+    unnamed class. A reader that skips only fenced blocks and treats a 4-space-indented
+    line as block structure keys a row the specification calls literal text, so its
+    certificate covers a presentation it never read. Round 94's reader declared the
+    fenced class (S322) and not the indented one, and its own wave showed the cost: the
+    indented-code fixture was refused (`verdict_tables=false`) and an indented stray
+    verdict token was read as a table row. Able to fail:
+    `.ufo/waves/round-94/w1/R94C1-A8-indented-code.out` (`C1_BADROWS dup:301:C01`,
+    `verdict_tables=false`, `C1_R94_PASS=false`) and
+    `.ufo/waves/round-94/w1/R94C1-A8b-indent-token.out` (`C1_BADROWS
+    stray-verdict:297:| C01 | KILLED |`) — the v94 reader refusing or mis-keying what
+    CommonMark §4.4 calls literal text; the round-95 reader's `indent-code-row` and
+    `indent-token` states are the arms that must now pass. (`lessons/round-95.md` M2,
+    M3; `plans/round-95.plan.md` §C1; S323.)
+
+172. A record's numbers about its own evidence are **printed by a command**, never
+    written by hand: a quote's word count is the accepting tokenizer's count
+    (`len(q.split())`), and a cited line is a line the record's named snapshot
+    rendering shows carrying the sentence. An eyeballed count is a number nobody
+    re-derived, and a line that does not carry its quote makes the record unverifiable
+    at the point a reader checks it. Round 95's own S323 row claimed `(15 words)` for a
+    16-token span and `line 2355` for a sentence its renderer puts later; both were
+    corrected at `16cf0d58`. Able to fail: `git show 3ca1981a:corpus/SOURCES.md` carries
+    `(15 words)` for the S323 span, while `len(q.split())` on that span prints 16 —
+    and the corrected row prints `(16 words)`; the line number is stated with the
+    renderer's convention in the lesson's `## Gate`. (`lessons/round-95.md` M1-M3;
+    R95SC1 D1-D3.)
