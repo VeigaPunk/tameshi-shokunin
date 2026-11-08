@@ -1,0 +1,52 @@
+{
+ "lane": "tameshi",
+ "round": 100,
+ "base": "34d8d7cef87ec78ed84bf5247e2609814cce74c8",
+ "instrument": "f8f912dfd569a33fade039af605f55cec15b921a",
+ "claims": {
+  "C1": {
+   "axis": "operability",
+   "type": "measured",
+   "surface": "tools/registry.json rows tagged r100-c1 (12) governing tools/tally-reconcile.py, tools/control-assertion-audit-v2.py, tools/control-assertion-audit.py, tools/registry-cell-immutability.py, graded by tools/registry-check.py --rev R",
+   "wording": "At R, python3 -I tools/registry-check.py --rev R --tag r100-c1 prints REGISTRY_CHECK: held=12/12 superseded=0 and exits 0; the twelve active r100-c1 rows are one --selftest row (exit 0), one red gate row (exit 1) and one green gate row (exit 0) for each of the four tools, red/green rows pinned to committed historical revisions with their exact summary line as stdout_contains; at base 34d8d7ce the same command exits 2 (no row selected); in a scratch checkout of R, replacing any one of the four tools by an always-green stub makes that tool's red row differ (held=11/12, exit 1); the full registry check at R prints REGISTRY_CHECK: held=87/91 superseded=7 with exactly the four rows that differ at base differing (sources-census, verify-round15, mte-interop-check, receipt-bytes-tree).",
+   "counter": "python3 -I tools/registry-check.py --rev R --tag r100-c1",
+   "predicate": "REGISTRY_CHECK: held=12/12 superseded=0",
+   "no_harm_counter": "python3 -I tools/registry-check.py --rev R",
+   "no_harm_predicate": "REGISTRY_CHECK: held=87/91 superseded=7; differing = {sources-census, verify-round15, mte-interop-check, receipt-bytes-tree}",
+   "before": "base 34d8d7ce: --tag r100-c1 exits 2 (.ufo/evidence/round-100/pre-freeze/c1-before-tag-miss.out); tools_with_rows=0/4 (c1-rows-base-vs-instr.out); full registry held=75/79 superseded=7 (.ufo/evidence/round-100/base/registry-check-full-at-base.out)",
+   "controls": [
+    "pre-freeze/c1-at-instruments.out held=12/12 rc 0",
+    "pre-freeze/c1-forgery-stub-*.out x4 held=11/12 rc 1"
+   ],
+   "limits": "rows prove recorded verdicts on pinned historical inputs, not correctness on new inputs; a stub reproducing both red and green lines per argv would pass; source cites SCORECARD.md@base:5933",
+   "kill": "tag check not held=12/12 rc 0 at R; any stub fails to flip its red row; full-registry differing set at R differs from base's four"
+  },
+  "C2": {
+   "axis": "calibration",
+   "type": "measured",
+   "sourced": "S327",
+   "surface": "tools/gate-line-recheck.py at R over the Gate sections of corpus/lessons/round-95..99.md and the snapshots they cite, rendered by the R93S1 strip_tags/locate definitions at R",
+   "wording": "At R, python3 -I tools/gate-line-recheck.py --repo . --rev R --record corpus/lessons/round-95.md --record corpus/lessons/round-96.md --record corpus/lessons/round-97.md --record corpus/lessons/round-98.md --record corpus/lessons/round-99.md prints GATE_LINE_RECHECK records=5 pointers=21 hit=12 miss=6 absent=0 unbound=3 and exits 1; its six GATE_LINE miss lines are exactly corpus/lessons/round-95.md:17..22 with cited 84, 4399, 4393, 4493, 2615, 2355; round-95 only prints pointers=6 hit=0 miss=6 absent=0 unbound=0 exit 1; round-97 only and round-99 only each print pointers=2 hit=2 miss=0 absent=0 unbound=0 exit 0; --selftest --repo . --rev R prints GATE_LINE_SELFTEST: 24/24 pass exit 0; the quote-presence do-nothing control over the same pointers prints QUOTE_PRESENCE pointers=21 present=18 absent=0 unbound=3 flagged_d1=0.",
+   "counter": "python3 -I tools/gate-line-recheck.py --repo . --rev R --record corpus/lessons/round-95.md --record corpus/lessons/round-96.md --record corpus/lessons/round-97.md --record corpus/lessons/round-98.md --record corpus/lessons/round-99.md",
+   "predicate": "GATE_LINE_RECHECK records=5 pointers=21 hit=12 miss=6 absent=0 unbound=3",
+   "battery": "python3 -I tools/gate-line-recheck.py --selftest --repo . --rev R",
+   "battery_predicate": "GATE_LINE_SELFTEST: 24/24 pass",
+   "red": "--record corpus/lessons/round-95.md only: pointers=6 hit=0 miss=6 absent=0 unbound=0, exit 1",
+   "green": "--record corpus/lessons/round-97.md only and --record corpus/lessons/round-99.md only: pointers=2 hit=2 miss=0 absent=0 unbound=0, exit 0",
+   "before": "git grep -c GATE_LINE_RECHECK 34d8d7ce -- . prints nothing, exit 1 (pre-freeze/c2-before-token.out); quote-presence control flagged_d1=0",
+   "controls": [
+    "pre-freeze/c2-forgery-r96-pointer.out miss=1 vs c2-forgery-r96-unforged.out miss=0",
+    "pre-freeze/c2-r95-stated-renderer.out hit_under_stated=0"
+   ],
+   "limits": "line N hit = some occurrence starts on N; observed start = line of the quote's first word; no-quote / unresolved / JSON snapshots are unbound (exit 1); declared three-step quote rule; lesson ## Gate sections only; one renderer; renderer definitions are compiled from the lane blob at --rev (trust boundary: the lane's own committed file)",
+   "kill": "summary or miss set differs at R; a wave artifact shows a pointer graded hit whose quote does not start on the cited line under the canonical renderer; the quote-presence control flags any of the six"
+  }
+ },
+ "controls": "plans/round-100.plan.md ## Pre-registered controls",
+ "axes": {
+  "calibration": "lowest non-retired, pinned 8",
+  "operability": "C1"
+ },
+ "routed_defects": "round-99 spot-check items 1-5, plan ## Routed items",
+ "note": "R written to .ufo/waves/round-100/records-rev.txt before the records run; amendments only from wave artifacts (plan ## Amendments), post-records ones in ### Post-records"
+}
