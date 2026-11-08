@@ -1,4 +1,17 @@
-# R96L1 — no report: the seat's probe never landed
+# R96L1 — CORRECTION: the seat settled late; the earlier absence record is withdrawn
+
+**Correction (2026-11-08 ~10:45 -03, after the orchestrator's `WAVE-DONE tameshi r96 w1`).**
+The seat **did** land: `.ufo/waves/round-96/w1/R96L1.md` exists (and `R96L1-runs/`), and the
+orchestrator's `w1-results.json` lists all 13 seats. The absence claim below was written at
+10:39 -03 from the then-present files; it is kept only as the record of what the L1 observed
+and of the defect it caused (a premature dead-seat call, `corpus/lessons/round-96.md` M5).
+**The rounded report and the falsification ledger point at `R96L1.md`, not at this file.**
+The seat's verdict (`partly refuted`) is integrated in the round report and confirms A1/A2/A6
+independently.
+
+---
+
+## Superseded record (written 10:39 -03)
 
 Seat `R96L1` (revenger, wave `w1`, round 96) was dispatched in
 `.ufo/waves/round-96/w1-dispatch.json` (`counts.total=13`) and spawned by the orchestrator at
