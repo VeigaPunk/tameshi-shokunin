@@ -141,7 +141,8 @@ def mutant_edits(counter_text):
     d01 = base.replace(lane_block, no_gate, 1)
     d02 = base.replace(env_frag, "", 1)
     d01d02 = d01.replace(env_frag, "", 1)
-    pin_assert = """    if not self_pin_ok():
+    pin_assert = """    selfpin = self_pin_ok()
+    if not selfpin:
         die("self-pin-mismatch")
 """
     assert pin_assert in base, "D03 pin anchor missing"
@@ -154,7 +155,7 @@ def mutant_edits(counter_text):
             continue
 """
     assert unkeyed in base, "D03 unkeyed anchor missing"
-    d03 = (base.replace(pin_assert, "", 1)
+    d03 = (base.replace(pin_assert, "    selfpin = True  # D03: self-pin assert removed\n", 1)
                .replace(shape, 'ID_SHAPE = re.compile(r"^C[0-9]{2}$")', 1)
                .replace(unkeyed, "        if not shaped:\n            continue\n", 1))
     return {
@@ -306,7 +307,7 @@ def main():
             os.makedirs(mw, exist_ok=True)
             p = subprocess.run([sys.executable, "-I", mp, "--repo", repo, "--rev", "HEAD",
                                 "--work", mw], capture_output=True, text=True)
-            open(os.path.join(a.outdir, n + "-" + state_name + ".out"), "w").write(
+            open(os.path.join(a.outdir, n + ".out"), "w").write(
                 "mutant=%s state=%s\ncounter_sha=%s\nexit=%d\n" % (
                     n, state_name, hashlib.sha256(open(mp, "rb").read()).hexdigest(), p.returncode)
                 + p.stdout + p.stderr)
@@ -322,6 +323,16 @@ def main():
         shutil.rmtree(st1, ignore_errors=True)
         shutil.rmtree(st2, ignore_errors=True)
 
+    # summary derived from the receipts on disk (QUALITY 147) — a partial run can
+    # regenerate it, and a receipt the run never wrote cannot be counted as matched.
+    results = {}
+    for fn in sorted(os.listdir(a.outdir)):
+        if not fn.endswith(".out"):
+            continue
+        body = open(os.path.join(a.outdir, fn), encoding="utf-8", errors="replace").read()
+        m = re.search(r"^exit=(\d+)$", body, re.M)
+        if m:
+            results[fn[:-4]] = (int(m.group(1)), body)
     lines = []
     matched = 0
     mism = []
