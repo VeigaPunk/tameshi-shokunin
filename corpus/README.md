@@ -767,3 +767,16 @@ closure's.
 | Entry | Map position | Grounding |
 |---|---|---|
 | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); verdict-content certificate at `855f0c1c`, battery `states=35 matched=35`; revision-bound seal | S316, S317 (opened 2026-11-06); S320, S321, S322 (opened 2026-11-08); `.ufo/evidence/round-93/` |
+
+## Round 94 — certification position of the fleet-gate case note (fifth attempt)
+
+Appended; every earlier row is unchanged. Round 94's successor counter anchors the gate
+identity in its own self-pinned bytes (QUALITY 163), makes `coverage` fence-aware with the
+path as its own cell (QUALITY 164), reads the delimiter row and decides the remainder-row
+policy (QUALITY 165), and its disposition checker requires a state/digest-naming
+`unfalsifiable` reason with a frozen falsifiable floor (QUALITY 166). Its battery registers
+45 states.
+
+| Entry | Map position | Grounding |
+|---|---|---|
+| `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases; certificate revision-bound to the round-94 instrument revision — the twelve cells are a measurement, not an admission) | S320, S321, S322 (re-opened 2026-11-08); `.ufo/evidence/round-94/c1/`; `.ufo/evidence/round-94/pre-freeze/controls/` |

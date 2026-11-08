@@ -5066,3 +5066,27 @@ carries a `## Correction appended in round 92` block. The frozen `plans/round-91
   round 94`: fence-aware coverage, delimiter width, an externally anchored gate identity,
   `--min-falsifiable`, a fixture-assembly assertion, `O_NOFOLLOW` receipt writes, `GIT_*`
   scrubbing in the driver, and the eight rule-level states.
+
+## Round 94 (2026-11-08) — two claims: the self-anchored gate identity (coverage) and the state/digest disposition (calibration)
+
+- **Shape.** One v1 wave `r94-w1`, 12 seats (executor 3, scribe 1, scout 2, reviewer 2,
+  critic 1, mutation-tester 1, sentinel 1, connector 1; attack share 4/12 = 33 % by the
+  policy's role set, 6/12 = 50 % counting sentinel and connector). Base `a8f0e14b`;
+  instrument revision `7084358c`; freeze `fdbd18c6`; pre-freeze records `33279f40`.
+- **R94-C1 (coverage) — fifth attempt at the round-90 fleet-gate case.** The successor
+  counter anchors the gate identity in its own self-pinned bytes (`GATE_COMMIT` /
+  `GATE_SHA256`) and refuses at setup with `gate-identity-mismatch` instead of executing a
+  foreign gate (QUALITY 163); its `coverage` scan is fence-aware and matches the note path
+  as its own cell (QUALITY 164); its `tables()` returns the delimiter cells, adds a
+  `delim:` finding and decides the remainder-row policy from S321 (QUALITY 165).
+- **R94-C2 (calibration).** The disposition checker requires an `unfalsifiable` reason to
+  name a battery state or a pin digest (not just a mechanism word) and accepts a frozen
+  `--min-falsifiable` floor; its selftest carries both the mechanism-word cheat and a
+  digest-naming clean case, 8/8 (QUALITY 166).
+- **Motivating evidence.** The round-93 non-author spot-check
+  (`corpus/lessons/round-93-verifier-spotcheck.md`) routed eight items, each answered in
+  `plans/round-94.plan.md` § Records; the A3 defect (a lane commit executing a foreign
+  gate while printing `pin=true`) is the class this round closes by construction.
+- **Frontier.** S320, S321 and S322 re-opened (all three byte-identical snapshots) for the
+  digest, delimiter/remainder and fence ground; registry rows 182 → 182. QUALITY
+  163-167. Mistakes M1-M4 in `corpus/lessons/round-94.md`.

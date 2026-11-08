@@ -2665,3 +2665,11 @@ on the landed bytes (`c2-landed-battery.txt`).
     `.ufo/evidence/round-94/conjunct-disposition-v94.py --selftest` case
     `a4-mechanism-word-cheat` (finding) against `a4-digest-named` (clean), and
     `--min-falsifiable 17` rejecting `falsifiable=0`. (`lessons/round-94.md` M4; R93SN1 F8; A4.)
+167. A freeze revision is recorded outside the frozen commit. A file inside the freeze commit
+    cannot carry that commit's own hash (fixpoint), so `claims.json` legitimately reads
+    `freeze: null`; the freeze revision lives in a sibling receipt
+    (`.ufo/waves/round-<N>/freeze-rev.txt`) and in the plan, lesson and report. A frozen
+    artifact is never edited afterwards to carry it — a post-freeze edit of a frozen file is
+    the defect, not the null. Able to fail: round 94's own working-tree edit of
+    `claims.json` (reverted; the committed bytes read `null` and the receipt names
+    `fdbd18c6`). (`lessons/round-94.md` M2.)

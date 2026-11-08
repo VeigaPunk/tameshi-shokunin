@@ -293,3 +293,34 @@ refused.
 The twelve verdict cells above are the cells the counter reads; it certifies those cells
 and nothing about how they were obtained. Admission is the non-author closure's.
 
+
+## Certification attempt (appended round 94) — the self-anchored gate identity
+
+Appended; the entry and the round-92/93 blocks above are unchanged. Round 93's counter was
+killed by three sentences of its own record: its `coverage` scan was fence-blind, it never
+read the delimiter row so it could not see a GFM-invalid table, and its seal compared the
+spec to itself — one lane commit repointing the spec and regenerating `pins.json` made it
+execute a foreign gate while printing `pin=true pins=true`. Round 94's successor,
+`.ufo/evidence/round-94/c1/measure-v94.py`, answers each:
+
+- **The gate identity is anchored in the counter's own self-pinned bytes.**
+  `GATE_COMMIT` and `GATE_SHA256` are constants inside the file whose sha256 is itself
+  pinned; when the spec-derived identity disagrees the counter refuses at setup
+  (`C1_SETUP gate-identity-mismatch`, exit 2) and never materialises or runs the subject.
+  The battery's `gate-foreign` state repoints `gate.path` to another real fleet blob with
+  its real sha and gets exactly that refusal.
+- **`coverage` skips fenced blocks and matches the note path as its own cell.** The scan
+  runs through `block_lines` (S322) and requires a backtick-delimited cell whose first
+  token is the path, so a fenced denial row cannot flip a committed assertion and a longer
+  filename cannot satisfy it (S321's cell rule).
+- **The delimiter row is read and checked.** `tables()` returns the delimiter cells; a
+  table whose delimiter width differs from its header adds a `delim:` finding; a
+  remainder row is padded or truncated when its one verdict token sits in the verdict
+  column and refused when the verdict-bearing cells are ambiguous (S321's pad/ignore rule).
+
+The twelve verdict cells above are unchanged: the counter derives them by re-running the
+pinned gate's own `selftest` over the twelve single-edit mutants and prints
+`n=12 killed=5 survived=7`, `mismatched=0`. It certifies those cells and nothing about how
+they were obtained. Round 94's battery registers 45 states — 6 positive, 30 hostile, 1
+gate-identity setup, 3 setup, 5 removal mutants — and every hostile state names the
+conjunct it must falsify. Admission remains the non-author closure's.
