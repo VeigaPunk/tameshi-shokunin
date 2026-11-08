@@ -1,0 +1,168 @@
+{
+ "schema": "tameshi-r90-census-mutants-v1",
+ "gate": {
+  "repo": "/home/vgpnk/Projects/shokunin",
+  "commit": "f47ad6ba8d306f8125597401cb2ce45c1297a593",
+  "path": "scripts/sources-census.sh",
+  "sha256": "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30",
+  "fixtures": "scripts/fixtures/sources-census"
+ },
+ "suite": [
+  "selftest"
+ ],
+ "timeout_s": 180,
+ "runs_per_verdict": 2,
+ "mutants": [
+  {
+   "id": "C01",
+   "arm": "E10 community-at-A",
+   "old": "if (tier==\"A\" && kind==\"community\")",
+   "new": "if (tier==\"A\" && kind==\"communityX\")",
+   "predict": "KILLED",
+   "witness": {
+    "mode": "validate",
+    "sources": "# W\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| S001 | Forum — https://w1.example/f | community | A | s | §1 | forum post at tier A | queued | 2026-10-01 | 90d | — |\n",
+    "today": "2026-11-06"
+   }
+  },
+  {
+   "id": "C02",
+   "arm": "W02 thin-reject length boundary",
+   "old": "length(teaches)<8",
+   "new": "length(teaches)<7",
+   "predict": "SURVIVED",
+   "witness": {
+    "mode": "validate",
+    "sources": "# W\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| S001 | Rej — https://w2.example/r | docs | B | s | §1 | 1234567 | rejected | 2026-10-01 | 90d | — |\n",
+    "today": "2026-11-06"
+   }
+  },
+  {
+   "id": "C03",
+   "arm": "E04 supersedes exemption id width",
+   "old": "teaches !~ /supersedes S[0-9]{3}/",
+   "new": "teaches !~ /supersedes S[0-9]{4}/",
+   "predict": "SURVIVED",
+   "witness": {
+    "mode": "validate",
+    "sources": "# W\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| S001 | Old — https://w3.example/x | docs | B | s | §1 | first row | queued | 2026-10-01 | 90d | — |\n| S002 | New — https://w3.example/x | docs | B | s | §2 | supersedes S001 with newer text | queued | 2026-10-01 | 90d | — |\n",
+    "today": "2026-11-06"
+   }
+  },
+  {
+   "id": "C04",
+   "arm": "overdue due-day boundary",
+   "old": "if (due!=INVALID_EPOCH && due<=today_s)",
+   "new": "if (due!=INVALID_EPOCH && due<today_s)",
+   "predict": "KILLED",
+   "witness": {
+    "mode": "overdue",
+    "sources": "# W\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| S001 | Due — https://w4.example/d | docs | B | s | §1 | due today | queued | 2026-10-07 | 30d | — |\n",
+    "today": "2026-11-06"
+   }
+  },
+  {
+   "id": "C05",
+   "arm": "E08 opened-today boundary",
+   "old": "opened_epoch>today_s)",
+   "new": "opened_epoch>=today_s)",
+   "predict": "KILLED",
+   "witness": {
+    "mode": "validate",
+    "sources": "# W\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| S001 | Today — https://w5.example/t | docs | B | s | §1 | opened today | queued | 2026-11-06 | 90d | — |\n",
+    "today": "2026-11-06"
+   }
+  },
+  {
+   "id": "C06",
+   "arm": "separator row with alignment colons",
+   "old": "if (c !~ /^:?-+:?$/) return 0",
+   "new": "if (c !~ /^-+$/) return 0",
+   "predict": "SURVIVED",
+   "witness": {
+    "mode": "census",
+    "sources": "# W\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|:---|:---|:---:|---|---|---|---|---|---|---|---:|\n| S001 | Row — https://w6.example/r | docs | B | s | §1 | one row | queued | 2026-10-01 | 90d | — |\n",
+    "today": "2026-11-06"
+   }
+  },
+  {
+   "id": "C07",
+   "arm": "awk row-indent width 0-3",
+   "old": "if (line !~ /^ {0,3}\\|/) next",
+   "new": "if (line !~ /^ {0,2}\\|/) next",
+   "predict": "KILLED",
+   "witness": {
+    "mode": "census",
+    "sources": "# W\n\n## Registry\n\n   | id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n   |---|---|---|---|---|---|---|---|---|---|---|\n   | S001 | Ind — https://w7.example/i | docs | B | s | §1 | three-space row | queued | 2026-10-01 | 90d | — |\n",
+    "today": "2026-11-06"
+   }
+  },
+  {
+   "id": "C08",
+   "arm": "E11 used-by existence test (-e)",
+   "old": "if [ ! -e \"$dir/$path\" ]; then",
+   "new": "if [ ! -f \"$dir/$path\" ]; then",
+   "predict": "SURVIVED",
+   "witness": {
+    "mode": "validate",
+    "dirs": [
+     "corpus/knowledge"
+    ],
+    "sources": "# W\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| S001 | Dir — https://w8.example/d | docs | B | s | §1 | used by a directory | mined | 2026-10-01 | 90d | corpus/knowledge |\n",
+    "today": "2026-11-06"
+   }
+  },
+  {
+   "id": "C09",
+   "arm": "URL fragment normalization",
+   "old": "sub(/#[^ ]*$/,\"\",u)",
+   "new": "sub(/#[^ ]*$/,\"&\",u)",
+   "predict": "SURVIVED",
+   "witness": {
+    "mode": "validate",
+    "sources": "# W\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| S001 | A — https://w9.example/p#a | docs | B | s | §1 | anchor a | queued | 2026-10-01 | 90d | — |\n| S002 | B — https://w9.example/p#b | docs | B | s | §2 | anchor b | queued | 2026-10-01 | 90d | — |\n",
+    "today": "2026-11-06"
+   }
+  },
+  {
+   "id": "C10",
+   "arm": "symbolic cadence with spaces",
+   "old": "function symbolic(s) { return s ~ /^[A-Za-z][A-Za-z0-9 _-]*$/ }",
+   "new": "function symbolic(s) { return s ~ /^[A-Za-z][A-Za-z0-9_-]*$/ }",
+   "predict": "SURVIVED",
+   "witness": {
+    "mode": "validate",
+    "sources": "# W\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| S001 | Rel — https://w10.example/r | docs | B | s | §1 | release cadence | queued | 2026-10-01 | on next release | — |\n",
+    "today": "2026-11-06"
+   }
+  },
+  {
+   "id": "C11",
+   "arm": "missing-registry exit 2",
+   "old": "[ \"$missing_error\" = 1 ] && exit 2",
+   "new": "[ \"$missing_error\" = 1 ] && exit 1",
+   "predict": "KILLED",
+   "witness": {
+    "mode": "validate",
+    "sources": null,
+    "today": "2026-11-06"
+   }
+  },
+  {
+   "id": "C12",
+   "arm": "used-by comma-list trimming",
+   "old": "      path=$(trim_cell \"$path\")\n",
+   "new": "      path=$path\n",
+   "predict": "SURVIVED",
+   "witness": {
+    "mode": "validate",
+    "files": [
+     "corpus/a.md",
+     "corpus/b.md"
+    ],
+    "sources": "# W\n\n## Registry\n\n| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n|---|---|---|---|---|---|---|---|---|---|---|\n| S001 | Two — https://w12.example/t | docs | B | s | §1 | used by two files | mined | 2026-10-01 | 90d | corpus/a.md, corpus/b.md |\n",
+    "today": "2026-11-06"
+   }
+  }
+ ]
+}
