@@ -421,3 +421,35 @@ is committed with them. Residual limit, stated: **per-receipt byte provenance is
 the `parent=` line and by re-runnability, not by a per-receipt instrument digest**; the
 fixture clone revisions are ephemeral and not in the lane's object store. Routed to round
 95: have the driver write a `counter_sha=` line into every `run_ctl` receipt.
+
+### A7 — the C2 checker reads receipts from the working tree (R94SN1 F1-F3)
+
+The plan's C2 surface says a `state` row's *committed* receipt must show the conjunct
+false. The checker reads the counter and the manifest from `--rev` but reads the receipt
+files from `--receipts` on the filesystem, without a git seal: an ambient `GIT_DIR` or a
+`refs/replace` entry can substitute the counter/manifest blobs (R94SN1 F1), a
+working-tree receipt can differ from the committed one (F2), and a hand-written receipt
+carrying a matching `C1_CONJUNCTS` line satisfies a state row without the counter ever
+running (F3). Narrowed wording: **C2 certifies the manifest-to-receipt mapping and the
+counts, over the receipt bytes present in the tree at the run; receipt authenticity is not
+part of C2 — it is bound by C1's own battery replay (R94E3 re-ran the full 45-state battery
+from committed bytes twice into one outdir and matched every stable line) and by kill rule
+(c).** The run cited in the claim used exactly the receipt bytes committed at `4dc919ac`
+(the checker was run after that commit and the tree was clean for those paths; `git status`
+on the controls directory is empty at the run's revision `6a2a1fdd`). Routed to round 95:
+seal the checker's git reads (`GIT_NO_REPLACE_OBJECTS`, scrubbed `GIT_*`), read receipts
+from `--rev` object store, refuse a receipt whose `counter_sha=` does not equal the counter
+blob, and keep a hand-written-receipt control as a battery state.
+
+### A8 — twelve rule-level mutants survive the battery (R94M1)
+
+R94M1's 38-defect matrix scores `killed:26 survived:12` (`R94M1-results.json`,
+`R94M1.md`). The survivors name rules whose removal no committed state detects: `green`
+(E04), `canary` (E05, declared unfalsifiable), `unstable0` (E09), the two-run count (E10),
+`out-of-set` (E13), `position` (E15), `width` (E16), figure anchoring (E20), coverage's
+own-cell half (E26), the trivial detector's `rc is None` arm (E29), the one-verdict-column
+rule (E30), and the spec-count half (E32). The claim sentence is unaffected — it is about
+the thirty named states, which all refuse with their named conjunct false — but QUALITY 158
+is **conjunct-level only** for this reader: these twelve rules have no discriminating state.
+Routed to round 95: one state per survivor (the round-93 M8 list minus the four this round
+added), and a mutation-matrix row in the plan that names the survivors as it does here.
