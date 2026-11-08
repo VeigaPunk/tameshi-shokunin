@@ -132,7 +132,17 @@ Every number below is a line a committed receipt printed at the records revision
 
 ## Wave
 
-Filled from the settled `w1` wave.
+`w1`, 13 seats (executor 4, scribe 1, scout 1, reviewer 2, critic 1, mutation-tester 1,
+sentinel 1, connector 1, revenger 1; attack 6/13 = 46%). Twelve seats filed a report;
+executor R98E4 settled with no report and no receipts (output truncated at its first line),
+recorded as the round's one dead seat. Findings are the amendments A5-A10 and mistakes
+M6/M7: R98R1 falsified five C1 classification mechanisms (branch order, function scope,
+shadowed `add`, attribute reassignment, augmented assignment) plus the stub-runner
+spelling; R98C1 found the nested-scope constant and the `want=code` tautology; R98R2,
+R98SN1 and R98E2 falsified C2's caller-supplied tool pin, red-summary indistinguishability,
+missing per-class transcript and poisoned-base-manifest path. The instruments were
+repaired after the readers finished (audit v3 `82c2e54b…`, battery v2 `de94cbcc…`) and the
+records run re-ran every counter at the records revision.
 
 ## considerthese and assimilation
 
