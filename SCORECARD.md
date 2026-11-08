@@ -5877,7 +5877,9 @@ attribute reassignment, augmented assignment, stub runners) → A5; R98R2 falsif
 tool-pin, red-summary and per-class-transcript sentences and the digest wording →
 A4/A7/A8/A10; R98C1 measured both do-nothing controls, the scope-shadow constant (A5) and
 the `want=code` tautology (A6); R98M1 ran a 20-mutant matrix over both instruments
-(13 killed, 7 survivors with named equivalences/gaps); R98SN1 held the environment and
+(`MUTANTS audit=7/10 battery=7/10`; with the repaired instruments the same runs give
+`audit=6/10 battery=5/10`, the three extra survivors a8/b8/b11 killed only by a supplementary
+arm); R98SN1 held the environment and
 path-confinement rows and found the unpinned battery mode (A7); R98CN1 found no duplicate
 implementation (nearest siblings diverge); R98L1 mapped the recorder-shape boundary and
 confirmed no other literal-coded `add` state; R98S1 drafted the record fragments; R98SC1
