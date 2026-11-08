@@ -1,0 +1,55 @@
+{
+ "lane": "tameshi",
+ "round": 97,
+ "base": "07e50d6d0142b21e8443b5417b8edc4d1dd76455",
+ "instrument": "917d7109c9c4e43dd8fd69e59b147181e2e94d85",
+ "claims": {
+  "C1": {
+   "axis": "calibration",
+   "type": "measured",
+   "surface": ".ufo/evidence/round-97/c1/battery-bind.py reading, at --rev, the committed driver .ufo/evidence/round-96/c1/controls-v96.py (states() and EXPECT_EXTRA are the oracle), the frozen counter .ufo/evidence/round-96/c1/measure-v96.py (its sha256 is the counter=self digest) and the 50 receipts under .ufo/evidence/round-96/pre-freeze/controls/",
+   "wording": "at the records revision R, python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev R --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5 prints BATTERY states=50 matched=50 mismatched=0 missing=0 and exits 0; it reads the 50 receipts as blobs at R (a receipt present only in the working tree is absent) and takes its expectations from the committed driver's states() and EXPECT_EXTRA at R; a receipt deleted from the index (but left in the working tree), a counter_sha= edit, an exit= edit and a C1_R96_PASS=true payload edit each print a nonzero mismatched count and exit 1; a --driver-sha value unequal to the driver blob's sha256 is refused BATTERY_SETUP driver-sha-mismatch, exit 2; at base 07e50d6d git grep -c 'BATTERY states=' prints nothing and C1-summary.txt is absent at 8ed9c526 (git cat-file -e exit 1)",
+   "counter": "python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev RECORDS_REV --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5",
+   "battery": "python3 -I .ufo/evidence/round-97/c1/battery-bind.py --selftest",
+   "predicate": "BATTERY states=50 matched=50 mismatched=0 missing=0",
+   "battery_predicate": "BATTERY_SELFTEST: 7/7 pass",
+   "before": "at base 07e50d6d no committed tool prints a BATTERY states= line (git grep -c 'BATTERY states=' is empty) and the summary the round-96 report cites is absent at 8ed9c526; the round-96 records carry the 50 receipts but no reader of them",
+   "after": "the predicate line at R, exit 0, plus the five refusals and the selftest",
+   "instrument_sha256": "34d5aaf16545e5712955d4da7746598b0c3b555fe171a2368f746022180895ab",
+   "driver_sha256": "88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5",
+   "counter_sha256": "69ee68b6fa230e29ef5ddc4e02d619562d5fe5f3620fb2355903c7f9f09a18d9",
+   "kill": [
+    "a: the line is printed while a named receipt is absent at R or its counter_sha=/exit=/payload does not satisfy the committed driver's own grade()",
+    "b: a receipt that exists only in the working tree is counted matched",
+    "c: a --driver-sha mismatch is graded instead of refused at setup",
+    "d: the selftest cannot fail (a cheat case is reintroduced and still passes)",
+    "e: the driver blob at R is not the oracle the manifest's states() names (the reader substitutes its own expectations)"
+   ],
+   "limits": ["the reader trusts the committed driver as the oracle; it verifies that the receipts satisfy it, not that the driver's expectations are the right ones", "a hand-written receipt carrying the right counter_sha= and payload cannot be distinguished from a real run without re-executing the state (round-96 F1, unchanged)"]
+  },
+  "C2": {
+   "axis": "operability",
+   "type": "measured",
+   "surface": ".ufo/evidence/round-97/c2/guard-inertia.py + the committed manifest .ufo/evidence/round-97/c2/guard-inertia.json, applied to the round-96 checker blob .ufo/evidence/round-96/conjunct-disposition-v96.py at --rev",
+   "wording": "at the records revision R, python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev R --checker-sha 02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80 prints GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0 and exits 0; for each of the 10 manifest rows it applies exactly one exact-string edit to the checker blob at R (refusing a no-op with GUARD_SETUP edit-no-op and an ambiguous anchor with GUARD_SETUP edit-ambiguous, each exit 2), runs the pristine and the mutant checker against the same fresh fixture store and the same arguments, and reports killed only when the pristine run exits with the row's declared exit and prints its declared token and the mutant run's exit differs or loses that token, and limit only when the two runs are identical in exit and declared token; a row whose observed class differs from its frozen expect makes unmet nonzero and exits 1; at base 07e50d6d git grep -c 'GUARD_INERTIA' prints nothing",
+   "counter": "python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev RECORDS_REV --checker-sha 02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80",
+   "battery": "python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --selftest",
+   "predicate": "GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0",
+   "battery_predicate": "GUARD_INERTIA_SELFTEST: 7/7 pass",
+   "before": "at base 07e50d6d no committed tool prints a GUARD_INERTIA line; round 96's R96M1 mutation matrix covers the counter measure-v96.py, not the checker's guards, and the revenger probe R96L1 delivered nothing (spot-check D-b)",
+   "after": "the predicate line at R, exit 0; the selftest 7/7; a manifest whose killed row is declared limit prints survived=1 and exits 1; a no-op edit is refused exit 2",
+   "instrument_sha256": "96c3829d8a701487a3f08ae91dac20b1115cf247035cf9848ec0c54f9f1a43e3",
+   "manifest_sha256": "1a1d9d903ca971ef3b881b6f3687dd083db079baaa3b7083292449b38c42dac8",
+   "checker_sha256": "02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80",
+   "kill": [
+    "a: the pristine and the mutant run against different stores, revisions or arguments",
+    "b: a no-op or ambiguous edit is applied instead of refused",
+    "c: a row whose two runs are identical is counted killed",
+    "d: a limit row names no measured mechanism",
+    "e: the checker blob at R is not the one the manifest was measured against (digest pin)",
+    "f: the tool prints the summary without running every row"
+   ],
+   "limits": ["the fixture store is four files (a counter stub, a manifest, a claims digest and receipts); a guard whose effect needs the real 50-state receipts is out of scope", "the matrix measures one exact edit per guard, not two-edit combinations; a guard killed only by a combination is not counted (git-absolute and verify-quiet are measured limit for that reason)"]
+  }
+ }
+}
