@@ -64,7 +64,7 @@ run2 c2-population --repo "$L" --rev "$I" $REC
 run2 c2-red-r95-only --repo "$L" --rev "$I" --record corpus/lessons/round-95.md
 run2 c2-green-r99-only --repo "$L" --rev "$I" --record corpus/lessons/round-99.md
 run2 c2-green-r97-only --repo "$L" --rev "$I" --record corpus/lessons/round-97.md
-run2 c2-selftest --selftest
+run2 c2-selftest --selftest --repo "$L" --rev "$I"
 # do-nothing control: quote presence anywhere in the rendered snapshot (the lane's prior check
 # class, `C1_SOURCE ... quote:1`) over the same pointers — flags none of the six D1 misses
 hdr "$O/c2-control-quote-presence.out" "$I" .ufo/evidence/round-100/c2/quote-presence-control.py "python3 -I <git show $I:...quote-presence-control.py> <tool blob> $L $I + five records"

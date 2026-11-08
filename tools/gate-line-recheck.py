@@ -47,7 +47,7 @@ Verdict of one pointer (rendered lines = `strip_tags(blob)`, spans = `locate(lin
 Usage:
   python3 -I tools/gate-line-recheck.py --repo LANE --rev <40 hex> --record PATH [--record PATH ...]
         [--renderer PATH]
-  python3 -I tools/gate-line-recheck.py --selftest
+  python3 -I tools/gate-line-recheck.py --selftest [--repo LANE --rev <40 hex>]
 
 Output: one `GATE_LINE <verdict> <record>:<line> sid=<S###|-> cited=<N|N-M> observed=<a-b,...|->
 snapshot=<path|-> bind=<explicit|inherited|convention|-> detail=<d>` line per pointer, then
@@ -354,15 +354,24 @@ def summary_fields(line):
     return dict((k, int(v)) for k, v in re.findall(r"(\w+)=(\d+)\b", line) if k != "renderer_sha256")
 
 
-def selftest():
-    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    rpath = os.path.join(here, DEFAULT_RENDERER)
-    try:
-        with open(rpath, "rb") as fh:
-            renderer = fh.read()
-    except OSError:
-        print("GATE_LINE_SELFTEST: setup renderer-unreadable %s" % rpath)
-        return 2
+def selftest(repo=None, rev=None):
+    """With --repo/--rev the renderer fixture is the renderer blob at rev (so the selftest runs
+    from a `git show` copy of this tool); otherwise the file beside this tool's lane root."""
+    if repo or rev:
+        try:
+            renderer = Tree(os.path.abspath(repo or ""), rev).read_bytes(DEFAULT_RENDERER)
+        except Setup as exc:
+            print("GATE_LINE_SELFTEST: setup %s" % exc)
+            return 2
+    else:
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        rpath = os.path.join(here, DEFAULT_RENDERER)
+        try:
+            with open(rpath, "rb") as fh:
+                renderer = fh.read()
+        except OSError:
+            print("GATE_LINE_SELFTEST: setup renderer-unreadable %s" % rpath)
+            return 2
     scratch = os.environ.get("TMPDIR") or None
     base = tempfile.mkdtemp(prefix="gate-line-recheck-selftest-", dir=scratch)
     passed = total = 0
@@ -471,7 +480,7 @@ def main():
         print("GATE_LINE_USAGE run as python3 -I (isolated mode is required)")
         return 64
     if a.selftest:
-        return selftest()
+        return selftest(a.repo, a.rev)
     if not a.repo or not a.rev or not a.record:
         print("GATE_LINE_USAGE --repo, --rev and at least one --record are required")
         return 64
