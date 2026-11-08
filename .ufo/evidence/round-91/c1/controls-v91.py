@@ -105,9 +105,14 @@ def run_ctl(name, files, lane, scratch, measure, outdir):
         os.makedirs(os.path.dirname(fp), exist_ok=True)
         open(fp, "w", encoding="utf-8").write(text)
     if name == "CTL15-coverage":
-        # the control holds a note and a source row but no README row; the positive
-        # fixture must NOT land a README row here, or the counter cannot tell.
-        files = {k: v for k, v in files.items() if k != "corpus/README.md"}
+        # The clone is checked out at A_REV, whose corpus/README.md ALREADY names
+        # the note (round-90 coverage row), so the control must actively strip
+        # that row after checkout — files above never lands one. Read the
+        # checked-out README, drop every line that names the note, write it back.
+        rp = os.path.join(repo, "corpus", "README.md")
+        rlines = open(rp, encoding="utf-8").read().split("\n")
+        kept = [l for l in rlines if "knowledge/mutation-case-fleet-sources-census.md" not in l]
+        open(rp, "w", encoding="utf-8").write("\n".join(kept))
     sh("git", "-C", repo, "add", "-A")
     sh("git", "-C", repo, "-c", "user.name=r90-fixture", "-c", "user.email=r90-fixture@invalid",
        "commit", "-q", "-m", "r90 control " + name)
