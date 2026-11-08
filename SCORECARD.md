@@ -271,8 +271,20 @@ written and are superseded here:
 | selftest-text pin | pin a suite's own assertion text (digest of `inspect.getsource(selftest)` against a constant), so a weakened arm fails an arm instead of passing vacuously — the round-80 `ss-bom-only` / `wr-prefix` survivor class; extended to `tools/defect-bind.py` in round 82 | `SELFSTATE_SELFTEST: 24/24 pass`, `WAVE_RECONCILE_SELFTEST: 25/25 pass`, `DEFECT_BIND_SELFTEST: 15/15 pass` (round84 A15 adds public-CLI identity refusals and valid sibling; text pin explicitly recomputed). Historical round81/82 batteries `defects=5 killed=5` / `defects=14 killed=14` / `defects=5 killed=5` with `CONTROL: GREEN`; base controls `killed=0 survived=1` per tool (`.ufo/evidence/round-81/controls/`, `.ufo/evidence/round-82/controls/c3-before-mutant.txt`); round84 isolated selftest output in `.ufo/waves/round-84/w1/T84E1.md` | round 81; defect-bind text-pin arm round 82; identity arm round84 |
 | ledger witness | audit `tools/mutate-and-run.sh --regression` from the kernel's record instead of the runner's printed figure: run it under `strace -f -y -v` from a clean environment and bind every declared leg to a `git show` exec, an interpreter exec of the pristine and of each spec-exact mutant (sha256 computed by the witness from git), no write after exec, environment parity with the control, and a kernel exit equal to the recorded verdict (15 checks W_PARSE…W_ENV); out of model: L1–L4 in `plans/round-89.plan.md` | `python3 -I tools/ledger-witness.py --selftest` → `LEDGER_WITNESS_SELFTEST: 21/21 pass`; `bash .ufo/evidence/round-89/measure.sh <lane> <REV> <fleet> <empty>` → real runner and two honest variants `legs=11 witnessed=11 findings=0 checks=- PASS`, `forgeries_refused=12/12` (pre-freeze `.ufo/evidence/round-89/pre-freeze/measure-a65e11c0.out`; landing receipt named in `## Round 89`); `corpus/knowledge/kernel-witnessed-ledger.md`, S313, S314 | round 89; lane demonstrated; **killed by its own kill rule (b)**: wave seat T89E2's `hardlink`, `dirswap` and `symlink` runners exec one-line stubs at the audited paths and install the spec-exact bytes through an alias afterwards, and the witness prints PASS (`.ufo/waves/round-89/w1/T89E2.md`) — W_ORDER matches path spelling, not object identity; **not admitted** (appended at the round-89 records commit) |
 | conjunct-disposition audit | prove every conjunct of a frozen counter is falsifiable by a named committed battery receipt, or declared unfalsifiable with a mechanism-naming reason; flag a manifest key the counter no longer prints; six-case self-falsifying selftest, and a measured do-nothing control showing what the checker alone does not catch | `python3 -I tools/conjunct-disposition.py --lane . --rev <REV>` -> `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`, exit 0; `--selftest` -> `DISPOSITION_SELFTEST: 6/6 pass`; `.ufo/evidence/round-93/pre-freeze/c2-cheat-all-unfalsifiable.out` | round 93 |
+| committed-battery binder | re-grade the 50 committed round-96 receipts against the committed driver's own `states()`/`EXPECT_EXTRA`, reading receipts as blobs at a revision and refusing a non-64-hex or unequal driver pin | `python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev 2a57b42f… --driver-sha 88bcca86…` → `BATTERY states=50 matched=50 mismatched=0 missing=0`, exit 0; `--selftest` → `BATTERY_SELFTEST: 7/7 pass` (`.ufo/evidence/round-97/landing/c1-positive-{1,2,3}.out`, sha256 `54c6f667…`) | round 97 |
+| guard-inertia matrix | apply ten pre-registered exact-string edits to the round-96 checker on a four-file fixture store, classify `killed` only on a measured verdict difference and `limit` only on an identical pair, and refuse no-op/ambiguous edits and substituted/empty manifests | `python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev 2a57b42f… --manifest-sha 9de0b7e9…` → `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0`, exit 0; `--selftest` → `GUARD_INERTIA_SELFTEST: 7/7 pass` (`.ufo/evidence/round-97/landing/c2-positive-{1,2,3}.out`, sha256 `254536aa…`) | round 97 |
+| control-assertion audit | classify every `add(...)` site of a control driver by the provenance of its recorded code (measured / literal / unresolved) from committed bytes, refusing an absent or unparsable driver at setup | `python3 -I tools/control-assertion-audit.py --repo . --rev d32043ec… --driver .ufo/evidence/round-98/controls98.py` → `CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0`, exit 0; the r97 driver → `measured=14 literal=1 unmeasured=1`, exit 1; `--selftest` → 12/12 (`.ufo/evidence/round-98/pre-freeze/c1-audit-*.out`) | round 98 |
+| guard refusal battery | drive a frozen tool through all six declared `GUARD_SETUP` refusal classes from committed bytes, one manifest fixture per class, with a positive and a red arm that must miss | `python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane . --rev d32043ec… --tool-sha 634997d0… --work <empty>` → `GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok`, exit 0; `--red state-unbuildable` → `refused=5 wrong=1`, exit 1; `--selftest` → 9/9 | round 98 |
+| registry cell audit | compare two revisions of `corpus/SOURCES.md` and flag any immutable-cell change or row removal, parsing 0-3-space rows and reading blobs, refusing a malformed or zero-row registry | `python3 -I tools/registry-cell-immutability.py --repo . --from 0b19af5f… --to 29734beb…` → two `anchor` findings (`changed=2`), exit 1; the green pair → `changed=0 removed=0 added=0`, exit 0; `--selftest` → 10/10 | round 98 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout. The three round-81 capabilities above now live here rather than only in `## Round 81 — capabilities entered` (the round-81 closure's routed defect 6); each is a live self-state row from round 82 (`tools/selfstate-freshness.json` rows `closure-defect-bind`, `standing-pin-audit`, `selftest-text-pin`).
+
+Correction appended 2026-11-08 (round 98, spot-check D-4): the sentence "none enter
+through this rollout" describes the round-81/82 state at its write. Five rows entered
+after it — `committed-battery binder` and `guard-inertia matrix` (round 97, D-4 of the
+round-97 spot-check) and `control-assertion audit`, `guard refusal battery`,
+`registry cell audit` (round 98) — each demonstrated in its round's report with a
+self-invocation receipt.
 
 ## Saturation
 
@@ -5682,7 +5694,7 @@ mutation-tester 1, sentinel 1, connector 1; attack 4/12 = 33 % by the policy's r
 
 | Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
 |---|---|---|---|---|---|---|
-| R94-C1 | coverage (fifth attempt) | at base `a8f0e14b`: `C1_SETUP spec-absent-at-rev`, exit 2 (`.ufo/evidence/round-94/pre-freeze/controls/nowork-base.out`) | `C1_R94_PASS=true`, exit 0 at the instrument revision (`pos-real`); battery `C1_CONTROLS states=45 matched=45 mismatches=0 missing=0`, exit 0, `CONTROL_INSTRUMENT sha256=a22563b0…` (`.ufo/evidence/round-94/pre-freeze/controls-run.log`); `gate-foreign` refuses at setup with `gate-identity-mismatch` | **verified under the amended wording** | `python3 -I .ufo/evidence/round-94/c1/measure-v94.py --repo . --rev <REV> --work <empty dir>`; battery `controls-v94.py --lane . --rev 7084358c --base a8f0e14b --work <dir> --outdir <dir> --jobs 12` | instrument `7084358c`; receipts `4dc919ac`, `b98b0864` |
+| R94-C1 | coverage (fifth attempt) | at base `a8f0e14b`: `C1_SETUP spec-absent-at-rev`, exit 2 (`.ufo/evidence/round-94/pre-freeze/controls/nowork-base.out`) | `C1_R94_PASS=true`, exit 0 at the instrument revision (`pos-real`); battery `C1_CONTROLS states=45 matched=45 mismatches=0 missing=0`, exit 0, `CONTROL_INSTRUMENT sha256=a22563b0…` (`.ufo/evidence/round-94/pre-freeze/controls-run.log`); `gate-foreign` refuses at setup with `gate-identity-mismatch` | **verified under the amended wording (A3-A10)** | `python3 -I .ufo/evidence/round-94/c1/measure-v94.py --repo . --rev <REV> --work <empty dir>`; battery `controls-v94.py --lane . --rev 7084358c --base a8f0e14b --work <dir> --outdir <dir> --jobs 12` | instrument `7084358c`; receipts `4dc919ac`, `b98b0864` |
 | R94-C2 | calibration | at base: `DISPOSITION_SETUP counter-absent-at-rev`, exit 2 (`.ufo/evidence/round-94/pre-freeze/c2-nowork-base.out`) | `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`, exit 0 under `--min-falsifiable 17`; `DISPOSITION_SELFTEST: 9/9 pass`; the rev-1 mechanism-word cheat printed `findings=0` while rev 3 prints 19 state/digest findings | **verified at the mapping/counts level** | `python3 -I .ufo/evidence/round-94/conjunct-disposition-v94.py --lane . --rev <REV> --min-falsifiable 17`; `--selftest` | checker rev3 `6d4d2706` (`6a2a1fdd`); receipts `2ad7ebb0`, `cdf669cf` |
 
 Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0); the nudge premise still
@@ -5833,3 +5845,48 @@ hand-written receipt with the right payload is accepted; a `mutant=D<nn>` line o
 digest check) and the manifest's row choice (a coherent non-guard manifest prints the same line
 when its digest is passed); plus the round-96 F2 alternates-file defect. No claim is pre-approved
 here.
+
+## Round 98 — two claims: measurement-derived control codes (calibration) and guard refusal receipts (operability)
+
+Base `034240a591575167f0747ad7372a1f4b9cd33a58`; instruments `d32043ec`; freeze `764aca97`;
+records `3b7ae127`. One v1 wave `w1`, 13 seats (executor 4, scribe 1, scout 1, reviewer 2,
+critic 1, mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 6/13 = 46% by the
+policy's role set — reviewer×2, critic, mutation-tester, sentinel, revenger). 12 seats filed
+a report; executor R98E4 settled without one (reported as a dead seat in the round report).
+
+| Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|---|---|
+| R98-C1 | calibration (lowest non-retired, pinned 8) | at base `034240a5` no committed tool prints a `CONTROL_ASSERT` line (`git grep` empty, exit 1; `.ufo/evidence/round-98/pre-freeze/c1-before-token.out`); the round-97 driver's `c2-nowork-absent` is `add(..., 0, ...)` and its receipt carries outer `rc=0` while the wrapped grep returns 1 (round-97 spot-check D-2) | `CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0`, exit 0 on the repaired driver; `sites=15 measured=14 literal=1 unmeasured=1`, exit 1 on the round-97 driver; `CONTROLS98 states=18 matched=18 mismatched=0`, exit 0; selftest `18/18` | **verified under the amended wording (A1-A6)** | `python3 -I tools/control-assertion-audit.py --repo . --rev <R> --driver .ufo/evidence/round-98/controls98.py`; `--selftest` | `3b7ae127` |
+| R98-C2 | operability | at base no `GUARD_REFUSALS` line and neither `GUARD_SETUP state-unbuildable` nor `GUARD_SETUP limit-mechanism-missing` in any committed receipt (`git grep` rc 1 each; `pre-freeze/c2-before-*.out`); round-97 spot-check D-6: 4 receipted / 2 code-only | `GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok`, exit 0, with six `GUARD_REFUSAL` lines and ten `GUARD_ROW` lines; red arm `GUARD_REFUSALS_RED state-unbuildable observed=missed rc=0` and `classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable`, exit 1 | **verified under the amended wording (A3-A10)** | `python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane . --rev <R> --tool .ufo/evidence/round-97/c2/guard-inertia.py --tool-sha 634997d0… --work <empty>`; `--selftest` | `3b7ae127` |
+
+Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0); the nudge premise holds
+(10/8/9 >= 8) and capabilities entered inside the window. Capability rows entered this round
+(and the two owed by round 97, spot-check D-4) are the `## Capabilities` rows
+`committed-battery binder`, `guard-inertia matrix`, `control-assertion audit`,
+`guard refusal battery`, `registry cell audit`.
+
+**Retired:** none. **Saturation:** unchanged.
+
+**Wave.** `w1`, 13 seats, 12 filed a report (executor R98E4 settled without one — dead
+seat, recorded). R98E1 reproduced the audit's numbers, exit codes, blob-vs-worktree and
+loop-count arms; R98E2 reproduced both C2 predicates and hand-drove the two formerly
+code-only classes; R98E3 re-derived all 18 control receipts byte-identically (only
+`c2-nowork-absent` rc 0→1) and exercised the driver's setup refusals; R98R1 falsified
+C1's classification clause with seven fixtures (branch order, scope, shadowed `add`,
+attribute reassignment, augmented assignment, stub runners) → A5; R98R2 falsified C2's
+tool-pin, red-summary and per-class-transcript sentences and the digest wording →
+A4/A7/A8/A10; R98C1 measured both do-nothing controls, the scope-shadow constant (A5) and
+the `want=code` tautology (A6); R98M1 ran a 20-mutant matrix over both instruments
+(13 killed, 7 survivors with named equivalences/gaps); R98SN1 held the environment and
+path-confinement rows and found the unpinned battery mode (A7); R98CN1 found no duplicate
+implementation (nearest siblings diverge); R98L1 mapped the recorder-shape boundary and
+confirmed no other literal-coded `add` state; R98S1 drafted the record fragments; R98SC1
+re-opened S012 (byte-identical to the freeze snapshot) and S009 with a declared UA (M5).
+Every falsification became an amendment A5-A10 with its artifact cited; nothing was
+smoothed and no number moved.
+
+**Planned (round 99):** the declared limits this round leaves live — a hand-written receipt
+with the right payload is still accepted (receipt provenance is a declared limit from round 97),
+the guard matrix's manifest rows remain a human declaration the digest pin fixes but does not
+validate, and the new audit is blind to a driver that registers through a renamed recorder.
+No claim is pre-approved here.
