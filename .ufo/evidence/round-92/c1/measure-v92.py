@@ -34,7 +34,7 @@ Exit: 0 PASS; 1 not PASS; 2 setup refusal.
 """
 import argparse, hashlib, io, json, os, re, shutil, subprocess, sys, tarfile
 
-SELF_SHA256 = "6f6ff108d8fcf838c2bab40b5824b179034d0ad05d3a901ae697b7c80cd022c1"
+SELF_SHA256 = "723562ed5b20e1a914d9addbce9007b8edf1c962c8237592dbac3b39e5509c2c"
 SELF_PIN_RE = rb'^SELF_SHA256 = "[0-9a-f]{64}"\n'
 
 SPEC_PATH = ".ufo/evidence/round-92/c1/census-mutants.json"
@@ -192,7 +192,8 @@ def parse_note(nt, spec_ids):
 
 
 def main():
-    if not self_pin_ok():
+    selfpin = self_pin_ok()
+    if not selfpin:
         die("self-pin-mismatch")
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", required=True)
@@ -328,7 +329,7 @@ def main():
         print("C1_ROW %s derived=%s runs=%s note=%s invalid=%s trivial=%s witness=%s" % (
             r["id"], r["derived"], ",".join(r["runs"]), note_rows.get(r["id"], "-"),
             ",".join(r["invalid"]) or "-", int(r["trivial"]), r["witness"]))
-    conj = dict(selfpin=True, pin=pin, spec=spec_pinned, green=green, canary=canary,
+    conj = dict(selfpin=selfpin, pin=pin, spec=spec_pinned, green=green, canary=canary,
                 invalid0=invalid == 0, trivial0=trivial == 0, inconclusive0=inconclusive == 0,
                 unstable0=unstable == 0, note=note is not None, ids=ids_ok,
                 mismatched0=(note is not None and mism == 0), figure=figure_ok,

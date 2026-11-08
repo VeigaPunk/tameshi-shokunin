@@ -246,7 +246,8 @@ def main():
     open(counter, "wb").write(blob.stdout)
     print("CONTROL_INSTRUMENT sha256=" + hashlib.sha256(blob.stdout).hexdigest())
     C = states(lane)
-    sel = a.only if a.only else list(C)
+    all_states = list(C) + ["nowork-base"]
+    sel = list(a.only) if a.only else all_states
     results = {}
     expectations = {n: C[n]["expect"] for n in C}
     expectations.update({
@@ -276,6 +277,7 @@ def main():
 
     if not a.states_only:
         mts = mutant_edits(blob.stdout.decode())
+        mut_sel = [n for n in sel if n in mts]
         false_note = note_text(rows={k: ("SURVIVED" if v == "KILLED" else "KILLED")
                                      for k, v in DERIVED.items()})
         # state 1: honest note committed, replace ref maps the honest blob to the false note
@@ -294,9 +296,7 @@ def main():
         true_blob = subprocess.run(["git", "-C", st2, "hash-object", "-w", "--stdin"],
                                    input=note_text(), capture_output=True, text=True).stdout.strip()
         subprocess.run(["git", "-C", st2, "replace", false_blob, true_blob], check=True)
-        for n in sel:
-            if n not in mts:
-                continue
+        for n in mut_sel:
             text, state_name = mts[n]
             mp = os.path.join(work, "counter-" + n + ".py")
             open(mp, "w").write(text)
