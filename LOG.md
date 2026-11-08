@@ -5132,3 +5132,43 @@ carries a `## Correction appended in round 92` block. The frozen `plans/round-91
   the checker accepts a movable revspec, and the counter accepts `--rev ''` (the index);
   the environment-trust limits (hostile `PATH`, ambient non-`GIT_*` variables) are
   declared in `plans/round-95.plan.md` §A6-A7.
+
+## Round 96 (2026-11-08) — two claims: the sealed audit's revision identity (calibration) and the hardened write path (operability)
+
+Shape: one v1 wave `w1`, 13 seats (executor 4, scribe 1, scout 1, reviewer 2, critic 1,
+mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 5/13 = 38 % by the policy's
+role set, 7/13 = 54 % including sentinel and connector). Base
+`c8de77f3de0fd4bf619ebe78fa0b28adaf320d3e`.
+
+- **R96-C1 (calibration).** The disposition checker binds its verdict to a commit identity:
+  `--rev` is checked as 40 hex, resolved with `rev-parse --verify --quiet <rev>^{commit}`,
+  printed as `rev=` in `DISPOSITION_INSTRUMENT`, and refused with
+  `rev-not-a-commit-id` / `rev-unresolvable` before any read. Its git calls run under an
+  explicit environment with a pinned `PATH` and `GIT=/usr/bin/git`, so a hostile `git`
+  earlier in the inherited `PATH` cannot answer for it; the manifest blob is bound to the
+  sha256 the round's claims file names (`manifest-sha-mismatch`). Positive at the records
+  revision `8ed9c526`: `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`,
+  exit 0; selftest `13/13 pass`, two of them now running the real main path under a
+  poisoned `PATH` and with `--rev master`.
+- **R96-C2 (operability).** `make-pins96.py` refuses an empty (`lane-empty`), relative
+  (`lane-not-absolute`), missing or toplevel-mismatched lane, refuses a symlink at
+  `pins.json` (`pins-symlink-refused`) and at its temp name (`tmp-symlink-refused`), and
+  writes atomically (temp + `fsync` + `os.replace`); the battery driver grades the receipt
+  it wrote (never a planted index-0 file), refuses a symlinked `--outdir` or `--work`, and
+  validates the `counter_sha=` line on what it grades. Battery
+  `C1_CONTROLS states=50 matched=50 mismatches=0 missing=0`.
+- **Motivating evidence.** The round-95 sentinel's F1-F8 (`w1/R95SN1.md` of round 95) and
+  this round's own wave: R96R1 falsified two C1 sentences (the checker's default counter
+  path and the dead `rev-unresolvable` token), R96C1 falsified five more atomic assertions
+  (the unprinted rev, the no-op selftest cases, the before-rev citation), R96E4 and R96SN1
+  measured the driver's `--rev HEAD` contract break (44/50) and the planted-index-0 grade.
+  All were amended pre-data as A1-A9 in `plans/round-96.plan.md`, each citing its artifact;
+  no scored receipt existed before the amendments.
+- **Frontier.** S320-S323 re-opened this round (round-96 snapshots, byte-identical bodies),
+  census exit 0 before and after; no new row (no uncovered ground this round). QUALITY
+  173-174. Mistakes mined in `corpus/lessons/round-96.md`.
+- **Routed to round 97.** R96SN1 F1 (a hand-written receipt set carrying the honest
+  `counter_sha=` is still accepted — the counter_sha binds the receipt to the counter blob,
+  not to a run) and F2 (an alternates file lets a lane with no commits of its own answer
+  the reads) are the next frontier; the round-96 wording is narrowed to the properties the
+  instrument enforces, and neither is claimed.

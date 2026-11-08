@@ -2746,3 +2746,32 @@ on the landed bytes (`c2-landed-battery.txt`).
     and the corrected row prints `(16 words)`; the line number is stated with the
     renderer's convention in the lesson's `## Gate`. (`lessons/round-95.md` M1-M3;
     R95SC1 D1-D3.)
+
+173. A revision named by an instrument is a **commit identity**, never a ref or a
+    shorthand: it is checked as 40 hex, resolved with `rev-parse --verify --quiet
+    <rev>^{commit}`, printed into the verdict line, and an empty or branch-shaped value is
+    refused before any read. A bare `git rev-parse <40-hex>` echoes a nonexistent object id
+    with rc 0 and a bare `rev-parse` resolves a branch that moves under the audit, so the
+    "frozen revision" would not be pinned at all. Able to fail: the round-96 checker at
+    `933df676` prints `DISPOSITION_SETUP rev-not-a-commit-id` exit 2 for `--rev ''` and
+    `--rev master`, `DISPOSITION_SETUP rev-unresolvable` exit 2 for `--rev deadbeef…`
+    (`.ufo/evidence/round-96/landing/c1-rev-{empty,branch,unresolvable}.out`), and the
+    positive prints `DISPOSITION_INSTRUMENT rev=8ed9c526… sha256=…` — while the
+    pre-amendment bytes (`10d8fa5d`) printed `rev-unresolvable` never and only `sha256=`
+    (`w1/R96C1.md` C1.3, C1.5). (`lessons/round-96.md`; `plans/round-96.plan.md` §A2-A3.)
+
+174. A tool that writes into a repository path **refuses an empty or relative lane, refuses
+    a symlink at the destination, and writes atomically** (temp file with
+    `O_CREAT|O_EXCL|O_NOFOLLOW`, `fsync`, `os.replace`) — and a battery that grades its own
+    receipts reads **the path it wrote**, not a name-index search over the directory. An
+    empty `--lane` resolves to the process CWD (`os.path.realpath("")`), a plain `open()`
+    follows a symlink out of the tree, and a lowest-index search grades a planted file at
+    index 0. Able to fail: `make-pins96.py --lane ''` prints `PINS_SETUP lane-empty` exit 2
+    writing nothing; a symlink at `pins.json` prints `PINS_SETUP pins-symlink-refused` exit
+    2 with the outside target's sha256 unchanged (`9660b330…` before and after;
+    `.ufo/evidence/round-96/landing/c2-pins-{empty-lane,symlink}.out`); the driver grades
+    `pos-real.rerun-1.out` — its own write — while a planted `pos-real.out` with
+    `counter_sha=000…0` sits beside it (`c2-rerun-plant.out`), and refuses a symlinked
+    `--outdir` (`outdir-symlink-refused`, `c2-outdir-symlink.out`). The pre-amendment
+    round-95 tool wrote through the symlink and into the CWD (`w1/R96R2.md`; `w1/R96SN1.md`
+    F4/F9). (`lessons/round-96.md`; `plans/round-96.plan.md` §A7, A9.)
