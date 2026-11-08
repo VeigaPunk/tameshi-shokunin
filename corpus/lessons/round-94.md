@@ -109,3 +109,22 @@ as a calibration limit (A8), and nine sentinel findings routed to round 95.
 | M5 | **the C2 checker's default manifest pointed at another round's file.** Rev 1/2 read `tools/conjunct-disposition.json` (round 93's) while the plan and claim name the round-94 manifest, so the reason test ran on bytes the claim does not describe — and printed `findings=0` on the round-93 manifest's shorter reasons. | `.ufo/evidence/round-94/pre-freeze/c2-pos.rev1.out` (rev 1: `findings=0` reading the wrong manifest) vs `c2-pos.out` (rev 3); fix `6a2a1fdd` | the reason test's own refusal when given the real manifest | a checker that takes a `--rev` must also default every surface it grades to that round's path; the default is now asserted by the selftest's clean case. |
 | M6 | **an instrument repair after the freeze was not recorded before it ran.** The C2 checker changed three times (rev 1 → rev 2 → rev 3) after `claims.json` had named rev 1; the receipts were re-run at rev 3 and the amendment (A1) written afterwards. | `claims.json` `C2.instrument_sha256` = `8ec7924e…` vs the rev-3 blob `6d4d2706…`; `.ufo/evidence/round-94/pre-freeze/c2-cheat-mechanism-word.rev1.out` | nothing — QUALITY 144's "a repair after the freeze is a successor" has no pre-commit check in this lane | add the freeze-time check to round 95: every `instrument_sha256` in `claims.json` must equal the working-tree blob of the file it names, and any change after the freeze commit must land with its amendment in the same commit. |
 | M7 | **the wave-spec generator's drift check read the wrong record.** It compared the spec pin against `claims.json`, which never carries it, and refused the first run (`SPEC_CONST_DRIFT spec`). | first run of `.ufo/waves/round-94/make-spec.py`; fix in `33279f40` | the generator itself | a drift check names the file each pinned value's home is; the spec pin lives in `pins.json` (derived), the two instrument pins in `claims.json`. |
+
+## Erratum mined this round — round-93 M2's receipt pointer names a state no committed receipt carries
+
+R94SC1 (scribe) read the round-93 lesson's M2 row against the tree and found that its
+evidence pointer cites a receipt that does not exist in that form: "first subset run
+`D01.out` (`mutant=D01 state=renamed-result`, `exit=1`, `C1_R93_PASS=false`)". Measured:
+every committed `D01.out` — `.ufo/evidence/round-93/pre-freeze/controls/D01.out` and
+`controls-firstrun/D01.out` (byte-identical, sha256 `63fd5f80…94f1`) — reads `exit=0` and
+`C1_R93_PASS=true` at line 19. The M2 *finding* stands (the rule did have two
+implementation sites at `b34c929e`, and the single-site counter returns the cheat); its
+pointer does not describe any committed byte.
+
+The round-93 lesson and the round-93 QUALITY criterion 159 are frozen history and are not
+rewritten; this erratum is the correction, appended where corrections live.
+`corpus/QUALITY.md` 168 records the rule the miss implies.
+
+| id | class | evidence pointer | captured-by | fix |
+|---|---|---|---|---|
+| M8 | **a prose receipt claim was never checked against a receipt.** The frozen row's quoted `exit=1`/`C1_R93_PASS=false` describes no committed `D01.out`; the tree's receipts read `exit=0`/`true`, which is the *fixed-counter* state, not the first subset run. | `git show master:.ufo/evidence/round-93/pre-freeze/controls/D01.out` (`exit=0`, `C1_R93_PASS=true` at `:19`) and `.../controls-firstrun/D01.out` (byte-identical, sha256 `63fd5f80…`); the claim at `corpus/lessons/round-93.md` M2 | none — `tools/quoted-line-exists.py` checks backticked spans, and this claim was prose; the round-93 battery's own summary never carried the failed subset run either | QUALITY 168 (a `## Mistakes` evidence pointer that quotes a receipt line is byte-backed by that receipt, and a pointer whose receipt was overwritten says so). Routed to round 95: extend `quoted-line-exists.py` to prose spans naming a receipt path and a line token. |

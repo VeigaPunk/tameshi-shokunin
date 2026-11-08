@@ -2673,3 +2673,12 @@ on the landed bytes (`c2-landed-battery.txt`).
     the defect, not the null. Able to fail: round 94's own working-tree edit of
     `claims.json` (reverted; the committed bytes read `null` and the receipt names
     `fdbd18c6`). (`lessons/round-94.md` M2.)
+
+168. A `## Mistakes` (or any lesson) evidence pointer that quotes a receipt line is
+    byte-backed by that receipt at the revision the lesson names, or it says the receipt
+    was overwritten and names its replacement. A prose quote is checked like a backticked
+    one: `tools/quoted-line-exists.py` sees only backtick spans, so a prose claim rides
+    free until a reader opens the file. Able to fail: round-93 M2's pointer cites
+    `D01.out` as `exit=1`, `C1_R93_PASS=false`, while every committed `D01.out` (both the
+    first-run and the fixed-state copy, sha256 `63fd5f80…`) reads `exit=0`,
+    `C1_R93_PASS=true` (`lessons/round-94.md`, erratum; R94SC1). (`lessons/round-94.md` M8.)
