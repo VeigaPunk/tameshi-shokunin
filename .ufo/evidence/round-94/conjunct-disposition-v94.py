@@ -34,7 +34,7 @@ import sys
 import tempfile
 
 COUNTER = ".ufo/evidence/round-94/c1/measure-v94.py"
-MANIFEST = "tools/conjunct-disposition.json"
+MANIFEST = ".ufo/evidence/round-94/conjunct-disposition.json"
 RECEIPTS = ".ufo/evidence/round-94/pre-freeze/controls"
 MIN_REASON = 40
 MECHANISM = ("pin", "sealed", "seal", "gate bytes", "GIT_", "pinned", "replace")
