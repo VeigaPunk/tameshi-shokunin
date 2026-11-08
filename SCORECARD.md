@@ -5718,8 +5718,8 @@ Base `02ff6290945dde18062a366799a774abb50fb365`; freeze declarations `0d3fc99b`;
 `0685c358`; lesson Gate reflow `20fabad4`; lesson anchor `f219fb0c`; claims freeze
 `3ca1981a`; records fix `16cf0d58`; pre-freeze records `4bd1e88f`; landing `3610b46c`.
 One v1 wave `w1`, 13 seats (executor 4, scribe 1, scout 1, reviewer 2, critic 1,
-mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 5/13 = 38 % by the policy's
-role set, 7/13 = 54 % including sentinel and connector), all settled, no dead seat.
+mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 4/13 = 31 % by the §6 named set
+(reviewer×2, critic, mutation-tester), 7/13 = 54 % including sentinel, connector and revenger), all settled, no dead seat.
 
 | Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
 |---|---|---|---|---|---|---|
@@ -5765,8 +5765,8 @@ two-run disagreement can be constructed. No claim is pre-approved here.
 Base `c8de77f3de0fd4bf619ebe78fa0b28adaf320d3e`; instruments `10d8fa5d`; pre-data amendments
 A1-A9 `933df676`; records (50 receipts + claims shas) `8ed9c526`; landing receipts `9b89c68d`.
 One v1 wave `w1`, 13 seats (executor 4, scribe 1, scout 1, reviewer 2, critic 1,
-mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 5/13 = 38 % by the policy's
-role set, 7/13 = 54 % including sentinel and connector).
+mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 4/13 = 31 % by the §6 named set
+(reviewer×2, critic, mutation-tester), 7/13 = 54 % including sentinel, connector and revenger).
 
 | Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
 |---|---|---|---|---|---|---|

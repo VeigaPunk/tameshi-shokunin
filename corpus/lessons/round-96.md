@@ -10,15 +10,17 @@ Sources re-opened this round (all four fetched live by this round's scout, 2026-
 snapshots under `.ufo/evidence/round-96/sources/` are byte-identical to the round-95 bodies,
 so the anchors below name the round-96 path). Each sid line carries its located quote on the
 same line — the counter's `located_quotes` collects a quoted span only from a line naming
-its sid. Line numbers are in the tag-stripped snapshot (each tag replaced by one space,
-entities unescaped, lines right-trimmed); word counts are `len(quote.split())`.
+its sid. Line numbers are in the canonical lane rendering
+(`.ufo/waves/round-93/w1/R93S1-tagstrip.py` `strip_tags`: script/style blocks and comments
+removed, each tag replaced by one space, entities unescaped, lines right-trimmed); a quote
+that wraps is located by its **span**. Word counts are `len(quote.split())`.
 
 - S320 sha256sum(1) `https://man.archlinux.org/man/sha256sum.1.en` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 12:21:54 GMT; `.ufo/evidence/round-96/sources/s320.html` sha256 `b968bc09…`), line 88: "Print or check SHA256 (256-bit) checksums." (6 words) — the digest the counter's `SELF_SHA256` pin computes and the audit compares is a sha256 of the counter bytes.
-- S320 sha256sum(1), line 116: "don't output anything, status code shows success" (7 words) — why the checker reads the exit code, never prose, when it runs `git rev-parse --verify --quiet` for the revision identity (A2).
+- S320 sha256sum(1), line 116: "don't output anything, status code shows success" (7 words) — why the checker reads the exit code, never prose, when it runs `git rev-parse --verify --quiet` for the revision identity (A2). These three sentences were paraphrased in the registry's `teaches` cell (round-95 spot-check D4); quoting them verbatim here closes the gap on the reading side.
 - S321 GFM Tables `https://github.github.com/gfm/` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 12:21:54 GMT; `.ufo/evidence/round-96/sources/s321.html` sha256 `b153d814…`), line 4403: "The delimiter row consists of cells whose only content are hyphens" (11 words) — one hyphen is a legal delimiter cell, the round-95 A5 rule the successor reader keeps.
-- S321 GFM Tables, line 4496: "The table is broken at the first empty line, or beginning of another block-level structure" (15 words) — a following indented chunk ends a table, so it cannot extend an earlier verdict table.
-- S322 CommonMark 0.31.2 Fenced code blocks `https://spec.commonmark.org/0.31.2/` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 12:21:54 GMT; `.ufo/evidence/round-96/sources/s322.html` sha256 `c85f56cc…`), line 2618: "A fenced code block begins with a code fence, preceded by up to three spaces of indentation." (17 words) — a fence opens literal text, the declared limit the reader already held.
-- S323 CommonMark 0.31.2 Indented code blocks `https://spec.commonmark.org/0.31.2/` (the same page bytes as S322; same fetch) line 2358: "An indented code block is composed of one or more indented chunks separated by blank lines." (16 words) — an indented chunk is literal text, so a verdict row presented inside one is not a keyed row.
+- S321 GFM Tables, lines 4496-4497: "The table is broken at the first empty line, or beginning of another block-level structure" (15 words) — a following indented chunk ends a table, so it cannot extend an earlier verdict table.
+- S322 CommonMark 0.31.2 Fenced code blocks `https://spec.commonmark.org/0.31.2/` fetched 2026-11-08 (HTTP date Sun, 08 Nov 2026 12:21:54 GMT; `.ufo/evidence/round-96/sources/s322.html` sha256 `c85f56cc…`), lines 2618-2619: "A fenced code block begins with a code fence, preceded by up to three spaces of indentation." (17 words) — a fence opens literal text, the declared limit the reader already held.
+- S323 CommonMark 0.31.2 Indented code blocks `https://spec.commonmark.org/0.31.2/` (the same page bytes as S322; same fetch) lines 2358-2359: "An indented code block is composed of one or more indented chunks separated by blank lines." (16 words) — an indented chunk is literal text, so a verdict row presented inside one is not a keyed row.
 
 Rejected this round: **one**. `https://docs.github.com/en/rest/commits/commits#get-a-commit`
 (GitHub REST API "Get a commit", opened 2026-11-08, HTTP date Sun, 08 Nov 2026 12:24:50 GMT,

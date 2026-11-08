@@ -5136,8 +5136,8 @@ carries a `## Correction appended in round 92` block. The frozen `plans/round-91
 ## Round 96 (2026-11-08) — two claims: the sealed audit's revision identity (calibration) and the hardened write path (operability)
 
 Shape: one v1 wave `w1`, 13 seats (executor 4, scribe 1, scout 1, reviewer 2, critic 1,
-mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 5/13 = 38 % by the policy's
-role set, 7/13 = 54 % including sentinel and connector). Base
+mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 4/13 = 31 % by the §6 named set
+(reviewer×2, critic, mutation-tester), 7/13 = 54 % including sentinel, connector and revenger). Base
 `c8de77f3de0fd4bf619ebe78fa0b28adaf320d3e`.
 
 - **R96-C1 (calibration).** The disposition checker binds its verdict to a commit identity:
