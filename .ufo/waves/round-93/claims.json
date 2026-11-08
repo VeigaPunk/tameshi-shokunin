@@ -1,0 +1,51 @@
+{
+  "lane": "tameshi",
+  "round": 93,
+  "base": "4a7e259b407d582d2010197f32d7524d6bed5370",
+  "freeze": "855f0c1c59ee2af7f184d8de62d02cdd576eb94e",
+  "instrument": "855f0c1c59ee2af7f184d8de62d02cdd576eb94e",
+  "driver": "69d377a03093792016a46868c38974d050261fc1",
+  "pins_commit": "90ec4b332d91336a7e1e21e615f6ad6e738b38ad",
+  "freeze_note": "the instrument revision carries the C1 counter (rev A3, single stray-verdict rule) and, as ancestors, pins.json (90ec4b33) and the battery driver (69d377a0). The plan-filing commit is their child and sets `freeze` to itself; every pre-freeze receipt and the landing counter run certify those three revisions.",
+  "claims": {
+    "C1": {
+      "axis": "coverage",
+      "type": "measured",
+      "surface": "corpus/knowledge/mutation-case-fleet-sources-census.md certified over the fleet gate scripts/sources-census.sh @ f47ad6ba8d306f8125597401cb2ce45c1297a593 under the verdict-content reader",
+      "wording": "at the instrument revision the committed note yields C1_R93_PASS=true, exit 0, with verdict_tables=1 badrows=0 mismatched=0; each of the three positive states pos-real, pos-honest-a13, pos-honest-verdict-cell yields C1_R93_PASS=true, exit 0; and each of the twenty-five hostile states named in the plan's Controls section yields C1_R93_PASS=false, exit 1, with the conjunct named for that state false",
+      "counter": "python3 -I .ufo/evidence/round-93/c1/measure-v93.py --repo <lane> --rev REV --work <empty dir>",
+      "battery": "python3 -I .ufo/evidence/round-93/c1/controls-v93.py --lane <lane> --rev 855f0c1c59ee2af7f184d8de62d02cdd576eb94e --base 4a7e259b407d582d2010197f32d7524d6bed5370 --work <empty dir> --outdir <dir> --jobs 6",
+      "predicate": "C1_R93_PASS=true",
+      "battery_predicate": "C1_CONTROLS states=35 matched=35 mismatches=0 missing=0",
+      "before": "C1_SETUP spec-absent-at-rev, exit 2 at base 4a7e259b",
+      "after": "C1_R93_PASS=true, exit 0 at the landing revision; C1_CONTROLS states=35 matched=35 mismatches=0 missing=0",
+      "instrument_sha256": "18903602aa040b7e258fd6c81491cfee4ea7bb0575784fe27e351587fe094c2d",
+      "instrument_self_pin": "9a073d351dd23de2f61af95436e5cac1fa871193f7d52e0728553e9034cb99e2",
+      "driver_sha256": "400d8e0ffceadc3e9aa7d057ac16b5142f0f4b60626544133462b1067bc0da74",
+      "kill": [
+        "a: an honest note state (the committed note, the note with an id-keyed table that asserts no verdict, the note with a data cell equal to `verdict`) is refused by a rule stated in the plan",
+        "b: one of the twenty-five named states fails to reach C1_R93_PASS=false with its named conjunct false",
+        "c: the counter blob at 855f0c1c differs from the named sha256, or a receipt was produced by other bytes",
+        "d: a pre-registered control name has no receipt, or the driver's summary counts a state it did not write"
+      ]
+    },
+    "C2": {
+      "axis": "calibration",
+      "type": "measured",
+      "surface": "the counter's self-assessment: tools/conjunct-disposition.py + tools/conjunct-disposition.json audited against the committed battery receipts",
+      "wording": "the checker prints DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0, exit 0, against the counter at the instrument revision and the committed manifest, and its --selftest prints DISPOSITION_SELFTEST: 6/6 pass, exit 0, with each failing case producing a finding and the clean case producing none",
+      "counter": "python3 -I tools/conjunct-disposition.py --lane <lane> --rev REV",
+      "battery": "python3 -I tools/conjunct-disposition.py --selftest",
+      "predicate": "DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0",
+      "battery_predicate": "DISPOSITION_SELFTEST: 6/6 pass",
+      "before": "DISPOSITION_SETUP counter-absent-at-rev, exit 2 at base 4a7e259b (neither the counter nor the manifest exists there)",
+      "after": "rows=19 falsifiable=17 unfalsifiable=2 findings=0, exit 0; selftest 6/6",
+      "kill": [
+        "a: findings=0 is printed while a printed conjunct key has no row, a row names an unknown key, a state row's receipt does not move its conjunct, or an unfalsifiable reason is shorter than 40 characters or names no mechanism",
+        "b: fewer than 17 of the 19 rows carry a state",
+        "c: the selftest cannot fail - a case that must produce a finding produces none, or the clean case produces one",
+        "d: the checker or manifest blob at the named revision differs from the sha256 named in the plan"
+      ]
+    }
+  }
+}
