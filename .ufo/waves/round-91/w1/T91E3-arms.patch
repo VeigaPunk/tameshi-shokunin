@@ -1,0 +1,56 @@
+--- a/scripts/sources-census.sh
++++ b/scripts/sources-census.sh
+@@ -444,6 +444,53 @@
+   else
+     printf 'SURVIVED\tgawk-failure-is-error-not-ok\n'; fail=1
+   fi
++
++  # ---- T91E3 survivor-killing arms (round 91, report-only) ----
++  # C02: rejected row with teaches length exactly 7. Pristine W02 requires
++  # a strict <8 threshold, so a 7-char reason MUST warn; the mutant misses it.
++  w02_dir="$test_root/arm-w02-shokunin"; mkdir -p "$w02_dir/corpus"
++  printf '%s\n' '## Registry' '| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |' '|---|---|---|---|---|---|---|---|---|---|---|' '| S001 | Rej — https://arm-w02.example | docs | B | s | s | 1234567 | rejected | 2026-10-01 | 90d | — |' > "$w02_dir/corpus/SOURCES.md"
++  check "arm-C02-w02-length-7" "W02" "$0" validate --today 2026-10-19 "$w02_dir"
++  # C03: duplicate url+scope where second row teaches "supersedes S001 ..."
++  # (3-digit id — E04 exemption applies; {4} mutant wrongly reports E04).
++  e04_dir="$test_root/arm-e04-shokunin"; mkdir -p "$e04_dir/corpus"
++  printf '%s\n' '## Registry' '| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |' '|---|---|---|---|---|---|---|---|---|---|---|' '| S001 | Base — https://arm-e04.example/x | docs | B | s | s | base row | queued | 2026-10-01 | 90d | — |' '| S002 | New — https://arm-e04.example/x | docs | B | s | s | supersedes S001 with newer text | queued | 2026-10-01 | 90d | — |' > "$e04_dir/corpus/SOURCES.md"
++  checkx "arm-C03-supersedes-3digit-ok" 0 "$0" validate --today 2026-10-19 "$e04_dir"
++  check "arm-C03-supersedes-3digit-cleanline" $'arm-e04-shokunin\tok' "$0" validate --today 2026-10-19 "$e04_dir"
++  # C06: separator row with alignment colons (:--- / :---: / ---:) — pristine
++  # separator_row accepts, hyphen-only mutant counts it as a data row (E01).
++  sep_dir="$test_root/arm-sep-shokunin"; mkdir -p "$sep_dir/corpus"
++  printf '%s\n' '## Registry' '| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |' '|:---|:---|:---:|:---|:---:|:--:|:---:|:---|:---|:---|---:|' '| S001 | Row — https://arm-sep.example | docs | B | s | s | valid row | queued | 2026-10-01 | 90d | — |' > "$sep_dir/corpus/SOURCES.md"
++  checkx "arm-C06-colon-separator-clean" 0 "$0" validate --today 2026-10-19 "$sep_dir"
++  checkline "arm-C06-colon-separator-counted" "$(printf '%s\trows\t1' "arm-sep-shokunin")" "$0" census --root "$test_root" "$sep_dir"
++  # C08: used-by naming a DIRECTORY that exists. Pristine -e accepts (clean);
++  # -f mutant reports E11.
++  e11_dir="$test_root/arm-e11-shokunin"; mkdir -p "$e11_dir/corpus/knowledge" "$e11_dir/useddir"
++  printf '%s\n' '## Registry' '| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |' '|---|---|---|---|---|---|---|---|---|---|---|' '| S001 | Dir — https://arm-e11.example | docs | B | s | s | mined dir used-by | mined | 2026-10-01 | 90d | useddir |' > "$e11_dir/corpus/SOURCES.md"
++  checkx "arm-C08-usedby-directory-clean" 0 "$0" validate --today 2026-10-19 "$e11_dir"
++  check "arm-C08-usedby-directory-okline" $'arm-e11-shokunin\tok' "$0" validate --today 2026-10-19 "$e11_dir"
++  # C09: two URLs differing only by fragment — pristine strips fragment, so
++  # they collide as duplicates (W04 across scopes); no-strip mutant sees two
++  # distinct URLs and misses the W04.
++  frag_dir="$test_root/arm-frag-shokunin"; mkdir -p "$frag_dir/corpus"
++  printf '%s\n' '## Registry' '| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |' '|---|---|---|---|---|---|---|---|---|---|---|' '| S001 | A — https://arm-frag.example/p#a | docs | B | s1 | s | anchor a | queued | 2026-10-01 | 90d | — |' '| S002 | B — https://arm-frag.example/p#b | docs | B | s2 | s | anchor b | queued | 2026-10-01 | 90d | — |' > "$frag_dir/corpus/SOURCES.md"
++  check "arm-C09-fragment-collision-w04" "W04" "$0" validate --today 2026-10-19 "$frag_dir"
++  # C10: symbolic cadence with interior space ("on next release") — pristine
++  # symbolic() accepts (no E09, cadence reported); no-space mutant rejects it
++  # (E09) and skips the cadence line.
++  cad_dir="$test_root/arm-cad-shokunin"; mkdir -p "$cad_dir/corpus"
++  printf '%s\n' '## Registry' '| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |' '|---|---|---|---|---|---|---|---|---|---|---|' '| S001 | Rel — https://arm-cad.example | docs | B | s | s | rel row | queued | 2026-10-01 | on next release | — |' > "$cad_dir/corpus/SOURCES.md"
++  checkx "arm-C10-spaced-cadence-valid" 0 "$0" validate --today 2026-10-19 "$cad_dir"
++  check "arm-C10-spaced-cadence-reported" "cadence" "$0" overdue --today 2026-10-19 "$cad_dir"
++  # C12: used-by list "corpus/a.md, corpus/b.md" — second path has a leading
++  # space; pristine trims each path before the -e check, so both files pass.
++  # Untrimmed mutant checks " corpus/b.md" (leading space) and reports E11.
++  list_dir="$test_root/arm-list-shokunin"; mkdir -p "$list_dir/corpus"
++  printf 'a\n' > "$list_dir/corpus/a.md"; printf 'b\n' > "$list_dir/corpus/b.md"
++  printf '%s\n' '## Registry' '| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |' '|---|---|---|---|---|---|---|---|---|---|---|' '| S001 | Two — https://arm-list.example | docs | B | s | s | two files | mined | 2026-10-01 | 90d | corpus/a.md, corpus/b.md |' > "$list_dir/corpus/SOURCES.md"
++  checkx "arm-C12-comma-list-trimmed" 0 "$0" validate --today 2026-10-19 "$list_dir"
++  check "arm-C12-comma-list-okline" $'arm-list-shokunin\tok' "$0" validate --today 2026-10-19 "$list_dir"
++  # ---- end arms ----
+   if [ "$fail" = 0 ]; then echo "selftest ok"; exit 0; else echo "selftest FAILED" >&2; exit 3; fi
+ fi
+ 

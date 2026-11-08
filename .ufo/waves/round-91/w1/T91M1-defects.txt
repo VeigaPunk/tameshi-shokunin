@@ -1,0 +1,192 @@
+T91M1 mutation spec — sealed C1 counter (round 91)
+==================================================
+
+Target: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-91/c1/measure-v91.py
+Target sha256: 37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e
+Control battery: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-91/c1/controls-v91.py
+Control receipts (frozen): /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-91/pre-freeze/controls/
+Lane snapshot used for the battery: HEAD 584bbe3ca78fdb9188214b0a3de22caf6ffeb2e4 (corpus files byte-identical to the worktree at spec freeze).
+
+Method
+------
+One defect = one contiguous textual edit to the frozen counter, each weakening exactly
+ONE conjunct or check. The mutated copy is compiled (`python3 -m py_compile`) and every
+`old` snippet must occur exactly once before the edit is applied. The committed control
+states are then reproduced exactly as in controls-v91.py (clone lane at A_REV
+ace200b50fe8cea1e05cde88dabf8fe075f86116, write the CTL14-pos fixture files, commit once
+under a fixture identity inside the scratch clone) and the mutated counter is run on each
+state with `python3 -I MUT --repo CLONE --rev HEAD --work EMPTY`.
+
+Kill rule (pre-registered): a defect is KILLED iff at least one control whose frozen
+receipt says `C1_R91_PASS=false` (or exits 2) now prints `C1_R91_PASS=true` on that same
+control state. The positive control CTL14-pos must keep printing `C1_R91_PASS=true`; a
+mutant that breaks it is recorded separately as `pos_ok=false` (not a kill under the rule
+above, because no must-not-pass state was accepted).
+
+Controls that must NOT pass (from the frozen receipts): CTL1-nowork-base (exit 2),
+CTL1b-nowork-A, V4-replace (exit 2), CTL2-flip, CTL3-figure, CTL4-ids, CTL10-source,
+CTL16-oldsource, CTL15-coverage, VOV1-dup-row, VOV3-draft-column, CTL5-spec, CTL6-noop,
+CTL7-syntax, CTL8-absent, CTL9-equiv, CTL11-trivial, CTL12-pin.
+Control that must pass: CTL14-pos.
+
+Defects (id | conjunct/check weakened | prediction)
+---------------------------------------------------
+D01 replace-list gate (lane): the refusal of a non-empty lane `git replace -l`.
+    old:
+        if p.stdout.strip():
+            die("replace-refs-present:" + label)
+    new:
+        if p.stdout.strip():
+            pass
+    predict: SURVIVED — sealed reads carry GIT_NO_REPLACE_OBJECTS=1, so V4-replace still
+    reads the child tree and fails mismatched0; and the replaced parent state fails
+    source, so V4 has no path to PASS=true.
+
+D02 sealed git environment: drop GIT_NO_REPLACE_OBJECTS from every git read.
+    old: "GIT_NO_REPLACE_OBJECTS": "1",
+    new: "GIT_NO_REPLACE_OBJECTS": "0",
+    predict: SURVIVED — the replace-list gate still refuses V4-replace at setup.
+
+D03 green: evaluate the pristine gate once instead of twice.
+    old: green_runs = [selftest(gp, work, to) for _ in range(2)]
+    new: green_runs = [selftest(gp, work, to) for _ in range(1)]
+    predict: SURVIVED — no control state exercises a nondeterministic pristine gate.
+
+D04 canary: ignore the exit-97 canary gate.
+    old: canary = selftest(cgp, work, to)[0] == 97
+    new: canary = True
+    predict: SURVIVED — the canary is constant across all control states.
+
+D05 figure: compare only the denominator (N) of `measured: K/N killed`.
+    old: figure_ok = len(heads) == 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n
+    new: figure_ok = len(heads) == 1 and int(heads[0][1]) == n
+    predict: KILLED by CTL3-figure (measured 6/12, killed 5: N matches, K does not).
+
+D06 figure: compare only the numerator (K) of `measured: K/N killed`.
+    old: figure_ok = len(heads) == 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n
+    new: figure_ok = len(heads) == 1 and int(heads[0][0]) == killed
+    predict: SURVIVED — CTL3-figure also changes K, so the mutant still refuses it; no
+    control has a matching K with a wrong N.
+
+D07 note verdicts: ignore the note/counter verdict mismatch count.
+    old: mism = sum(1 for r in rows if note_rows.get(r["id"]) != r["derived"])
+    new: mism = 0
+    predict: KILLED by CTL2-flip (C02 note KILLED vs derived SURVIVED).
+
+D08 note parser: accept a duplicate id row instead of refusing the note.
+    old:
+        if cid in rows:
+            ambiguous.append(cid)
+            continue
+    new:
+        if cid in rows:
+            continue
+    predict: KILLED by VOV1-dup-row and VOV3-draft-column (both have a complete correct
+    main table plus extra rows).
+
+D09 note parser: skip a data row whose verdict cell is out of vocabulary instead of
+    refusing the note.
+    old:
+        if v not in ("KILLED", "SURVIVED"):
+            ambiguous.append(cid)
+            continue
+    new:
+        if v not in ("KILLED", "SURVIVED"):
+            continue
+    predict: KILLED by VOV3-draft-column (MAYBE in the header-named cell; the correct
+    main-table rows remain).
+
+D10 note ids: stop requiring the parsed id set to equal the spec id set.
+    old: ids_ok = (len(ambiguous) == 0) and sorted(note_rows) == sorted(ids)
+    new: ids_ok = len(ambiguous) == 0
+    predict: SURVIVED — CTL4-ids (C12 row dropped) also flips mismatched0, which still
+    counts the missing id.
+
+D11 spec pin: stop pinning the mutant spec bytes to SPEC_SHA.
+    old: spec_pinned = hashlib.sha256(spec_bytes).hexdigest() == SPEC_SHA
+    new: spec_pinned = True
+    predict: KILLED by CTL5-spec (only spec=false in its frozen receipt).
+
+D12 gate pin: stop pinning the gate blob to the spec's sha256.
+    old: pin = hashlib.sha256(gate_bytes).hexdigest() == g["sha256"]
+    new: pin = True
+    predict: SURVIVED — CTL12-pin edits the sha inside the spec, so spec=false also
+    fires and CTL12 still cannot pass.
+
+D13 invalid0: accept mutants whose edit is absent/duplicated/noop.
+    old:                 invalid0=invalid == 0,
+    new:                 invalid0=True,
+    predict: SURVIVED — every control that flips invalid0 also edits the spec, so
+    spec=false masks it.
+
+D14 trivial0: accept mutants whose `validate` run is trivially failing.
+    old:                 trivial0=trivial == 0,
+    new:                 trivial0=True,
+    predict: SURVIVED — CTL7/CTL11 also edit the spec (spec=false).
+
+D15 mutant validity: stop counting a no-op mutant (new == old) as invalid.
+    old:
+        if m["new"] == m["old"]:
+            inv.append("noop")
+    new:
+        if False:
+            inv.append("noop")
+    predict: SURVIVED — CTL6-noop also edits the spec; spec=false masks invalid0.
+
+D16 witness: hard-code every witness comparison as "differs".
+    old:             witness = "differs" if (p1[0], p1[1]) != (p2[0], p2[1]) else "same"
+    new:             witness = "differs"
+    predict: SURVIVED — CTL9-equiv (witness same) also edits the spec; spec=false masks
+    the witnessed conjunct.
+
+D17 timeout: treat a timed-out selftest as SURVIVED instead of INCONCLUSIVE.
+    old:             verdicts.append("INCONCLUSIVE" if rc is None else ("SURVIVED" if rc == 0 else "KILLED"))
+    new:             verdicts.append("SURVIVED" if rc is None or rc == 0 else "KILLED")
+    predict: SURVIVED — no control state produces a timeout.
+
+D18 note parser: stop skipping fenced code blocks.
+    old:
+        if line.startswith("```"):
+            in_fence = not in_fence
+            continue
+    new:
+        if line.startswith("```"):
+            continue
+    predict: SURVIVED — no control note carries fenced pseudo-rows.
+
+D19 n_min: drop the 12-mutant floor.
+    old: n_min=n >= N_MIN)
+    new: n_min=True)
+    predict: SURVIVED — no control spec shrinks the mutant list (spec-editing controls
+    are already failed by spec=false).
+
+D20 source: drop the S318 registry-evidence check entirely.
+    old:
+    ```
+    ids_ok = figure_ok = source_ok = False
+    mism = 0
+    ```
+    (the two lines above carry four leading spaces in the counter)
+    new:
+    ```
+    ids_ok = figure_ok = False
+    source_ok = True
+    mism = 0
+    ```
+    predict: KILLED by CTL10-source and CTL16-oldsource (their frozen receipts show
+    source=false as the only failing conjunct).
+
+D21 coverage: drop the README note-row check.
+    old:
+    ```
+    coverage_ok = any(l.lstrip().startswith("|") and "knowledge/mutation-case-fleet-sources-census.md" in l
+                      for l in readme.split("\n"))
+    ```
+    (both lines carry four leading spaces in the counter)
+    new:
+    ```
+    coverage_ok = True
+    ```
+    predict: KILLED by CTL15-coverage (its frozen receipt shows coverage=false only).
+
+Total: 21 single-edit defects. FROZEN before the first control run.

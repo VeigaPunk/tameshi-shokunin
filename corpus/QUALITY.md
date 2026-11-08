@@ -2518,3 +2518,11 @@ on the landed bytes (`c2-landed-battery.txt`).
     `tools/defect-bind.py` in the candidate tree yields `C2_R91_PASS=true` with the note
     provably unrepaired), F3 (abbreviated `ff7a4b06`), F4 (no seal, no `replace` refusal).
     (`lessons/round-91.md` M6.)
+149. A refusal conjunct is tested by a control in which removing the refusal turns a PASS into
+    a refusal — not by a state that merely exits 2 while the check is present. A setup-refusal
+    control does not kill the mutant that removes the check, so the seal can be deleted and the
+    battery stays green. Able to fail: `.ufo/waves/round-91/w1/T91M1.md` — 21 single-edit
+    defects against the sealed counter, 14 SURVIVED including D01 (the `replace`-list gate)
+    and D02 (`GIT_NO_REPLACE_OBJECTS`), because `V4-replace`'s receipt is `C1_SETUP` exit 2 and
+    a refusal is not scored as a kill under the pre-registered rule.
+    (`lessons/round-91.md` `## Mistakes` M7.)

@@ -78,6 +78,8 @@ themselves are real (`T91R2.md` §3.1: item 1's operative sentence is the true o
 | M5 | the control summary was hand-authored, had no writer, and contradicted two receipts (`CTL15-coverage` printed as PASS; `CTL1b-nowork-A` carried round-90's `note=false` text); the driver also filtered on the round-90 label `C1_R90` | `w1/T91R2.md` §2.2; `C1-summary.txt` vs `CTL15-coverage.out`, `CTL1b-nowork-A.out` | round-90 M6 (a validate/commit chain) — the same "record above receipts is prose" family | QUALITY 147. Able to fail: the two contradicted rows |
 | M6 | the C2 counter executes the candidate's own `tools/defect-bind.py` and trusts its stdout, so a stub tool certifies an unrepaired note; no git seal, no `replace` refusal, abbreviated-rev pin resolution | `w1/T91SN1.md` F1-F4 | QUALITY 138 (an independently deriving counter) / 139 (seal every read) — applicable to C2, applied only to C1 | QUALITY 148. Able to fail: `T91SN1`'s stub-tool state |
 
+| M7 | **the battery does not test the seal.** 21 single-edit defects against the sealed counter: 7 killed, 14 survived — including D01 (drop the `replace`-list gate) and D02 (drop `GIT_NO_REPLACE_OBJECTS`), because the one control aimed at the seal (`V4-replace`) refuses at setup and the pre-registered kill rule scores only PASS-on-a-must-not-pass-state. The property the round was built to add is the property its battery never exercises | `w1/T91M1.md` (defect table, `VERDICT: survivors:D01,D02,...`); `w1/T91M1-defects.txt` | QUALITY 146 (every conjunct fails once) — met per conjunct, not per branch; and the SEAL had no control in which its removal changes an outcome | QUALITY 149. Able to fail: `T91M1`'s matrix, D01/D02 SURVIVED |
+
 Also recorded, not scored: `T91SN1` F5-F9 (ambient `GIT_DIR` defeats the toplevel guard;
 `fixes-v91.py --target` unvalidated and appends to any tree; `--repo ''` resolves to the
 CWD; no scratch trap on failure paths). Routed below.
@@ -98,7 +100,10 @@ CWD; no scratch trap on failure paths). Routed below.
    arms for the fleet's `scripts/sources-census.sh`.
 4. Driver safety: `T91SN1` F5-F9 (ambient-env scrubbing on mutating calls, `--target`
    validation, empty-argument refusal, scratch traps).
-5. Do not re-declare either claim from this round's receipts; the sealed-environment
+5. The sealed counter's mutation matrix (`w1/T91M1.md`, 14 survivors) is the cheapest
+   starting battery for round 92: every SURVIVED row names a control that must be added, D01/D02
+   first (QUALITY 149).
+6. Do not re-declare either claim from this round's receipts; the sealed-environment
    behaviour (`T91E4`) and the 12/12 reproduction (`T91E1`) are evidence, not a claim.
 
 ## Learning trends

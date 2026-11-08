@@ -1,0 +1,248 @@
+{
+ "controls_driver": "/fast/scratch/hyaku/tameshi-r91/T91M1/controls-probe.py",
+ "corpus_sha": {
+  "N": "6217cfe7bf2f6e9de598aaf3477444caea72a070afb6ff7cb2414aea5048d6c3",
+  "R": "63cde4d0ba5974c84b349d5238e7e3aa4d63c089ed55349e628d43cb91761959",
+  "S": "491de5003e432516faaca7fc5fe527aaa76a1eff079a83dcadbc700a9947cef4"
+ },
+ "defects": [
+  {
+   "check": "replace-list gate (lane) refuses non-empty git replace -l",
+   "id": "D01",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D01/measure.py",
+   "new": "        if p.stdout.strip():\n            pass\n",
+   "old": "        if p.stdout.strip():\n            die(\"replace-refs-present:\" + label)\n",
+   "predict": "SURVIVED (V4-replace still refused by sealed reads / source=false)",
+   "sha_mutant": "fc4ef8981160cfc62f7c0ec3cc29c44b2c798fed3ff5a51a37e460c3d995bcb5",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "sealed git env carries GIT_NO_REPLACE_OBJECTS=1",
+   "id": "D02",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D02/measure.py",
+   "new": "\"GIT_NO_REPLACE_OBJECTS\": \"0\"",
+   "old": "\"GIT_NO_REPLACE_OBJECTS\": \"1\"",
+   "predict": "SURVIVED (replace-list gate still refuses V4-replace)",
+   "sha_mutant": "a63a742f8324b671ac1fbe9a851177190ba5e1b596d1c1c323e692311edfa2d6",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "pristine gate is green on two runs",
+   "id": "D03",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D03/measure.py",
+   "new": "green_runs = [selftest(gp, work, to) for _ in range(1)]",
+   "old": "green_runs = [selftest(gp, work, to) for _ in range(2)]",
+   "predict": "SURVIVED (no control state exercises green)",
+   "sha_mutant": "0750f3fe8994d5a08b327b4314d4978dcee53bdba75ed4bd5fb46a6699f79f1a",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "exit-97 canary gate",
+   "id": "D04",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D04/measure.py",
+   "new": "canary = True",
+   "old": "canary = selftest(cgp, work, to)[0] == 97",
+   "predict": "SURVIVED (canary is constant across control states)",
+   "sha_mutant": "847f36172b4197b01dc13f17abc53292b4a5078473b0ae7164e71614bd21ac2d",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "figure: compare both K and N of measured: K/N killed",
+   "id": "D05",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D05/measure.py",
+   "new": "figure_ok = len(heads) == 1 and int(heads[0][1]) == n",
+   "old": "figure_ok = len(heads) == 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n",
+   "predict": "KILLED by CTL3-figure",
+   "sha_mutant": "88f44b1e3d54e93c4813e299871b0d42c637522debdc9d2a5fb7aaf560eaf00f",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "figure: compare K only",
+   "id": "D06",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D06/measure.py",
+   "new": "figure_ok = len(heads) == 1 and int(heads[0][0]) == killed",
+   "old": "figure_ok = len(heads) == 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n",
+   "predict": "SURVIVED (CTL3-figure also changes K)",
+   "sha_mutant": "6dc89fee898bc6c76e5f73440f7070abed6e54fa6e07f90f5c7fe8db64efc3cc",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "note verdicts must match derived verdicts",
+   "id": "D07",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D07/measure.py",
+   "new": "mism = 0",
+   "old": "mism = sum(1 for r in rows if note_rows.get(r[\"id\"]) != r[\"derived\"])",
+   "predict": "KILLED by CTL2-flip",
+   "sha_mutant": "a0090f50e234570a65845d0466e182338b5933149bd5f0227f7b80e11b92b628",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "duplicate id row refuses the note",
+   "id": "D08",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D08/measure.py",
+   "new": "        if cid in rows:\n            continue\n",
+   "old": "        if cid in rows:\n            ambiguous.append(cid)\n            continue\n",
+   "predict": "KILLED by VOV1-dup-row, VOV3-draft-column",
+   "sha_mutant": "413138490bf4f9da0a31ddbe3c657095b1bf25c9ed01e608d1bff6a982375abf",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "out-of-vocabulary verdict cell refuses the note",
+   "id": "D09",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D09/measure.py",
+   "new": "        if v not in (\"KILLED\", \"SURVIVED\"):\n            continue\n",
+   "old": "        if v not in (\"KILLED\", \"SURVIVED\"):\n            ambiguous.append(cid)\n            continue\n",
+   "predict": "KILLED by VOV3-draft-column",
+   "sha_mutant": "4ad557fb189a4709f0b6ee101c29098087aefe6918a58772c8b4170973c2655c",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "note id set must equal the spec id set",
+   "id": "D10",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D10/measure.py",
+   "new": "ids_ok = len(ambiguous) == 0",
+   "old": "ids_ok = (len(ambiguous) == 0) and sorted(note_rows) == sorted(ids)",
+   "predict": "SURVIVED (CTL4-ids also flips mismatched0)",
+   "sha_mutant": "482acf36736b58f19f5e370e41cc1bf92f56e3f05fd5d5012df324130296472e",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "mutant spec bytes pinned to SPEC_SHA",
+   "id": "D11",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D11/measure.py",
+   "new": "spec_pinned = True",
+   "old": "spec_pinned = hashlib.sha256(spec_bytes).hexdigest() == SPEC_SHA",
+   "predict": "KILLED by CTL5-spec",
+   "sha_mutant": "0b8604f4b88a5e7f4e53a2a6f4cf7ab86cefe7540c2f4768e4d63991eb1f98a8",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "gate blob pinned to the spec sha256",
+   "id": "D12",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D12/measure.py",
+   "new": "pin = True",
+   "old": "pin = hashlib.sha256(gate_bytes).hexdigest() == g[\"sha256\"]",
+   "predict": "SURVIVED (CTL12-pin also flips spec=false)",
+   "sha_mutant": "01a11e1216c384804f45afa6532f74a7f75a3441c50f8c1837f17fc6de3ebdba",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "mutant edit must be unique and non-noop (invalid0)",
+   "id": "D13",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D13/measure.py",
+   "new": "invalid0=True,",
+   "old": "invalid0=invalid == 0,",
+   "predict": "SURVIVED (invalid-flipping controls also edit the spec)",
+   "sha_mutant": "63fea808162c600e842b8ac497178938aa7774698941f8315a4626e7ba1aec7c",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "mutant validate run must not fail trivially (trivial0)",
+   "id": "D14",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D14/measure.py",
+   "new": "trivial0=True,",
+   "old": "trivial0=trivial == 0,",
+   "predict": "SURVIVED (trivial-flipping controls also edit the spec)",
+   "sha_mutant": "270a6f119b9c6959fa1577409c5f151ae613367c81ff0390a1fb132d37212988",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "no-op mutant counts as invalid",
+   "id": "D15",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D15/measure.py",
+   "new": "        if False:\n            inv.append(\"noop\")\n",
+   "old": "        if m[\"new\"] == m[\"old\"]:\n            inv.append(\"noop\")\n",
+   "predict": "SURVIVED (CTL6-noop also edits the spec)",
+   "sha_mutant": "47ee55b1d69fd84798b134d71b53b90cb9f20800e8798c375b3b749e1d557936",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "witness must actually differ",
+   "id": "D16",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D16/measure.py",
+   "new": "            witness = \"differs\"",
+   "old": "            witness = \"differs\" if (p1[0], p1[1]) != (p2[0], p2[1]) else \"same\"",
+   "predict": "SURVIVED (CTL9-equiv also edits the spec)",
+   "sha_mutant": "52e007c58a0c0610d74659e41e4ea3a64ed5947bfd7a569d9968a155d0e10c58",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "timeout derives INCONCLUSIVE, not SURVIVED",
+   "id": "D17",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D17/measure.py",
+   "new": "            verdicts.append(\"SURVIVED\" if rc is None or rc == 0 else \"KILLED\")",
+   "old": "            verdicts.append(\"INCONCLUSIVE\" if rc is None else (\"SURVIVED\" if rc == 0 else \"KILLED\"))",
+   "predict": "SURVIVED (no control produces a timeout)",
+   "sha_mutant": "377ffa13e380f0eb677149ab86040ed99627c2b9b7eb27844f7e720dc7739a8e",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "fenced code blocks are skipped by the note parser",
+   "id": "D18",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D18/measure.py",
+   "new": "        if line.startswith(\"```\"):\n            continue\n",
+   "old": "        if line.startswith(\"```\"):\n            in_fence = not in_fence\n            continue\n",
+   "predict": "SURVIVED (no control note carries fenced rows)",
+   "sha_mutant": "e727b9745c204633b46ff55d3ef6facf8ea9c49a829909da63a275211681badf",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "at least 12 mutants (n_min)",
+   "id": "D19",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D19/measure.py",
+   "new": "n_min=True)",
+   "old": "n_min=n >= N_MIN)",
+   "predict": "SURVIVED (no control shrinks the mutant list without editing the spec)",
+   "sha_mutant": "274c92660a8084fe8d02d97cf3640e3c000fb3d16d72e2a3da5a2748b719ff77",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "note cites a mined S318 registry row naming the note",
+   "id": "D20",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D20/measure.py",
+   "new": "    ids_ok = figure_ok = False\n    source_ok = True\n    mism = 0\n",
+   "old": "    ids_ok = figure_ok = source_ok = False\n    mism = 0\n",
+   "predict": "KILLED by CTL10-source, CTL16-oldsource",
+   "sha_mutant": "b5f42c7735bce55806619d455bc78b6950b6647d20ebc8abaf5d7856cf9f779b",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  },
+  {
+   "check": "README carries a row naming the note",
+   "id": "D21",
+   "mutated": "/fast/scratch/hyaku/tameshi-r91/T91M1/mut/D21/measure.py",
+   "new": "    coverage_ok = True",
+   "old": "    coverage_ok = any(l.lstrip().startswith(\"|\") and \"knowledge/mutation-case-fleet-sources-census.md\" in l\n                      for l in readme.split(\"\\n\"))",
+   "predict": "KILLED by CTL15-coverage",
+   "sha_mutant": "4839998f0b8e93ae8342a05e78ae8e8d0d3e3d693e76220c357354f129013371",
+   "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e"
+  }
+ ],
+ "frozen_controls": {
+  "CTL1-nowork-base": "false",
+  "CTL10-source": "false",
+  "CTL11-trivial": "false",
+  "CTL12-pin": "false",
+  "CTL14-pos": "true",
+  "CTL15-coverage": "false",
+  "CTL16-oldsource": "false",
+  "CTL1b-nowork-A": "false",
+  "CTL2-flip": "false",
+  "CTL3-figure": "false",
+  "CTL4-ids": "false",
+  "CTL5-spec": "false",
+  "CTL6-noop": "false",
+  "CTL7-syntax": "false",
+  "CTL8-absent": "false",
+  "CTL9-equiv": "false",
+  "V4-replace": "false",
+  "VOV1-dup-row": "false",
+  "VOV3-draft-column": "false"
+ },
+ "lane_head": "584bbe3ca78fdb9188214b0a3de22caf6ffeb2e4",
+ "lane_snapshot": "/fast/scratch/hyaku/tameshi-r91/T91M1/lane",
+ "scratch": "/fast/scratch/hyaku/tameshi-r91/T91M1",
+ "sha_controls_driver": "f94088b016b8666f4821c467fe9358dd4f4ea49b20ef9c7351a47e230d5b9401",
+ "sha_controls_frozen": "21607bf89e039a71bcd07c17c1b3771d59a833c487dd6585a9d5e8c3e1b84fa4",
+ "sha_target": "37e5b3b480d8e4f8f9efec2f24c95e38f4b8afdb2e60fb0200f507ed4dab902e",
+ "target": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-91/c1/measure-v91.py"
+}

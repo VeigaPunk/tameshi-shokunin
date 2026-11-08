@@ -1,0 +1,65 @@
+== replace-ref check (the sealed counters refuse a non-empty replace list) ==
+  /home/vgpnk/Projects/shokunin/tameshi-shokunin: git replace -l -> rc=0 out=''
+  /home/vgpnk/Projects/shokunin: git replace -l -> rc=0 out=''
+
+== BEFORE: lane HEAD, no amendment ==
+  exit=1
+  C1_SUMMARY rev=HEAD n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0
+  C1_CONJUNCTS pin=true spec=true green=true canary=true invalid0=true trivial0=true inconclusive0=true unstable0=true note=true ids=true mismatched0=true figure=true witnessed=true source=false coverage=true n_min=true
+  C1_R91_PASS=false
+
+== fixture: lane + the round-91 amendment ==
+  fixes-v91.py --target <fixture>: fixes-v91 written variant=pos
+  source: line replaced (old 689 B -> new 1044 B); appended marker section present: True
+  S318 registry row inserted after line 193
+  fixture commit: 5425a3929746c588f5bbbf9595ba2d449fd7fc17
+  frozen parse_note over the amended note: rows=12 ambiguous=[]
+  header-named verdict cells: C01=KILLED, C02=SURVIVED, C03=SURVIVED, C04=KILLED, C05=KILLED, C06=SURVIVED, C07=KILLED, C08=SURVIVED, C09=SURVIVED, C10=SURVIVED, C11=KILLED, C12=SURVIVED
+  lines starting with 'source:': 1 ; measured heads: [('5', '12')]
+
+== AFTER: the sealed counter over the amended fixture ==
+  exit=0
+  C1_SUMMARY rev=5425a3929746c588f5bbbf9595ba2d449fd7fc17 n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0
+  C1_CONJUNCTS pin=true spec=true green=true canary=true invalid0=true trivial0=true inconclusive0=true unstable0=true note=true ids=true mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+  C1_R91_PASS=true
+
+== AFTER: the C2 calibration counter over the amended fixture ==
+  exit=0
+  DEFECT_BIND_ROW R90-1-not-admitted-marker kind=doc-contains expect=closed state=closed detail=section-carries
+  DEFECT_BIND_ROW R90-2-entry-cites-coverage-row kind=doc-contains expect=closed state=closed detail=section-carries
+  DEFECT_BIND_ROW R90-2-lesson-receipt-addendum kind=doc-contains expect=closed state=closed detail=section-carries
+  argv=ok
+  toolpin=ok expect=0839f5875a7a3baf694d993316a2cca6b38b449561a76e0bf54dd1988ebf8d37 src=ff7a4b06
+  C2_SUMMARY rev=5425a3929746c588f5bbbf9595ba2d449fd7fc17 manifest=pinned manifest_src=5425a3929746c588f5bbbf9595ba2d449fd7fc17 rows=ok argv=ok toolpin=ok blobrun=ok defect_bind_exit=0
+  C2_R91_PASS=true
+
+== NEGATIVE CONTROL: a second copy of the verdict table appended to the note ==
+  frozen parse_note over the duplicated note: rows=12 ambiguous=['C01', 'C02', 'C03', 'C04', 'C05', 'C06', 'C07', 'C08', 'C09', 'C10', 'C11', 'C12']
+  -> ids conjunct would be FALSE (ambiguous ids refuse the state)
+
+== gate check on the amended fixture registry (E/W codes for the S318 row) ==
+  exit=0
+  file	W04	S047 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+  file	W04	S048 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+  file	W04	S075 duplicate url man7.org/linux/man-pages/man1/strace.1.html across scopes
+  file	W04	S076 duplicate url docs.jj-vcs.dev/latest/git-compatibility across scopes
+  file	W04	S077 duplicate url man7.org/linux/man-pages/man2/PR_SET_CHILD_SUBREAPER.2const.html across scopes
+  file	W04	S078 duplicate url man7.org/linux/man-pages/man2/open.2.html across scopes
+  file	W04	S081 duplicate url bazel.build/reference/test-encyclopedia across scopes
+  file	W04	S092 duplicate url bazel.build/remote/caching across scopes
+  file	W01	S101 tierC mined used-by=corpus/knowledge/witness-equivalence-rule.md
+  file	W04	S104 duplicate url cgit.git.savannah.gnu.org/cgit/bash.git/plain/doc/bashref.texi?id=b8c60bc9ca365f8261fa97900b6fa939f6ebc303 across scopes
+  file	W04	S160 duplicate url stryker-mutator.io/docs/mutation-testing-elements/equivalent-mutants across scopes
+  file	W04	S265 duplicate url testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html across scopes
+  file	W04	S266 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+  file	W04	S267 duplicate url github.com/containers/bubblewrap/blob/v0.13.1/bwrap.xml across scopes
+  file	W04	S268 duplicate url www.tensorflow.org/federated/golden_tests?hl=zh-cn across scopes
+  file	W04	S274 duplicate url bazel.build/basics/hermeticity across scopes
+  file	W04	S288 duplicate url www.atlassian.com/incident-management/handbook/postmortems across scopes
+  file	W04	S293 duplicate url git-scm.com/docs/git-cat-file across scopes
+  file	W04	S303 duplicate url www.gnu.org/software/sed/manual/sed.html across scopes
+  file	W04	S314 duplicate url man7.org/linux/man-pages/man1/strace.1.html across scopes
+  file	W04	S318 duplicate url git-scm.com/docs/git across scopes
+  file	ok	/fast/scratch/hyaku/tameshi-r91/T91SC1/probe/fixture/corpus/SOURCES.md
+
+scratch fixture removed

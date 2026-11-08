@@ -1,0 +1,13 @@
+--- /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-91/c1/controls-v91.py	2026-11-07 23:52:28.415926176 -0300
++++ /fast/scratch/hyaku/tameshi-r91/T91M1/controls-probe.py	2026-11-08 00:36:02.384625258 -0300
+@@ -191,8 +191,8 @@
+     ap.add_argument("--jobs", type=int, default=3)
+     a = ap.parse_args()
+     lane = os.path.realpath(a.lane)
+-    measure = os.path.join(lane, ".ufo/evidence/round-91/c1/measure-v91.py")
+-    outdir = os.path.join(lane, ".ufo/evidence/round-91/pre-freeze/controls")
++    measure = os.environ.get("T91_MEASURE", os.path.join(lane, ".ufo/evidence/round-91/c1/measure-v91.py"))
++    outdir = os.environ.get("T91_OUTDIR", os.path.join(lane, ".ufo/evidence/round-91/pre-freeze/controls"))
+     os.makedirs(outdir, exist_ok=True)
+     os.makedirs(a.scratch, exist_ok=True)
+     C = controls(lane)

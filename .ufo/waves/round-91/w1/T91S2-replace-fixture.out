@@ -1,0 +1,22 @@
+=== 1. scratch fixture repo ===
+toplevel=/fast/scratch/hyaku/tameshi-r91/T91S2/fx.9EodKw/fx
+blob_a(replaced)   =4b48deed3a433909bfd6b6ab3d4b91348b6af464
+blob_b(replacement)=feae347d8510cfba5eb8c8ac80056777b07c2528
+=== 2. git replace -l (what the counter reads) ===
+4b48deed3a433909bfd6b6ab3d4b91348b6af464
+exit=0
+=== 2b. the ref itself ===
+refs/replace/4b48deed3a433909bfd6b6ab3d4b91348b6af464 feae347d8510cfba5eb8c8ac80056777b07c2528
+=== 3a. cat-file WITHOUT GIT_NO_REPLACE_OBJECTS ===
+replaced
+=== 3b. cat-file WITH GIT_NO_REPLACE_OBJECTS=1 ===
+original
+=== 3c. git replace -l WITH GIT_NO_REPLACE_OBJECTS=1 (still lists) ===
+4b48deed3a433909bfd6b6ab3d4b91348b6af464
+exit=0
+=== 4. sealed C1 counter against a clone carrying the replace ref ===
+clone replace -l:
+dcc27807b20456027b6a152f9756c62360e229d6
+C1_SETUP replace-refs-present:lane
+C1_R91_PASS=false
+counter_exit=2

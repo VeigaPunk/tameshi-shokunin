@@ -1,0 +1,69 @@
+
+===== P1  C2 'toolpin' is a self-comparison: sha(file) vs sha(same file). Never fails. =====
+expect=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+pinned=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+RESULT: toolpin would be OK even for a MISSING/EMPTY blob
+
+===== P2  the 'pinned' blob is an ABBREVIATED rev (ff7a4b06) resolved against the clone's refs =====
+true pinned blob sha (lane @ff7a4b06): 0839f5875a7a3baf694d993316a2cca6b38b449561a76e0bf54dd1988ebf8d37
+shadowing tag resolves to        : warning: refname 'ff7a4b06' is ambiguous.
+
+===== P2b END-TO-END: a candidate tag named ff7a4b06 substitutes the 'pinned' witness blob =====
+counter exit=1
+toolpin=ok expect=98f352ccb2e3da9baf53b9504744f48f45ca29c2ce9e0bec9a09123c21fc9836 src=ff7a4b06
+C2_SUMMARY rev=c4489aaf14cd5badc7ac998e4a98cf9c065b7b52 manifest=pinned manifest_src=048c3f3000a79ee35b53678af19411d3f9fa1816 rows=fail argv=ok toolpin=ok blobrun=ok defect_bind_exit=1
+C2_R91_PASS=false
+TRUE pinned blob sha (lane @ff7a4b06): 0839f5875a7a3baf694d993316a2cca6b38b449561a76e0bf54dd1988ebf8d37
+
+===== P3  C2 counter runs the CANDIDATE's tools/defect-bind.py; a stub tool => PASS with docs UNREPAIRED =====
+committed note   'not admitted' count: 0
+committed lesson 'receipt addendum'  : 0
+counter exit=0
+toolpin=ok expect=0839f5875a7a3baf694d993316a2cca6b38b449561a76e0bf54dd1988ebf8d37 src=ff7a4b06
+C2_SUMMARY rev=40fdc4d83d51e451d807bc3f2b4b4ec0ad4cc6b0 manifest=pinned manifest_src=048c3f3000a79ee35b53678af19411d3f9fa1816 rows=ok argv=ok toolpin=ok blobrun=ok defect_bind_exit=0
+C2_R91_PASS=true
+
+===== P4  C1 counter --repo '' -> os.path.realpath('') == cwd (the fleet root under the seat host guard) =====
+realpath('') = /home/vgpnk/Projects/shokunin
+git -C '' rev-parse --show-toplevel: /home/vgpnk/Projects/shokunin
+
+===== P5  ambient GIT_DIR defeats the C2 toplevel guard: git acts on the injected repo, guard still passes =====
+plain   : git -C p5/clone rev-parse --show-toplevel -> /fast/scratch/hyaku/tameshi-r91/T91SN1/final/p5
+GIT_DIR : git -C p5/clone rev-parse --show-toplevel -> /fast/scratch/hyaku/tameshi-r91/T91SN1/final/p5/clone
+GIT_DIR : 'git -C p5/clone checkout' rc=0 (operates on the injected GIT_DIR, not the clone)
+
+===== P6  ambient GIT_INDEX_FILE redirects 'git add -A' writes OUTSIDE the scratch clone =====
+ambient index written outside the clone: -rw-r--r-- 1 vgpnk vgpnk 3387160 Nov  8 01:05 /fast/scratch/hyaku/tameshi-r91/T91SN1/final/p6.ambient.idx
+
+===== P7  controls-v91.py --lane '' creates .ufo/... under the CWD before validating the lane =====
+tree created under the CWD (cwd == $S/p7):
+.
+./OUT
+./sc
+
+===== P8  fixes-v91.py --target on a sibling-shaped tree FORGES corpus files (open(...,'a') creates) =====
+files now present in the sibling-shaped tree:
+./corpus/knowledge/other-note.md
+./corpus/knowledge/mutation-case-fleet-sources-census.md
+./corpus/lessons/round-90.md
+--- head of the forged note:
+
+## Admission status (appended round 91)
+
+--- against a fleet-root-shaped target (no corpus/):
+   exit=1  files created: 0
+
+===== P9  C1 counter blob(): empty --rev turns 'rev:path' into ':path' = the INDEX, not a commit =====
+HEAD blob  'not admitted' count: 0
+index blob ':path'       count: 1
+
+===== P10 worktree bytes != committed blob under core.autocrlf=true (C2 reads the WORKTREE) =====
+committed blob sha: 2751a3a2f303ad21752038085e2b8c5f98ecff61a2e4ebbd43506a941725be80
+worktree file sha : 4ad3ef64dfb83f7a8f789bce6f30cc1f8d18491b14db4c875309b150d2a7d213
+
+===== P11 C1 sealed env: are global credential/user/safe config entries visible to git? =====
+rc 0
+origins seen: ['file:.git/config']
+global credential helper visible: False
+
+===== PROBE COMPLETE — no file inside the lane or the fleet was written by this script =====
