@@ -1,0 +1,31 @@
+# CMD: python3 -I /fast/scratch/hyaku/tameshi-r98/R98SN1/src/.ufo_evidence_round-98_refusals_guard-refusals.py
+# ENV: inherited
+# CWD: /home/vgpnk/Projects/shokunin
+# START: 2026-11-08T13:22:01-03:00
+guard-refusals — drive the frozen round-97 guard-inertia tool through every
+declared GUARD_SETUP refusal class, end to end, from committed bytes.
+
+Round 97's matrix declared six refusal classes, but two of them existed only as
+code: no committed receipt or selftest case executed `state-unbuildable` or
+`limit-mechanism-missing` (round-97 spot-check D-6). This battery reads the
+frozen tool as a blob at --rev (sha256 must equal --tool-sha, so a worktree
+copy or an unpinned driver is refused), builds one manifest fixture per class
+in a scratch clone, runs the tool's public CLI once per class, and grades the
+run on exit 2 plus the exact class token on a line of the tool's own stdout.
+The positive run uses the committed manifest and must print the exact
+`GUARD_INERTIA` predicate with exit 0.
+
+`--red CLASS` substitutes the positive manifest for that class: the battery
+must then MISS the class (exit 1), which is how the claim shows the battery
+can fail.
+
+Usage:
+  python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane LANE       --rev <40 hex> --tool <repo path> --tool-sha <64 hex> --work <empty dir>       [--red CLASS] [--selftest]
+
+Exit: 0 every class refused with exit 2 and the exact token, and the positive
+printed the predicate with exit 0; 1 a missed class, a wrong token or a failed
+positive (each named); 2 setup (bad rev, tool absent, tool-sha invalid or
+mismatched, manifest unreadable, work not empty); 64 usage.
+
+# RC: 64
+# END: 2026-11-08T13:22:01-03:00

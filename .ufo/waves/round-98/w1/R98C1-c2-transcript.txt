@@ -1,0 +1,44 @@
+# R98C1 C2 per-class visibility — the battery prints no per-class line on success
+
+## every print() in the battery that could name a class
+62:    print("GUARD_REFUSALS_SETUP " + msg)
+125:        print("SELFTEST %s %s got=%s want=%s" % (name, "PASS" if ok else "FAIL", got, want))
+126:    print("GUARD_REFUSALS_SELFTEST: %d/%d pass" % (passed, len(cases)))
+144:        print(__doc__)
+219:                print("GUARD_REFUSALS_RED %s refused-under-red-run" % name)
+221:                print("GUARD_REFUSALS_RED %s missed-as-declared rc=%d" % (name, rc))
+228:            print("GUARD_REFUSALS_MISS %s rc=%d first=%r" % (name, rc, token))
+239:        print("GUARD_REFUSALS_POSITIVE_FAIL rc=%d last=%r" % (rc, out.splitlines()[-1:]))
+240:    print("GUARD_REFUSALS classes=%d refused=%d wrong=%d positive=%s%s"
+
+## observations is collected and never printed
+191:    observations = []
+214:        observations.append((name, rc, ok))
+
+## the committed positive receipt (blob at the freeze rev)
+GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok
+rc=0
+
+## the committed red receipt (blob at the freeze rev)
+GUARD_REFUSALS_RED state-unbuildable missed-as-declared rc=0
+GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable
+rc=1
+
+## therefore: the After clause "the six per-class runs in the transcript" has no
+## per-class line in either receipt; the only per-class output is a MISS/RED line on failure.
+
+=====================================================================
+## R98C1 re-measurement of the C2 battery at the freeze rev (own run, scratch work dirs)
+
+$ python3 -I <battery at 764aca97> --lane . --rev 764aca97 --tool .ufo/evidence/round-97/c2/guard-inertia.py --tool-sha 634997d0... --work <scratch/bat1>
+GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok
+rc=0
+
+$ ... --work <scratch/bat2> --red state-unbuildable
+GUARD_REFUSALS_RED state-unbuildable missed-as-declared rc=0
+GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable
+rc=1
+
+## the positive run emitted exactly one line: no per-class run is named.
+## the red run emitted the RED line plus the summary; the substituted class is skipped
+## (continue) rather than graded wrong, so wrong = 6 - refused by construction.

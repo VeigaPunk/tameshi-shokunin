@@ -1,0 +1,34 @@
+=== D1 a5-code-arg-off-by-one: two positional args (add(name, code)) ===
+pristine   rc=0 CONTROL_ASSERT_DRIVER rev=95c82915ba87d9d61dcd30947d89bf5b15bb523b driver=drv.py sha256=72824f84652d57f9ce2b02d4d8efad6435995f221e66ecb3afd22c1bac1f2b6e | CONTROL_ASSERT_SITE line=6 name=two-arg measured=yes class=measured detail=tuple-run@5 | CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+mutant-a5  rc=2 CONTROL_ASSERT_DRIVER rev=95c82915ba87d9d61dcd30947d89bf5b15bb523b driver=drv.py sha256=72824f84652d57f9ce2b02d4d8efad6435995f221e66ecb3afd22c1bac1f2b6e
+=== D2 a9-tuple-index-ignored: second tuple element (add(name, out)) ===
+pristine   rc=1 CONTROL_ASSERT_DRIVER rev=3e52cdd1e1e9e0e321a1674472372c5e5eba771a driver=drv.py sha256=6125f0987962f9e8f5fbdff5af90dc332f9657ea282d523446c49129607402b6 | CONTROL_ASSERT_SITE line=6 name=second-element measured=no class=unresolved detail=tuple-not-runner@5 | CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+mutant-a9  rc=0 CONTROL_ASSERT_DRIVER rev=3e52cdd1e1e9e0e321a1674472372c5e5eba771a driver=drv.py sha256=6125f0987962f9e8f5fbdff5af90dc332f9657ea282d523446c49129607402b6 | CONTROL_ASSERT_SITE line=6 name=second-element measured=yes class=measured detail=tuple-run@5 | CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+=== D3 a10-depth-guard-widened: 10-link name chain ===
+pristine   rc=1 CONTROL_ASSERT_DRIVER rev=e4024adea262d3163cf2749972bc561635063fbd driver=drv.py sha256=e1e5203b8ff68d1aff53d7810a0e526ae7f1f57116a0a4a0dd668146c4bac4d1 | CONTROL_ASSERT_SITE line=13 name=deep-chain measured=no class=unresolved detail=name-chain | CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+mutant-a10 rc=1 CONTROL_ASSERT_DRIVER rev=e4024adea262d3163cf2749972bc561635063fbd driver=drv.py sha256=e1e5203b8ff68d1aff53d7810a0e526ae7f1f57116a0a4a0dd668146c4bac4d1 | CONTROL_ASSERT_SITE line=13 name=deep-chain measured=no class=literal detail=constant | CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+=== D4 b1-rc-accepts-one: class_token_ok with exit 1 ===
+class_token_ok(token, rc=2): pristine=True mutant=True
+class_token_ok(token, rc=1): pristine=False mutant=True
+class_token_ok(token, rc=0): pristine=False mutant=False
+=== D5 b6-positive-substring: predicate embedded in a longer line ===
+positive_ok('GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0', 0): pristine=True mutant=True
+positive_ok('note GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0', 0): pristine=False mutant=True
+positive_ok('GUARD_INERTIA rows=1', 0): pristine=False mutant=False
+=== D6 b5-token-from-stderr: frozen tool token stream ===
+guard-inertia.py contains 'sys.stderr': False
+guard-inertia.py die() prints via stdout: True
+mutant b5 merges stderr into graded text: True
+=== P1 (post-registration) audit silently drops unlabeled sites ===
+P1 .ufo/evidence/round-97/controls97.py rc=1 last='CONTROL_ASSERT sites=13 measured=12 literal=1 unmeasured=1'
+P1 .ufo/evidence/round-98/controls98.py rc=0 last='CONTROL_ASSERT sites=13 measured=13 literal=0 unmeasured=0'
+=== P2 (post-registration) battery reads the worktree tool (wtlane) ===
+wtlane worktree tool sha256=76b609f33bd6af42f05f527562ac6ce1d70452f8167eb69391a2130e140e5a76 blob sha256=634997d09d2dba5cd87df12e2844962b3517ede798ab0ce04303807b6db042c8
+P2 pristine   rc=0 last='GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+P2 mutant-p2  rc=2 last='GUARD_REFUSALS_SETUP tool-sha-mismatch'
+D1b pristine   rc=0 stdout='CONTROL_ASSERT_DRIVER rev=95c82915ba87d9d61dcd30947d89bf5b15bb523b driver=drv.py sha256=72824f84652d57f9ce2b02d4d8efad6435995f221e66ecb3afd22c1bac1f2b6e\nCONTROL_ASSERT_SITE line=6 name=two-arg measured=yes class=measured detail=tuple-run@5\nCONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0\n' stderr=''
+D1b mutant-a5  rc=2 stdout='CONTROL_ASSERT_DRIVER rev=95c82915ba87d9d61dcd30947d89bf5b15bb523b driver=drv.py sha256=72824f84652d57f9ce2b02d4d8efad6435995f221e66ecb3afd22c1bac1f2b6e\nAUDIT_SETUP add-without-code:line=6\n' stderr=''
+=== P3 (post-registration) audit reads the worktree driver (wtclone, D-2 edit) ===
+P3 pristine   rc=0 CONTROL_ASSERT_SITE line=211 name=c2-forge-manifest-empty measured=yes class=measured detail=tuple-run@208 | CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0
+P3 mutant-p3  rc=1 CONTROL_ASSERT_SITE line=211 name=c2-forge-manifest-empty measured=yes class=measured detail=tuple-run@208 | CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1
+P3 discriminator: wtclone worktree sha256=4acc745a4dd7d3f261786e7e2d7ac9aba8fe5d40c4d53f4758e0ed33c86ee302 blob sha256=f1c1db0edb670fdefdb1b27a193b315db8da90f4580cc7c4c225648f3fbf924b

@@ -780,3 +780,21 @@ policy (QUALITY 165), and its disposition checker requires a state/digest-naming
 | Entry | Map position | Grounding |
 |---|---|---|
 | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases; certificate revision-bound to the round-94 instrument revision — the twelve cells are a measurement, not an admission) | S320, S321, S322 (re-opened 2026-11-08); `.ufo/evidence/round-94/c1/`; `.ufo/evidence/round-94/pre-freeze/controls/` |
+
+## Round 98 — control-assertion anchoring (calibration) and guard refusal receipts (operability)
+
+Appended; rows above keep their line numbers. QUALITY 7: the new note gets its row
+in the same round.
+
+| Note | Holds | Sources |
+|---|---|---|
+| `knowledge/control-assertion-anchoring.md` | a control's graded code must derive from the runner call it claims (measured / literal / unresolved classification, the round-97 literal instance and its repair, the audit's selftest and static boundaries); the dual direction of S012's state-anchored oracle | S012 (re-opened 2026-11-08); `tools/control-assertion-audit.py`; `.ufo/evidence/round-98/pre-freeze/` |
+
+The guard refusal battery (`.ufo/evidence/round-98/refusals/guard-refusals.py`) adds
+receipts for the two code-only `GUARD_SETUP` classes of `guard-inertia.py`
+(`state-unbuildable`, `limit-mechanism-missing`): six classes run end to end through
+the frozen tool's public CLI, one fixture each, with a red arm. It is operability
+evidence, not a new frontier ground: F1–F11 are unchanged (F1 partly held, F2 partly
+held, F3–F11 as before). The registry in-place cell class (round-97 D-1) is now measured
+by `tools/registry-cell-immutability.py`; its live red pair prints the two `anchor`
+findings and its selftest is 10/10.

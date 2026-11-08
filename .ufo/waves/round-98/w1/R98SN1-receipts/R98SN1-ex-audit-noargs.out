@@ -1,0 +1,35 @@
+# CMD: python3 -I /fast/scratch/hyaku/tameshi-r98/R98SN1/src/tools_control-assertion-audit.py
+# ENV: inherited
+# CWD: /home/vgpnk/Projects/shokunin
+# START: 2026-11-08T13:15:39-03:00
+control-assertion-audit — static provenance audit of a control driver.
+
+Round 97's pre-freeze driver registered one state whose graded code was the
+literal 0 (`add("c2-nowork-absent", 0, ...)`), so that control could not fail
+whatever the `git grep` it wrapped returned (round-97 spot-check D-2). This
+tool classifies every `add(...)` call site in a driver by where its recorded
+code expression comes from:
+
+  measured    the expression derives from a runner call (`sh`, `git`, `run`,
+              `subprocess.run`): `p.returncode`, or the first element of
+              `code, out = run(...)`; a name chain is followed to its last
+              assignment before the call.
+  literal     a constant, directly or bound through a name.
+  unresolved  any other expression (a non-runner `.returncode`, a plain call,
+              arithmetic, a loop variable, a name with no prior assignment).
+
+A driver is conforming only when every site is `measured`; an expectation
+(`want_code`) is data and is not classified.
+
+Usage:
+  python3 -I tools/control-assertion-audit.py --repo LANE --rev <40 hex>       [--driver PATH] [--selftest]
+
+The driver is read as a blob at --rev through `git cat-file`, never from the
+worktree, so a worktree-only edit cannot change the audit.
+
+Exit: 0 every site measured; 1 an unmeasured site (named); 2 setup (bad rev,
+driver absent, unparsable, an `add` call without a classifiable code argument);
+64 usage.
+
+# RC: 64
+# END: 2026-11-08T13:15:39-03:00

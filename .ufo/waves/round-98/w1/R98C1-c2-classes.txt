@@ -1,0 +1,60 @@
+# R98C1 C2 class census — the frozen tool declares 13 GUARD_SETUP tokens; the battery names 6
+
+## every GUARD_SETUP token emitted by the frozen tool (blob at the freeze rev)
+ 1 checker-absent-at-rev
+ 2 checker-sha-mismatch
+ 3 edit-ambiguous
+ 4 edit-no-op
+ 5 limit-mechanism-missing
+ 6 manifest-absent-at-rev
+ 7 manifest-empty
+ 8 manifest-sha-invalid
+ 9 manifest-sha-mismatch
+10 manifest-unparsable
+11 rev-not-a-commit-id
+12 rev-unresolvable
+13 state-unbuildable
+total 13
+
+## the battery CLASSES list (blob at the freeze rev)
+CLASSES = ["edit-no-op", "edit-ambiguous", "state-unbuildable",
+          "limit-mechanism-missing", "manifest-sha-mismatch", "manifest-empty"]
+
+## uncovered (declared by the tool, no fixture in the battery)
+  checker-absent-at-rev
+  checker-sha-mismatch
+  manifest-absent-at-rev
+  manifest-sha-invalid
+  manifest-unparsable
+  rev-not-a-commit-id
+  rev-unresolvable
+uncovered 7 of 13
+
+## token -> emitting branch (frozen tool source lines)
+214:            raise SystemExit(_setup_text("limit-mechanism-missing:" + row["id"]))
+218:            raise SystemExit(_setup_text("edit-ambiguous:%s:%d" % (row["id"], count)))
+220:            raise SystemExit(_setup_text("edit-no-op:" + row["id"]))
+228:            raise SystemExit(_setup_text("state-unbuildable:%s:%s" % (row["id"], str(exc)[:120])))
+317:        sys.exit(die("rev-not-a-commit-id"))
+322:        sys.exit(die("rev-unresolvable"))
+326:        sys.exit(die("checker-absent-at-rev"))
+328:        sys.exit(die("checker-sha-mismatch"))
+331:        sys.exit(die("manifest-absent-at-rev"))
+334:            sys.exit(die("manifest-sha-invalid"))
+336:            sys.exit(die("manifest-sha-mismatch"))
+340:        sys.exit(die("manifest-unparsable"))
+342:        sys.exit(die("manifest-empty"))
+
+## each fixture reaches its declared branch (static walk)
+main order: rev-hex -> rev-resolve -> tool blob -> tool-sha(valid|mismatch) -> manifest blob
+            -> manifest-unparsable -> manifest-empty -> run_matrix
+run_matrix order per row: limit-mechanism-missing -> edit-ambiguous -> edit-no-op -> build_state
+  limit-mechanism-missing : rows[0].expect=limit + 9-char mechanism  -> L214
+  edit-ambiguous          : rows[0].edit.old="DISPOSITION", 9 hits   -> L218
+  edit-no-op              : rows[0].edit.new=edit.old (count==1)     -> L220
+  state-unbuildable       : rows[0].state="no-such-state-r98"        -> L228 via L177
+  manifest-sha-mismatch   : committed bytes + sha256(bytes+b"x")     -> L336
+  manifest-empty          : {"rows": {}} + its own digest            -> L342
+
+## checker occurrence count used by the edit-ambiguous fixture
+DISPOSITION occurrences = 9

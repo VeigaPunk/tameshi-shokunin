@@ -1,0 +1,32 @@
+# R98C1 C1 classifier-clause probes (each frozen clause, one site)
+
+## git -C cls-probe rev-parse --show-toplevel / HEAD
+/fast/scratch/hyaku/tameshi-r98/R98C1/cls-probe
+b99b6b2ad3fd73f79c294728d6c675023b80f287
+
+## driver.py
+def f():
+    return 0
+
+class X:
+    returncode = 0
+
+def main():
+    x = X()
+    for n in ("a", "b"):
+        add(n, n, "b", 0)
+    add("plain", f(), "b", 0)
+    add("fake-rc", x.returncode, "b", 0)
+    add("const", 0, "b", 0)
+    code, out = (0, "o")
+    add("tuple-nonrunner", code, "b", 0)
+
+## python3 -I files/tools/control-assertion-audit.py --repo cls-probe --rev <HEAD> --driver driver.py
+CONTROL_ASSERT_DRIVER rev=b99b6b2ad3fd73f79c294728d6c675023b80f287 driver=driver.py sha256=6deace6ffcaee95f5db2fce2f328be000ee611d31473ea13b8c302d9f095bb1b
+CONTROL_ASSERT_SITE line=10 name=? measured=no class=unresolved detail=loop-variable
+CONTROL_ASSERT_SITE line=11 name=plain measured=no class=unresolved detail=plain-call
+CONTROL_ASSERT_SITE line=12 name=fake-rc measured=no class=unresolved detail=returncode-of-unresolved
+CONTROL_ASSERT_SITE line=13 name=const measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=15 name=tuple-nonrunner measured=no class=unresolved detail=other-assignment@14
+CONTROL_ASSERT sites=5 measured=0 literal=1 unmeasured=5
+rc=1

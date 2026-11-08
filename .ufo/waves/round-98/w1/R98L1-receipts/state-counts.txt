@@ -1,0 +1,22 @@
+Static registrations at 764aca97e513d650949999362cd4b0f5f0e566a5 (AST of the freeze blob) and the committed receipt count.
+
+C[..] assigns = module-level `C["..."] = ...` statements as written; unique = distinct names;
+dups = key written more than once (a later assignment overwrites an earlier one in the dict);
+EXPECT_EXTRA = module-level dict length; total = unique + EXPECT_EXTRA.
+
+$ git show 764aca97e513d650949999362cd4b0f5f0e566a5:<path> | python3 - (ast.parse)
+
+.ufo/evidence/round-90/c1/controls.py                assigns=7   unique=7   dups=0  extra=0  total=7 
+.ufo/evidence/round-91/c1/controls-v91.py            assigns=9   unique=9   dups=0  extra=0  total=9 
+.ufo/evidence/round-92/c1/controls-v92.py            assigns=18  unique=18  dups=0  extra=0  total=18 
+.ufo/evidence/round-93/c1/controls-v93.py            assigns=27  unique=27  dups=0  extra=8  total=35 
+.ufo/evidence/round-94/c1/controls-v94.py            assigns=38  unique=37  dups=1  extra=8  total=45 ['sharp-delim-5-4']
+.ufo/evidence/round-95/c1/controls-v95.py            assigns=42  unique=41  dups=1  extra=9  total=50 ['sharp-delim-5-4']
+.ufo/evidence/round-96/c1/controls-v96.py            assigns=42  unique=41  dups=1  extra=9  total=50 ['sharp-delim-5-4']
+
+committed receipts under .ufo/evidence/round-96/pre-freeze/controls: 50 .out -> v96's 41 unique + 9 = 50.
+
+controls97.py / controls98.py: 15 static add(...) sites (audit); 18 runtime states
+(driver summary `CONTROLS97 states=18` / `CONTROLS98 states=18`): the `forge` helper site
+at line 136 executes 3x and the driver-sha loop site at line 152 executes 2x, so 15 sites
+register 18 states. The audit's `sites=` is a static site count, not a state count.

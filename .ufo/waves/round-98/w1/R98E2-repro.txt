@@ -1,0 +1,279 @@
+R98E2 — reproduction log for the frozen C2 claim
+=================================================
+
+Lane:   /home/vgpnk/Projects/shokunin/tameshi-shokunin
+Lane HEAD at run time: cdaecece9ac3136e14f4961b6e6c412fc7e854b9
+Round base:            034240a591575167f0747ad7372a1f4b9cd33a58
+Instruments commit:    d32043ec836ca097e93ae0b095faa7cae4125697
+Freeze commit (R):     764aca97e513d650949999362cd4b0f5f0e566a5
+Scratch:               /fast/scratch/hyaku/tameshi-r98/R98E2/  (deleted after copying receipts)
+Environment:           python 3.14.8, /usr/bin/git 2.56.0
+
+Pins measured at R
+------------------
+$ git cat-file blob 764aca97:.ufo/evidence/round-97/c2/guard-inertia.py | sha256sum
+  634997d09d2dba5cd87df12e2844962b3517ede798ab0ce04303807b6db042c8   (claims C2 tool_sha256)
+$ git cat-file blob 764aca97:.ufo/evidence/round-98/refusals/guard-refusals.py | sha256sum
+  4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872   (claims C2 instrument_sha256)
+$ git cat-file blob 764aca97:.ufo/evidence/round-97/c2/guard-inertia.json | sha256sum
+  9de0b7e9649e0e267d05489a9d14b4075424e16ae80a8a6b27ae34870fe094da   (round-97 manifest pin)
+$ git cat-file blob 764aca97:.ufo/evidence/round-96/conjunct-disposition-v96.py | sha256sum
+  02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80   (round-97 checker pin)
+$ sha256sum .ufo/evidence/round-98/refusals/guard-refusals.py .ufo/evidence/round-97/c2/guard-inertia.py
+  4077d8f9...  .ufo/evidence/round-98/refusals/guard-refusals.py
+  634997d0...  .ufo/evidence/round-97/c2/guard-inertia.py
+
+Step 1 — positive battery
+-------------------------
+$ cd /home/vgpnk/Projects/shokunin/tameshi-shokunin
+$ TMPDIR=/fast/scratch/hyaku/tameshi-r98/R98E2 \
+  python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane . \
+    --rev 764aca97e513d650949999362cd4b0f5f0e566a5 \
+    --tool .ufo/evidence/round-97/c2/guard-inertia.py \
+    --tool-sha 634997d09d2dba5cd87df12e2844962b3517ede798ab0ce04303807b6db042c8 \
+    --work /fast/scratch/hyaku/tameshi-r98/R98E2/bat \
+    > R98E2-positive.out 2> R98E2-positive.err
+observed stdout (stderr empty, 55 bytes, sha256 1d22df060865ea274aff41aa8dac0d3b3cd634df6c6377ea4c3e5e9c51c1aad4):
+  GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok
+observed exit: 0
+frozen predicate: GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok (exit 0)  => MATCH
+
+Step 2 — red arm
+----------------
+$ TMPDIR=/fast/scratch/hyaku/tameshi-r98/R98E2 \
+  python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane . \
+    --rev 764aca97e513d650949999362cd4b0f5f0e566a5 \
+    --tool .ufo/evidence/round-97/c2/guard-inertia.py \
+    --tool-sha 634997d09d2dba5cd87df12e2844962b3517ede798ab0ce04303807b6db042c8 \
+    --work /fast/scratch/hyaku/tameshi-r98/R98E2/red --red state-unbuildable \
+    > R98E2-red.out 2>&1
+observed stdout+stderr (138 bytes, sha256 f279d49755072fec44428cf29f192b8341017ed603c8421327c526c409d80294):
+  GUARD_REFUSALS_RED state-unbuildable missed-as-declared rc=0
+  GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable
+observed exit: 1
+frozen red predicate: ...refused=5 wrong=1 positive=ok red=state-unbuildable (exit 1)  => MATCH
+(byte detail: the RED line is part of the measured bytes and is not in the frozen quote; F3)
+
+Step 3 — hand drive of all six classes (scratch clone at R)
+-----------------------------------------------------------
+$ mkdir -p /fast/scratch/hyaku/tameshi-r98/R98E2/hand
+$ git clone -q --shared /home/vgpnk/Projects/shokunin/tameshi-shokunin \
+    /fast/scratch/hyaku/tameshi-r98/R98E2/hand/clone
+$ git -C .../hand/clone checkout -q --detach 764aca97e513d650949999362cd4b0f5f0e566a5
+$ git -C .../hand/clone rev-parse --show-toplevel
+  /fast/scratch/hyaku/tameshi-r98/R98E2/hand/clone      (host-guard assertion, before any fixture git mutation)
+$ git -C .../hand/clone rev-parse HEAD
+  764aca97e513d650949999362cd4b0f5f0e566a5
+$ git -C .../hand/clone cat-file blob 764aca97:.ufo/evidence/round-97/c2/guard-inertia.py \
+    > .../hand/tool.py
+$ git -C .../hand/clone cat-file blob 764aca97:.ufo/evidence/round-98/refusals/guard-refusals.py \
+    > .../hand/guard-refusals.py
+$ sha256sum .../hand/tool.py .../hand/guard-refusals.py
+  634997d09d2dba5cd87df12e2844962b3517ede798ab0ce04303807b6db042c8  tool.py
+  4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872  guard-refusals.py
+$ cd .../hand && python3 handdrive.py > ../R98E2-hand.out 2> ../R98E2-hand.err
+observed exit: 0
+observed key lines (full file R98E2-hand.out, 4411 B, sha256 52304425a87642e4d02ee7248673a46989fde2db3db1a8596b2e5640663fcbf9):
+  CLONE_TOPLEVEL /fast/scratch/hyaku/tameshi-r98/R98E2/hand/clone
+  MANIFEST_SHA256 9de0b7e9649e0e267d05489a9d14b4075424e16ae80a8a6b27ae34870fe094da
+  MANIFEST_ROWS 10
+  CLASS edit-no-op frev=9e9cd3914e47a973d13ce5e44d423a2ec755169b fixture_sha256=6cba53e0b1e3a8d2e13c722e21e3bc8e43279b7002c65787964182aa20300942 rc=2
+    stdout='GUARD_SETUP edit-no-op:rev-hex\n'
+  CLASS edit-ambiguous frev=dc98d1e1f01117256d257b00daf5f997118c2e5f fixture_sha256=5b61030fc7ceecc635e1b6effebea1d70499aa0e59a251fc5032b981dd918964 rc=2
+    stdout='GUARD_SETUP edit-ambiguous:rev-hex:9\n'
+  CLASS state-unbuildable frev=e766f7a62cea11beaef1cb32793975e230d800c3 fixture_sha256=cd0e0d3cf146733fdf39cbd1b7b72bff2c60ad4e5f5332ec3d568988bf6339e5 rc=2
+    stdout='GUARD_SETUP state-unbuildable:rev-hex:unknown state: no-such-state-r98\n'
+  CLASS limit-mechanism-missing frev=5220232e4dd59678428b14d5b28a1476c7fc0175 fixture_sha256=5de816b4eeab9df253d1c21e90b3d329d6c5547fa996120e2fb1c4ece1f6c389 rc=2
+    stdout='GUARD_SETUP limit-mechanism-missing:rev-hex\n'
+  CLASS manifest-sha-mismatch frev=febbc5cd6283b265afdbbcc23321d7e3767dcac2 fixture_sha256=65852017f81726a68ca7cb2dee9862b4b1cf638b339f1ef04c3222b8476e3010 rc=2
+    stdout='GUARD_SETUP manifest-sha-mismatch\n'
+    (the script's `fixture_sha256=` field is the pin passed for this class; the fixture's own
+     digest is c63eba3f43308805…, per R98E2-fixture-probe.out)
+  CLASS manifest-empty frev=4b7ee8c81040b8110075e3aad627024dbf70d5a5 fixture_sha256=507110f675a8cba5fabff93049a3fbffdb74339b20050b2f02c10172fd993149 rc=2
+    stdout='GUARD_SETUP manifest-empty\n'
+  CLASS positive frev=764aca97e513d650949999362cd4b0f5f0e566a5 rc=0
+    stdout=10 GUARD_ROW lines + 'GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0'
+  ATTACK unused-field rc=0; grader class_token_ok(state-unbuildable, rc=0)=False, forced rc=2=False; positive_ok=True
+  ATTACK echoed-field rc=2; stdout='GUARD_SETUP edit-ambiguous:rev-hex\nGUARD_SETUP state-unbuildable:injected:9\n'; grader class_token_ok(state-unbuildable)=True
+fixture commits above are scratch-only commits in the deleted clone; they are not lane objects.
+
+$ python3 rawcapture.py      (re-runs the tool CLI at those fixture commits, writes raw stdout)
+observed:
+  edit-no-op rev=9e9cd391... rc=2 lines=1
+  edit-ambiguous rev=dc98d1e1... rc=2 lines=1
+  state-unbuildable rev=e766f7a6... rc=2 lines=1
+  limit-mechanism-missing rev=5220232e... rc=2 lines=1
+  manifest-sha-mismatch rev=febbc5cd... rc=2 lines=1
+  manifest-empty rev=4b7ee8c8... rc=2 lines=1
+  positive rev=764aca97... rc=0 lines=11
+  attack-unused-field rev=2d201717... rc=0 lines=11
+  attack-echoed-field rev=03a40ad3... rc=2 lines=2
+$ sha256sum R98E2-hand-positive.out
+  254536aa0cd7d9389bf8625d6d478ff211b8938d827a02c6abfa4bfa1d52853b
+  (= digest the round-97 spot-check cites for landing/c2-positive-*.out)
+$ cat R98E2-hand-state-unbuildable.out
+  GUARD_SETUP state-unbuildable:rev-hex:unknown state: no-such-state-r98
+$ cat R98E2-hand-limit-mechanism-missing.out
+  GUARD_SETUP limit-mechanism-missing:rev-hex
+$ cat R98E2-hand-positive.out | tail -1
+  GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0
+
+Battery transcript token probe (step 3 question)
+------------------------------------------------
+$ python3 - <<'PY'  (reads R98E2-positive.out / R98E2-red.out)
+  ...
+PY
+observed (R98E2-transcript-probe.out, sha256 713127be19fba1b53cc9ae6e08e2f829b4bd21ac8d7cc884ccbf855f216ba08f):
+  R98E2-positive.out bytes=55 lines=1 GUARD_SETUP_lines=0 sha256=1d22df06...
+  R98E2-red.out bytes=138 lines=2 GUARD_SETUP_lines=0 sha256=f279d497...
+=> the other four (in fact all six) class tokens are NOT in the battery transcript; see F1.
+
+Step 4 — pin attacks
+--------------------
+$ ... --tool-sha $(printf '0%.0s' {1..64}) --work .../pin-zero
+observed: GUARD_REFUSALS_SETUP tool-sha-mismatch   (39 B, sha256 c2cd8a139f16bdb06d2cbd1ad7f1ae8a2d12dde3c0de597559ed1565a1cbb5a1)
+observed exit: 2
+$ ... --tool-sha 0123456789 --work .../pin-short
+observed: GUARD_REFUSALS_SETUP tool-sha-invalid    (38 B, sha256 544ca0991cf0b03e2cc327aea1e1699edfe79fec6740949ce4006ba4f5d9deb1)
+observed exit: 2
+$ ls -la .../pin-zero .../pin-short
+  both empty (setup refusal before tool extraction/clone)
+
+Kill-d probes (scratch clone only)
+----------------------------------
+$ git -C .../hand/clone rev-parse --show-toplevel
+  /fast/scratch/hyaku/tameshi-r98/R98E2/hand/clone
+$ git -C .../hand/clone reset -q --hard 764aca97...
+$ printf '\n# worktree-only tamper by R98E2\nprint("GUARD_SETUP state-unbuildable:forged")\n' \
+    >> .../hand/clone/.ufo/evidence/round-97/c2/guard-inertia.py
+$ git -C .../hand/clone status --porcelain
+   M .ufo/evidence/round-97/c2/guard-inertia.py
+$ sha256sum .../hand/clone/.ufo/evidence/round-97/c2/guard-inertia.py
+  258f56930e88b73e394279101f3a22631ae032decebeaa4c977fb534d679d916
+$ ... --lane .../hand/clone --rev 764aca97... --tool-sha 634997d0... --work .../wtpin
+observed: GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok   (55 B, sha256 1d22df06...)
+observed exit: 0        => the dirty worktree changed nothing; the blob at --rev is read
+$ ... --lane .../hand/clone --rev 764aca97... --tool-sha 258f5693... --work .../wtpin-bad
+observed: GUARD_REFUSALS_SETUP tool-sha-mismatch   (39 B, sha256 c2cd8a13...)
+observed exit: 2
+$ git -C .../hand/clone reset -q --hard 764aca97... ; git -C .../hand/clone status --porcelain
+  (empty)
+
+Step 5 — class-grading attacks
+------------------------------
+Attack A (unused manifest string field; row 0 valid):
+  fixture = base + top-level "note" and rows[0]["note"] = "GUARD_SETUP state-unbuildable"
+  $ tool --lane clone --rev 2d201717... --manifest .ufo/evidence/round-97/c2/guard-inertia.json \
+      --manifest-sha 76a1bd8a3657bc1aa78c7c2f67f351c48316d9faf37d2572135db340101edf9e
+  observed: 10 GUARD_ROW lines + GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0
+  observed exit: 0
+  observed stdout bytes: 1071 B, sha256 254536aa0cd7d9389bf8625d6d478ff211b8938d827a02c6abfa4bfa1d52853b
+    (byte-identical to the positive hand run)
+  committed grader on that stdout: class_token_ok("state-unbuildable", out, 0)=False;
+    class_token_ok("state-unbuildable", out, 2)=False; positive_ok(out,0)=True
+  => a token in an unused manifest string is NOT counted as a refusal.
+
+Attack B (token in a manifest field the tool echoes; row 0 id + edit.old="DISPOSITION"):
+  $ tool --lane clone --rev 03a40ad3... --manifest .ufo/evidence/round-97/c2/guard-inertia.json \
+      --manifest-sha d7e807de9c03b4caf5ccc44be0169562daf80aa5f8c5c530d2a7e21ab9887698
+  observed stdout (76 B, sha256 99d51df8f3126b82b645f55b7ffcd0dc0f995f3e8175d5520904f79fda566bfd):
+    GUARD_SETUP edit-ambiguous:rev-hex
+    GUARD_SETUP state-unbuildable:injected:9
+  observed exit: 2
+  committed grader: class_token_ok("state-unbuildable", out, 2)=True
+  => a manifest string echoed at line start CAN be counted (F2); unreachable at R (clean base ids,
+     tree pinned by --rev).
+
+--red edit-no-op:
+$ ... --red edit-no-op --work .../red-noop
+observed (124 B, sha256 3c7dd8d2d6eb2746cbb55d5aedcb22217560aa32ff2267b705f1008a044b48fd), exit 1:
+  GUARD_REFUSALS_RED edit-no-op missed-as-declared rc=0
+  GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=edit-no-op
+
+Step 6 — selftest
+-----------------
+$ python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --selftest
+observed (500 B, sha256 74c3f8ce41d145f29c960cdf9c0f9e3b123f90d509724376acd6e2b820212075), exit 0:
+  SELFTEST refusal-exact PASS got=True want=True
+  SELFTEST refusal-bare PASS got=True want=True
+  SELFTEST refusal-wrong-exit PASS got=False want=False
+  SELFTEST refusal-wrong-token PASS got=False want=False
+  SELFTEST refusal-longer-word PASS got=False want=False
+  SELFTEST refusal-other-line PASS got=False want=False
+  SELFTEST positive-exact PASS got=True want=True
+  SELFTEST positive-missing PASS got=False want=False
+  SELFTEST positive-wrong-exit PASS got=False want=False
+  GUARD_REFUSALS_SELFTEST: 9/9 pass
+
+Before clause (base 034240a5)
+-----------------------------
+$ git grep -c 'GUARD_SETUP state-unbuildable' 034240a5 -- .ufo/evidence
+  rc=1 stdout=''
+$ git grep -c 'GUARD_SETUP limit-mechanism-missing' 034240a5 -- .ufo/evidence
+  rc=1 stdout=''
+$ git grep -c 'GUARD_REFUSALS' 034240a5 -- .ufo/evidence
+  rc=1 stdout=''
+(R98E2-base-tokens.out, sha256 0846966355708dc4d0c167a367003046075f4c47b35b5cdeaeff575b036fd26b)
+
+Auxiliary probes
+----------------
+fixture probe (R98E2-fixture-probe.out, sha256 3a28d94d48c7840126acaf495a2933df704fa92f0feabf8441c21890248efb51):
+  base_manifest_sha256 9de0b7e9...
+  checker_sha256 02a5482a...
+  base_text_has_GUARD_SETUP False
+  base_ids ['rev-hex','rev-unresolvable','verify-quiet','replace-refs','counter-sha',
+            'receipt-absent','no-flip','unknown-key','min-falsifiable','git-absolute']
+  base_ids_have_newline False
+  fixture shas: edit-no-op 6cba53e0..., edit-ambiguous 5b61030f..., state-unbuildable cd0e0d3c...,
+                limit-mechanism-missing 5de816b4..., manifest-sha-mismatch c63eba3f...,
+                manifest-empty 507110f6... ; text_has_GUARD_SETUP=False for all six
+  row0 old counts: 1 / 9 / 1 / 1 / 1 / - ; old_eq_new: True for edit-no-op only
+
+token census (R98E2-token-census.out, sha256 67b0736815c6bd5e675161a068854174658be8ad93356dd00e4adb4886fda760):
+  frozen tool declares 13 GUARD_SETUP tokens (4 _setup_text + 9 die); battery CLASSES = 6;
+  uncovered = rev-not-a-commit-id, rev-unresolvable, checker-absent-at-rev, checker-sha-mismatch,
+              manifest-absent-at-rev, manifest-sha-invalid, manifest-unparsable
+
+red predicate constancy (R98E2-red-constant.out, sha256 153296094328bc0cb0f7e8317cb20d8bd529a38f773aa181ecceabd594e1a5f1):
+  committed class_token_ok('state-unbuildable','GUARD_SETUP state-unbuildable:forged\n',2)=True
+  red class never enters refused (source 215-224); wrong = 6 - refused (241); exit literal 1 (245-246)
+  => quoted red summary + exit is identical for a correct miss and a red-arm failure (F3)
+
+Lane untouched
+--------------
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin rev-parse --show-toplevel
+  /home/vgpnk/Projects/shokunin/tameshi-shokunin
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin rev-parse HEAD
+  cdaecece9ac3136e14f4961b6e6c412fc7e854b9
+No lane mutation was run: read-only git, plus `git clone --shared <lane> <scratch>`.
+Lane worktree status observed before my writes (no R98E2 path; only L1 and sibling-seat
+artifacts):
+  M .ufo/waves/round-98/claims.json
+  M LOG.md
+  M SCORECARD.md
+  M corpus/QUALITY.md
+  M corpus/README.md
+  M corpus/SOURCES.md
+  M plans/round-98.plan.md
+  ?? .ufo/evidence/round-97/pre-freeze/CONTROLS97-summary.txt
+  ?? .ufo/evidence/round-97/pre-freeze/NOTE-superseded-r98.txt
+  ?? .ufo/evidence/round-98/pre-freeze/c1-before-token.out
+  ?? .ufo/evidence/round-98/pre-freeze/c2-before-limit-mechanism.out
+  ?? .ufo/evidence/round-98/pre-freeze/c2-before-state-unbuildable.out
+  ?? .ufo/evidence/round-98/pre-freeze/c2-before-token.out
+  ?? .ufo/evidence/round-98/records-run.sh
+  ?? .ufo/waves/round-97/w1/NOTE-superseded-r98.txt
+  ?? .ufo/waves/round-98/census-after.txt
+  ?? .ufo/waves/round-98/w1.ready
+  ?? .ufo/waves/round-98/w1.ready.dispatched
+  ?? .ufo/waves/round-98/w1/R98E1-fixtures/
+  ?? .ufo/waves/round-98/w1/R98E3-receipts/
+  ?? .ufo/waves/round-98/w1/R98E3.md
+  ?? .ufo/waves/round-98/w1/R98SC1-*  (census/fetch/render/registry receipts)
+  ?? corpus/knowledge/control-assertion-anchoring.md
+  ?? corpus/lessons/round-98.md
+(my own R98E2.md / R98E2-repro.txt / R98E2-* receipts are written after this observation)
+
+Scratch /fast/scratch/hyaku/tameshi-r98/R98E2 deleted after the receipts above were copied
+into .ufo/waves/round-98/w1/. No tool install/upgrade, no pacman transaction, no sysctl or
+service change.

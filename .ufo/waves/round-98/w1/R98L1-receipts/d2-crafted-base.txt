@@ -1,0 +1,25 @@
+Crafted base used by the two d2-* runs above.
+
+$ git clone -q --shared <lane> lane-probe
+$ git -C lane-probe checkout -q --detach 07e50d6d0142b21e8443b5417b8edc4d1dd76455
+$ mkdir -p .ufo/evidence/round-98/nowork-probe
+$ printf 'GUARD_INERTIA\n' > .ufo/evidence/round-98/nowork-probe/token.txt
+$ git add -A && git commit -m 'r98l1 probe base: add GUARD_INERTIA token above 07e50d6d'
+
+$ git -C /fast/scratch/hyaku/tameshi-r98/R98L1/lane-probe rev-parse 92289442b1c00f7bc5132c1c9d68933d93a95673^
+07e50d6d0142b21e8443b5417b8edc4d1dd76455
+(rc=0)
+
+$ git -C /fast/scratch/hyaku/tameshi-r98/R98L1/lane-probe rev-parse 92289442b1c00f7bc5132c1c9d68933d93a95673
+92289442b1c00f7bc5132c1c9d68933d93a95673
+(rc=0)
+
+$ git -C /fast/scratch/hyaku/tameshi-r98/R98L1/lane-probe grep -c GUARD_INERTIA 92289442b1c00f7bc5132c1c9d68933d93a95673
+92289442b1c00f7bc5132c1c9d68933d93a95673:.ufo/evidence/round-98/nowork-probe/token.txt:1
+(rc=0)
+
+$ git -C /fast/scratch/hyaku/tameshi-r98/R98L1/lane-probe grep -c BATTERY states= 92289442b1c00f7bc5132c1c9d68933d93a95673
+(rc=1)
+
+So the base contains GUARD_INERTIA and does NOT contain 'BATTERY states=':
+the C1 no-work premise is intact, the C2 no-work premise is false.

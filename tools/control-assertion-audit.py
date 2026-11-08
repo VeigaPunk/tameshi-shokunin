@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""control-assertion-audit — static provenance audit of a control driver.
+"""control-assertion-audit — static, scope-aware provenance audit of a control driver.
 
 Round 97's pre-freeze driver registered one state whose graded code was the
 literal 0 (`add("c2-nowork-absent", 0, ...)`), so that control could not fail
@@ -9,8 +9,9 @@ code expression comes from:
 
   measured    the expression derives from a runner call (`sh`, `git`, `run`,
               `subprocess.run`): `p.returncode`, or the first element of
-              `code, out = run(...)`; a name chain is followed to its last
-              assignment before the call.
+              `code, out = run(...)`; a name chain is followed through the
+              call's own scope chain (function locals, enclosing functions,
+              module) to the last assignment before the call.
   literal     a constant, directly or bound through a name.
   unresolved  any other expression (a non-runner `.returncode`, a plain call,
               arithmetic, a loop variable, a name with no prior assignment).
@@ -61,87 +62,151 @@ def is_runner_call(node):
     return isinstance(node, ast.Call) and call_name(node) in RUNNERS
 
 
-def collect_assigns(tree):
-    """name -> [(lineno, kind, payload)] in source order.
+class Scope:
+    __slots__ = ("idx", "parent")
 
-    kind: 'direct' (payload = expression), 'tuple' (payload = (index, call)),
-          'loop' (payload = None), 'other' (payload = expression).
+    def __init__(self, idx, parent):
+        self.idx = idx
+        self.parent = parent
+
+
+def collect_scopes(tree):
+    """Returns (assigns, scopes_of, call_scope, scope_nodes).
+
+    assigns: (scope_idx, name) -> [(lineno, kind, payload)]
+    scopes_of: id(node) -> Scope for every node, so a call site knows its scope
     """
-    out = {}
+    assigns = {}
+    scopes_of = {}
+    counter = [0]
 
-    def rec(node):
-        for child in ast.iter_child_nodes(node):
-            rec(child)
+    def new_scope(parent):
+        counter[0] += 1
+        return Scope(counter[0], parent)
+
+    def record(scope, name, lineno, kind, payload):
+        assigns.setdefault((scope.idx, name), []).append((lineno, kind, payload))
+
+    def visit(node, scope):
+        scopes_of[id(node)] = scope
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+            inner = new_scope(scope)
+            if isinstance(node, ast.Lambda):
+                visit(node.body, inner)
+                return
+            # defaults and decorators evaluate in the enclosing scope
+            for d in list(node.decorator_list) + list(node.args.defaults) + \
+                    [d for d in node.args.kw_defaults if d is not None]:
+                visit(d, scope)
+            for arg in list(node.args.posonlyargs) + list(node.args.args) + \
+                    list(node.args.kwonlyargs) + [node.args.vararg, node.args.kwarg]:
+                if arg is not None:
+                    record(inner, arg.arg, node.lineno, "loop", None)
+            for child in node.body:
+                visit(child, inner)
+            return
         if isinstance(node, ast.Assign):
-            val = node.value
             tuple_bind = isinstance(node.value, ast.Call) and isinstance(node.targets[0], ast.Tuple)
             for tgt in node.targets:
                 if isinstance(tgt, ast.Name):
-                    kind = "direct"
-                    out.setdefault(tgt.id, []).append((node.lineno, kind, val))
+                    record(scope, tgt.id, node.lineno, "direct", node.value)
+                elif isinstance(tgt, ast.Attribute):
+                    base = tgt.value
+                    if isinstance(base, ast.Name):
+                        record(scope, base.id + "." + tgt.attr, node.lineno, "direct", node.value)
                 elif isinstance(tgt, ast.Tuple):
                     for i, el in enumerate(tgt.elts):
                         if isinstance(el, ast.Name):
                             if tuple_bind:
-                                out.setdefault(el.id, []).append((node.lineno, "tuple", (i, val)))
+                                record(scope, el.id, node.lineno, "tuple", (i, node.value))
                             else:
-                                out.setdefault(el.id, []).append((node.lineno, "other", None))
-        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
-            if node.value is not None:
-                out.setdefault(node.target.id, []).append((node.lineno, "direct", node.value))
+                                record(scope, el.id, node.lineno, "other", None)
+        elif isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name) and node.value is not None:
+            record(scope, node.target.id, node.lineno, "direct", node.value)
+        elif isinstance(node, ast.AugAssign) and isinstance(node.target, ast.Name):
+            # an augmented assignment changes the value without a plain binding
+            record(scope, node.target.id, node.lineno, "other", None)
         elif isinstance(node, (ast.For, ast.AsyncFor, ast.comprehension)):
             for el in ast.walk(node.target):
                 if isinstance(el, ast.Name):
-                    out.setdefault(el.id, []).append((getattr(el, "lineno", 0), "loop", None))
+                    record(scope, el.id, getattr(el, "lineno", 0), "loop", None)
+        for child in ast.iter_child_nodes(node):
+            if id(child) not in scopes_of:
+                visit(child, scope)
 
-    rec(tree)
-    return out
+    root = new_scope(None)
+    visit(tree, root)
+    return assigns, scopes_of
 
 
-def resolve(name, lineno, assigns, depth=0):
-    """Returns (class, detail) for a name used as a recorded code."""
+def resolve(name, lineno, scope, assigns, depth=0):
+    """Resolve a name in the call's scope chain (locals -> enclosing -> module)."""
     if depth > 8:
         return "unresolved", "name-chain"
-    cand = [row for row in assigns.get(name, []) if row[0] < lineno]
-    if not cand:
-        return "unresolved", "no-assignment-before-call"
-    ln, kind, payload = max(cand, key=lambda r: r[0])
-    if kind == "loop":
-        return "unresolved", "loop-variable"
-    if kind == "tuple":
-        idx, call = payload
-        if is_runner_call(call) and idx == 0:
-            return "measured", "tuple-run@%d" % ln
-        return "unresolved", "tuple-not-runner@%d" % ln
-    if kind == "direct":
-        return classify(payload, ln, assigns, depth + 1)
-    return "unresolved", "other-assignment@%d" % ln
+    s = scope
+    while s is not None:
+        cand = [row for row in assigns.get((s.idx, name), []) if row[0] < lineno]
+        if cand:
+            classes = []
+            for ln, kind, payload in cand:
+                if kind == "loop":
+                    classes.append(("unresolved", "loop-variable@%d" % ln))
+                elif kind == "tuple":
+                    idx, call = payload
+                    if is_runner_call(call) and idx == 0:
+                        classes.append(("measured", "tuple-run@%d" % ln))
+                    else:
+                        classes.append(("unresolved", "tuple-not-runner@%d" % ln))
+                elif kind == "direct":
+                    classes.append(classify(payload, ln, s, assigns, depth + 1))
+                else:
+                    classes.append(("unresolved", "other-assignment@%d" % ln))
+            if all(c[0] == "measured" for c in classes):
+                return "measured", classes[-1][1]
+            if any(c[0] == "literal" for c in classes):
+                return "literal", classes[-1][1]
+            return "unresolved", classes[-1][1]
+        s = s.parent
+    return "unresolved", "no-assignment-in-scope-chain"
 
 
-def classify(expr, lineno, assigns, depth=0):
+def classify(expr, lineno, scope, assigns, depth=0):
     if isinstance(expr, ast.Constant):
         return "literal", "constant"
     if isinstance(expr, ast.Name):
-        return resolve(expr.id, lineno, assigns, depth)
+        return resolve(expr.id, lineno, scope, assigns, depth)
     if isinstance(expr, ast.Attribute):
         if expr.attr == "returncode":
             v = expr.value
+            if isinstance(v, ast.Name):
+                key = v.id + ".returncode"
+                s = scope
+                while s is not None:
+                    mut = [r for r in assigns.get((s.idx, key), []) if r[0] < lineno]
+                    if mut:
+                        return classify(mut[-1][2], mut[-1][0], s, assigns, depth + 1)
+                    s = s.parent
             if is_runner_call(v):
                 return "measured", "returncode-of-runner"
             if isinstance(v, ast.Name):
-                cls, det = resolve(v.id, lineno, assigns, depth)
+                cls, det = resolve(v.id, lineno, scope, assigns, depth)
                 if cls == "measured" and det.startswith("tuple-run"):
                     return "unresolved", "returncode-of-tuple"
                 if cls == "unresolved":
-                    nxt = [r for r in assigns.get(v.id, []) if r[0] < lineno]
-                    if nxt and nxt[-1][1] == "direct" and is_runner_call(nxt[-1][2]):
-                        return "measured", "returncode-of-runner-name"
+                    s = scope
+                    while s is not None:
+                        nxt = [r for r in assigns.get((s.idx, v.id), []) if r[0] < lineno]
+                        if nxt:
+                            if nxt[-1][1] == "direct" and is_runner_call(nxt[-1][2]):
+                                return "measured", "returncode-of-runner-name"
+                            break
+                        s = s.parent
                 return "unresolved", "returncode-of-%s" % cls
             return "unresolved", "returncode-of-non-runner"
         return "unresolved", "attribute-" + expr.attr
     if isinstance(expr, ast.IfExp):
-        a = classify(expr.body, lineno, assigns, depth + 1)
-        b = classify(expr.orelse, lineno, assigns, depth + 1)
+        a = classify(expr.body, lineno, scope, assigns, depth + 1)
+        b = classify(expr.orelse, lineno, scope, assigns, depth + 1)
         if a[0] == "measured" and b[0] == "measured":
             return "measured", "both-branches"
         if a[0] == "literal" and b[0] == "literal":
@@ -158,7 +223,9 @@ def audit_text(text):
         tree = ast.parse(text)
     except SyntaxError as exc:
         return None, 2, ["AUDIT_SETUP unparsable:%s" % exc]
-    assigns = collect_assigns(tree)
+    assigns, scopes_of = collect_scopes(tree)
+    add_defs = [n for n in ast.walk(tree)
+                if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == "add"]
     sites = []
     calls = sorted((n for n in ast.walk(tree)
                     if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
@@ -175,7 +242,10 @@ def audit_text(text):
             label = node.args[0].value
         if code_expr is None:
             return None, 2, ["AUDIT_SETUP add-without-code:line=%d" % node.lineno]
-        cls, det = classify(code_expr, node.lineno, assigns)
+        if len(add_defs) > 1:
+            cls, det = "unresolved", "duplicate-add-definition"
+        else:
+            cls, det = classify(code_expr, node.lineno, scopes_of[id(node)], assigns)
         sites.append((node.lineno, label, cls, det))
     measured = sum(1 for s in sites if s[2] == "measured")
     literal = sum(1 for s in sites if s[2] == "literal")
@@ -197,9 +267,19 @@ SELFTEST_CASES = [
     ("measured-tuple-run",
      'def run(a):\n    return 1, "o"\ndef main():\n    code, out = run(["x"])\n    add("x", code, "b", 0)\n',
      "measured"),
-    ("rebound-to-measured",
-     'import subprocess\ndef main():\n    rc = 0\n    p = subprocess.run(["true"])\n    rc = p.returncode\n    add("x", rc, "b", 0)\n',
+    ("rebound-mixed", 'import subprocess\ndef main():\n    rc = 0\n    p = subprocess.run(["true"])\n    rc = p.returncode\n    add("x", rc, "b", 0)\n',
+     "literal"),
+    ("all-measured-multiple",
+     'import subprocess\ndef main():\n    p = subprocess.run(["true"])\n    rc = p.returncode\n    q = subprocess.run(["false"])\n    rc = q.returncode\n    add("x", rc, "b", 0)\n',
      "measured"),
+    ("attr-mutation",
+     'import subprocess\ndef main():\n    p = subprocess.run(["true"])\n    p.returncode = 0\n    add("x", p.returncode, "b", 1)\n',
+     "literal"),
+    ("augassign", 'def run(a):\n    return 1, "o"\ndef main():\n    code, out = run(["x"])\n    code += 7\n    add("x", code, "b", 0)\n',
+     "unresolved"),
+    ("duplicate-add",
+     'def add(a, b, c, d):\n    pass\ndef add(a, b, c, d):\n    pass\ndef main():\n    add("x", 0, "b", 0)\n',
+     "unresolved"),
     ("fake-returncode",
      'class X:\n    returncode = 0\ndef main():\n    x = X()\n    add("x", x.returncode, "b", 0)\n',
      "unresolved"),
@@ -207,6 +287,12 @@ SELFTEST_CASES = [
     ("loop-site", 'def run(a):\n    return 1, "o"\ndef main():\n    for n in ("a", "b"):\n        code, out = run(["x"])\n        add(n, code, "b", 0)\n',
      "measured"),
     ("no-assignment", 'def main():\n    add("x", rc, "b", 0)\n', "unresolved"),
+    ("scope-shadow-constant",
+     'import subprocess\ndef main():\n    rc = 0\n    def helper():\n        p = subprocess.run(["true"])\n        rc = p.returncode\n        return rc\n    add("x", rc, "b", 1)\n',
+     "literal"),
+    ("scope-shadow-attr",
+     'import subprocess\nclass R:\n    returncode = 0\ndef main():\n    p = R()\n    def helper():\n        p = subprocess.run(["true"])\n        return p\n    add("x", p.returncode, "b", 1)\n',
+     "unresolved"),
 ]
 
 

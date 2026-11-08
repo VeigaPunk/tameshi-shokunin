@@ -1,0 +1,298 @@
+{
+ "seat": "R98M1",
+ "round": 98,
+ "wave": "w1",
+ "registered": true,
+ "target_commits": {
+  "base": "034240a591575167f0747ad7372a1f4b9cd33a58",
+  "instruments": "d32043ec836ca097e93ae0b095faa7cae4125697",
+  "freeze": "764aca97e513d650949999362cd4b0f5f0e566a5"
+ },
+ "instruments": {
+  "audit": {
+   "path": "control-assertion-audit.py",
+   "sha256": "774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c",
+   "bytes": 11774
+  },
+  "battery": {
+   "path": "guard-refusals.py",
+   "sha256": "4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872",
+   "bytes": 10452
+  }
+ },
+ "mutants": [
+  {
+   "id": "a1-constant-measured",
+   "instrument": "audit",
+   "rationale": "kill rule a: a constant is reported measured",
+   "old": "        return \"literal\", \"constant\"",
+   "new": "        return \"measured\", \"constant\"",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "a2-direct-name-measured",
+   "instrument": "audit",
+   "rationale": "kill rule a: a name bound to a constant is reported measured",
+   "old": "    if kind == \"direct\":\n        return classify(payload, ln, assigns, depth + 1)",
+   "new": "    if kind == \"direct\":\n        return \"measured\", \"direct-name\"",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "a3-fake-returncode-measured",
+   "instrument": "audit",
+   "rationale": "kill rule b: a returncode on a non-runner value is reported measured",
+   "old": "        return \"unresolved\", \"returncode-of-%s\" % cls",
+   "new": "        return \"measured\", \"returncode-of-%s\" % cls",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "a4-literal-tally-zero",
+   "instrument": "audit",
+   "rationale": "kill rule c: the literal tally is not measured",
+   "old": "    literal = sum(1 for s in sites if s[2] == \"literal\")",
+   "new": "    literal = 0",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "a5-code-arg-off-by-one",
+   "instrument": "audit",
+   "rationale": "kill rule d: every add site is skipped (no code argument found)",
+   "old": "        if len(node.args) >= 2:",
+   "new": "        if len(node.args) >= 3:",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "a6-first-assignment-not-last",
+   "instrument": "audit",
+   "rationale": "kill rule a/d: a rebound name resolves to its first assignment",
+   "old": "    ln, kind, payload = max(cand, key=lambda r: r[0])",
+   "new": "    ln, kind, payload = min(cand, key=lambda r: r[0])",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "a7-exit-always-zero",
+   "instrument": "audit",
+   "rationale": "kill rule d: the audit cannot exit 1",
+   "old": "    return sites, (0 if unmeasured == 0 else 1), lines",
+   "new": "    return sites, 0, lines",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "a8-site-name-dropped",
+   "instrument": "audit",
+   "rationale": "frozen wording: the literal site is not named",
+   "old": "             % (ln, name, \"yes\" if cls == \"measured\" else \"no\", cls, det)",
+   "new": "             % (ln, \"?\", \"yes\" if cls == \"measured\" else \"no\", cls, det)",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "a9-tuple-index-ignored",
+   "instrument": "audit",
+   "rationale": "kill rule a: any element of a runner tuple counts as measured",
+   "old": "        if is_runner_call(call) and idx == 0:",
+   "new": "        if is_runner_call(call):",
+   "old_occurrences": 1,
+   "predicted": "SURVIVED"
+  },
+  {
+   "id": "a10-depth-guard-widened",
+   "instrument": "audit",
+   "rationale": "kill rule a: the name-chain depth guard is 100x wider",
+   "old": "    if depth > 8:",
+   "new": "    if depth > 800:",
+   "old_occurrences": 1,
+   "predicted": "SURVIVED"
+  },
+  {
+   "id": "b1-rc-accepts-one",
+   "instrument": "battery",
+   "rationale": "kill rule a: a class counted refused when the run exited 1",
+   "old": "    if rc != 2:\n        return False",
+   "new": "    if rc not in (2, 1):\n        return False",
+   "old_occurrences": 1,
+   "predicted": "SURVIVED"
+  },
+  {
+   "id": "b2-rc-check-dead",
+   "instrument": "battery",
+   "rationale": "kill rule a: the exit-2 requirement is removed",
+   "old": "    if rc != 2:\n        return False",
+   "new": "    if rc == 999:\n        return False",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "b3-token-prefix-loosened",
+   "instrument": "battery",
+   "rationale": "kill rule b: a longer token word is accepted",
+   "old": "        if line == \"GUARD_SETUP \" + name or line.startswith(\"GUARD_SETUP \" + name + \":\"):",
+   "new": "        if line == \"GUARD_SETUP \" + name or line.startswith(\"GUARD_SETUP \" + name):",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "b5-token-from-stderr",
+   "instrument": "battery",
+   "rationale": "kill rule b: a class token is accepted from stderr",
+   "old": "        ok = class_token_ok(name, out, rc)",
+   "new": "        ok = class_token_ok(name, out + err, rc)",
+   "old_occurrences": 1,
+   "predicted": "SURVIVED"
+  },
+  {
+   "id": "b6-positive-substring",
+   "instrument": "battery",
+   "rationale": "kill rule e: the positive predicate matches as a substring, not the exact line",
+   "old": "    return rc == 0 and any(line == PREDICATE for line in stdout.splitlines())",
+   "new": "    return rc == 0 and any(PREDICATE in line for line in stdout.splitlines())",
+   "old_occurrences": 1,
+   "predicted": "SURVIVED"
+  },
+  {
+   "id": "b7-positive-exit-ignored",
+   "instrument": "battery",
+   "rationale": "kill rule e: the positive's exit code is not graded",
+   "old": "    return rc == 0 and any(line == PREDICATE for line in stdout.splitlines())",
+   "new": "    return any(line == PREDICATE for line in stdout.splitlines())",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "b8-red-substitution-dropped",
+   "instrument": "battery",
+   "rationale": "kill rule c: the red arm never substitutes the positive manifest",
+   "old": "        git(clone, [\"reset\", \"-q\", \"--hard\", rev], env)\n        if a.red == name:\n            fixture = man_bytes",
+   "new": "        git(clone, [\"reset\", \"-q\", \"--hard\", rev], env)\n        if False:\n            fixture = man_bytes",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "b9-red-exit-removed",
+   "instrument": "battery",
+   "rationale": "kill rule c: the red run cannot exit 1",
+   "old": "    if a.red:\n        return 1  # the red run is the failing demonstration the claim cites",
+   "new": "    if a.red:\n        return 0  # the red run is the failing demonstration the claim cites",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "b10-wrong-count-hardcoded",
+   "instrument": "battery",
+   "rationale": "kill rule c/f: the wrong count is a literal 0 in the summary",
+   "old": "          % (len(CLASSES), refused, len(CLASSES) - refused, \"ok\" if pos else \"fail\",",
+   "new": "          % (len(CLASSES), refused, 0, \"ok\" if pos else \"fail\",",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  },
+  {
+   "id": "b11-pin-check-disabled",
+   "instrument": "battery",
+   "rationale": "kill rule d: the --tool-sha pin is never enforced",
+   "old": "    if a.tool_sha is not None:",
+   "new": "    if False:",
+   "old_occurrences": 1,
+   "predicted": "KILLED"
+  }
+ ],
+ "arms": {
+  "audit": [
+   {
+    "id": "audit-selftest",
+    "kind": "selftest",
+    "expect": {
+     "rc": 0,
+     "exact_line": "CONTROL_ASSERT_SELFTEST: 12/12 pass"
+    }
+   },
+   {
+    "id": "audit-r97-driver",
+    "kind": "audit-run",
+    "driver": ".ufo/evidence/round-97/controls97.py",
+    "expect": {
+     "rc": 1,
+     "exact_line": "CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1",
+     "exact_site_line": "CONTROL_ASSERT_SITE line=156 name=c2-nowork-absent measured=no class=literal detail=constant"
+    }
+   },
+   {
+    "id": "audit-controls98",
+    "kind": "audit-run",
+    "driver": ".ufo/evidence/round-98/controls98.py",
+    "expect": {
+     "rc": 0,
+     "exact_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   },
+   {
+    "id": "audit-blob-not-worktree",
+    "kind": "audit-run-worktree-edit",
+    "driver": ".ufo/evidence/round-98/controls98.py",
+    "expect": {
+     "rc": 0,
+     "exact_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    "note": "supplementary arm for kill rule e: same rev, worktree driver edited to reintroduce D-2; a blob reader is unchanged"
+   }
+  ],
+  "battery": [
+   {
+    "id": "battery-selftest",
+    "kind": "selftest",
+    "expect": {
+     "rc": 0,
+     "exact_line": "GUARD_REFUSALS_SELFTEST: 9/9 pass"
+    }
+   },
+   {
+    "id": "battery-positive",
+    "kind": "battery-positive",
+    "expect": {
+     "rc": 0,
+     "exact_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    }
+   },
+   {
+    "id": "battery-red",
+    "kind": "battery-red",
+    "red": "state-unbuildable",
+    "expect": {
+     "rc": 1,
+     "exact_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable",
+     "red_observable": {
+      "contains_prefix": "GUARD_REFUSALS_RED state-unbuildable missed-as-declared rc=",
+      "absent_substring": "refused-under-red-run"
+     }
+    }
+   },
+   {
+    "id": "battery-pin",
+    "kind": "battery-pin",
+    "expect": {
+     "mismatch": {
+      "rc": 2,
+      "exact_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch"
+     },
+     "invalid": {
+      "rc": 2,
+      "exact_line": "GUARD_REFUSALS_SETUP tool-sha-invalid"
+     }
+    },
+    "note": "supplementary arm for the frozen C2 wording (a --tool-sha that is not 64 hex or does not equal the blob sha256 is refused with setup exit 2)"
+   }
+  ]
+ },
+ "method": "pre-registered before any mutant run; each mutant is one exact old->new string replacement in a fresh copy; old-string occurrence count asserted == 1",
+ "classification": {
+  "KILLED": "at least one pre-registered arm observed its predicate to fail",
+  "SURVIVED": "every pre-registered arm observed its predicate to pass",
+  "INCONCLUSIVE": "the pristine baseline failed an arm, or the mutant could not be applied"
+ }
+}

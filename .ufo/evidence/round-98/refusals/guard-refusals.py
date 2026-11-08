@@ -18,8 +18,8 @@ can fail.
 
 Usage:
   python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane LANE \
-      --rev <40 hex> --tool <repo path> --tool-sha <64 hex> --work <empty dir> \
-      [--red CLASS] [--selftest]
+      --rev <40 hex> --tool <repo path> --tool-sha <the frozen tool's 64 hex> \
+      --work <empty dir> [--red CLASS] [--selftest]
 
 Exit: 0 every class refused with exit 2 and the exact token, and the positive
 printed the predicate with exit 0; 1 a missed class, a wrong token or a failed
@@ -36,6 +36,7 @@ import subprocess
 import sys
 
 GIT = "/usr/bin/git"
+FROZEN_TOOL_SHA = "634997d09d2dba5cd87df12e2844962b3517ede798ab0ce04303807b6db042c8"
 CLASSES = ["edit-no-op", "edit-ambiguous", "state-unbuildable",
           "limit-mechanism-missing", "manifest-sha-mismatch", "manifest-empty"]
 MANIFEST = ".ufo/evidence/round-97/c2/guard-inertia.json"
@@ -159,16 +160,21 @@ def main():
     if tb[0] != 0:
         sys.exit(die("tool-absent-at-rev"))
     tool_blob = tb[1].encode()
-    if a.tool_sha is not None:
-        if not re.fullmatch(r"[0-9a-f]{64}", a.tool_sha):
-            sys.exit(die("tool-sha-invalid"))
-        if hashlib.sha256(tool_blob).hexdigest() != a.tool_sha:
-            sys.exit(die("tool-sha-mismatch"))
+    if a.tool_sha is None:
+        sys.exit(die("tool-sha-missing"))
+    if not re.fullmatch(r"[0-9a-f]{64}", a.tool_sha):
+        sys.exit(die("tool-sha-invalid"))
+    if a.tool_sha != FROZEN_TOOL_SHA:
+        sys.exit(die("tool-sha-not-frozen"))
+    if hashlib.sha256(tool_blob).hexdigest() != a.tool_sha:
+        sys.exit(die("tool-sha-mismatch"))
     mb = git(lane, ["cat-file", "blob", "%s:%s" % (rev, a.manifest)], env)
     if mb[0] != 0:
         sys.exit(die("manifest-absent-at-rev"))
     man_bytes = mb[1].encode()
     man_sha = hashlib.sha256(man_bytes).hexdigest()
+    if b"GUARD_SETUP" in man_bytes:
+        sys.exit(die("base-manifest-token"))
     try:
         base = json.loads(man_bytes)
     except ValueError:
@@ -189,6 +195,7 @@ def main():
     failed = 0
     refused = 0
     observations = []
+    red_rc = []
     for name in CLASSES:
         git(clone, ["reset", "-q", "--hard", rev], env)
         if a.red == name:
@@ -214,14 +221,15 @@ def main():
         observations.append((name, rc, ok))
         if a.red == name:
             # the red arm must MISS: a substituted positive manifest must not refuse.
+            red_observed = "refused" if ok else "missed"
+            print("GUARD_REFUSALS_RED %s observed=%s rc=%d" % (name, red_observed, rc))
+            red_rc.append(rc)
             if ok:
                 failed += 1
-                print("GUARD_REFUSALS_RED %s refused-under-red-run" % name)
-            else:
-                print("GUARD_REFUSALS_RED %s missed-as-declared rc=%d" % (name, rc))
             continue
         if ok:
             refused += 1
+            print("GUARD_REFUSAL %s rc=2 token=ok" % name)
         else:
             failed += 1
             token = [ln for ln in out.splitlines() if ln.startswith("GUARD_SETUP")][:1]
@@ -234,6 +242,11 @@ def main():
     rc, out, err = run([sys.executable, "-I", tool, "--lane", clone, "--rev", rev,
                         "--manifest-sha", man_sha], sealed_env(scratch))
     pos = positive_ok(out, rc)
+    for line in out.splitlines():
+        if line.startswith("GUARD_ROW "):
+            print(line)
+    print("GUARD_REFUSAL_POSITIVE rows=%d rc=%d" % (
+        sum(1 for line in out.splitlines() if line.startswith("GUARD_ROW ")), rc))
     if not pos:
         failed += 1
         print("GUARD_REFUSALS_POSITIVE_FAIL rc=%d last=%r" % (rc, out.splitlines()[-1:]))
@@ -243,7 +256,8 @@ def main():
     shutil.rmtree(clone, ignore_errors=True)
     shutil.rmtree(os.path.join(work, "tool-scratch"), ignore_errors=True)
     if a.red:
-        return 1  # the red run is the failing demonstration the claim cites
+        # 1 = the substituted class was missed as required; 2 = the red arm refused
+        return 2 if failed else 1
     return 0 if failed == 0 else 1
 
 

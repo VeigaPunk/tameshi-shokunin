@@ -1,0 +1,23 @@
+## arm 1: not 64 hex
+CMD: python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane . --rev 764aca97e513d650949999362cd4b0f5f0e566a5 --tool .ufo/evidence/round-97/c2/guard-inertia.py --tool-sha zz --work /fast/scratch/hyaku/tameshi-r98/R98R2/r-p1
+GUARD_REFUSALS_SETUP tool-sha-invalid
+EXIT=2
+## arm 2: 64 hex digest of other bytes
+CMD: python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane . --rev 764aca97e513d650949999362cd4b0f5f0e566a5 --tool .ufo/evidence/round-97/c2/guard-inertia.py --tool-sha 0000..(64x0) --work /fast/scratch/hyaku/tameshi-r98/R98R2/r-p2
+GUARD_REFUSALS_SETUP tool-sha-mismatch
+EXIT=2
+## arm 3: different committed tool, frozen digest supplied
+CMD: python3 -I .ufo/evidence/round-98/refusals/guard-refusals.py --lane . --rev 764aca97e513d650949999362cd4b0f5f0e566a5 --tool .ufo/evidence/round-98/refusals/guard-refusals.py --tool-sha 634997d09d2dba5cd87df12e2844962b3517ede798ab0ce04303807b6db042c8 --work /fast/scratch/hyaku/tameshi-r98/R98R2/r-p3
+GUARD_REFUSALS_SETUP tool-sha-mismatch
+EXIT=2
+## control: no digest of 634997d0... is baked into the battery
+CMD: git cat-file -p 764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/refusals/guard-refusals.py | grep -n 634997
+EXIT=1
+CMD: git cat-file -p 764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/refusals/guard-refusals.py | grep -n 'tool-sha' | head
+8:frozen tool as a blob at --rev (sha256 must equal --tool-sha, so a worktree
+21:      --rev <40 hex> --tool <repo path> --tool-sha <64 hex> --work <empty dir> \
+26:positive (each named); 2 setup (bad rev, tool absent, tool-sha invalid or
+135:    ap.add_argument("--tool-sha", default=None)
+164:            sys.exit(die("tool-sha-invalid"))
+166:            sys.exit(die("tool-sha-mismatch"))
+EXIT=0

@@ -1,0 +1,27 @@
+# CMD: python3 -I /fast/scratch/hyaku/tameshi-r98/R98SN1/src/tools_registry-cell-immutability.py
+# ENV: inherited
+# CWD: /home/vgpnk/Projects/shokunin
+# START: 2026-11-08T13:15:40-03:00
+registry-cell-immutability — audit CORPUS SOURCES registry rows between two
+commits for in-place edits of immutable cells.
+
+`CORPUS.md` §SOURCES.md rule 2 is append-only: only `status`, `recheck` and
+`used-by` may change in place, and each change is logged old→new in the round
+lesson; every other cell (source, kind, tier, scope, anchor, teaches, opened)
+is frozen, and a correction is a new superseding row. Round 97 edited the
+`anchor` cells of S159 and S006 in place; the round's census passed and only
+the non-author spot-check (D-1) caught it. This tool measures the class.
+
+Both revisions are read as blobs through `git cat-file` (never a worktree).
+Rows are parsed with the maintained 0-3 leading-space rule; a row that is not
+11 columns is setup, not a verdict (a malformed registry has no cell identity).
+
+Usage:
+  python3 -I tools/registry-cell-immutability.py --repo LANE       --from <40 hex> --to <40 hex> [--path corpus/SOURCES.md] [--selftest]
+
+Exit: 0 no immutable cell changed and no row removed; 1 findings (each printed
+as `REGISTRY_CELL <id>:<column> changed` or `REGISTRY_ROW removed <id>`);
+2 setup (bad rev, blob absent, zero rows, malformed row); 64 usage.
+
+# RC: 64
+# END: 2026-11-08T13:15:40-03:00

@@ -1,0 +1,405 @@
+R98E1 — C1 reproduction raw transcript (round 98, wave w1)
+seat: R98E1 (executor); lane: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+round base 034240a5; instruments d32043ec; freeze 764aca97 (the --rev used below)
+each block is one receipt; '$ (cd CWD && ...)' is the exact command, '[exit N]' its exit
+host: Arch x64; python3 3.14.8; git 2.56.0
+
+##################################################################
+## STEP 0 — pins (tool and driver blobs at the freeze commit)
+##################################################################
+$ (cd /fast/scratch/hyaku/tameshi-r98/R98E1 && bash /fast/scratch/hyaku/tameshi-r98/R98E1/step0.sh )
+lane worktree HEAD: cdaecece9ac3136e14f4961b6e6c412fc7e854b9
+freeze rev:              764aca97e513d650949999362cd4b0f5f0e566a5
+python3: Python 3.14.8
+git:     git version 2.56.0
+-- sha256 of the audit tool: worktree vs freeze blob
+774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c  tools/control-assertion-audit.py
+774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c  -
+-- sha256 of the two drivers at the freeze commit (printed by the audit too)
+a75c542824a94947dd7ed54de175bd3e3a1e660cdcc4eb6c93091ea76170d6ad  -
+f1c1db0edb670fdefdb1b27a193b315db8da90f4580cc7c4c225648f3fbf924b  -
+-- claims.json pins read back
+C1 instrument_sha256: 774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c
+C1 driver_sha256:     f1c1db0edb670fdefdb1b27a193b315db8da90f4580cc7c4c225648f3fbf924b
+C2 instrument_sha256: 4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872
+round base:           034240a591575167f0747ad7372a1f4b9cd33a58
+instruments commit:   d32043ec836ca097e93ae0b095faa7cae4125697
+-- the three paths exist at the freeze rev
+cat-file -e tools/control-assertion-audit.py rc=0
+cat-file -e .ufo/evidence/round-97/controls97.py rc=0
+cat-file -e .ufo/evidence/round-98/controls98.py rc=0
+[exit 0]
+
+
+##################################################################
+## STEP 1 — audit the round-97 driver (red arm)
+##################################################################
+$ (cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && python3 -I tools/control-assertion-audit.py --repo . --rev 764aca97e513d650949999362cd4b0f5f0e566a5 --driver .ufo/evidence/round-97/controls97.py )
+CONTROL_ASSERT_DRIVER rev=764aca97e513d650949999362cd4b0f5f0e566a5 driver=.ufo/evidence/round-97/controls97.py sha256=a75c542824a94947dd7ed54de175bd3e3a1e660cdcc4eb6c93091ea76170d6ad
+CONTROL_ASSERT_SITE line=98 name=c1-nowork-bind-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=102 name=c1-nowork-summary-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=109 name=c1-positive measured=yes class=measured detail=tuple-run@108
+CONTROL_ASSERT_SITE line=111 name=c1-selftest measured=yes class=measured detail=tuple-run@110
+CONTROL_ASSERT_SITE line=124 name=c1-forge-worktree-only measured=yes class=measured detail=tuple-run@123
+CONTROL_ASSERT_SITE line=136 name=? measured=yes class=measured detail=tuple-run@135
+CONTROL_ASSERT_SITE line=146 name=c1-forge-driver-sha measured=yes class=measured detail=tuple-run@144
+CONTROL_ASSERT_SITE line=152 name=? measured=yes class=measured detail=tuple-run@150
+CONTROL_ASSERT_SITE line=156 name=c2-nowork-absent measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=162 name=c2-positive measured=yes class=measured detail=tuple-run@160
+CONTROL_ASSERT_SITE line=164 name=c2-selftest measured=yes class=measured detail=tuple-run@163
+CONTROL_ASSERT_SITE line=180 name=c2-forge-flipped-expect measured=yes class=measured detail=tuple-run@178
+CONTROL_ASSERT_SITE line=190 name=c2-forge-noop measured=yes class=measured detail=tuple-run@188
+CONTROL_ASSERT_SITE line=200 name=c2-forge-manifest-subst measured=yes class=measured detail=tuple-run@198
+CONTROL_ASSERT_SITE line=208 name=c2-forge-manifest-empty measured=yes class=measured detail=tuple-run@205
+CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1
+[exit 1]
+
+
+##################################################################
+## STEP 2 — audit the repaired driver (counter)
+##################################################################
+$ (cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && python3 -I tools/control-assertion-audit.py --repo . --rev 764aca97e513d650949999362cd4b0f5f0e566a5 --driver .ufo/evidence/round-98/controls98.py )
+CONTROL_ASSERT_DRIVER rev=764aca97e513d650949999362cd4b0f5f0e566a5 driver=.ufo/evidence/round-98/controls98.py sha256=f1c1db0edb670fdefdb1b27a193b315db8da90f4580cc7c4c225648f3fbf924b
+CONTROL_ASSERT_SITE line=98 name=c1-nowork-bind-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=102 name=c1-nowork-summary-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=109 name=c1-positive measured=yes class=measured detail=tuple-run@108
+CONTROL_ASSERT_SITE line=111 name=c1-selftest measured=yes class=measured detail=tuple-run@110
+CONTROL_ASSERT_SITE line=124 name=c1-forge-worktree-only measured=yes class=measured detail=tuple-run@123
+CONTROL_ASSERT_SITE line=136 name=? measured=yes class=measured detail=tuple-run@135
+CONTROL_ASSERT_SITE line=146 name=c1-forge-driver-sha measured=yes class=measured detail=tuple-run@144
+CONTROL_ASSERT_SITE line=152 name=? measured=yes class=measured detail=tuple-run@150
+CONTROL_ASSERT_SITE line=159 name=c2-nowork-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=165 name=c2-positive measured=yes class=measured detail=tuple-run@163
+CONTROL_ASSERT_SITE line=167 name=c2-selftest measured=yes class=measured detail=tuple-run@166
+CONTROL_ASSERT_SITE line=183 name=c2-forge-flipped-expect measured=yes class=measured detail=tuple-run@181
+CONTROL_ASSERT_SITE line=193 name=c2-forge-noop measured=yes class=measured detail=tuple-run@191
+CONTROL_ASSERT_SITE line=203 name=c2-forge-manifest-subst measured=yes class=measured detail=tuple-run@201
+CONTROL_ASSERT_SITE line=211 name=c2-forge-manifest-empty measured=yes class=measured detail=tuple-run@208
+CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0
+[exit 0]
+
+
+##################################################################
+## STEP 3 — audit selftest
+##################################################################
+$ (cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && python3 -I tools/control-assertion-audit.py --selftest )
+SELFTEST direct-literal PASS got=literal want=literal
+SELFTEST literal-via-name PASS got=literal want=literal
+SELFTEST measured-returncode PASS got=measured want=measured
+SELFTEST measured-tuple-run PASS got=measured want=measured
+SELFTEST rebound-to-measured PASS got=measured want=measured
+SELFTEST fake-returncode PASS got=unresolved want=unresolved
+SELFTEST constant-ifexp PASS got=literal want=literal
+SELFTEST loop-site PASS got=measured want=measured
+SELFTEST no-assignment PASS got=unresolved want=unresolved
+SELFTEST exit-conforming PASS got=0 want=0
+SELFTEST exit-literal PASS got=1 want=1
+SELFTEST loop-site-count PASS got=1 want=1
+CONTROL_ASSERT_SELFTEST: 12/12 pass
+[exit 0]
+
+
+##################################################################
+## STEP 4 — independent static add( site count from the committed blobs
+##################################################################
+$ (cd /fast/scratch/hyaku/tameshi-r98/R98E1 && bash /fast/scratch/hyaku/tameshi-r98/R98E1/step4.sh )
+== controls97  .ufo/evidence/round-97/controls97.py  at 764aca97e513d650949999362cd4b0f5f0e566a5
+-- command: git cat-file blob 764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/controls97.py | grep -cE '^[[:space:]]+add\('
+15
+grep exit=0
+-- command: git cat-file blob 764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/controls97.py | grep -nE '^[[:space:]]+add\('
+98:    add("c1-nowork-bind-absent", g.returncode,
+102:    add("c1-nowork-summary-absent", _cf.returncode,
+109:    add("c1-positive", code, out, 0)
+111:    add("c1-selftest", code, out, 0)
+124:    add("c1-forge-worktree-only", code, out, 1)
+136:        add(name, code, out, 1)
+146:    add("c1-forge-driver-sha", code, out, 2)
+152:        add(_name, code, out, 2)
+156:    add("c2-nowork-absent", 0,
+162:    add("c2-positive", code, out, 0)
+164:    add("c2-selftest", code, out, 0)
+180:    add("c2-forge-flipped-expect", code, out, 1)
+190:    add("c2-forge-noop", code, out, 2)
+200:    add("c2-forge-manifest-subst", code, out, 2)
+208:    add("c2-forge-manifest-empty", code, out, 2)
+grep exit=0
+
+== controls98  .ufo/evidence/round-98/controls98.py  at 764aca97e513d650949999362cd4b0f5f0e566a5
+-- command: git cat-file blob 764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/controls98.py | grep -cE '^[[:space:]]+add\('
+15
+grep exit=0
+-- command: git cat-file blob 764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/controls98.py | grep -nE '^[[:space:]]+add\('
+98:    add("c1-nowork-bind-absent", g.returncode,
+102:    add("c1-nowork-summary-absent", _cf.returncode,
+109:    add("c1-positive", code, out, 0)
+111:    add("c1-selftest", code, out, 0)
+124:    add("c1-forge-worktree-only", code, out, 1)
+136:        add(name, code, out, 1)
+146:    add("c1-forge-driver-sha", code, out, 2)
+152:        add(_name, code, out, 2)
+159:    add("c2-nowork-absent", g.returncode,
+165:    add("c2-positive", code, out, 0)
+167:    add("c2-selftest", code, out, 0)
+183:    add("c2-forge-flipped-expect", code, out, 1)
+193:    add("c2-forge-noop", code, out, 2)
+203:    add("c2-forge-manifest-subst", code, out, 2)
+211:    add("c2-forge-manifest-empty", code, out, 2)
+grep exit=0
+
+[exit 0]
+
+
+##################################################################
+## STEP 5 — classifier attacks in a scratch git repo
+##   cases a-f: the assigned attacks
+##   cases g-j: supplementary (blob-vs-worktree, name chain, loop count, attr overwrite)
+##################################################################
+$ (cd /fast/scratch/hyaku/tameshi-r98/R98E1 && bash /fast/scratch/hyaku/tameshi-r98/R98E1/step5.sh )
+toplevel: /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier
+
+==== case_a  fixture.py@f99626084a92822feffde54ea32ea79117b6e176
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev f99626084a92822feffde54ea32ea79117b6e176 --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=f99626084a92822feffde54ea32ea79117b6e176 driver=fixture.py sha256=1c0ebd5220516fd4ee7ba33693df36ac3091f9f70e8595c44c342e4627b7985d
+CONTROL_ASSERT_SITE line=7 name=x measured=no class=literal detail=constant
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+audit_exit=1
+-- audit sha of driver blob: 1c0ebd5220516fd4ee7ba33693df36ac3091f9f70e8595c44c342e4627b7985d
+CASE_RESULT case=a commit=f99626084a92822feffde54ea32ea79117b6e176
+
+==== case_b  fixture.py@6a81f0bee74d5d202e50d4ea5e9cbc2710795428
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev 6a81f0bee74d5d202e50d4ea5e9cbc2710795428 --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=6a81f0bee74d5d202e50d4ea5e9cbc2710795428 driver=fixture.py sha256=42f6faa1d8b98ca0dc9976b9d81788a6fa44b3cd3c7fedf8a8c36aa597e413f6
+CONTROL_ASSERT_SITE line=8 name=x measured=no class=literal detail=constant
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+audit_exit=1
+-- audit sha of driver blob: 42f6faa1d8b98ca0dc9976b9d81788a6fa44b3cd3c7fedf8a8c36aa597e413f6
+CASE_RESULT case=b commit=6a81f0bee74d5d202e50d4ea5e9cbc2710795428
+
+==== case_c  fixture.py@03299fd00148358288a9ef7f0cc598fc31d3aeb9
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev 03299fd00148358288a9ef7f0cc598fc31d3aeb9 --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=03299fd00148358288a9ef7f0cc598fc31d3aeb9 driver=fixture.py sha256=e76a8a1203c737dfc01516a8294373e5b783390b614fa39809dd2e38e9eee4c8
+CONTROL_ASSERT_SITE line=11 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+audit_exit=0
+-- audit sha of driver blob: e76a8a1203c737dfc01516a8294373e5b783390b614fa39809dd2e38e9eee4c8
+CASE_RESULT case=c commit=03299fd00148358288a9ef7f0cc598fc31d3aeb9
+
+==== case_d  fixture.py@6e2ec40147e54f0e0747a337b09c3d771c5e063e
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev 6e2ec40147e54f0e0747a337b09c3d771c5e063e --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=6e2ec40147e54f0e0747a337b09c3d771c5e063e driver=fixture.py sha256=8cb25547319d0c07f8200341051a8a6f785ab03b507e579b2eed247e3fa7cd13
+CONTROL_ASSERT_SITE line=12 name=x measured=no class=unresolved detail=returncode-of-unresolved
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+audit_exit=1
+-- audit sha of driver blob: 8cb25547319d0c07f8200341051a8a6f785ab03b507e579b2eed247e3fa7cd13
+CASE_RESULT case=d commit=6e2ec40147e54f0e0747a337b09c3d771c5e063e
+
+==== case_e  fixture.py@343c95024653a9b6c3724066f69b6b62242fa9cb
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev 343c95024653a9b6c3724066f69b6b62242fa9cb --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=343c95024653a9b6c3724066f69b6b62242fa9cb driver=fixture.py sha256=84d87f4de811247b9a6dc11aac65f28e24b016292ae7a8a0e4cfb1e22e15691f
+CONTROL_ASSERT_SITE line=7 name=x measured=no class=literal detail=constant
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+audit_exit=1
+-- audit sha of driver blob: 84d87f4de811247b9a6dc11aac65f28e24b016292ae7a8a0e4cfb1e22e15691f
+CASE_RESULT case=e commit=343c95024653a9b6c3724066f69b6b62242fa9cb
+
+==== case_f  fixture.py@2563c486be43e525bce75bb517407ea84b6f3a7c
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev 2563c486be43e525bce75bb517407ea84b6f3a7c --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=2563c486be43e525bce75bb517407ea84b6f3a7c driver=fixture.py sha256=61355e07bc14bb092f06a186e93bddc46b9c4585c11dbdb94046c2519bc52d4c
+CONTROL_ASSERT_SITE line=16 name=x measured=yes class=measured detail=tuple-run@15
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+audit_exit=0
+-- audit sha of driver blob: 61355e07bc14bb092f06a186e93bddc46b9c4585c11dbdb94046c2519bc52d4c
+CASE_RESULT case=f commit=2563c486be43e525bce75bb517407ea84b6f3a7c
+
+==== case_h  fixture.py@49016da959fb7d8e560fab80c22df121641915ca
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev 49016da959fb7d8e560fab80c22df121641915ca --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=49016da959fb7d8e560fab80c22df121641915ca driver=fixture.py sha256=015999e3575782140269a6ccdd142dceff2c13150d7aee0cce29f2f67fa60ad2
+CONTROL_ASSERT_SITE line=9 name=x measured=no class=literal detail=constant
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+audit_exit=1
+-- audit sha of driver blob: 015999e3575782140269a6ccdd142dceff2c13150d7aee0cce29f2f67fa60ad2
+CASE_RESULT case=h commit=49016da959fb7d8e560fab80c22df121641915ca
+
+==== case_i  fixture.py@ada382adc4ff3e1bf118c5544f5db8d476b94f59
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev ada382adc4ff3e1bf118c5544f5db8d476b94f59 --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=ada382adc4ff3e1bf118c5544f5db8d476b94f59 driver=fixture.py sha256=3717faae9ab70535b5db6cb8ac9c3ffaa23a709282a1d3ec6cfb3b33e15d2c6f
+CONTROL_ASSERT_SITE line=13 name=? measured=yes class=measured detail=tuple-run@12
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+audit_exit=0
+-- audit sha of driver blob: 3717faae9ab70535b5db6cb8ac9c3ffaa23a709282a1d3ec6cfb3b33e15d2c6f
+CASE_RESULT case=i commit=ada382adc4ff3e1bf118c5544f5db8d476b94f59
+
+==== case_j  fixture.py@17a5a31053971aac61b9b61995883cd14a30f0ce
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev 17a5a31053971aac61b9b61995883cd14a30f0ce --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=17a5a31053971aac61b9b61995883cd14a30f0ce driver=fixture.py sha256=b4300b3a346e26906abe32afa9673f10379e407eb233a22040a7025d01d29f9e
+CONTROL_ASSERT_SITE line=16 name=x measured=no class=unresolved detail=returncode-of-unresolved
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+audit_exit=1
+-- audit sha of driver blob: b4300b3a346e26906abe32afa9673f10379e407eb233a22040a7025d01d29f9e
+CASE_RESULT case=j commit=17a5a31053971aac61b9b61995883cd14a30f0ce
+
+==== case_f runtime: python3 -I /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier/fixture.py (HEAD is case_j by now; rerun at case_f commit)
+SECOND x b 0
+fixture_exit=0
+
+==== case_g  fixture.py@42bbd0d7d6ca478e588da024b2f9bf2ff0a65b7f (committed: constant)
+-- committed blob sha256: 15fe63759dc564d51cc3dc7680cc52c2288fcb1c6cbf70c7ff144eb1f7caaf37
+-- worktree sha256 before edit: 15fe63759dc564d51cc3dc7680cc52c2288fcb1c6cbf70c7ff144eb1f7caaf37
+-- worktree sha256 after edit:  54321f6e31622360e158f6103b82330e32de4f92cb0fdd0b9e53182ec2f42e5f
+-- worktree fixture (measured, runs /bin/false):
+x 1 b 0
+fixture_exit=0
+-- audit at the commit (kill rule e: must read the blob, not the worktree):
+CONTROL_ASSERT_DRIVER rev=42bbd0d7d6ca478e588da024b2f9bf2ff0a65b7f driver=fixture.py sha256=15fe63759dc564d51cc3dc7680cc52c2288fcb1c6cbf70c7ff144eb1f7caaf37
+CONTROL_ASSERT_SITE line=7 name=x measured=no class=literal detail=constant
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+audit_exit=1
+CASE_RESULT case=g commit=42bbd0d7d6ca478e588da024b2f9bf2ff0a65b7f
+-- worktree restored sha256: 15fe63759dc564d51cc3dc7680cc52c2288fcb1c6cbf70c7ff144eb1f7caaf37
+[exit 0]
+
+
+##################################################################
+## STEP 5b — nested-scope shadow (findings F1: kill-rule b/a counterexample)
+##################################################################
+$ (cd /fast/scratch/hyaku/tameshi-r98/R98E1 && bash /fast/scratch/hyaku/tameshi-r98/R98E1/step5b.sh )
+toplevel: /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier
+
+==== case_k1  fixture.py@67c27436b6bad8ce2fa2b9868e7a104ebaed7ca7
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev 67c27436b6bad8ce2fa2b9868e7a104ebaed7ca7 --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=67c27436b6bad8ce2fa2b9868e7a104ebaed7ca7 driver=fixture.py sha256=c3efa75dd83c396b3887cb0f8473dda00c81bb4c98b9875b5b23a43e7aae4580
+CONTROL_ASSERT_SITE line=20 name=scope-shadowed-constant measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+audit_exit=0
+-- runtime of the fixture (what the site actually records):
+RECORD name=scope-shadowed-constant code=0 want=1
+fixture_exit=0
+CASE_RESULT case=k1 commit=67c27436b6bad8ce2fa2b9868e7a104ebaed7ca7
+
+==== case_k2  fixture.py@b48f261d0748995d6fd149e6c65a282755b4bbdc
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev b48f261d0748995d6fd149e6c65a282755b4bbdc --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=b48f261d0748995d6fd149e6c65a282755b4bbdc driver=fixture.py sha256=1dadfdd7ed79be3b4ce49b128325c4fd43f9afcc8a6e2629766a2f0eb234689f
+CONTROL_ASSERT_SITE line=17 name=scope-shadowed-constant measured=no class=unresolved detail=returncode-of-unresolved
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+audit_exit=1
+-- runtime of the fixture (what the site actually records):
+RECORD name=scope-shadowed-constant code=0 want=1
+fixture_exit=0
+CASE_RESULT case=k2 commit=b48f261d0748995d6fd149e6c65a282755b4bbdc
+[exit 0]
+
+
+##################################################################
+## STEP 5c — same-name recorder called as an attribute (zero-site vacuous pass)
+##################################################################
+$ (cd /fast/scratch/hyaku/tameshi-r98/R98E1 && bash /fast/scratch/hyaku/tameshi-r98/R98E1/step5c.sh )
+toplevel: /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier
+==== case_l  fixture.py@4d7697e8ea235eea6ce21e3b46901fdad0268646
+-- audit: python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py --repo /fast/scratch/hyaku/tameshi-r98/R98E1/fixtures/classifier --rev 4d7697e8ea235eea6ce21e3b46901fdad0268646 --driver fixture.py
+CONTROL_ASSERT_DRIVER rev=4d7697e8ea235eea6ce21e3b46901fdad0268646 driver=fixture.py sha256=eeac776fe1ec2137b788fc9188658d4e9cd6495181d98fc26799b70891eb5686
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+audit_exit=0
+-- runtime of the fixture:
+RECORD name=attribute-recorder code=0 want=1
+fixture_exit=0
+CASE_RESULT case=l commit=4d7697e8ea235eea6ce21e3b46901fdad0268646
+[exit 0]
+
+
+##################################################################
+## STEP 6 — the repaired c2-nowork-absent control can fail
+##################################################################
+$ (cd /fast/scratch/hyaku/tameshi-r98/R98E1 && bash /fast/scratch/hyaku/tameshi-r98/R98E1/step6.sh )
+clone toplevel: /fast/scratch/hyaku/tameshi-r98/R98E1/step6/clone
+clone HEAD before fixture commit: 764aca97e513d650949999362cd4b0f5f0e566a5
+fixture commit BASE=1630c9e811266875862e94fbbda96bf7ad233247
+1630c9e8 r98e1 fixture: a committed file containing GUARD_INERTIA
+ guard-inertia-token.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+-- git grep -c GUARD_INERTIA at BASE (the c2-nowork probe the driver runs):
+1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/c2/guard-inertia.py:2
+1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/controls97.py:3
+1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/landing/c2-positive-1.out:1
+1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/landing/c2-positive-2.out:1
+1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/landing/c2-positive-3.out:1
+matches_files=90 grep_exit=141
+-- git grep -c GUARD_INERTIA at the unmodified freeze commit (control: token pre-exists):
+matches_files=89 grep_exit=0
+
+driver worktree sha: f1c1db0edb670fdefdb1b27a193b315db8da90f4580cc7c4c225648f3fbf924b
+driver copy sha:     f1c1db0edb670fdefdb1b27a193b315db8da90f4580cc7c4c225648f3fbf924b
+
+==== run 1: driver copy with --base $BASE (committed GUARD_INERTIA file present)
+c1-nowork-bind-absent MISMATCH rc=0 want=1
+c1-nowork-summary-absent MATCH rc=128 want=128
+c1-positive MATCH rc=0 want=0
+c1-selftest MATCH rc=0 want=0
+c1-forge-worktree-only MATCH rc=1 want=1
+c1-forge-counter-sha MATCH rc=1 want=1
+c1-forge-exit MATCH rc=1 want=1
+c1-forge-payload MATCH rc=1 want=1
+c1-forge-driver-sha MATCH rc=2 want=2
+c1-forge-driver-sha-empty MATCH rc=2 want=2
+c1-forge-driver-sha-short MATCH rc=2 want=2
+c2-nowork-absent MISMATCH rc=0 want=1
+c2-positive MATCH rc=0 want=0
+c2-selftest MATCH rc=0 want=0
+c2-forge-flipped-expect MATCH rc=1 want=1
+c2-forge-noop MATCH rc=2 want=2
+c2-forge-manifest-subst MATCH rc=2 want=2
+c2-forge-manifest-empty MATCH rc=2 want=2
+CONTROLS98 states=18 matched=16 mismatched=2
+driver_exit=1
+-- receipt /fast/scratch/hyaku/tameshi-r98/R98E1/step6/out1/c2-nowork-absent.out:
+git grep GUARD_INERTIA at base 1630c9e811266875862e94fbbda96bf7ad233247: rc=0 out='1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/c2/guard-inertia.py:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/controls97.py:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/landing/c2-positive-1.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/landing/c2-positive-2.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/landing/c2-positive-3.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/pre-freeze/c2-forge-flipped-expect.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/pre-freeze/c2-nowork-absent.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/pre-freeze/c2-positive.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/pre-freeze/c2-selftest.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/repeat/c2-run-1.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/repeat/c2-run-2.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/repeat/c2-run-3.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/controls98.py:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-forge-flipped-expect.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-nowork-absent.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-positive.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-selftest.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls/c2-forge-flipped-expect.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls/c2-nowork-absent.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls/c2-positive.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls/c2-selftest.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/refusals/guard-refusals.py:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/claims.json:4\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1-dispatch.json:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1-spec.json:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1-receipts/00-counters-and-selftests.txt:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1-receipts/06-c2-nonguard-manifest.txt:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1-receipts/10-source-excerpts.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1-receipts/11-repaired-tool-nonguard.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1.md:5\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97CN1.md:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97CN1/01-pattern-scan.txt:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97CN1/02-token-uniqueness.txt:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97CN1/06-commands.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97E2-repro.txt:9\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97E2.md:4\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97L1-receipts/c2-rerun.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-baseline.log:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-prereg.json:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-results.json:13\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-results.tsv:6\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-run.log:7\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-selftest-detail.log:6\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1.md:7\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2-receipts/atk10-pristine-exit-unmet.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2-receipts/atk11-limit-token-lost.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2-receipts/atk12-pristine-token-unmet.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2-receipts/atk14-limit-extra-finding.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2-receipts/atk2-text-diff-expect-killed.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2-receipts/atk2-text-diff-expect-limit.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2-receipts/atk6-flipped-expect.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2-receipts/base-and-pins.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2-receipts/c2-counter-declared-env-head.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2-receipts/c2-counter-freeze.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2-receipts/c2-selftest-declared-env.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R2.md:7\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97S1.md:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SC1.md:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-attacks.txt:11\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-receipts/attack2.py:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-receipts/attack3.py:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-receipts/attack4.py:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-receipts/attack6.py:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-receipts/attack7.py:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-receipts/claims-head.json:4\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-receipts/head-guard-inertia.py:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1.md:6\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-lesson-measurements.md:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-log.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-pinned-counters.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-quality.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-quote-backability.txt:7\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-receipt-catalog.txt:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-record-verification.txt:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-scorecard.md:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-sources.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/specs/R97CN1.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/swarm-registry.json:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-98/claims.json:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-98/w1/specs/R98E1.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-98/w1/specs/R98E3.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-98/w1/specs/R98L1.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-98/w1/specs/R98R1.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:LOG.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:SCORECARD.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:corpus/lessons/round-97-verifier-spotcheck.md:6\n1630c9e811266875862e94fbbda96bf7ad233247:corpus/lessons/round-97.md:2\n1630c9e811266875862e94fbbda96bf7ad233247:guard-inertia-token.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:plans/round-97.plan.md:6\n1630c9e811266875862e94fbbda96bf7ad233247:plans/round-98.plan.md:1'
+rc=0
+-- receipt /fast/scratch/hyaku/tameshi-r98/R98E1/step6/out1/c1-nowork-bind-absent.out:
+git grep BATTERY-states at base 1630c9e811266875862e94fbbda96bf7ad233247: rc=0 out='1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/c1/battery-bind.py:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/controls97.py:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/landing/c1-positive-1.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/landing/c1-positive-2.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/landing/c1-positive-3.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/pre-freeze/c1-forge-conjunct.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/pre-freeze/c1-forge-counter-sha.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/pre-freeze/c1-forge-exit.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/pre-freeze/c1-forge-payload.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/pre-freeze/c1-forge-worktree-only.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/pre-freeze/c1-positive.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/pre-freeze/c1-selftest.out:6\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/repeat/c1-run-1.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/repeat/c1-run-2.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/repeat/c1-run-3.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/controls98.py:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-forge-counter-sha.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-forge-exit.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-forge-payload.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-forge-worktree-only.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-positive.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-selftest.out:6\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls/c1-forge-counter-sha.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls/c1-forge-exit.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls/c1-forge-payload.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls/c1-forge-worktree-only.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls/c1-positive.out:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-98/pre-freeze/controls/c1-selftest.out:6\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/claims.json:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1-dispatch.json:5\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1-spec.json:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1-receipts/00-counters-and-selftests.txt:7\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1-receipts/02-c1-base-nowork.txt:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1-receipts/03-c1-shadowed-controls.txt:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1-receipts/04-c1-handwritten-receipt.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1-receipts/05-c1-mutant-counter-sha.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1-receipts/10-source-excerpts.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1-receipts/12-worktree-amendments.txt:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97C1.md:5\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97CN1.md:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97CN1/01-pattern-scan.txt:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97CN1/02-token-uniqueness.txt:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97CN1/06-commands.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97E1-repro.txt:14\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97E1.md:14\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97E2-repro.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97E3-forgeries.txt:14\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97E3.md:18\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-baseline.log:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-prereg.json:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-probe-m06.log:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-results.json:9\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-results.tsv:6\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1-run.log:9\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97M1.md:6\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R1-repro.txt:31\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97R1.md:11\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97S1-receipts/R97S1-control-discrimination.txt:4\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97S1.md:10\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SC1.md:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-attacks.txt:16\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-receipts/attack6.py:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-receipts/claims-head.json:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1-receipts/head-battery-bind.py:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/R97SN1.md:7\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-driver-pin-refusals.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-isolated-forges.txt:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-lesson-measurements.md:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-log.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-pinned-counters.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-quality.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-quote-backability.txt:8\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-receipt-catalog.txt:2\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-record-verification.txt:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-scorecard.md:3\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/SC1-sources.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/specs/R97C1.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/specs/R97CN1.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/specs/R97R1.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:.ufo/waves/round-97/w1/swarm-registry.json:2\n1630c9e811266875862e94fbbda96bf7ad233247:LOG.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:SCORECARD.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:corpus/QUALITY.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:corpus/lessons/round-97-verifier-spotcheck.md:3\n1630c9e811266875862e94fbbda96bf7ad233247:corpus/lessons/round-97.md:1\n1630c9e811266875862e94fbbda96bf7ad233247:plans/round-97.plan.md:8'
+rc=0
+
+==== run 2 (supplementary, confound check): same driver copy with --base $REV (freeze commit, no fixture file)
+c1-nowork-bind-absent MISMATCH rc=0 want=1
+c1-nowork-summary-absent MATCH rc=128 want=128
+c1-positive MATCH rc=0 want=0
+c1-selftest MATCH rc=0 want=0
+c1-forge-worktree-only MATCH rc=1 want=1
+c1-forge-counter-sha MATCH rc=1 want=1
+c1-forge-exit MATCH rc=1 want=1
+c1-forge-payload MATCH rc=1 want=1
+c1-forge-driver-sha MATCH rc=2 want=2
+c1-forge-driver-sha-empty MATCH rc=2 want=2
+c1-forge-driver-sha-short MATCH rc=2 want=2
+c2-nowork-absent MISMATCH rc=0 want=1
+c2-positive MATCH rc=0 want=0
+c2-selftest MATCH rc=0 want=0
+c2-forge-flipped-expect MATCH rc=1 want=1
+c2-forge-noop MATCH rc=2 want=2
+c2-forge-manifest-subst MATCH rc=2 want=2
+c2-forge-manifest-empty MATCH rc=2 want=2
+CONTROLS98 states=18 matched=16 mismatched=2
+driver_exit=1
+-- receipt /fast/scratch/hyaku/tameshi-r98/R98E1/step6/out2/c2-nowork-absent.out:
+git grep GUARD_INERTIA at base 764aca97e513d650949999362cd4b0f5f0e566a5: rc=0 out='764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/c2/guard-inertia.py:2\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/controls97.py:3\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/landing/c2-positive-1.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/landing/c2-positive-2.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/landing/c2-positive-3.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/pre-freeze/c2-forge-flipped-expect.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/pre-freeze/c2-nowork-absent.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/pre-freeze/c2-positive.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/pre-freeze/c2-selftest.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/repeat/c2-run-1.txt:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/repeat/c2-run-2.txt:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-97/repeat/c2-run-3.txt:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/controls98.py:3\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-forge-flipped-expect.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-nowork-absent.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-positive.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-selftest.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/pre-freeze/controls/c2-forge-flipped-expect.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/pre-freeze/controls/c2-nowork-absent.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/pre-freeze/controls/c2-positive.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/pre-freeze/controls/c2-selftest.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/refusals/guard-refusals.py:3\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/claims.json:4\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1-dispatch.json:3\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1-spec.json:2\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97C1-receipts/00-counters-and-selftests.txt:2\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97C1-receipts/06-c2-nonguard-manifest.txt:3\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97C1-receipts/10-source-excerpts.txt:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97C1-receipts/11-repaired-tool-nonguard.txt:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97C1.md:5\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97CN1.md:3\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97CN1/01-pattern-scan.txt:2\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97CN1/02-token-uniqueness.txt:2\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97CN1/06-commands.txt:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97E2-repro.txt:9\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97E2.md:4\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97L1-receipts/c2-rerun.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97M1-baseline.log:2\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97M1-prereg.json:2\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97M1-results.json:13\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97M1-results.tsv:6\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97M1-run.log:7\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97M1-selftest-detail.log:6\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97M1.md:7\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2-receipts/atk10-pristine-exit-unmet.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2-receipts/atk11-limit-token-lost.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2-receipts/atk12-pristine-token-unmet.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2-receipts/atk14-limit-extra-finding.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2-receipts/atk2-text-diff-expect-killed.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2-receipts/atk2-text-diff-expect-limit.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2-receipts/atk6-flipped-expect.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2-receipts/base-and-pins.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2-receipts/c2-counter-declared-env-head.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2-receipts/c2-counter-freeze.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2-receipts/c2-selftest-declared-env.out:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97R2.md:7\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97S1.md:2\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97SC1.md:3\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97SN1-attacks.txt:11\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97SN1-receipts/attack2.py:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97SN1-receipts/attack3.py:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97SN1-receipts/attack4.py:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97SN1-receipts/attack6.py:3\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97SN1-receipts/attack7.py:2\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97SN1-receipts/claims-head.json:4\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97SN1-receipts/head-guard-inertia.py:2\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/R97SN1.md:6\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/SC1-lesson-measurements.md:3\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/SC1-log.md:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/SC1-pinned-counters.txt:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/SC1-quality.md:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/SC1-quote-backability.txt:7\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/SC1-receipt-catalog.txt:2\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/SC1-record-verification.txt:3\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/SC1-scorecard.md:3\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/SC1-sources.md:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/specs/R97CN1.md:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-97/w1/swarm-registry.json:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-98/claims.json:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-98/w1/specs/R98E1.md:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-98/w1/specs/R98E3.md:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-98/w1/specs/R98L1.md:1\n764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/waves/round-98/w1/specs/R98R1.md:1\n764aca97e513d650949999362cd4b0f5f0e566a5:LOG.md:1\n764aca97e513d650949999362cd4b0f5f0e566a5:SCORECARD.md:1\n764aca97e513d650949999362cd4b0f5f0e566a5:corpus/lessons/round-97-verifier-spotcheck.md:6\n764aca97e513d650949999362cd4b0f5f0e566a5:corpus/lessons/round-97.md:2\n764aca97e513d650949999362cd4b0f5f0e566a5:plans/round-97.plan.md:6\n764aca97e513d650949999362cd4b0f5f0e566a5:plans/round-98.plan.md:1'
+rc=0
+[exit 0]
+
+
+## STEP 6 supplement — clean grep exits (the r06 'grep_exit=141' is SIGPIPE
+## from piping git grep into head; the driver's own recorded rc is the receipt's rc=0)
+$ (cd /fast/scratch/hyaku/tameshi-r98/R98E1 && bash /fast/scratch/hyaku/tameshi-r98/R98E1/step6b.sh )
+-- clean rc of the c2-nowork grep at BASE (all output discarded; no pipe)
+grep_exit=0
+-- clean rc at the unmodified freeze commit
+grep_exit=0
+-- count of matching files at BASE / at REV
+BASE_matches=90
+REV_matches=89
+-- the c2-nowork receipt body (rebuilt from out1, first line only)
+git grep GUARD_INERTIA at base 1630c9e811266875862e94fbbda96bf7ad233247: rc=0 out='1630c9e811266875862e94fbbda96bf7ad233247:.ufo/evidence/round-97/c2/guard-iner
+-- sha256 of the driver copy and of the freeze blob
+f1c1db0edb670fdefdb1b27a193b315db8da90f4580cc7c4c225648f3fbf924b  /fast/scratch/hyaku/tameshi-r98/R98E1/step6/controls98-copy.py
+f1c1db0edb670fdefdb1b27a193b315db8da90f4580cc7c4c225648f3fbf924b  -
+[exit 0]
+

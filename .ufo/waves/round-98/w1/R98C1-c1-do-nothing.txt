@@ -1,0 +1,53 @@
+# R98C1 do-nothing controls (C1) and frozen-arm re-measurement
+
+## C1 do-nothing: the round-97 driver unchanged, audited at the freeze rev (no repair)
+$ python3 -I <audit at 764aca97e513d650949999362cd4b0f5f0e566a5> --repo . --rev 764aca97e513d650949999362cd4b0f5f0e566a5 --driver .ufo/evidence/round-97/controls97.py
+CONTROL_ASSERT_DRIVER rev=764aca97e513d650949999362cd4b0f5f0e566a5 driver=.ufo/evidence/round-97/controls97.py sha256=a75c542824a94947dd7ed54de175bd3e3a1e660cdcc4eb6c93091ea76170d6ad
+CONTROL_ASSERT_SITE line=98 name=c1-nowork-bind-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=102 name=c1-nowork-summary-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=109 name=c1-positive measured=yes class=measured detail=tuple-run@108
+CONTROL_ASSERT_SITE line=111 name=c1-selftest measured=yes class=measured detail=tuple-run@110
+CONTROL_ASSERT_SITE line=124 name=c1-forge-worktree-only measured=yes class=measured detail=tuple-run@123
+CONTROL_ASSERT_SITE line=136 name=? measured=yes class=measured detail=tuple-run@135
+CONTROL_ASSERT_SITE line=146 name=c1-forge-driver-sha measured=yes class=measured detail=tuple-run@144
+CONTROL_ASSERT_SITE line=152 name=? measured=yes class=measured detail=tuple-run@150
+CONTROL_ASSERT_SITE line=156 name=c2-nowork-absent measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=162 name=c2-positive measured=yes class=measured detail=tuple-run@160
+CONTROL_ASSERT_SITE line=164 name=c2-selftest measured=yes class=measured detail=tuple-run@163
+CONTROL_ASSERT_SITE line=180 name=c2-forge-flipped-expect measured=yes class=measured detail=tuple-run@178
+CONTROL_ASSERT_SITE line=190 name=c2-forge-noop measured=yes class=measured detail=tuple-run@188
+CONTROL_ASSERT_SITE line=200 name=c2-forge-manifest-subst measured=yes class=measured detail=tuple-run@198
+CONTROL_ASSERT_SITE line=208 name=c2-forge-manifest-empty measured=yes class=measured detail=tuple-run@205
+CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1
+rc=1
+
+## C1 counter at the freeze rev (repaired driver)
+$ python3 -I <audit at 764aca97e513d650949999362cd4b0f5f0e566a5> --repo . --rev 764aca97e513d650949999362cd4b0f5f0e566a5 --driver .ufo/evidence/round-98/controls98.py
+CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0
+rc=0
+
+## audit selftest
+CONTROL_ASSERT_SELFTEST: 12/12 pass
+rc=0
+
+## kill (e): a worktree-only edit does not change the line
+$ echo junk >> c1-counter/driver.py; audit at the same rev
+CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0
+rc=0
+
+## kill (f) evidence: the repaired run CAN fail (pre-freeze receipt, read at the freeze rev)
+$ git cat-file blob 764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/pre-freeze/controls98-at-round-base.out | tail -3
+c2-forge-manifest-subst MATCH rc=2 want=2
+c2-forge-manifest-empty MATCH rc=2 want=2
+CONTROLS98 states=18 matched=16 mismatched=2
+
+## repaired run receipt at the freeze rev (read, not re-executed: it clones the lane and runs 18 states)
+$ git cat-file blob 764aca97e513d650949999362cd4b0f5f0e566a5:.ufo/evidence/round-98/pre-freeze/controls98-run.out | tail -2
+c2-forge-manifest-empty MATCH rc=2 want=2
+CONTROLS98 states=18 matched=18 mismatched=0
+
+## the two no-work receipts: repaired rc=1 / round-97 rc=0
+git grep GUARD_INERTIA at base 07e50d6d0142b21e8443b5417b8edc4d1dd76455: rc=1 out=''
+rc=1
+git grep GUARD_INERTIA at base 07e50d6d0142b21e8443b5417b8edc4d1dd76455: rc=1 out=''
+rc=0

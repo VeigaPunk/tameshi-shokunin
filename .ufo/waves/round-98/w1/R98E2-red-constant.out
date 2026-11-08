@@ -1,0 +1,16 @@
+committed battery blob sha256 4077d8f9... (guard-refusals.py at 764aca97)
+class_token_ok('state-unbuildable', 'GUARD_SETUP state-unbuildable:forged\n', 2) = True
+
+red-branch arithmetic with the committed loop (guard-refusals.py:215-228,240-246):
+  if ok: failed+=1; print GUARD_REFUSALS_RED <name> refused-under-red-run; continue
+  refused is NOT incremented for the red class in either outcome
+  wrong = len(CLASSES) - refused = 6 - 5 = 1
+  summary = GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=<name>
+  exit = 1 unconditionally (line 245-246)
+
+=> the quoted red summary + exit is identical for a correct miss and for a
+   red-arm failure; only the unquoted GUARD_REFUSALS_RED line distinguishes them.
+measured correct run (R98E2-red.out):
+  GUARD_REFUSALS_RED state-unbuildable missed-as-declared rc=0
+  GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable
+  exit 1

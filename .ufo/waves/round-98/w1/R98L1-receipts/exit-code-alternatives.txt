@@ -1,0 +1,36 @@
+Several distinct mechanisms produce the graded exit codes used by controls97/98's
+want codes (2 setup, 1 failure) and by c1-nowork-summary-absent (128).
+
+$ bash -c git cat-file -e 764aca97:.nope-r98l1; echo rc=$?
+rc=128
+fatal: path '.nope-r98l1' does not exist in '764aca97'
+rc=0
+
+$ bash -c git cat-file -e deadbeefdeadbeefdeadbeefdeadbeefdeadbeef:.nope-r98l1; echo rc=$?
+rc=128
+fatal: path '.nope-r98l1' does not exist in 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
+rc=0
+
+$ bash -c git cat-file -e 8ed9c5262bd2f36f3cc8a64550897f4d1adb3a3b:.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt; echo rc=$?
+rc=128
+fatal: path '.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt' does not exist in '8ed9c5262bd2f36f3cc8a64550897f4d1adb3a3b'
+rc=0
+
+$ python3 -I /fast/scratch/hyaku/tameshi-r98/R98L1/lane-probe/.ufo/evidence/round-97/c2/guard-inertia.py --bogus-flag
+usage: guard-inertia.py [-h] [--lane LANE] [--rev REV] [--checker CHECKER]
+                        [--manifest MANIFEST] [--checker-sha CHECKER_SHA]
+                        [--manifest-sha MANIFEST_SHA] [--selftest]
+guard-inertia.py: error: unrecognized arguments: --bogus-flag
+rc=2
+
+$ python3 -I /fast/scratch/hyaku/tameshi-r98/R98L1/lane-probe/.ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev not-a-rev --manifest-sha aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+GUARD_SETUP rev-not-a-commit-id
+rc=2
+
+$ python3 -c raise RuntimeError('x')
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    raise RuntimeError('x')
+RuntimeError: x
+rc=1
+

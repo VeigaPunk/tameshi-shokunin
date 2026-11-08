@@ -1,0 +1,855 @@
+{
+ "baseline": [
+  {
+   "instrument": "audit",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 12/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": true,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   ]
+  },
+  {
+   "instrument": "battery",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 9/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=11.6s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": true,
+     "detail": "rc=1 wall=16.4s red-observable=True ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": true,
+     "detail": "mismatch:rc=2 invalid:rc=2",
+     "observed_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid"
+    }
+   ]
+  }
+ ],
+ "mutants": [
+  {
+   "id": "a1-constant-measured",
+   "instrument": "audit",
+   "status": "KILLED",
+   "failing_arms": [
+    "audit-selftest",
+    "audit-r97-driver"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 8/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": false,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   ],
+   "mutant_sha256": "3cd68f4fa326c63b0b621c983e9765269a78b4b345f0c8b3585ee83de654a939"
+  },
+  {
+   "id": "a2-direct-name-measured",
+   "instrument": "audit",
+   "status": "KILLED",
+   "failing_arms": [
+    "audit-selftest",
+    "audit-r97-driver",
+    "audit-controls98",
+    "audit-blob-not-worktree"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 9/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=12 literal=1 unmeasured=3"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=12 literal=0 unmeasured=3"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=12 literal=0 unmeasured=3"
+    }
+   ],
+   "mutant_sha256": "315a713e853850897021091f2df9b91e3a1c0a0038b22993b57048124299829e"
+  },
+  {
+   "id": "a3-fake-returncode-measured",
+   "instrument": "audit",
+   "status": "KILLED",
+   "failing_arms": [
+    "audit-selftest"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 11/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": true,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   ],
+   "mutant_sha256": "56b22f0f05691a705e7280b7cee8df469bc8098f08187b4f14916e54ec593b6a"
+  },
+  {
+   "id": "a4-literal-tally-zero",
+   "instrument": "audit",
+   "status": "KILLED",
+   "failing_arms": [
+    "audit-r97-driver"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 12/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=14 literal=0 unmeasured=1"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   ],
+   "mutant_sha256": "61ad53d0f1e6f4cfce5a1dbabcae204fd336388874d685eb96cef87311db7c1e"
+  },
+  {
+   "id": "a5-code-arg-off-by-one",
+   "instrument": "audit",
+   "status": "SURVIVED",
+   "failing_arms": [],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 12/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": true,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   ],
+   "mutant_sha256": "ca5a200ca9b4f6aff72983621c0706c4b86322383694e2586412896f66871f1c"
+  },
+  {
+   "id": "a6-first-assignment-not-last",
+   "instrument": "audit",
+   "status": "KILLED",
+   "failing_arms": [
+    "audit-selftest"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 11/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": true,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   ],
+   "mutant_sha256": "b0cef0e1f11450967a6039e51564434364f3d7b57436a8080402fb82c4b06885"
+  },
+  {
+   "id": "a7-exit-always-zero",
+   "instrument": "audit",
+   "status": "KILLED",
+   "failing_arms": [
+    "audit-selftest",
+    "audit-r97-driver"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 11/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": false,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   ],
+   "mutant_sha256": "b34e8c479e1a0c61cac1511ee64b501f23ce86acbb3caf4506713b95f96565bf"
+  },
+  {
+   "id": "a8-site-name-dropped",
+   "instrument": "audit",
+   "status": "KILLED",
+   "failing_arms": [
+    "audit-r97-driver"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 12/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   ],
+   "mutant_sha256": "1ccc3bcec6082cb1a8148b97cb57c8df213cb63c205171c9ece5a7289575cbd4"
+  },
+  {
+   "id": "a9-tuple-index-ignored",
+   "instrument": "audit",
+   "status": "SURVIVED",
+   "failing_arms": [],
+   "predicted": "SURVIVED",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 12/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": true,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   ],
+   "mutant_sha256": "3eda7fd625550d9cbc09be79f77517e65fba1a87ba0fd5ef59348ff575e88913"
+  },
+  {
+   "id": "a10-depth-guard-widened",
+   "instrument": "audit",
+   "status": "SURVIVED",
+   "failing_arms": [],
+   "predicted": "SURVIVED",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 12/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": true,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   ],
+   "mutant_sha256": "f20364f6dae05b6a4a9147597e94974e0f98bac95a6fdaba9f89ee8a1852761c"
+  },
+  {
+   "id": "b1-rc-accepts-one",
+   "instrument": "battery",
+   "status": "SURVIVED",
+   "failing_arms": [],
+   "predicted": "SURVIVED",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 9/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=20.6s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": true,
+     "detail": "rc=1 wall=21.5s red-observable=True ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": true,
+     "detail": "mismatch:rc=2 invalid:rc=2",
+     "observed_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid"
+    }
+   ],
+   "mutant_sha256": "47fc83ec99a0a47845db25d952277c1ec66d2572e2376db02bd8b6c026b26f45"
+  },
+  {
+   "id": "b2-rc-check-dead",
+   "instrument": "battery",
+   "status": "KILLED",
+   "failing_arms": [
+    "battery-selftest"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 8/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=22.1s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": true,
+     "detail": "rc=1 wall=22.7s red-observable=True ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": true,
+     "detail": "mismatch:rc=2 invalid:rc=2",
+     "observed_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid"
+    }
+   ],
+   "mutant_sha256": "055d49b13ee276ef073b3ab55f4b302c2e2d1a3ea83edf6e4a8c00a1fb44e006"
+  },
+  {
+   "id": "b3-token-prefix-loosened",
+   "instrument": "battery",
+   "status": "KILLED",
+   "failing_arms": [
+    "battery-selftest"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 8/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=20.3s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": true,
+     "detail": "rc=1 wall=18.4s red-observable=True ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": true,
+     "detail": "mismatch:rc=2 invalid:rc=2",
+     "observed_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid"
+    }
+   ],
+   "mutant_sha256": "3331e1173c5f8eb0945c5bf7784845bb90a4f316d695d3add901f3fb47baed81"
+  },
+  {
+   "id": "b5-token-from-stderr",
+   "instrument": "battery",
+   "status": "SURVIVED",
+   "failing_arms": [],
+   "predicted": "SURVIVED",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 9/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=21.3s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": true,
+     "detail": "rc=1 wall=22.9s red-observable=True ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": true,
+     "detail": "mismatch:rc=2 invalid:rc=2",
+     "observed_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid"
+    }
+   ],
+   "mutant_sha256": "4b5fa98e6e2a74e4dcec9db58097b6652a32436875fb88809da910ce7164a8db"
+  },
+  {
+   "id": "b6-positive-substring",
+   "instrument": "battery",
+   "status": "SURVIVED",
+   "failing_arms": [],
+   "predicted": "SURVIVED",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 9/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=19.5s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": true,
+     "detail": "rc=1 wall=32.8s red-observable=True ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": true,
+     "detail": "mismatch:rc=2 invalid:rc=2",
+     "observed_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid"
+    }
+   ],
+   "mutant_sha256": "8857e6a965fb1835c2783cfc8ce3a10b4802869e981aca26eba6d94efcbdef08"
+  },
+  {
+   "id": "b7-positive-exit-ignored",
+   "instrument": "battery",
+   "status": "KILLED",
+   "failing_arms": [
+    "battery-selftest"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": false,
+     "detail": "rc=1 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 8/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=29.5s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": true,
+     "detail": "rc=1 wall=25.5s red-observable=True ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": true,
+     "detail": "mismatch:rc=2 invalid:rc=2",
+     "observed_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid"
+    }
+   ],
+   "mutant_sha256": "962b8b927cd785900f3aba750c3f61c66c8f2e25d20b9e991383032e19981304"
+  },
+  {
+   "id": "b8-red-substitution-dropped",
+   "instrument": "battery",
+   "status": "KILLED",
+   "failing_arms": [
+    "battery-red"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 9/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=35.3s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": false,
+     "detail": "rc=1 wall=18.9s red-observable=False ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": true,
+     "detail": "mismatch:rc=2 invalid:rc=2",
+     "observed_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid"
+    }
+   ],
+   "mutant_sha256": "d9347be701f8e25f6af05d3fe4716f944a747a000e81175b16fe503e73361eff"
+  },
+  {
+   "id": "b9-red-exit-removed",
+   "instrument": "battery",
+   "status": "KILLED",
+   "failing_arms": [
+    "battery-red"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 9/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=36.2s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": false,
+     "detail": "rc=0 wall=21.7s red-observable=True ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": true,
+     "detail": "mismatch:rc=2 invalid:rc=2",
+     "observed_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid"
+    }
+   ],
+   "mutant_sha256": "8d8806b98727b881313523d43ed087e05780332fd74d4045a97da17f71bdab91"
+  },
+  {
+   "id": "b10-wrong-count-hardcoded",
+   "instrument": "battery",
+   "status": "KILLED",
+   "failing_arms": [
+    "battery-red"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 9/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=22.5s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": false,
+     "detail": "rc=1 wall=20.7s red-observable=True ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=0 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": true,
+     "detail": "mismatch:rc=2 invalid:rc=2",
+     "observed_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid"
+    }
+   ],
+   "mutant_sha256": "ec81df5f21a4d05d52b0bcadaf2294ea84c5ee84dc97051d99988cc4ca7be900"
+  },
+  {
+   "id": "b11-pin-check-disabled",
+   "instrument": "battery",
+   "status": "KILLED",
+   "failing_arms": [
+    "battery-pin"
+   ],
+   "predicted": "KILLED",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 9/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=23.4s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": true,
+     "detail": "rc=1 wall=18.9s red-observable=True ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": false,
+     "detail": "mismatch:rc=0 invalid:rc=0",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok | GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    }
+   ],
+   "mutant_sha256": "30178572e7a13f7ddd8c5579f2e02d6be6b0f4602b18c24b4b996b19a88249a2"
+  }
+ ],
+ "postrestore": [
+  {
+   "instrument": "audit",
+   "arms": [
+    {
+     "arm": "audit-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT_SELFTEST: 12/12 pass"
+    },
+    {
+     "arm": "audit-r97-driver",
+     "pass": true,
+     "detail": "rc=1 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1"
+    },
+    {
+     "arm": "audit-controls98",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    },
+    {
+     "arm": "audit-blob-not-worktree",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0"
+    }
+   ]
+  },
+  {
+   "instrument": "battery",
+   "arms": [
+    {
+     "arm": "battery-selftest",
+     "pass": true,
+     "detail": "rc=0 ",
+     "observed_line": "GUARD_REFUSALS_SELFTEST: 9/9 pass"
+    },
+    {
+     "arm": "battery-positive",
+     "pass": true,
+     "detail": "rc=0 wall=12.5s ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok"
+    },
+    {
+     "arm": "battery-red",
+     "pass": true,
+     "detail": "rc=1 wall=14.5s red-observable=True ",
+     "observed_line": "GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable"
+    },
+    {
+     "arm": "battery-pin",
+     "pass": true,
+     "detail": "mismatch:rc=2 invalid:rc=2",
+     "observed_line": "GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid"
+    }
+   ]
+  }
+ ],
+ "restore": {
+  "instruments": {
+   "audit": {
+    "before": "774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c",
+    "after": "774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c",
+    "match": true
+   },
+   "battery": {
+    "before": "4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872",
+    "after": "4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872",
+    "match": true
+   }
+  },
+  "lane_blobs": {
+   "tools/control-assertion-audit.py": "774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c",
+   ".ufo/evidence/round-98/refusals/guard-refusals.py": "4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872"
+  }
+ }
+}

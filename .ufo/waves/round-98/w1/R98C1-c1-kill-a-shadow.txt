@@ -1,0 +1,123 @@
+# R98C1 C1 kill-rule (a) counterexample — a name bound to a constant is reported measured
+# fixture: /fast/scratch/hyaku/tameshi-r98/R98C1/c1-shadow2 (deleted before yield)
+
+## fixture driver.py (the site records the constant 0: p = Result(0))
+import subprocess
+
+
+class Result:
+    def __init__(self, rc):
+        self.returncode = rc
+
+
+def add(name, code, body, want_code):
+    print("RECORD %s code=%r want=%r" % (name, code, want_code))
+
+
+def main():
+    p = Result(0)                      # the recorded code will be the constant 0
+    def helper():
+        p = subprocess.run(["/usr/bin/true"])   # different scope; never called
+        return p
+    add("shadowed-constant", p.returncode, "body", 1)
+
+
+main()
+
+## git -C c1-shadow2 rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r98/R98C1/c1-shadow2
+## git -C c1-shadow2 rev-parse HEAD
+48dcee9e6d21163524e2bab392d4809396a5baf0
+
+## python3 -I files/tools/control-assertion-audit.py --repo c1-shadow2 --rev <HEAD> --driver driver.py
+CONTROL_ASSERT_DRIVER rev=48dcee9e6d21163524e2bab392d4809396a5baf0 driver=driver.py sha256=ba232fe2a1a04378b26d2e5f2bab5ee46a87b32cc7a0b6a202817fd1653395bb
+CONTROL_ASSERT_SITE line=18 name=shadowed-constant measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+rc=0
+
+## python3 c1-shadow2/driver.py   (what the site actually records)
+RECORD shadowed-constant code=0 want=1
+
+## minimal form: p = 0 in the site scope, runner assignment in a nested scope
+## python3 -I files/tools/control-assertion-audit.py --repo c1-shadow --rev <HEAD> --driver driver.py
+CONTROL_ASSERT_DRIVER rev=7fa80a115bc9955cc4816361c365aa553df67341 driver=driver.py sha256=323a4f5dd94dcf027b39e53b74116b0ea43eaf66d8fc12b2c529a7db7b6a3890
+CONTROL_ASSERT_SITE line=9 name=shadowed-constant measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+rc=0
+## c1-shadow/driver.py source
+import subprocess
+
+
+def main():
+    p = 0
+    def inner():
+        p = subprocess.run(["/usr/bin/true"])
+        return p
+    add("shadowed-constant", p.returncode, "body", 0)
+
+=====================================================================
+## LITERAL kill-rule (a) hit: the recorded code is a Name bound to the constant 0
+## fixture: c1-shadow3 (the site scope binds rc = 0; a nested scope shadows rc)
+
+import subprocess
+
+
+def add(name, code, body, want_code):
+    print("RECORD %s code=%r want=%r" % (name, code, want_code))
+
+
+def main():
+    rc = 0                              # the site's own binding: a constant
+    def helper():                       # a different scope, never called
+        p = subprocess.run(["/usr/bin/true"])
+        rc = p.returncode
+        return rc
+    add("name-bound-constant", rc, "body", 1)
+
+
+main()
+
+## git -C c1-shadow3 rev-parse --show-toplevel / HEAD
+/fast/scratch/hyaku/tameshi-r98/R98C1/c1-shadow3
+feedf5a9d5fee52bd2c20cff3ed9a845ef7a6d54
+
+## python3 -I files/tools/control-assertion-audit.py --repo c1-shadow3 --rev <HEAD> --driver driver.py
+CONTROL_ASSERT_DRIVER rev=feedf5a9d5fee52bd2c20cff3ed9a845ef7a6d54 driver=driver.py sha256=2c80ecb5a579114845643bdb9709e544fbbf5cff32c4e4767d480b8ba70bd6fe
+CONTROL_ASSERT_SITE line=14 name=name-bound-constant measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+rc=0
+
+## what the driver records at run time
+RECORD name-bound-constant code=0 want=1
+
+## kill rule (a) as frozen: "a constant, or a name bound to a constant, is reported measured"
+## observed: name bound to the constant 0 -> measured=yes, exit 0
+
+=====================================================================
+## VARIANT: a dead store (if False) makes the constant 0 report measured
+## fixture: c1-dead
+import subprocess
+
+
+def add(name, code, body, want_code):
+    print("RECORD %s code=%r want=%r" % (name, code, want_code))
+
+
+def main():
+    rc = 0
+    if False:                                     # dead store
+        rc = subprocess.run(["/usr/bin/true"]).returncode
+    add("dead-store-constant", rc, "body", 1)
+
+
+main()
+## git -C c1-dead rev-parse --show-toplevel / HEAD
+/fast/scratch/hyaku/tameshi-r98/R98C1/c1-dead
+acafe14b65bf1706b4f6899bba622302be0c5c13
+## python3 -I files/tools/control-assertion-audit.py --repo c1-dead --rev <HEAD> --driver driver.py
+CONTROL_ASSERT_DRIVER rev=acafe14b65bf1706b4f6899bba622302be0c5c13 driver=driver.py sha256=b1b3ea4ff876fa9ad02d2f33aa0905b9690bad68c3603f8fefcac00d004993d2
+CONTROL_ASSERT_SITE line=12 name=dead-store-constant measured=yes class=measured detail=returncode-of-runner
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+rc=0
+## what the driver records at run time
+RECORD dead-store-constant code=0 want=1

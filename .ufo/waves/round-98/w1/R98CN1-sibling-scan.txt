@@ -1,0 +1,478 @@
+
+### sweep date: 2026-11-08; fleet root /home/vgpnk/Projects/shokunin (read-only)
+
+### class A: static provenance audit of a control/recorder call site
+
+$ rg -n --hidden --glob !.git -l ast\.parse|ast\.walk audio-shokunin/corpus/fixtures
+audio-shokunin/corpus/fixtures/test_audio_final_guards.py
+audio-shokunin/corpus/fixtures/test_audio_host_lock.py
+audio-shokunin/corpus/fixtures/test_pwstream_r98_scope.py
+audio-shokunin/corpus/fixtures/test_rtp_r99_lan_control.py
+audio-shokunin/corpus/fixtures/test_rtp_r99_loopback.py
+audio-shokunin/corpus/fixtures/test_rtp_r99_missing.py
+audio-shokunin/corpus/fixtures/test_sofa_r100_witnesses.py
+audio-shokunin/corpus/fixtures/test_wppol_r97_guard.py
+rc=0
+
+$ rg -n defects\.append|ast\.parse|ast\.walk|bound|survivors kaidoku-shokunin/tools/round-80/guard-battery.py
+4:Binds each `defects.append(...)` refusal clause of
+13:  * A clause exists for every `defects.append(...)` statement inside
+27:  * `bound` counts clauses with a unique row and an existing declared case.
+33:Exit: 0 guards>0, rows==guards, bound==guards, survivors==[], pristine green;
+125:    """The literal text of one defects.append argument (f-string parts joined)."""
+135:    tree = ast.parse(source)
+137:    for node in ast.walk(tree):
+144:    statements = [node for node in ast.walk(func)
+179:            defects.append(f"malformed row ({len(cells)} cells): {line[:70]}")
+185:            defects.append(f"clause id is not G<NN>-<slug>: {clause_id}")
+190:            defects.append(f"{clause_id}: fragment or case is empty")
+201:        defects.append("duplicate clause id in the table")
+203:    bound = 0
+211:                 "clause_bound": False}
+213:            defects.append(f"G{clause['index']:02d}: no table row binds this clause")
+215:            defects.append(f"G{clause['index']:02d}: {len(hits)} rows bind this clause")
+218:                defects.append(f"{hits[0]['clause_id']}: case {hits[0]['case']!r} "
+221:                entry["clause_bound"] = True
+222:                bound += 1
+224:    used = {e["index"] for e in per_clause if e["clause_bound"]}
+228:            defects.append(f"{row['clause_id']}: fragment matches no clause")
+230:            defects.append(f"{row['clause_id']}: fragment matches "
+233:            defects.append(f"{row['clause_id']}: clause {hits[0]['index']} is unbound")
+234:    return {"bound": bound, "per_clause": per_clause, "defects": defects,
+260:    bound = bind(clauses, rows, gate.decode())
+265:    survivors: list[dict] = []
+267:    for entry in bound["per_clause"]:
+269:        if not entry["clause_bound"]:
+270:            survivors.append({"clause": entry["index"], "line": clause["line"],
+272:                              "no declared case bound to this clause"})
+293:            survivors.append({**record, "reason":
+306:        "bound": bound["bound"],
+307:        "survivors": survivors,
+308:        "survivors_count": len(survivors),
+316:        "binding_defects": bound["defects"],
+319:        "per_clause": bound["per_clause"],
+326:        and receipt["bound"] == receipt["guards"] and not survivors
+328:        and not table_defects and not bound["defects"])
+337:        defects.append("guards does not re-derive from the clause list")
+340:        defects.append("rows does not re-derive from the table rows")
+342:    if receipt.get("bound") != sum(1 for c in per_clause if c.get("clause_bound")):
+343:        defects.append("bound does not re-derive from per_clause")
+344:    survivors = receipt.get("survivors") or []
+345:    if receipt.get("survivors_count") != len(survivors):
+346:        defects.append("survivors_count does not re-derive from survivors")
+350:            defects.append(f"clause {entry.get('clause')}: killed with a case that "
+354:        defects.append("pristine case summary is absent")
+356:        defects.append("ok true with a failing pristine selftest")
+357:    if receipt.get("ok") and survivors:
+358:        defects.append("ok true with survivors")
+360:        defects.append("ok true over an empty clause set")
+362:        defects.append("ok true with table defects")
+365:            defects.append("a table row declares no case")
+368:        defects.append("target pin matched without a 64-hex expectation")
+370:        defects.append("rev is not a 40-hex commit")
+372:        defects.append("checked_at is absent")
+375:        defects.append("instrument sha256 is not this file's digest")
+377:            "survivors": len(survivors)}
+390:        "        defects.append('duplicate fixture id')\n"
+392:        "        defects.append(f\"{receipt['id']}: refused by {receipt['rule']}, \"\n"
+395:        "        defects.append('refused does not re-derive from the fixture list')\n"
+416:    bound = bind(clauses, rows, gate_with_cases)
+417:    case("binding-bound", bound["bound"], 3)
+418:    case("binding-clean", bound["defects"], [])
+421:    case("red-absent-case-unbound",
+422:         bind(clauses, missing, gate_with_cases)["bound"], 2)
+437:    case("red-unbound-clause-named",
+444:    case("red-malformed-row-not-bound", malformed, [])
+446:    mangled = gate_with_cases.replace("defects.append('duplicate fixture id')",
+447:                                      "defects.append('dup fixture id')")
+449:         [e["clause_bound"] for e in
+456:         and mutant.count(b"defects.append") == 2, True)
+461:               "per_clause": [{"clause_bound": True}] * 3, "bound": 3,
+462:               "survivors": [], "survivors_count": 0,
+471:    tampered["survivors"] = [{"clause": 2}]
+472:    case("red-validate-tampered-survivors",
+474:         ["survivors_count does not re-derive from survivors"])
+482:                  "per_clause": [], "bound": 0})
+535:                      ("guards", "rows", "bound", "survivors_count", "ok")},
+537:    print(json.dumps({"survivors": [s.get("clause") for s in receipt["survivors"]],
+rc=0
+
+$ rg -n static |multiset|st_\*|leg assignments tameshi-shokunin/tools/tally-audit-v3.py
+71:  static   the identified tally loop's operands equal the head's leg assignments as multisets and
+343:    leg assignments (the runtime oracle still sweeps every status vector, and the sum-guard is
+504:        problems.append('no st_* leg assignments before the tally block')
+554:        problems.append('no st_*=$? leg assignments')
+581:        return False, 'no leg assignments to sweep'
+rc=0
+
+$ rg -n measured=|recorded= mado-shokunin/tools/mado-verify.sh
+534:    "REGRESSION_DEFECT fixture D1: measured=SURVIVED recorded=KILLED"
+545:    "REGRESSION_CASE fixture: SETUP (pin mismatch: recorded=000000000000"
+566:  st_has "R5: unrecorded row named" "$o1" "REGRESSION_DEFECT fixture D3: measured=KILLED recorded=ABSENT"
+567:  st_has "R5: FAIL line carries the defect count" "$o1" "defects=3-recorded=2"
+575:  st_has "R6: absent row named" "$o1" "REGRESSION_DEFECT fixture D2: measured=ABSENT recorded=KILLED"
+2150:    printf 'REGRESSION_CASE %s: SETUP (pin mismatch: recorded=%s live=%s target=%s)\n' \
+2194:      diffs="$diffs$(printf 'REGRESSION_DEFECT %s %s: measured=%s recorded=ABSENT\n' "$name" "$id" "$v")"$'\n'
+2197:      diffs="$diffs$(printf 'REGRESSION_DEFECT %s %s: measured=%s recorded=%s\n' "$name" "$id" "$v" "$want")"$'\n'
+2209:        diffs="$diffs$(printf 'REGRESSION_DEFECT %s %s: measured=ABSENT recorded=%s\n' "$name" "$eid" "${pair#*:}")"$'\n'
+2223:  [ "$killed" = "$exp_killed" ] || reasons="$reasons killed=$killed-recorded=$exp_killed"
+2226:  [ "$total" = "$exp_total" ] || reasons="$reasons defects=$total-recorded=$exp_total"
+rc=0
+
+### class A predicate scan: no sibling prints a control-code measured/literal/unmeasured tally
+
+$ bash -c for d in ./*-shokunin; do rg -n --hidden 'measured=[0-9]|literal=[0-9]|unmeasured=[0-9]' "$d/tools" "$d/scripts" 2>/dev/null | grep -v '\.md:' | head -3; done
+./kumitate-shokunin/scripts/harm-cases.json:47:    "summary": "unmeasured=1"
+./kumitate-shokunin/scripts/harm-cases.json:126:    "summary": "unmeasured=1"
+./souji-shokunin/tools/souji-landing-gate.py:1960:            "checked_pins=3\tchecked_measured=2\tchecked_markers=0\t"
+./tameshi-shokunin/tools/count-recheck.py:240:        if rc == 0 and "COUNT_ROW C1 expect=match printed=3 measured=3 ok" \
+./tameshi-shokunin/tools/count-recheck.py:252:        if rc == 0 and "COUNT_ROW C2 expect=drift printed=2 measured=3 ok" \
+./tameshi-shokunin/tools/count-recheck.py:263:        if rc == 1 and "COUNT_ROW C3 expect=match printed=2 measured=3 " \
+rc=0
+
+### class B: refusal-class battery driving a frozen tool
+
+$ rg -n REFUSALS|HONEST|REFUSAL_TOTAL|clean=|leaked=|hung= kengaku-shokunin/plans/round45_c1_verify.py
+23:  REFUSALS  the ten modules of `plans/refusals45/` (round-44 hostile f1-f6 byte-copied from
+29:  HONEST    the 22 modules of the standing batteries `plans/battery42`, `plans/battery43`, `plans/battery44`
+38:  `REFUSALS total=10 clean=10 leaked=0 read=0 hung=0 build_errors=0`, then
+39:  `HONEST fixtures=104 admitted=104 refused=0 read=0 hung=0 build_errors=0`, then
+64:HONEST_RELS = ("plans/battery42", "plans/battery43", "plans/battery44")
+100:REFUSAL_TOTAL = 10
+101:HONEST_TOTAL = 104
+271:        groups["honest"] = [f for rel in HONEST_RELS for f in sorted((lane / rel).glob("*.py"))]
+306:            print(f"REFUSAL {f.name} {verdict} fixtures={len(rows)} admitted={n_admit} hung={n_hung} opens={n_open}")
+308:        print(f"REFUSALS total={rtotal} clean={clean} leaked={leaked} read={read} hung={hung}"
+315:        print(f"HONEST fixtures={len(hrows)} admitted={h_adm} refused={h_ref} read={h_read} hung={h_hung}"
+318:        print(f"CALIBRATION advertised={REFUSAL_TOTAL} contradicted={contradicted}")
+320:        good = (not mism and not after and rtotal == REFUSAL_TOTAL and clean == REFUSAL_TOTAL and leaked == 0
+321:                and read == 0 and hung == 0 and build_errors["refusal"] == 0 and len(hrows) == HONEST_TOTAL
+322:                and h_adm == HONEST_TOTAL and h_ref == 0 and h_read == 0 and h_hung == 0
+rc=0
+
+$ rg -n positives|negatives_refused|false_admits|anti_table|GATE =|line 1 kake-shokunin/.ufo/waves/round-90/c90_gate.py
+9:  positives (4): the shipped round-89 candidate as of the base revision, the L1
+23:anti_table: the gate source must not contain any subject sha256 (first 12 hex) or
+26:met <=> gate present AND population pins match AND positives admitted 4/4 AND
+27:negatives refused 57/57 (false_admits == 0, errors == 0) AND anti_table ok.
+29:Line 1: C2v90 revision=<sha> gate=present|absent positives=a/4 negatives_refused=b/57
+30:        false_admits=c errors=d anti_table=ok|hit population=ok|drift seed=S met=true|false
+47:GATE = "scripts/cache_key_conformance.py"
+117:        print("C2v90 revision=%s gate=absent positives=0/%d negatives_refused=0/%d false_admits=0 errors=0 "
+118:              "anti_table=n/a population=n/a seed=%d met=false" % (rev, len(POSITIVES), len(NEGATIVES), seed))
+154:        detail["anti_table_hits"] = hits
+187:    false_admits = [p for p in NEGATIVES if res[p][0] == "admit"]
+189:    detail.update({"false_admits": false_admits, "errors": {p: res[p][1] for p in errors},
+190:                   "positives_not_admitted": {p: res[p][1] for p in pos if res[p][0] != "admit"},
+193:    print("C2v90 revision=%s gate=present positives=%d/%d negatives_refused=%d/%d false_admits=%d errors=%d "
+194:          "anti_table=%s population=%s seed=%d met=%s" % (
+195:              rev, pos_ok, len(pos), neg_ok, len(NEGATIVES), len(false_admits), len(errors),
+rc=0
+
+$ rg -n c1-refusal-arithmetic|refusalReceipts|whole-payload|CLASSES =  tabi-shokunin/scripts/round-evidence-audit.mjs
+16://   c1-refusal-arithmetic  a cited "<n> whole-payload refusals" vs the refusal receipts committed
+38:export const CLASSES = [
+39:  "c1-refusal-arithmetic",
+205:// "<n> whole-payload refusals" — the report/lesson wording for a capacity refusal.
+213:    for (const m of line.matchAll(/(?:\*\*)?\b(\d{1,3})\b(?:\*\*)?\s+whole-payload\s+refusal/gi)) out.add(Number(m[1]));
+313:  const refusalReceipts = refusalFiles.filter((f) => isRefusal(ctx.read(f)));
+317:  const wrong = citedSet.filter((n) => n !== refusalReceipts.length);
+321:      "c1-refusal-arithmetic",
+323:      refusalReceipts.length,
+325:      `cited ${wrong.join("/")} whole-payload refusals, receipts committed ${refusalReceipts.length} (${refusalFiles.length} refusal files, ${refusalReceipts.length} carrying the capacity marker)`
+583:    "2 whole-payload refusals refused the wave.",
+632:    runFixtureCase("c1-red-cited-below-receipts", "c1-refusal-arithmetic", (fx) => {
+634:        "2 whole-payload refusals",
+635:        "1 whole-payload refusals"
+669:      fx.files["corpus/lessons/round-90.md"] = "# Round90\n\n## Gate\n\n2 whole-payload refusals refused the wave.\n\n## Mistakes\n\nnone\n";
+707:        "2 whole-payload refusals",
+708:        "3 whole-payload refusals"
+801:    const f = baseline.findings.find((x) => x.class === "c1-refusal-arithmetic");
+803:    const fix = (t) => String(t || "").replace(/\b\d{1,3}(\s+whole-payload)/g, `${derived}$1`);
+804:    push("c1-refusal-arithmetic", lesson === null ? {} : { [lessonPath]: fix(lesson) }, fix(reportText));
+rc=0
+
+$ rg -n GUARD_SETUP|GUARD_REFUSALS tameshi-shokunin/.ufo/evidence/round-97/c2/guard-inertia.py tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py
+tameshi-shokunin/.ufo/evidence/round-97/c2/guard-inertia.py:63:    print("GUARD_SETUP " + msg)
+tameshi-shokunin/.ufo/evidence/round-97/c2/guard-inertia.py:249:    return "GUARD_SETUP " + msg
+tameshi-shokunin/.ufo/evidence/round-97/c2/guard-inertia.py:292:                               "pristine": {"exit": 2}}, "GUARD_SETUP edit-no-op:noop")
+tameshi-shokunin/.ufo/evidence/round-97/c2/guard-inertia.py:295:                                   "pristine": {"exit": 2}}, "GUARD_SETUP edit-ambiguous:amb:")
+tameshi-shokunin/.ufo/evidence/round-97/c2/guard-inertia.py:348:        if isinstance(exc.code, str) and exc.code.startswith("GUARD_SETUP "):
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:3:declared GUARD_SETUP refusal class, end to end, from committed bytes.
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:62:    print("GUARD_REFUSALS_SETUP " + msg)
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:70:        if line == "GUARD_SETUP " + name or line.startswith("GUARD_SETUP " + name + ":"):
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:105:        raise SystemExit("GUARD_REFUSALS_SETUP fixture-commit-failed:%s" % r[2][:120])
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:111:        ("refusal-exact", class_token_ok("edit-no-op", "GUARD_SETUP edit-no-op:row-1\n", 2), True),
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:112:        ("refusal-bare", class_token_ok("edit-no-op", "GUARD_SETUP edit-no-op\n", 2), True),
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:113:        ("refusal-wrong-exit", class_token_ok("edit-no-op", "GUARD_SETUP edit-no-op:row-1\n", 0), False),
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:114:        ("refusal-wrong-token", class_token_ok("edit-no-op", "GUARD_SETUP edit-ambiguous:x\n", 2), False),
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:115:        ("refusal-longer-word", class_token_ok("edit-no-op", "GUARD_SETUP edit-no-opX\n", 2), False),
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:116:        ("refusal-other-line", class_token_ok("edit-no-op", "note GUARD_SETUP edit-no-op:x\n", 2), False),
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:126:    print("GUARD_REFUSALS_SELFTEST: %d/%d pass" % (passed, len(cases)))
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:219:                print("GUARD_REFUSALS_RED %s refused-under-red-run" % name)
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:221:                print("GUARD_REFUSALS_RED %s missed-as-declared rc=%d" % (name, rc))
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:227:            token = [ln for ln in out.splitlines() if ln.startswith("GUARD_SETUP")][:1]
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:228:            print("GUARD_REFUSALS_MISS %s rc=%d first=%r" % (name, rc, token))
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:239:        print("GUARD_REFUSALS_POSITIVE_FAIL rc=%d last=%r" % (rc, out.splitlines()[-1:]))
+tameshi-shokunin/.ufo/evidence/round-98/refusals/guard-refusals.py:240:    print("GUARD_REFUSALS classes=%d refused=%d wrong=%d positive=%s%s"
+rc=0
+
+### class B cross-check: no sibling defines the GUARD_SETUP/GUARD_REFUSALS tokens
+
+$ bash -c for d in ./*-shokunin; do rg -n --hidden 'GUARD_SETUP|GUARD_REFUSALS' "$d/tools" "$d/scripts" "$d/plans" 2>/dev/null | head -2; done
+./tameshi-shokunin/plans/round-98.plan.md:17:D-6: two of the round-97 matrix's six `GUARD_SETUP` refusal classes had no committed
+./tameshi-shokunin/plans/round-98.plan.md:104:  prints `GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok` and exits 0. It reads
+rc=0
+
+### class C: registry cell-mutability checker (append-only cell comparison)
+
+$ rg -n immutable|MUTABLE|status|recheck|used-by|round_changed|appendonly_violations mori-shokunin/tools/mori-sources-appendonly.py
+9:Only the columns `status`, `recheck` and `used-by` may change in place; every
+10:other column is immutable, and a rewritten row must land as a new row whose
+15:  ids            rows present at <rev> whose immutable cells differ from the
+23:  round_changed  ids whose immutable cells changed, or which were deleted, in
+29:                 descendant of or equal to the id's last immutable-cell edit
+34:  appendonly_violations = len(ids) + len(deleted)
+37:registry header; immutable keys compare in canonical column order. Rows are
+43:    appendonly_violations=N ids=[...] deleted=[...] superseded=[...] round_changed=[...]
+64:           "status", "opened", "recheck", "used-by"]
+65:MUTABLE = ("status", "recheck", "used-by")
+70:    r"^appendonly_violations=(\d+)\s+ids=\[([^\]]*)\]\s+deleted=\[([^\]]*)\]\s+"
+71:    r"superseded=\[([^\]]*)\]\s+round_changed=\[([^\]]*)\]$")
+210:def immutable_indices(colmap):
+215:            if name not in MUTABLE and name in colmap]
+335:        ref_imm_idx = immutable_indices(ref_colmap)
+336:        commit_imm_idx = immutable_indices(commit_colmap)
+352:    tip_imm_idx = immutable_indices(tip_colmap)
+356:                 imm_key(first[cid], immutable_indices(first_colmap[cid])))
+403:    round_changed = set()
+411:                round_changed |= changed_at.get(index, set())
+412:                round_changed |= deleted_at.get(index, set())
+419:        "round_changed": sorted(round_changed),
+441:    lines.append("appendonly_violations=%d ids=[%s] deleted=[%s] superseded=[%s] "
+442:                 "round_changed=[%s]"
+446:                    format_list(result["round_changed"])))
+468:         status="mined", opened="2026-01-01", recheck="on-release",
+470:    return [rid, source, kind, tier, scope, anchor, teaches, status, opened,
+471:            recheck, used_by]
+594:    # the superseded row — the never-edited id's last immutable-cell edit is
+629:          "round_changed": ["S001"], "superseded_by": {"S001": "S002"},
+633:          "round_changed": [], "superseded_by": {"S001": "S003"},
+637:          "round_changed": ["S001"], "superseded_by": {"S001": "S002"},
+641:          "round_changed": [],
+645:          "round_changed": ["S001"], "superseded_by": {"S001": "S002"},
+649:          "round_changed": ["S008"],
+855:          "round_changed": [], "superseded_as_of": ["S001"],
+860:          "round_changed": [], "superseded_as_of": ["S001"],
+865:          "round_changed": [], "superseded_as_of": [],
+870:          "round_changed": ["S001"], "superseded_as_of": [],
+875:          "round_changed": ["S001"], "superseded_by": {"S001": "S002"},
+880:          "round_changed": ["S001"], "superseded_by": {"S001": "S002"},
+885:          "round_changed": ["S001", "S002"],
+894:    mutable = _render([_row("S001", status="queued")])
+897:    padded = _render([_row("S001", anchor="  anchor a  ", status=" mined ")])
+916:         {"ids": [], "deleted": [], "superseded": [], "round_changed": [],
+919:         {"ids": [], "deleted": [], "superseded": [], "round_changed": [],
+921:        ("immutable edit", [base, edited], 1,
+922:         {"ids": ["S001"], "deleted": [], "superseded": [], "round_changed": ["S001"],
+925:         {"ids": [], "deleted": [], "superseded": [], "round_changed": ["S001"],
+928:         {"ids": [], "deleted": ["S002"], "superseded": [], "round_changed": ["S002"],
+931:         {"ids": ["S001"], "deleted": [], "superseded": ["S001"], "round_changed": ["S001"],
+936:          "round_changed": ["S001"], "superseded_by": {"S001": "S002"},
+939:         {"ids": [], "deleted": [], "superseded": [], "round_changed": [],
+942:         {"ids": [], "deleted": [], "superseded": [], "round_changed": [],
+989:                got["round_changed"] = [p for p in groups[4].split(",") if p]
+996:                got["round_changed"] = []
+1007:            for key in ("ids", "deleted", "superseded", "round_changed",
+1083:                        help="start of the round (exclusive); enables round_changed")
+1109:        return 1 if result["round_changed"] else 0
+rc=0
+
+$ rg -n permitted|status \(8th\)|recheck \(10th\)|used-by \(11th\)|KQ22 kama-shokunin/tools/append-only-audit.py
+9:  permitted   for a file whose contract rule is A-row, a deleted line that is a registry
+12:              than status (8th), recheck (10th) and used-by (11th) are byte-equal: the
+13:              in-place change the A-row rule allows (KQ22); counted per event as
+14:              `permitted`, never graded; graded + ungraded + permitted == deleted
+512:def permitted_edits(dl, new_body):
+659:            perm = permitted_edits(dl, r.list_lines(wb[f"{c}:{f}"]) if wb[f"{c}:{f}"] else []) \
+720:                           "ungraded": len(dl) - ng - len(perm), "permitted": len(perm),
+734:               "permitted_lines": sum(e["permitted"] for e in events),
+750:           f"ungraded={e['ungraded']} permitted={e['permitted']} restored_max={e['restored_max']} "
+764:               f"permitted_lines={s['permitted_lines']} disclosed_lines={s['disclosed_lines']} "
+1270:    # ---------------- v6 (round 51): default threshold 1, A-row permitted edits, disclosures
+1303:        return (len(e) == 1 and e[0]["permitted"] == 1 and e[0]["graded"] == 0 and e[0]["ungraded"] == 0
+1311:        return (len(e) == 1 and e[0]["permitted"] == 0 and e[0]["graded"] == 1 and e[0]["status"] == "unrestored"
+1320:        return len(e) == 1 and e[0]["permitted"] == 0 and e[0]["graded"] == 1, str(e)
+1327:        return len(e) == 1 and e[0]["permitted"] == 0 and e[0]["status"] == "unrestored", str(e)
+1436:        return len(e) == 1 and e[0]["permitted"] == 0 and e[0]["graded"] == 1, str(e)
+rc=0
+
+$ rg -n only status|recheck|used-by|differ at REV|append-only kaidoku-shokunin/tools/round-38/registry-immutable.sh
+3:# CORPUS.md SOURCES rule 2 (append-only): for every registry row present at BASE,
+4:# only status, recheck and used-by may differ at REV. Prints each row whose other
+10:# VARIANT NOTE (R39CL2Selftests, advisory): this copy adds the two append-only
+17:# green/red constructs (append-only 0, in-place cell edit 1, row deletion 1,
+50:      printf '| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |\n'
+68:  write_table "$R2X" "$R1D" "$R4";         C5=$(fx_commit 'change only status, recheck and used-by of S001')
+90:  run_case append-only      0 "$C0" "$C1"
+103:# columns (awk -F'|'): 2 id, 3 source, 4 kind, 5 tier, 6 scope, 7 anchor, 8 teaches, 9 status, 10 opened, 11 recheck, 12 used-by
+110:  END { for (i=1;i<=nb;i++) if (!(order[i] in seen)) { print order[i], "row deleted (append-only)"; hit=1 }
+113:        for (i=1;i<=nr;i++) if (revorder[i] != common[i]) { print order[i] " / " revorder[i], "row reordered (append-only)"; hit=1; break }
+rc=0
+
+$ rg -n IMMUTABLE|def compare|--from|--to|REGISTRY_IMMUTABLE|cat-file tameshi-shokunin/tools/registry-cell-immutability.py
+12:Both revisions are read as blobs through `git cat-file` (never a worktree).
+18:      --from <40 hex> --to <40 hex> [--path corpus/SOURCES.md] [--selftest]
+35:IMMUTABLE = {1: "source", 2: "kind", 3: "tier", 4: "scope", 5: "anchor",
+64:def compare(old, new):
+75:        for idx, name in IMMUTABLE.items():
+83:    r = subprocess.run([GIT, "-C", repo, "cat-file", "blob", "%s:%s" % (rev, path)],
+146:    print("REGISTRY_IMMUTABLE_SELFTEST: %d/%d pass" % (passed, total))
+153:    ap.add_argument("--from", dest="rev_from", default=None)
+154:    ap.add_argument("--to", dest="rev_to", default=None)
+183:    print("REGISTRY_IMMUTABLE from=%s to=%s shared=%d changed=%d removed=%d added=%d"
+rc=0
+
+$ rg -n append-only-raw|append-only-content|claim class|cat-file|round 74 tameshi-shokunin/tools/additivity-range.py
+3:range (round 74; closes the round-73 closure's routed defects 1-2).
+14:Two row kinds, one explicit claim class per row:
+18:            claim class and names the worst commit otherwise.
+24:  append-only-raw       judged on `raw_old_only`: no existing line removed or
+27:  append-only-content   judged on `norm_cr_old_only` (CRLF/CR -> LF first): the
+36:  * bytes come from git objects (`git cat-file blob <rev>:<path>`), never from
+42:  * a zero-row manifest, an unresolvable revision, an unknown claim class or an
+68:CLAIMS = ("append-only-raw", "append-only-content")
+107:    proc = subprocess.run(["git", "-C", repo, "cat-file", "-e",
+113:    return git(repo, "cat-file", "blob", "%s:%s" % (rev, path))
+165:    if claim == "append-only-raw":
+167:    if claim == "append-only-content":
+376:                        "kind": "commits", "claim": "append-only-raw",
+400:                                              claim="append-only-content",
+406:            lambda: exit_of(lambda: run([pair("append-only-raw", base,
+rc=0
+
+$ rg -n immutable|append-only|cell|registry scripts/sources-census.sh scripts/hyaku/prefile-falsification.py
+scripts/sources-census.sh:3:# Conforms to SOURCES-CONTRACT-v1: one registry table, 11 columns => NF=13,
+scripts/sources-census.sh:15:#                     use --file or an explicit directory for a specific registry.
+scripts/sources-census.sh:17:#           · 2 usage/env/missing registry · 3 selftest failure; W-codes and unlisted
+scripts/sources-census.sh:18:#             lanes never change status (validate missing registry returns 2).
+scripts/sources-census.sh:159:  checkx "W-only-registry-exit-0" 0 "$0" validate --today 2026-10-19 --root "$froot" z
+scripts/sources-census.sh:273:# Outside registry fixture
+scripts/sources-census.sh:281:  checkline "E12-outside-registry-mutant" \
+scripts/sources-census.sh:284:  checkx "E12-row-outside-registry-exit-1" 1 \
+scripts/sources-census.sh:430:    printf 'killed\tH1-no-table-cell-execution\n'
+scripts/sources-census.sh:432:    printf 'SURVIVED\tH1-no-table-cell-execution\n'; fail=1
+scripts/sources-census.sh:531:trim_cell() {
+scripts/sources-census.sh:539:  local f=$1 dir=$2 lane=$3 line id status usedby path section in_registry=0
+scripts/sources-census.sh:542:  local -a cells=() paths=()
+scripts/sources-census.sh:546:      section=$(trim_cell "${line:2}")
+scripts/sources-census.sh:547:      [ "$section" = Registry ] && in_registry=1 || in_registry=0
+scripts/sources-census.sh:550:    if [[ "$line" =~ $top_heading_re ]]; then in_registry=0; continue; fi
+scripts/sources-census.sh:551:    [ "$in_registry" = 1 ] || continue
+scripts/sources-census.sh:554:    cells=()
+scripts/sources-census.sh:555:    IFS='|' read -r -a cells <<< "$line"
+scripts/sources-census.sh:556:    [ "${#cells[@]}" -ge 12 ] || continue
+scripts/sources-census.sh:557:    id=$(trim_cell "${cells[1]}")
+scripts/sources-census.sh:558:    status=$(trim_cell "${cells[8]}")
+scripts/sources-census.sh:560:    usedby=$(trim_cell "${cells[11]}")
+scripts/sources-census.sh:564:      path=$(trim_cell "$path")
+scripts/sources-census.sh:611:        in_registry=(trim(substr(line,3))=="Registry")
+scripts/sources-census.sh:614:      if (line ~ /^ {0,3}#[ \t]/) { in_registry=0; next }
+scripts/sources-census.sh:618:      if (!in_registry) {
+rc=0
+
+### predicate scan: unmeasured counters in sibling code (all populations other than control codes)
+
+$ rg -n unmeasured kumitate-shokunin/scripts/harm-matrix.mjs tabi-shokunin/scripts/check-bidi-runtime.mjs mori-shokunin/tools/mori-census.sh
+kumitate-shokunin/scripts/harm-matrix.mjs:6: *                                [--strict-gone] [--strict-unmeasured]
+kumitate-shokunin/scripts/harm-matrix.mjs:31: *                unmeasured=<rows with no reading at either revision> ancestor=yes|no|same base=<12> tip=<12>
+kumitate-shokunin/scripts/harm-matrix.mjs:34: * INTERNAL) · 64 usage. --strict-gone makes GONE a harm; --strict-unmeasured makes any row with no reading at either revision a harm (both opt-in:
+kumitate-shokunin/scripts/harm-matrix.mjs:61:const USAGE = 'usage: harm-matrix.mjs --base REV --tip REV [--lane DIR] [--gates FILE] [--only a,b] [--timeout S] [--strict-gone] [--strict-unmeasured] | --selftest [--cases FILE]';
+kumitate-shokunin/scripts/harm-matrix.mjs:69:  const bools = new Set(['--selftest', '--strict-gone', '--strict-unmeasured']);
+kumitate-shokunin/scripts/harm-matrix.mjs:332:  const unmeasured = counted.filter((r) => ['FAIL_CLOSED', 'TIMEOUT'].includes(r.b.cls) && ['FAIL_CLOSED', 'TIMEOUT'].includes(r.t.cls)).length;
+kumitate-shokunin/scripts/harm-matrix.mjs:333:  if (unmeasured === counted.length) failClosed('ALL_UNMEASURED', `${unmeasured} gate(s) produced no reading at either revision`);
+kumitate-shokunin/scripts/harm-matrix.mjs:335:  const bad = harm + harmAbsent + newRed + (o['--strict-gone'] ? n('GONE') : 0) + (o['--strict-unmeasured'] ? unmeasured : 0);
+kumitate-shokunin/scripts/harm-matrix.mjs:336:  out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted.length} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} unmeasured=${unmeasured} ancestor=${res.anc}${res.added ? ` registry_added=${res.added}` : ''} registry=${res.registry} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)}`);
+tabi-shokunin/scripts/check-bidi-runtime.mjs:42:// counted in the population and reported as unmeasured, never as admitted.
+tabi-shokunin/scripts/check-bidi-runtime.mjs:102:// (rows with a finding), unmeasured (bare `no` rows), distinct (distinct ids
+tabi-shokunin/scripts/check-bidi-runtime.mjs:118://   - `no` rows are unmeasured, not verified: the gate cannot tell a genuinely
+tabi-shokunin/scripts/check-bidi-runtime.mjs:119://     absent capability from an unmeasured one.
+tabi-shokunin/scripts/check-bidi-runtime.mjs:724:    population: 0, admitted: 0, failing: 0, unmeasured: 0, distinct: 0, duplicates: [],
+tabi-shokunin/scripts/check-bidi-runtime.mjs:846:      // unmeasured: counted in the population, never admitted, not a finding
+tabi-shokunin/scripts/check-bidi-runtime.mjs:865:  out.unmeasured = out.rows.filter((r) => r.reason === null && r.verdict === "no").length;
+tabi-shokunin/scripts/check-bidi-runtime.mjs:1019:  { id: "v2-m19-unmeasured-row-counted", exit: 0, admitted: 16, reason: null, population: 17, build: () => ({ extraRows: [["R16", "no"]] }) },
+tabi-shokunin/scripts/check-bidi-runtime.mjs:1060:  // M18: a valid receipt and entry whose every row is unmeasured ("no"), so the
+tabi-shokunin/scripts/check-bidi-runtime.mjs:1227:    for (const r of out.rows) console.log(`ROW id=${r.id} line=${r.line} measured=${r.verdict ?? "-"} ${r.admitted ? "admitted" : r.reason === null ? "unmeasured" : `reason=${r.reason}${r.detail ? ` detail=${JSON.stringify(r.detail)}` : ""}`}`);
+tabi-shokunin/scripts/check-bidi-runtime.mjs:1228:    console.log(`BIDI_RUNTIME verdict=${out.clean ? "clean" : "failed"} rev=${out.rev} population=${out.population} admitted=${out.admitted} failing=${out.failing} unmeasured=${out.unmeasured} distinct=${out.distinct}${out.entryFinding ? ` entry=${out.entryFinding}` : ""} live=${out.live}`);
+mori-shokunin/tools/mori-census.sh:327:# memory block above: it exists so session idleness stops being unmeasured, it
+mori-shokunin/tools/mori-census.sh:364:# distribution yet. They exist so the four r2 gaps stop being unmeasured, and
+mori-shokunin/tools/mori-census.sh:1071:# unmeasured class with a reason that distinguishes a retired text heuristic, an
+mori-shokunin/tools/mori-census.sh:1372:  # Named coverage loss, not a look-alike zero. Each unmeasured class carries a
+mori-shokunin/tools/mori-census.sh:1377:  emit_finding JOURNAL_CLASSES_UNMEASURED info "classes=kernel_victim_text,gpf_text,other_signals,uncataloged_unit_failure basis=unmeasured reasons=kernel_victim_text:text-heuristic-retired,gpf_text:text-heuristic-retired,other_signals:structured-field-unimplemented,uncataloged_unit_failure:text-heuristic-retired counted_structured=kernel_oom_notice,oomd_notice,coredump_notice,segfault_signal11,unit_sigkill_record,unit_failure_record absent_records=possible:no-retained-record-is-not-no-event note=other_signals has structured EXIT_CODE/EXIT_STATUS records (S036) but only EXIT_STATUS=9 is implemented here; the retired text classes are not aliases and are never counted"
+mori-shokunin/tools/mori-census.sh:1672:    d="$d; unit=notice notice_classes=kernel_oom_notice,oomd_notice,coredump_notice record_classes=segfault_signal11,unit_sigkill_record,unit_failure_record trust=client-supplied field=$scope:MESSAGE_ID oomd_activity=unmeasured rc=$rc_n"
+mori-shokunin/tools/mori-census.sh:1674:    d="$d; unmeasured=kernel_victim_text,gpf_text,other_signals,uncataloged_unit_failure unmeasured_reasons=kernel_victim_text:text-heuristic-retired,gpf_text:text-heuristic-retired,other_signals:structured-field-unimplemented,uncataloged_unit_failure:text-heuristic-retired absent_records=possible:no-retained-record-is-not-no-event; ts=$TS_UTC"
+mori-shokunin/tools/mori-census.sh:1728:  # ---- r7: memory pressure (r2 note §4 Gaps: "unmeasured — no number proposed")
+mori-shokunin/tools/mori-census.sh:1968:    emit_finding DISK_IO_UNMEASURED info "no target device yielded a since-boot write average unmeasured=${io_unmeas:-none} basis=since-boot"
+mori-shokunin/tools/mori-census.sh:2630:  # ---- r8: per-session freshness (the residual r7 left unmeasured) ------------
+mori-shokunin/tools/mori-census.sh:4467:  check 'disk: device missing from diskstats -> unmeasured disclosed' 0 CLEAN \
+rc=0
+
+### re-run rc for token absence at fleet scope
+
+$ bash -c cd /home/vgpnk/Projects/shokunin && rg -l --hidden 'GUARD_REFUSALS' ./*-shokunin 2>/dev/null | wc -l
+15
+rc=0
+
+### refinement: nearest static call-site audit is kotodama receipt_guard_adoption.py
+$ rg -n "static analysis|in-place write|dominates the receipt write|adoption class|could-not-evaluate|ast" kotodama-shokunin/tools/harness/receipt_guard_adoption.py
+12:- every in-place write whose target statically resolves to that runner's own
+19:  dominates the receipt write in the same statement block. A ``try:`` whose
+22:- an adoption class (``guarded-refresh`` / ``unguarded-in-place`` /
+23:  ``guard-referenced-only`` / ``no-receipt-write`` / ``could-not-evaluate``)
+26:The census is static analysis only: this tool never executes a runner, never
+28:read time. Unknowns are ``could-not-evaluate`` rows with a named reason — the
+32:``could-not-evaluate`` row); 1 when a row is a gap (still printed in full);
+44:import ast
+91:        "no in-place write to the runner's own receipt was found; other writes "
+93:    "could-not-evaluate": (
+180:                return _strip_slashes(node.value), "literal"
+195:            return _strip_slashes("".join(parts)), "fstring"
+202:                return _strip_slashes(left + right), "concat"
+206:                return _strip_slashes(f"{left}/{right}"), "join"
+247:            return _strip_slashes("/".join(parts)), "os.path.join"
+575:                    "class": "could-not-evaluate", "hazard": None,
+576:                    "route": CLASS_PROTOCOL["could-not-evaluate"],
+579:                    "reasons": [f"could-not-evaluate: unparsable source "
+634:            row["class"] = "could-not-evaluate"
+636:            reasons.append("could-not-evaluate: write targets referencing "
+rc=0
+
+### refinement: every fleet occurrence of GUARD_SETUP/GUARD_REFUSALS is inside tameshi-shokunin (round-97/98 evidence, plan, or report)
+$ rg -n -l "GUARD_REFUSALS|GUARD_SETUP" ./*-shokunin | grep -v "^./tameshi-shokunin/" | wc -l
+0
+rc=0
+(0 means no sibling file carries either token; the earlier fleet-scope count of 15 was all tameshi paths.)
+
+### corpus size of the scan (files searched, git-tracked worktrees, no sibling writes)
+$ for d in ./*-shokunin; do printf "%s " "$d"; rg --files "$d/tools" "$d/scripts" 2>/dev/null | wc -l; done
+./audio-shokunin 0
+./chousa-shokunin 21
+./game-dev-2d-shokunin 0
+./game-dev-3d-shokunin 0
+./kagi-shokunin 0
+./kaidoku-shokunin 470
+./kake-shokunin 522
+./kama-shokunin 173
+./kasegi-shokunin 0
+./kengaku-shokunin 0
+./kotoba-shokunin 0
+./kotodama-shokunin 370
+./kumitate-shokunin 39
+./lore-shokunin 0
+./mado-shokunin 36
+./mori-shokunin 126
+./revenger-shokunin 0
+./souji-shokunin 149
+./tabi-shokunin 203
+./tameshi-shokunin 85
+./tsukuroi-shokunin 165

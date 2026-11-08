@@ -1,0 +1,29 @@
+# R98SC1 fetch receipt — 2026-11-08, host timezone -03
+# cwd: /fast/scratch/hyaku/tameshi-r98/R98SC1 (scratch, deleted before yield)
+# tool: curl 8.23.0 (x86_64-pc-linux-gnu) libcurl/8.23.0 OpenSSL/3.6.5
+
+## S012 — arXiv abs page
+cmd: curl -sS -L --max-time 120 -A 'tameshi-r98-scout/1.0' -D s012.headers -o s012.html -w 'http_code=%{http_code}\nfinal_url=%{url_effective}\n' https://arxiv.org/abs/2608.17214
+observed: http_code=200 final_url=https://arxiv.org/abs/2608.17214
+headers: last_status='HTTP/2 200' date='Sun, 08 Nov 2026 16:13:18 GMT' content-length=42588 last-modified=Mon, 24 Aug 2026 18:49:35 GMT
+deposited: .ufo/waves/round-98/w1/SC1-s012.html bytes=42588 sha256=fb6f384d294898d2a154c248261b518e77a3363a4e40ed92f4bf17b35fea2a80
+deposited: .ufo/waves/round-98/w1/SC1-s012.headers bytes=619
+freeze-commit control: .ufo/evidence/round-98/sources/s012.html sha256=fb6f384d294898d2a154c248261b518e77a3363a4e40ed92f4bf17b35fea2a80 (byte-identical to this live fetch)
+
+## S009 — UCL Discovery eprint 1499169
+cmd: curl -sS -L --max-time 120 -A 'tameshi-r98-scout/1.0' -D s009.headers -o s009.html -w 'http_code=%{http_code}\nfinal_url=%{url_effective}\n' https://discovery.ucl.ac.uk/id/eprint/1499169/
+observed: http_code=200 final_url=https://discovery.ucl.ac.uk/id/eprint/1499169/
+headers: last_status='HTTP/2 200' date='Sun, 08 Nov 2026 16:13:38 GMT' cf-cache-status=DYNAMIC cf-mitigated=<absent>
+deposited: .ufo/waves/round-98/w1/SC1-s009.html bytes=42254 sha256=be3f85dbdb766ab8d1935145099d77b3888915e0220183511253b5c1fa29ed7c
+deposited: .ufo/waves/round-98/w1/SC1-s009.headers bytes=575
+
+## S009 UA control — same URL, 2026-11-08 16:16:05..16:16:13 GMT
+cmd: curl -sS -L --max-time 120 -D s009b.headers -o s009b.html https://discovery.ucl.ac.uk/id/eprint/1499169/
+  default UA curl/8.23.0 -> last_status='HTTP/2 403' date='Sun, 08 Nov 2026 16:16:05 GMT' bytes=5517 sha256=6b639f645766dd6cf51cc5501f32041f5b87a8eaf564eda824f020ed43a47321 cf-mitigated=challenge body=<title>Just a moment...</title>
+cmd: curl -sS -L --max-time 120 -A 'tameshi-r98-scout/1.0' ... -> 200 bytes=42254 sha256=be3f85dbdb766ab8d1935145099d77b3888915e0220183511253b5c1fa29ed7c
+cmd: curl -sS -L --max-time 120 -A 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36' ... -> 200 bytes=42254 sha256=be3f85dbdb766ab8d1935145099d77b3888915e0220183511253b5c1fa29ed7c
+conclusion: the challenge is keyed on the curl default UA; a declared UA fetches the same 42254 B page, byte-identical across two distinct non-default UAs.
+
+## comparison with the freeze commit snapshot (not rewritten)
+freeze .ufo/evidence/round-98/sources/s009.html bytes=5517 sha256=d04c1de85d861c7c846e1dd39d576f352035acb8866b4ecdf56d6c5733d3e75e headers=HTTP/2 403 cf-mitigated: challenge
+freeze .ufo/evidence/round-98/sources/s009.headers date=Sun, 08 Nov 2026 15:46:44 GMT

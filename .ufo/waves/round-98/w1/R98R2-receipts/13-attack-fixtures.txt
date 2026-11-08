@@ -1,0 +1,28 @@
+# Attack fixtures, preserved after scratch deletion; sha256 must match the receipts.
+# Each is a tool-shaped stub placed at .ufo/evidence/round-97/c2/guard-inertia.py in a
+# scratch repo (git init + one commit) and driven by the frozen battery.
+
+e8941ae9a5b8f9d7d04edfd48e78ef2ac457a08e44bd26b281afae88d3e3f0f5  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-98/w1/R98R2-receipts/R98R2-fixture-stub-accept.py
+cdef44f1825190cce5270ee4fde90f67a80c55e34264518836dd8ddcdc3b650b  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-98/w1/R98R2-receipts/R98R2-fixture-stub-stderr.py
+3af2299bb831331963593cfa3e58ac8d027d43420bd84d14bd8dc46b756c0cb1  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-98/w1/R98R2-receipts/R98R2-fixture-stub-red.py
+
+## receipt -> fixture -> recorded stub sha/rev
+06-attack-b-stub-accepted.txt  R98R2-fixture-stub-accept.py  e8941ae9...  rev 32cccff15ea06b29ab04cb3828db1adba8f22732
+07-attack-b2-red-stub.txt     R98R2-fixture-stub-red.py     3af2299b...  rev be9ad3e9ba4af5827077b3ae0afffa1b5de954c0
+10-stdout-only-grading.txt    R98R2-fixture-stub-stderr.py  cdef44f1...  rev f5d209c3f5c589f4b7fad6afb9d4dae1f7e34b25
+
+## rebuild and re-run (any scratch dir; the red fixture needs a per-execution counter
+## file beside the tool, which the battery does not wipe between classes)
+  mkdir -p $W/.ufo/evidence/round-97/c2
+  cp R98R2-fixture-stub-accept.py $W/.ufo/evidence/round-97/c2/guard-inertia.py
+  cp <lane>/.ufo/evidence/round-97/c2/guard-inertia.json $W/.ufo/evidence/round-97/c2/
+  git -C $W init -q && git -C $W add -A && git -C $W -c user.name=x -c user.email=x@invalid commit -qm stub
+  python3 -I <lane>/.ufo/evidence/round-98/refusals/guard-refusals.py --lane $W --rev $(git -C $W rev-parse HEAD) --tool .ufo/evidence/round-97/c2/guard-inertia.py --tool-sha $(shasum -a 256 $W/.ufo/evidence/round-97/c2/guard-inertia.py | cut -d' ' -f1) --work <empty dir> [--red state-unbuildable]
+
+## replay harnesses (byte-identical to the ones that produced receipts 04 and 05)
+afc79952d522ec3d433eb9f27061944a779b5bc0d1a9c484485789e94705d3dd  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-98/w1/R98R2-receipts/R98R2-harness-perclass.py
+c83c3b5a8ff003bc73a05f900799c48b7a0dfa21535a9770740c2d75e597ffb8  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/waves/round-98/w1/R98R2-receipts/R98R2-harness-noteattack.py
+
+Both hard-code S=/fast/scratch/hyaku/tameshi-r98/R98R2, LANE=<the lane>, REV=764aca97...;
+edit S before re-running. Order: perclass first (it creates <S>/pc-work/clone), then noteattack.
+Both clone the lane with --shared and never write inside it.

@@ -1,0 +1,263 @@
+PREFLIGHT pristine
+PRISTINE audit sha256=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c match=True
+PRISTINE battery sha256=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872 match=True
+===== BASELINE pristine =====
+ARM baseline-audit audit audit-selftest PASS | rc=0 
+    line: 'CONTROL_ASSERT_SELFTEST: 12/12 pass'
+ARM baseline-audit audit audit-r97-driver PASS | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1'
+ARM baseline-audit audit audit-controls98 PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM baseline-audit audit audit-blob-not-worktree PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM baseline-battery battery battery-selftest PASS | rc=0 
+    line: 'GUARD_REFUSALS_SELFTEST: 9/9 pass'
+ARM baseline-battery battery battery-positive PASS | rc=0 wall=11.6s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM baseline-battery battery battery-red PASS | rc=1 wall=16.4s red-observable=True 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable'
+ARM baseline-battery battery battery-pin PASS | mismatch:rc=2 invalid:rc=2
+    line: 'GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid'
+===== MUTANT a1-constant-measured (audit) =====
+===== MUTANT a2-direct-name-measured (audit) =====
+MUTATED a2-direct-name-measured sha256=315a713e853850897021091f2df9b91e3a1c0a0038b22993b57048124299829e (pristine=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c)
+===== MUTANT a3-fake-returncode-measured (audit) =====
+MUTATED a3-fake-returncode-measured sha256=56b22f0f05691a705e7280b7cee8df469bc8098f08187b4f14916e54ec593b6a (pristine=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c)
+MUTATED a1-constant-measured sha256=3cd68f4fa326c63b0b621c983e9765269a78b4b345f0c8b3585ee83de654a939 (pristine=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c)
+===== MUTANT a4-literal-tally-zero (audit) =====
+MUTATED a4-literal-tally-zero sha256=61ad53d0f1e6f4cfce5a1dbabcae204fd336388874d685eb96cef87311db7c1e (pristine=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c)
+ARM a2-direct-name-measured audit audit-selftest FAIL | rc=1 
+    line: 'CONTROL_ASSERT_SELFTEST: 9/12 pass'
+ARM a1-constant-measured audit audit-selftest FAIL | rc=1 
+    line: 'CONTROL_ASSERT_SELFTEST: 8/12 pass'
+ARM a4-literal-tally-zero audit audit-selftest PASS | rc=0 
+    line: 'CONTROL_ASSERT_SELFTEST: 12/12 pass'
+ARM a3-fake-returncode-measured audit audit-selftest FAIL | rc=1 
+    line: 'CONTROL_ASSERT_SELFTEST: 11/12 pass'
+ARM a2-direct-name-measured audit audit-r97-driver FAIL | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=12 literal=1 unmeasured=3'
+ARM a1-constant-measured audit audit-r97-driver FAIL | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM a4-literal-tally-zero audit audit-r97-driver FAIL | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=14 literal=0 unmeasured=1'
+ARM a3-fake-returncode-measured audit audit-r97-driver PASS | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1'
+ARM a1-constant-measured audit audit-controls98 PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM a2-direct-name-measured audit audit-controls98 FAIL | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=12 literal=0 unmeasured=3'
+ARM a4-literal-tally-zero audit audit-controls98 PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM a3-fake-returncode-measured audit audit-controls98 PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM a1-constant-measured audit audit-blob-not-worktree PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+VERDICT a1-constant-measured KILLED fails=audit-selftest,audit-r97-driver predicted=KILLED
+===== MUTANT a5-code-arg-off-by-one (audit) =====
+MUTATED a5-code-arg-off-by-one sha256=ca5a200ca9b4f6aff72983621c0706c4b86322383694e2586412896f66871f1c (pristine=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c)
+ARM a2-direct-name-measured audit audit-blob-not-worktree FAIL | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=12 literal=0 unmeasured=3'
+VERDICT a2-direct-name-measured KILLED fails=audit-selftest,audit-r97-driver,audit-controls98,audit-blob-not-worktree predicted=KILLED
+===== MUTANT a6-first-assignment-not-last (audit) =====
+MUTATED a6-first-assignment-not-last sha256=b0cef0e1f11450967a6039e51564434364f3d7b57436a8080402fb82c4b06885 (pristine=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c)
+ARM a6-first-assignment-not-last audit audit-selftest FAIL | rc=1 
+    line: 'CONTROL_ASSERT_SELFTEST: 11/12 pass'
+ARM a4-literal-tally-zero audit audit-blob-not-worktree PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+VERDICT a4-literal-tally-zero KILLED fails=audit-r97-driver predicted=KILLED
+===== MUTANT a7-exit-always-zero (audit) =====
+MUTATED a7-exit-always-zero sha256=b34e8c479e1a0c61cac1511ee64b501f23ce86acbb3caf4506713b95f96565bf (pristine=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c)
+ARM a5-code-arg-off-by-one audit audit-selftest PASS | rc=0 
+    line: 'CONTROL_ASSERT_SELFTEST: 12/12 pass'
+ARM a6-first-assignment-not-last audit audit-r97-driver PASS | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1'
+ARM a7-exit-always-zero audit audit-selftest FAIL | rc=1 
+    line: 'CONTROL_ASSERT_SELFTEST: 11/12 pass'
+ARM a3-fake-returncode-measured audit audit-blob-not-worktree PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+VERDICT a3-fake-returncode-measured KILLED fails=audit-selftest predicted=KILLED
+===== MUTANT a8-site-name-dropped (audit) =====
+MUTATED a8-site-name-dropped sha256=1ccc3bcec6082cb1a8148b97cb57c8df213cb63c205171c9ece5a7289575cbd4 (pristine=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c)
+ARM a5-code-arg-off-by-one audit audit-r97-driver PASS | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1'
+ARM a7-exit-always-zero audit audit-r97-driver FAIL | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1'
+ARM a6-first-assignment-not-last audit audit-controls98 PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM a7-exit-always-zero audit audit-controls98 PASS | rc=0 
+ARM a8-site-name-dropped audit audit-selftest PASS | rc=0 
+    line: 'CONTROL_ASSERT_SELFTEST: 12/12 pass'
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM a6-first-assignment-not-last audit audit-blob-not-worktree PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+VERDICT a6-first-assignment-not-last KILLED fails=audit-selftest predicted=KILLED
+===== MUTANT a9-tuple-index-ignored (audit) =====
+MUTATED a9-tuple-index-ignored sha256=3eda7fd625550d9cbc09be79f77517e65fba1a87ba0fd5ef59348ff575e88913 (pristine=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c)
+ARM a5-code-arg-off-by-one audit audit-controls98 PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM a8-site-name-dropped audit audit-r97-driver FAIL | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1'
+ARM a7-exit-always-zero audit audit-blob-not-worktree PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+VERDICT a7-exit-always-zero KILLED fails=audit-selftest,audit-r97-driver predicted=KILLED
+===== MUTANT a10-depth-guard-widened (audit) =====
+MUTATED a10-depth-guard-widened sha256=f20364f6dae05b6a4a9147597e94974e0f98bac95a6fdaba9f89ee8a1852761c (pristine=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c)
+ARM a9-tuple-index-ignored audit audit-selftest PASS | rc=0 
+    line: 'CONTROL_ASSERT_SELFTEST: 12/12 pass'
+ARM a5-code-arg-off-by-one audit audit-blob-not-worktree PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+VERDICT a5-code-arg-off-by-one SURVIVED fails=- predicted=KILLED
+===== MUTANT b1-rc-accepts-one (battery) =====
+MUTATED b1-rc-accepts-one sha256=47fc83ec99a0a47845db25d952277c1ec66d2572e2376db02bd8b6c026b26f45 (pristine=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872)
+ARM a8-site-name-dropped audit audit-controls98 PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM a10-depth-guard-widened audit audit-selftest PASS | rc=0 
+    line: 'CONTROL_ASSERT_SELFTEST: 12/12 pass'
+ARM a8-site-name-dropped audit audit-blob-not-worktree PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+VERDICT a8-site-name-dropped KILLED fails=audit-r97-driver predicted=KILLED
+===== MUTANT b2-rc-check-dead (battery) =====
+MUTATED b2-rc-check-dead sha256=055d49b13ee276ef073b3ab55f4b302c2e2d1a3ea83edf6e4a8c00a1fb44e006 (pristine=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872)
+ARM b1-rc-accepts-one battery battery-selftest PASS | rc=0 
+    line: 'GUARD_REFUSALS_SELFTEST: 9/9 pass'
+ARM a10-depth-guard-widened audit audit-r97-driver PASS | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1'
+ARM a9-tuple-index-ignored audit audit-r97-driver PASS | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1'
+ARM b2-rc-check-dead battery battery-selftest FAIL | rc=1 
+    line: 'GUARD_REFUSALS_SELFTEST: 8/9 pass'
+ARM a10-depth-guard-widened audit audit-controls98 PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM a10-depth-guard-widened audit audit-blob-not-worktree PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+VERDICT a10-depth-guard-widened SURVIVED fails=- predicted=SURVIVED
+===== MUTANT b3-token-prefix-loosened (battery) =====
+MUTATED b3-token-prefix-loosened sha256=3331e1173c5f8eb0945c5bf7784845bb90a4f316d695d3add901f3fb47baed81 (pristine=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872)
+ARM a9-tuple-index-ignored audit audit-controls98 PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM b3-token-prefix-loosened battery battery-selftest FAIL | rc=1 
+    line: 'GUARD_REFUSALS_SELFTEST: 8/9 pass'
+ARM a9-tuple-index-ignored audit audit-blob-not-worktree PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+VERDICT a9-tuple-index-ignored SURVIVED fails=- predicted=SURVIVED
+===== MUTANT b5-token-from-stderr (battery) =====
+MUTATED b5-token-from-stderr sha256=4b5fa98e6e2a74e4dcec9db58097b6652a32436875fb88809da910ce7164a8db (pristine=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872)
+ARM b5-token-from-stderr battery battery-selftest PASS | rc=0 
+    line: 'GUARD_REFUSALS_SELFTEST: 9/9 pass'
+ARM b1-rc-accepts-one battery battery-positive PASS | rc=0 wall=20.6s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM b3-token-prefix-loosened battery battery-positive PASS | rc=0 wall=20.3s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM b5-token-from-stderr battery battery-positive PASS | rc=0 wall=21.3s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM b2-rc-check-dead battery battery-positive PASS | rc=0 wall=22.1s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM b3-token-prefix-loosened battery battery-red PASS | rc=1 wall=18.4s red-observable=True 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable'
+ARM b3-token-prefix-loosened battery battery-pin PASS | mismatch:rc=2 invalid:rc=2
+    line: 'GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid'
+VERDICT b3-token-prefix-loosened KILLED fails=battery-selftest predicted=KILLED
+===== MUTANT b6-positive-substring (battery) =====
+MUTATED b6-positive-substring sha256=8857e6a965fb1835c2783cfc8ce3a10b4802869e981aca26eba6d94efcbdef08 (pristine=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872)
+ARM b6-positive-substring battery battery-selftest PASS | rc=0 
+    line: 'GUARD_REFUSALS_SELFTEST: 9/9 pass'
+ARM b1-rc-accepts-one battery battery-red PASS | rc=1 wall=21.5s red-observable=True 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable'
+ARM b1-rc-accepts-one battery battery-pin PASS | mismatch:rc=2 invalid:rc=2
+    line: 'GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid'
+VERDICT b1-rc-accepts-one SURVIVED fails=- predicted=SURVIVED
+===== MUTANT b7-positive-exit-ignored (battery) =====
+MUTATED b7-positive-exit-ignored sha256=962b8b927cd785900f3aba750c3f61c66c8f2e25d20b9e991383032e19981304 (pristine=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872)
+ARM b7-positive-exit-ignored battery battery-selftest FAIL | rc=1 
+    line: 'GUARD_REFUSALS_SELFTEST: 8/9 pass'
+ARM b5-token-from-stderr battery battery-red PASS | rc=1 wall=22.9s red-observable=True 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable'
+ARM b2-rc-check-dead battery battery-red PASS | rc=1 wall=22.7s red-observable=True 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable'
+ARM b5-token-from-stderr battery battery-pin PASS | mismatch:rc=2 invalid:rc=2
+    line: 'GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid'
+VERDICT b5-token-from-stderr SURVIVED fails=- predicted=SURVIVED
+===== MUTANT b8-red-substitution-dropped (battery) =====
+MUTATED b8-red-substitution-dropped sha256=d9347be701f8e25f6af05d3fe4716f944a747a000e81175b16fe503e73361eff (pristine=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872)
+ARM b8-red-substitution-dropped battery battery-selftest PASS | rc=0 
+    line: 'GUARD_REFUSALS_SELFTEST: 9/9 pass'
+ARM b2-rc-check-dead battery battery-pin PASS | mismatch:rc=2 invalid:rc=2
+    line: 'GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid'
+VERDICT b2-rc-check-dead KILLED fails=battery-selftest predicted=KILLED
+===== MUTANT b9-red-exit-removed (battery) =====
+MUTATED b9-red-exit-removed sha256=8d8806b98727b881313523d43ed087e05780332fd74d4045a97da17f71bdab91 (pristine=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872)
+ARM b9-red-exit-removed battery battery-selftest PASS | rc=0 
+    line: 'GUARD_REFUSALS_SELFTEST: 9/9 pass'
+ARM b6-positive-substring battery battery-positive PASS | rc=0 wall=19.5s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM b7-positive-exit-ignored battery battery-positive PASS | rc=0 wall=29.5s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM b8-red-substitution-dropped battery battery-positive PASS | rc=0 wall=35.3s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM b9-red-exit-removed battery battery-positive PASS | rc=0 wall=36.2s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM b6-positive-substring battery battery-red PASS | rc=1 wall=32.8s red-observable=True 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable'
+ARM b6-positive-substring battery battery-pin PASS | mismatch:rc=2 invalid:rc=2
+    line: 'GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid'
+VERDICT b6-positive-substring SURVIVED fails=- predicted=SURVIVED
+===== MUTANT b10-wrong-count-hardcoded (battery) =====
+MUTATED b10-wrong-count-hardcoded sha256=ec81df5f21a4d05d52b0bcadaf2294ea84c5ee84dc97051d99988cc4ca7be900 (pristine=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872)
+ARM b10-wrong-count-hardcoded battery battery-selftest PASS | rc=0 
+    line: 'GUARD_REFUSALS_SELFTEST: 9/9 pass'
+ARM b7-positive-exit-ignored battery battery-red PASS | rc=1 wall=25.5s red-observable=True 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable'
+ARM b7-positive-exit-ignored battery battery-pin PASS | mismatch:rc=2 invalid:rc=2
+    line: 'GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid'
+VERDICT b7-positive-exit-ignored KILLED fails=battery-selftest predicted=KILLED
+===== MUTANT b11-pin-check-disabled (battery) =====
+MUTATED b11-pin-check-disabled sha256=30178572e7a13f7ddd8c5579f2e02d6be6b0f4602b18c24b4b996b19a88249a2 (pristine=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872)
+ARM b11-pin-check-disabled battery battery-selftest PASS | rc=0 
+    line: 'GUARD_REFUSALS_SELFTEST: 9/9 pass'
+ARM b8-red-substitution-dropped battery battery-red FAIL | rc=1 wall=18.9s red-observable=False 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable'
+ARM b8-red-substitution-dropped battery battery-pin PASS | mismatch:rc=2 invalid:rc=2
+    line: 'GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid'
+VERDICT b8-red-substitution-dropped KILLED fails=battery-red predicted=KILLED
+ARM b9-red-exit-removed battery battery-red FAIL | rc=0 wall=21.7s red-observable=True 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable'
+ARM b9-red-exit-removed battery battery-pin PASS | mismatch:rc=2 invalid:rc=2
+    line: 'GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid'
+VERDICT b9-red-exit-removed KILLED fails=battery-red predicted=KILLED
+ARM b10-wrong-count-hardcoded battery battery-positive PASS | rc=0 wall=22.5s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM b11-pin-check-disabled battery battery-positive PASS | rc=0 wall=23.4s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM b10-wrong-count-hardcoded battery battery-red FAIL | rc=1 wall=20.7s red-observable=True 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=0 positive=ok red=state-unbuildable'
+ARM b10-wrong-count-hardcoded battery battery-pin PASS | mismatch:rc=2 invalid:rc=2
+    line: 'GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid'
+VERDICT b10-wrong-count-hardcoded KILLED fails=battery-red predicted=KILLED
+ARM b11-pin-check-disabled battery battery-red PASS | rc=1 wall=18.9s red-observable=True 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable'
+ARM b11-pin-check-disabled battery battery-pin FAIL | mismatch:rc=0 invalid:rc=0
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok | GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+VERDICT b11-pin-check-disabled KILLED fails=battery-pin predicted=KILLED
+===== POST-RESTORE baseline =====
+ARM postrestore-audit audit audit-selftest PASS | rc=0 
+    line: 'CONTROL_ASSERT_SELFTEST: 12/12 pass'
+ARM postrestore-audit audit audit-r97-driver PASS | rc=1 
+    line: 'CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1'
+ARM postrestore-audit audit audit-controls98 PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM postrestore-audit audit audit-blob-not-worktree PASS | rc=0 
+    line: 'CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0'
+ARM postrestore-battery battery battery-selftest PASS | rc=0 
+    line: 'GUARD_REFUSALS_SELFTEST: 9/9 pass'
+ARM postrestore-battery battery battery-positive PASS | rc=0 wall=12.5s 
+    line: 'GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok'
+ARM postrestore-battery battery battery-red PASS | rc=1 wall=14.5s red-observable=True 
+    line: 'GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable'
+ARM postrestore-battery battery battery-pin PASS | mismatch:rc=2 invalid:rc=2
+    line: 'GUARD_REFUSALS_SETUP tool-sha-mismatch | GUARD_REFUSALS_SETUP tool-sha-invalid'
+===== RESTORE PROOF =====
+RESTORE audit before=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c after=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c match=True
+RESTORE battery before=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872 after=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872 match=True
+LANE-BLOB tools/control-assertion-audit.py sha256=774a5b5979fa53f9725553cf1169419d4a11519143083a87635bf7be71956b2c
+LANE-BLOB .ufo/evidence/round-98/refusals/guard-refusals.py sha256=4077d8f9083a8e63bcefc863e04c0a8cbf8c4c58d22248bb2a5292b3a6c34872
+MUTANTS audit=7/10 battery=7/10

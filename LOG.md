@@ -5211,3 +5211,49 @@ mutation-tester 1, sentinel 1, connector 1, revenger 1; attack 4/13 = 31 % by th
   the digest check), and the guard matrix's manifest is a human declaration that the digest pin
   fixes but does not validate (a coherent non-guard manifest yields the same line when its digest
   is passed). Neither is claimed.
+
+## Round 98 (2026-11-08) — measurement-derived control codes (C1) and guard refusal receipts (C2)
+
+Base `034240a591575167f0747ad7372a1f4b9cd33a58`; instruments `d32043ec`; freeze
+`764aca97`; records revision named in `.ufo/waves/round-98/records-rev.txt`; one v1 wave `w1`, 13 seats.
+
+- **R98-C1 (calibration).** The round-97 spot-check's D-2: `controls97.py:156` registered
+  `c2-nowork-absent` with the literal `0` as its recorded code, so the control passed whatever
+  the wrapped `git grep` returned (the committed receipt carries outer `rc=0` while the grep
+  returns 1). `tools/control-assertion-audit.py` reads a driver blob at `--rev` and classifies
+  every bare-name `add(...)` site's recorded code as measured (derived from a call spelled
+  `sh`/`git`/`run`/`subprocess.run`), literal, or unresolved, following a name through the
+  call's scope chain to every assignment before the call and counting a loop site once. At the records revision the round-97 driver prints
+  `CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1` exit 1 (line 156 named) and the
+  repaired driver prints `sites=15 measured=15 literal=0 unmeasured=0` exit 0; the repair turns
+  the recorded code into the measured grep rc, and the driver's full run prints
+  `CONTROLS98 states=18 matched=18 mismatched=0` with the repaired receipt's outer `rc=1`.
+  Selftest 18/18 after the wave repaired the resolver (A5: scope chain, every pre-call
+  assignment, `returncode` reassignment, augmented assignment, duplicate `add`); both real
+  drivers keep 15/15/0 and 15/14/1.
+- **R98-C2 (operability).** The round-97 spot-check's D-6: two of `guard-inertia.py`'s six
+  declared `GUARD_SETUP` refusal classes had no committed receipt or selftest case.
+  `.ufo/evidence/round-98/refusals/guard-refusals.py` reads the frozen tool as a blob at `--rev`
+  (pinned `--tool-sha`), builds one manifest fixture per class in a scratch clone, and runs the
+  public CLI once per class, requiring exit 2 and the exact class token on the tool's stdout;
+  the committed manifest must print `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0`
+  exit 0. Positive `GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok` exit 0; the red arm
+  (`--red state-unbuildable`) prints `GUARD_REFUSALS_RED state-unbuildable observed=missed
+  rc=0` and `classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable` exit 1, which is
+  how the battery is shown able to fail; the battery prints one `GUARD_REFUSAL` line per class
+  and the positive's ten `GUARD_ROW` lines. The wave forced the pin repair (A7-A9): the frozen
+  tool's sha256 is a constant in the battery, `--tool-sha` must equal it, and the base
+  manifest may not carry a `GUARD_SETUP` token. Selftest 9/9.
+- **Motivating evidence and routed defects.** Round-97 spot-check D-1…D-7: D-1 is logged
+  old→new and measured by the new `tools/registry-cell-immutability.py` (red pair: two `anchor`
+  findings, `changed=2`, exit 1; green pair: `changed=0`); D-3's stale pre-A15 fragments are
+  marked superseded by appended notes with digests; D-4's two round-97 capability rows and the
+  round-98 rows entered the SCORECARD table; D-5's report erratum and `CONTROLS97` summarised
+  receipt landed; D-7 is graded in the report. M1 (the battery's `main()` without
+  `sys.exit(main())`, caught by the red receipt's own `rc=`), M2 (the controls98 base mis-set to
+  the round tip, caught by the driver's MISMATCH lines), M3 (the mined round-97 in-place anchor
+  edit) and M4 (an eyeballed site count) in `corpus/lessons/round-98.md`.
+- **Frontier.** S012 re-opened (fetch 2026-11-08, 42588 B, sha256 `fb6f384d…`, renderer line
+  112, 16-word quote) and cited by `corpus/knowledge/control-assertion-anchoring.md`; S009
+  probed and refused a verdict from a 403 challenge page (stays `queued`); no new row; census
+  exit 0 before and after, rows 183, mined 149. QUALITY 177; README round-98 row.

@@ -2801,3 +2801,20 @@ on the landed bytes (`c2-landed-battery.txt`).
     `GUARD_SETUP edit-no-op` exit 2 (`.ufo/evidence/round-97/pre-freeze/c2-forge-noop.out`);
     the round-96 record had no guard measurement at all (R96L1 delivered nothing).
     (`lessons/round-97.md`; S159, S006.)
+
+177. A control's graded code is **measurement-derived**: the value a control driver
+    compares against its expectation is the process result the state claims to run,
+    never a constant typed beside it. A driver is conforming only when every
+    `add(...)` site's recorded code resolves to a runner call (`sh`, `git`, `run`,
+    `subprocess.run`); a constant, a constant bound through a name, a loop variable,
+    or a `returncode` attribute on a non-runner value is unmeasured. Able to fail:
+    the round-97 driver at `d32043ec` prints `CONTROL_ASSERT sites=15 measured=14
+    literal=1 unmeasured=1` exit 1 and names line 156 (`c2-nowork-absent`, whose
+    committed receipt carries outer `rc=0` while the wrapped `git grep` returns 1),
+    while the repaired driver prints `sites=15 measured=15 literal=0 unmeasured=0`
+    exit 0; the audit's eighteen selftest arms include a literal-through-a-name, a
+    nested-scope shadow, a `returncode` reassignment, an augmented assignment and a
+    duplicate `add` definition (`--selftest` 18/18). The rule is the repaired v3
+    instrument (round-98 A5): every pre-call assignment in the call's scope chain must
+    be measured; a call spelled `run` may still be a stub, which the limits declare. (`lessons/round-98.md`; round-97
+    spot-check D-2; S012.)

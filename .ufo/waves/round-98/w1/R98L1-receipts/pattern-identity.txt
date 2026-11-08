@@ -1,0 +1,14 @@
+rc=1 means 'this pattern has no match in the tree at this rev'. It does not identify
+which pattern was searched, so a typo'd pattern and a genuinely absent token grade the same.
+
+$ git -C <clone> grep -c 'BATTERY states=' 07e50d6d0142b21e8443b5417b8edc4d1dd76455
+(rc=1)
+
+$ git -C <clone> grep -c 'BATTERY statesX=' 07e50d6d0142b21e8443b5417b8edc4d1dd76455
+(rc=1)
+
+$ git -C <clone> grep -c 'GUARD_INERTIA' 07e50d6d0142b21e8443b5417b8edc4d1dd76455
+(rc=1)
+
+`BATTERY states=` and `BATTERY statesX=` both return rc 1 at the round-96 base;
+`GUARD_INERTIA` also returns rc 1 there (the round-97 receipt's observation).

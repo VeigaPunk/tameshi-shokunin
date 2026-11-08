@@ -1,0 +1,301 @@
+++ date -Is
++ echo '# R98SN1 strace extract — generated 2026-11-08T13:27:25-03:00'
+# R98SN1 strace extract — generated 2026-11-08T13:27:25-03:00
++ echo '# Source: $S/out/strace-battery.log = strace -f -y -e trace=openat,openat2,creat,mkdir,mkdirat,unlink,unlinkat,rename,renameat,renameat2,rmdir'
+# Source: $S/out/strace-battery.log = strace -f -y -e trace=openat,openat2,creat,mkdir,mkdirat,unlink,unlinkat,rename,renameat,renameat2,rmdir
++ echo '#   python3 -I guard-refusals.py --lane <lane clone> --rev 764aca97… --tool .ufo/evidence/round-97/c2/guard-inertia.py --tool-sha 634997d0… --work /fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace'
+#   python3 -I guard-refusals.py --lane <lane clone> --rev 764aca97… --tool .ufo/evidence/round-97/c2/guard-inertia.py --tool-sha 634997d0… --work /fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace
++ echo '#   (positive arm; stdout: GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok, rc 0)'
+#   (positive arm; stdout: GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok, rc 0)
++ echo
+
++ echo '## 1. totals'
+## 1. totals
+++ grep -cE 'O_WRONLY|O_RDWR|O_CREAT|creat\(|mkdir|unlink|rename|rmdir' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
++ echo 'write-ish syscalls (openat with write flags, creat, mkdir*, unlink*, rename*, rmdir): 67943'
+write-ish syscalls (openat with write flags, creat, mkdir*, unlink*, rename*, rmdir): 67943
++++ grep -E 'O_WRONLY|O_RDWR|O_CREAT|creat\(|mkdir|unlink|rename|rmdir' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
++++ grep -cE '"/'
++ echo '  absolute-path lines: 1579'
+  absolute-path lines: 1579
++++ grep -E 'O_WRONLY|O_RDWR|O_CREAT|creat\(|mkdir|unlink|rename|rmdir' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
++++ grep '"/'
++++ grep -c /fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace
++ echo '    under --work     : 1263'
+    under --work     : 1263
++++ grep -E 'O_WRONLY|O_RDWR|O_CREAT|creat\(|mkdir|unlink|rename|rmdir' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
++++ grep '"/'
++++ grep -c /dev/null
++ echo '    /dev/null        : 274'
+    /dev/null        : 274
++++ grep -E 'O_WRONLY|O_RDWR|O_CREAT|creat\(|mkdir|unlink|rename|rmdir' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
++++ grep '"/'
++++ grep -v /fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace
++++ grep -v /dev/null
++++ wc -l
++ echo '    OUTSIDE --work   : 78'
+    OUTSIDE --work   : 78
++++ grep -E 'O_WRONLY|O_RDWR|O_CREAT|creat\(|mkdir|unlink|rename|rmdir' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
++++ grep -vcE '"/'
++ echo '  relative-path lines: 66364  (child cwds are the clone and its fixture stores, all inside --work)'
+  relative-path lines: 66364  (child cwds are the clone and its fixture stores, all inside --work)
+++ grep -cE '\"/tmp/|\(/tmp' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
++ echo 'literal /tmp paths anywhere in the trace: 0'
+literal /tmp paths anywhere in the trace: 0
++ echo
+
++ echo '## 2. the 78 absolute lines outside --work, verbatim shape (deduplicated, = result kept)'
+## 2. the 78 absolute lines outside --work, verbatim shape (deduplicated, = result kept)
+++ grep -E 'O_WRONLY|O_RDWR|O_CREAT|creat\(|mkdir|unlink|rename|rmdir' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
+++ grep '"/'
+++ grep -v /fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace
+++ grep -v /dev/null
+++ sed -E 's/^[0-9]+ +//'
+++ sed -E 's/(disposition-counter-)[a-z0-9_]+/\1<RANDOM>/'
+++ sed -E 's/ = .*/ = <as shown in §2b>/'
+++ sort
+++ uniq -c
+     35 mkdir("/fast/scratch/hyaku/tameshi-r96-checker-home/tmp", 0777) = <as shown in §2b>
+     14 mkdir("/fast/scratch/hyaku/tameshi-r96/disposition-counter-<RANDOM>", 0700) = <as shown in §2b>
+      1 openat(AT_FDCWD</home/vgpnk/Projects/shokunin>, "/dev/tty", O_RDWR|O_NONBLOCK) = <as shown in §2b>
+     14 openat(AT_FDCWD</home/vgpnk/Projects/shokunin>, "/fast/scratch/hyaku/tameshi-r96/disposition-counter-<RANDOM>/counter.py", O_WRONLY|O_CREAT|O_TRUNC|O_CLOEXEC, 0666) = <as shown in §2b>
+     14 rmdir("/fast/scratch/hyaku/tameshi-r96/disposition-counter-<RANDOM>") = <as shown in §2b>
++ echo
+
++ echo '## 2b. results of those lines by operation'
+## 2b. results of those lines by operation
++ for op in mkdir openat rmdir unlinkat rename
++ echo '-- mkdir'
+-- mkdir
+++ grep -E '^[0-9]+ +mkdir\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
+++ grep tameshi-r96
+++ sed -E 's/^[0-9]+ +//'
+++ sed -E 's/(disposition-counter-)[a-z0-9_]+/\1<RANDOM>/'
+++ awk '-F = ' '{print $2}'
+++ sort
+++ uniq -c
+     14 0
+     35 -1 EEXIST (File exists)
++ for op in mkdir openat rmdir unlinkat rename
++ echo '-- openat'
+-- openat
+++ grep -E '^[0-9]+ +openat\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
+++ grep tameshi-r96
+++ sed -E 's/^[0-9]+ +//'
+++ sed -E 's/(disposition-counter-)[a-z0-9_]+/\1<RANDOM>/'
+++ awk '-F = ' '{print $2}'
+++ sort
+++ uniq -c
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-2is086js>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-2is086js/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-czj77a7_>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-czj77a7_/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-df3r5tfk>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-df3r5tfk/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-ektkg64s>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-ektkg64s/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-k3j8w6hl>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-k3j8w6hl/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-l5_rtpvg>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-l5_rtpvg/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-mici1j_k>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-mici1j_k/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-n1i7bb97>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-n1i7bb97/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-pc8_9rct>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-pc8_9rct/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-t7ks8aft>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-t7ks8aft/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-wb3irpbq>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-wb3irpbq/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-xyqjm0lz>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-xyqjm0lz/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-ygcs1plw>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-ygcs1plw/counter.py>
+      1 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-z91a_bpx>
+      3 3</fast/scratch/hyaku/tameshi-r96/disposition-counter-z91a_bpx/counter.py>
++ for op in mkdir openat rmdir unlinkat rename
++ echo '-- rmdir'
+-- rmdir
+++ grep -E '^[0-9]+ +rmdir\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
+++ grep tameshi-r96
+++ sed -E 's/^[0-9]+ +//'
+++ sed -E 's/(disposition-counter-)[a-z0-9_]+/\1<RANDOM>/'
+++ awk '-F = ' '{print $2}'
+++ sort
+++ uniq -c
+     14 0
++ for op in mkdir openat rmdir unlinkat rename
++ echo '-- unlinkat'
+-- unlinkat
+++ grep -E '^[0-9]+ +unlinkat\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
+++ grep tameshi-r96
+++ sed -E 's/^[0-9]+ +//'
+++ sed -E 's/(disposition-counter-)[a-z0-9_]+/\1<RANDOM>/'
+++ awk '-F = ' '{print $2}'
+++ sort
+++ uniq -c
+     14 0
++ for op in mkdir openat rmdir unlinkat rename
++ echo '-- rename'
+-- rename
+++ grep -E '^[0-9]+ +rename\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
+++ grep tameshi-r96
+++ sed -E 's/^[0-9]+ +//'
+++ sed -E 's/(disposition-counter-)[a-z0-9_]+/\1<RANDOM>/'
+++ awk '-F = ' '{print $2}'
+++ sort
+++ uniq -c
++ echo
+
++ echo '## 3. exactly the three syscalls that create bytes in the host-global round-96 scratch (first of each)'
+## 3. exactly the three syscalls that create bytes in the host-global round-96 scratch (first of each)
+++ grep -nE 'mkdir\("/fast/scratch/hyaku/tameshi-r96/disposition-counter' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
+++ head -1
+186552:3820284 mkdir("/fast/scratch/hyaku/tameshi-r96/disposition-counter-n1i7bb97", 0700) = 0
+++ grep -nE '^[0-9]+ +[0-9]+ openat.*tameshi-r96/disposition-counter.*O_CREAT' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
+++ head -1
+++ grep -nE 'rmdir\("/fast/scratch/hyaku/tameshi-r96/disposition-counter' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
+++ head -1
+186593:3820284 rmdir("/fast/scratch/hyaku/tameshi-r96/disposition-counter-n1i7bb97") = 0
++ echo
+
++ echo '## 4. --shared clone'
+## 4. --shared clone
+++ grep -n clone/.git/objects/info/alternates /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
+++ grep -E 'O_CREAT|rename'
+++ head -3
+484:3776175 openat(AT_FDCWD</home/vgpnk/Projects/shokunin>, "/fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace/clone/.git/objects/info/alternates.lock", O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC, 0666) = 3</fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace/clone/.git/objects/info/alternates.lock>
+486:3776175 rename("/fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace/clone/.git/objects/info/alternates.lock", "/fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace/clone/.git/objects/info/alternates") = 0
++++ grep -E O_CREAT /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
++++ grep -c clone/.git/objects/
++ echo 'objects created under clone/.git/objects (fixture commits only): 49'
+objects created under clone/.git/objects (fixture commits only): 49
+++ grep -nE 'unlinkat\(.*clone/.git/objects/info>, "alternates"' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery.log
+++ head -1
+235369:3776054 unlinkat(6</fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace/clone/.git/objects/info>, "alternates", 0) = 0
++ echo
+
++ echo '## 5. network (strace-battery-net.log: strace -f -e trace=network, same command)'
+## 5. network (strace-battery-net.log: strace -f -e trace=network, same command)
+++ grep -cE 'socket\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery-net.log
++ echo 'socket() count: 66'
+socket() count: 66
+++ grep -oE 'socket\([^)]*\)' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery-net.log
+++ sort
+++ uniq -c
+     11 socket(AF_INET6, SOCK_DGRAM|SOCK_CLOEXEC, IPPROTO_IP)
+     11 socket(AF_INET, SOCK_DGRAM|SOCK_CLOEXEC, IPPROTO_IP)
+     22 socket(AF_NETLINK, SOCK_RAW|SOCK_CLOEXEC, NETLINK_ROUTE)
+     11 socket(AF_UNIX, SOCK_DGRAM|SOCK_CLOEXEC, 0)
+     11 socket(AF_UNIX, SOCK_STREAM|SOCK_CLOEXEC|SOCK_NONBLOCK, 0)
+++ grep -cE 'socket\(AF_INET6?, SOCK_STREAM' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery-net.log
++ echo 'AF_INET/AF_INET6 SOCK_STREAM (TCP): 0'
+AF_INET/AF_INET6 SOCK_STREAM (TCP): 0
++++ grep -E 'connect\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery-net.log
++++ grep -cE 'sin6?_port=htons\([1-9]'
++ echo 'connect() to a NONZERO port: 0'
+connect() to a NONZERO port: 0
++ echo 'connect() targets by family:'
+connect() targets by family:
+++ grep -oE 'connect\([0-9]+, \{sa_family=AF_[A-Z0-9]+' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery-net.log
+++ sort
+++ uniq -c
+     20 connect(4, {sa_family=AF_INET
+     40 connect(4, {sa_family=AF_INET6
+     10 connect(4, {sa_family=AF_UNIX
+     40 connect(4, {sa_family=AF_UNSPEC
+      2 connect(6, {sa_family=AF_INET
+      4 connect(6, {sa_family=AF_INET6
+      1 connect(6, {sa_family=AF_UNIX
+      4 connect(6, {sa_family=AF_UNSPEC
+++ grep -oE 'sun_path="[^"]*"' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery-net.log
+++ sort
+++ uniq -c
+     11 sun_path="/run/systemd/resolve/io.systemd.Resolve"
++++ grep -E 'sin6?_port=htons\([1-9]' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-battery-net.log
++++ grep -c getsockname
++ echo 'nonzero sin*_port values occur only in getsockname(): 66'
+nonzero sin*_port values occur only in getsockname(): 66
++ echo
+
++ echo '## 5b. issuing binary (strace-frozen-net.log: frozen tool alone, -e trace=network,process)'
+## 5b. issuing binary (strace-frozen-net.log: frozen tool alone, -e trace=network,process)
++++ grep -E 'socket\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-frozen-net.log
++++ sed -E 's/^([0-9]+).*/\1/'
++++ sort -u
++++ head -2
++ for p in $(grep -E 'socket\(' $O/strace-frozen-net.log | sed -E 's/^([0-9]+).*/\1/' | sort -u | head -2)
++++ grep -E '^559892 .*execve\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-frozen-net.log
++++ head -1
++++ sed -E 's/^[0-9]+ execve\("([^"]+)".*/\1/'
++ echo 'pid 559892 execve: /usr/bin/git'
+pid 559892 execve: /usr/bin/git
++ for p in $(grep -E 'socket\(' $O/strace-frozen-net.log | sed -E 's/^([0-9]+).*/\1/' | sort -u | head -2)
++++ grep -E '^562983 .*execve\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-frozen-net.log
++++ head -1
++++ sed -E 's/^[0-9]+ execve\("([^"]+)".*/\1/'
++ echo 'pid 562983 execve: /usr/bin/git'
+pid 562983 execve: /usr/bin/git
++ echo
+
++ echo '## 5c. isolated git controls (no network sockets except in branch -M)'
+## 5c. isolated git controls (no network sockets except in branch -M)
+++ grep -cE 'socket\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-git-init.log
++ echo 'git init            : 0'
+git init            : 0
+++ grep -cE 'socket\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-git-commit.log
++ echo 'git commit          : 0'
+git commit          : 0
+++ grep -cE 'socket\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-git-branch.log
++ echo 'git branch -M master: 6'
+git branch -M master: 6
++ echo
+
++ echo '## 6. the two audits (mutation-free)'
+## 6. the two audits (mutation-free)
++ for f in $O/strace-audit-green.log $O/strace-registry-green.log
+++ basename /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-audit-green.log
+++ grep -cE 'O_WRONLY|O_RDWR|O_CREAT|creat\(|mkdir|unlink|rename|rmdir' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-audit-green.log
++++ grep -E 'O_WRONLY|O_RDWR|O_CREAT|creat\(|mkdir|unlink|rename|rmdir' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-audit-green.log
++++ grep -c /dev/null
+++ grep -c /tmp /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-audit-green.log
++ echo 'strace-audit-green.log: write-ish=2; of those /dev/null=2; literal /tmp=0'
+strace-audit-green.log: write-ish=2; of those /dev/null=2; literal /tmp=0
++ for f in $O/strace-audit-green.log $O/strace-registry-green.log
+++ basename /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-registry-green.log
+++ grep -cE 'O_WRONLY|O_RDWR|O_CREAT|creat\(|mkdir|unlink|rename|rmdir' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-registry-green.log
++++ grep -E 'O_WRONLY|O_RDWR|O_CREAT|creat\(|mkdir|unlink|rename|rmdir' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-registry-green.log
++++ grep -c /dev/null
+++ grep -c /tmp /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-registry-green.log
++ echo 'strace-registry-green.log: write-ish=4; of those /dev/null=4; literal /tmp=0'
+strace-registry-green.log: write-ish=4; of those /dev/null=4; literal /tmp=0
++ for f in $O/strace-audit-net.log $O/strace-registry-net.log
+++ basename /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-audit-net.log
+++ grep -cE 'socket\(|connect\(|sendto\(|recvfrom\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-audit-net.log
++ echo 'strace-audit-net.log: socket|connect|sendto|recvfrom=0'
+strace-audit-net.log: socket|connect|sendto|recvfrom=0
++ for f in $O/strace-audit-net.log $O/strace-registry-net.log
+++ basename /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-registry-net.log
+++ grep -cE 'socket\(|connect\(|sendto\(|recvfrom\(' /fast/scratch/hyaku/tameshi-r98/R98SN1/out/strace-registry-net.log
++ echo 'strace-registry-net.log: socket|connect|sendto|recvfrom=0'
+strace-registry-net.log: socket|connect|sendto|recvfrom=0
++ echo
+
++ echo '## 7. residue of a normal run'
+## 7. residue of a normal run
+++ find /fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace
+++ sort
+/fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace
+/fast/scratch/hyaku/tameshi-r98/R98SN1/bw-strace/tool.py
++ echo
+
++ echo '## 8. host scratch after the session (shared, pre-existing; not removed by this seat)'
+## 8. host scratch after the session (shared, pre-existing; not removed by this seat)
++ ls -ld /fast/scratch/hyaku/tameshi-r96 /fast/scratch/hyaku/tameshi-r96-checker-home /fast/scratch/hyaku/tameshi-r96-checker-home/tmp
+drwxr-xr-x 29 vgpnk vgpnk 4096 Nov  8 13:26 /fast/scratch/hyaku/tameshi-r96
+drwxr-xr-x  3 vgpnk vgpnk   17 Nov  8 12:01 /fast/scratch/hyaku/tameshi-r96-checker-home
+drwxr-xr-x  2 vgpnk vgpnk    6 Nov  8 12:01 /fast/scratch/hyaku/tameshi-r96-checker-home/tmp
++++ wc -l
++ echo 'disposition-counter-* left behind: 0'
+disposition-counter-* left behind: 0
