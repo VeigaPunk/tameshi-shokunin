@@ -1,0 +1,605 @@
+R97R1 repro — C1 wording attacks against the committed battery-bind reader
+generated: 2026-11-08T14:36:28Z
+lane: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+tip: 43acfe8125b3586e10fbf8da2b5c5bbe5fff885d; instrument: 917d7109c9c4e43dd8fd69e59b147181e2e94d85; base: 07e50d6d0142b21e8443b5417b8edc4d1dd76455
+reader sha256 34d5aaf16545e5712955d4da7746598b0c3b555fe171a2368f746022180895ab
+driver sha256 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+counter sha256 69ee68b6fa230e29ef5ddc4e02d619562d5fe5f3620fb2355903c7f9f09a18d9
+python: Python 3.14.8; git: git version 2.56.0
+
+=== fixture build (minimal tree from the tip) ===
+FX=/fast/scratch/hyaku/tameshi-r97/R97R1/fx
+LANE=/home/vgpnk/Projects/shokunin/tameshi-shokunin
+rm -rf "$FX"; mkdir -p "$FX"; cd "$FX"; git init -q
+git -C "$LANE" archive 43acfe8125b3586e10fbf8da2b5c5bbe5fff885d -- \
+  .ufo/evidence/round-96/c1/controls-v96.py \
+  .ufo/evidence/round-96/c1/measure-v96.py \
+  .ufo/evidence/round-96/c1/census-mutants.json \
+  .ufo/evidence/round-96/c1/pins.json \
+  .ufo/evidence/round-96/pre-freeze/controls \
+  corpus/knowledge/mutation-case-fleet-sources-census.md \
+  corpus/lessons/round-96.md corpus/README.md corpus/SOURCES.md | tar -x
+git add -A; git -c user.name=fixture -c user.email=fixture@invalid commit -qm base
+git rev-parse HEAD   # 5e99c661d21960ad52071a39ebbad59255bb8c1d
+# fixture driver/counter sha256 equal the claims pins (verified)
+# every reader run:
+#   cd "$LANE" && python3 -I .ufo/evidence/round-97/c1/battery-bind.py \
+#     --lane "$FX" --rev <case-rev> --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+# lane-rev runs (not on the fixture):
+#   cd "$LANE" && python3 -I .ufo/evidence/round-97/c1/battery-bind.py \
+#     --lane . --rev 43acfe8125b3586e10fbf8da2b5c5bbe5fff885d --driver-sha 88bcca...   # case 31
+#   cd "$LANE" && python3 -I .ufo/evidence/round-97/c1/battery-bind.py \
+#     --lane . --rev 917d7109c9c4e43dd8fd69e59b147181e2e94d85 --driver-sha 88bcca...   # case 27
+
+=== case driver: cases.sh ===
+#!/usr/bin/env bash
+# R97R1 wording attacks against battery-bind.py, run on a minimal fixture repo.
+set -u
+FX=/fast/scratch/hyaku/tameshi-r97/R97R1/fx
+OUT=/fast/scratch/hyaku/tameshi-r97/R97R1/receipts
+READER=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py
+BASE_REV=5e99c661d21960ad52071a39ebbad59255bb8c1d
+PIN=88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+REL=.ufo/evidence/round-96/pre-freeze/controls
+mkdir -p "$OUT"
+export HYAKU_SCRATCH=/fast/scratch/hyaku/tameshi-r97/R97R1/hyaku
+
+top=$(git -C "$FX" rev-parse --show-toplevel 2>/dev/null) || { echo "fixture toplevel missing"; exit 9; }
+[ "$top" = "$FX" ] || { echo "REFUSING: toplevel $top != $FX"; exit 9; }
+
+run_case() { # name rev [extra args...]
+  local name=$1 rev=$2; shift 2
+  local out rc
+  out=$(cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && \
+        python3 -I "$READER" --lane "$FX" --rev "$rev" "$@" 2>&1)
+  rc=$?
+  printf 'CASE %s\nREV %s\nARGS %s\n--- output ---\n%s\n--- rc=%d ---\n' \
+    "$name" "$rev" "$*" "$out" "$rc" > "$OUT/$name.out"
+  echo "== $name rc=$rc :: $(echo "$out" | tail -1)"
+}
+
+reset_base() { git -C "$FX" reset -q --hard "$BASE_REV"; git -C "$FX" clean -qfd; }
+commit_case() { # msg
+  git -C "$FX" add -A
+  git -C "$FX" -c user.name=fixture -c user.email=fixture@invalid commit -qm "$1"
+  git -C "$FX" rev-parse HEAD
+}
+commit_staged() { # msg: commit the index as-is (no add)
+  git -C "$FX" -c user.name=fixture -c user.email=fixture@invalid commit -qm "$1"
+  git -C "$FX" rev-parse HEAD
+}
+
+reset_base
+
+# 0. positive
+run_case 00-positive "$BASE_REV" --driver-sha "$PIN"
+
+# 1. untracked ghost receipt (name not in expectations)
+printf 'counter_sha=%s\nexit=0\nC1_R96_PASS=true\n' "$PIN" > "$FX/$REL/ghost.out"
+run_case 01-ghost-untracked "$BASE_REV" --driver-sha "$PIN"
+rm -f "$FX/$REL/ghost.out"
+
+# 2. worktree-only counter_sha edit (blob at rev unchanged)
+sed -i 's/^counter_sha=.*/counter_sha=0000000000000000000000000000000000000000000000000000000000000000/' "$FX/$REL/pos-real.out"
+run_case 02-worktree-edit-ignored "$BASE_REV" --driver-sha "$PIN"
+git -C "$FX" checkout -q -- "$REL/pos-real.out"
+
+# 3. committed drop of a receipt, file left in the worktree
+git -C "$FX" rm -q --cached "$REL/pos-real.out"
+REV3=$(commit_staged "drop pos-real from tree")
+[ -f "$FX/$REL/pos-real.out" ] && echo "worktree copy present: yes"
+run_case 03-drop-committed "$REV3" --driver-sha "$PIN"
+reset_base
+
+# 4. index-only drop (staged, not committed), reader at BASE_REV
+git -C "$FX" rm -q --cached "$REL/pos-real.out"
+run_case 04-drop-staged-only "$BASE_REV" --driver-sha "$PIN"
+git -C "$FX" reset -q HEAD -- "$REL/pos-real.out"
+
+# 5. isolated counter_sha edit on a non-mutant receipt
+sed -i '0,/^counter_sha=.*/s//counter_sha=0000000000000000000000000000000000000000000000000000000000000000/' "$FX/$REL/pos-real.out"
+REV5=$(commit_case "counter-sha edit pos-real")
+run_case 05-counter-sha-nonmutant "$REV5" --driver-sha "$PIN"
+reset_base
+
+# 6. isolated counter_sha edit on a mutant receipt (D01 carries mutant=D01)
+sed -i '0,/^counter_sha=.*/s//counter_sha=0000000000000000000000000000000000000000000000000000000000000000/' "$FX/$REL/D01.out"
+REV6=$(commit_case "counter-sha edit D01 mutant")
+run_case 06-counter-sha-mutant "$REV6" --driver-sha "$PIN"
+reset_base
+
+# 7. isolated exit= edit on a non-mutant receipt
+sed -i '0,/^exit=/s//exit=7/' "$FX/$REL/pos-real.out"
+REV7=$(commit_case "exit edit pos-real")
+run_case 07-exit-edit "$REV7" --driver-sha "$PIN"
+reset_base
+
+# 8. isolated C1_R96_PASS=true -> false on pos-real
+sed -i '0,/^C1_R96_PASS=true/s//C1_R96_PASS=false/' "$FX/$REL/pos-real.out"
+REV8=$(commit_case "payload flip pos-real")
+run_case 08-payload-flip "$REV8" --driver-sha "$PIN"
+reset_base
+
+# 9. add C1_R96_PASS=true to a conjunct-graded receipt (coverage-absent)
+printf 'C1_R96_PASS=true\n' >> "$FX/$REL/coverage-absent.out"
+REV9=$(commit_case "payload token added to conjunct state")
+run_case 09-payload-token-conjunct "$REV9" --driver-sha "$PIN"
+reset_base
+
+# 10. control= header names another state (copy pos-real over pos-fixture)
+cp "$FX/$REL/pos-real.out" "$FX/$REL/pos-fixture.out"
+REV10=$(commit_case "control header mismatch")
+run_case 10-control-header "$REV10" --driver-sha "$PIN"
+reset_base
+
+# 11. committed ghost receipt (name not in expectations)
+printf 'counter_sha=%s\nexit=0\nC1_R96_PASS=true\n' "$PIN" > "$FX/$REL/ghost.out"
+REV11=$(commit_case "committed ghost receipt")
+run_case 11-ghost-committed "$REV11" --driver-sha "$PIN"
+reset_base
+
+# 12. driver-sha wrong value (non-empty) -> refusal
+run_case 12-driver-sha-wrong "$BASE_REV" --driver-sha 0000000000000000000000000000000000000000000000000000000000000000
+
+# 13. driver-sha empty string -> ?
+run_case 13-driver-sha-empty "$BASE_REV" --driver-sha ""
+
+# 14. driver-sha uppercase form of the correct digest
+run_case 14-driver-sha-uppercase "$BASE_REV" --driver-sha 88BCCA8651F6A60568C0B74346796B5CE3407A9B2C8AC70CA7F229102D3C0FF5
+
+# 15. no --driver-sha at all (plan wording command)
+run_case 15-no-pin "$BASE_REV"
+
+echo "ALL CASES DONE"
+
+=== case driver: cases2.sh ===
+#!/usr/bin/env bash
+# R97R1 follow-up cases: corrected exit edit and driver-oracle-at-R cases.
+set -u
+FX=/fast/scratch/hyaku/tameshi-r97/R97R1/fx
+OUT=/fast/scratch/hyaku/tameshi-r97/R97R1/receipts
+READER=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py
+BASE_REV=5e99c661d21960ad52071a39ebbad59255bb8c1d
+PIN=88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+REL=.ufo/evidence/round-96/pre-freeze/controls
+mkdir -p "$OUT"
+export HYAKU_SCRATCH=/fast/scratch/hyaku/tameshi-r97/R97R1/hyaku
+
+top=$(git -C "$FX" rev-parse --show-toplevel 2>/dev/null) || { echo "fixture toplevel missing"; exit 9; }
+[ "$top" = "$FX" ] || { echo "REFUSING: toplevel $top != $FX"; exit 9; }
+
+run_case() {
+  local name=$1 rev=$2; shift 2
+  local out rc
+  out=$(cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && \
+        python3 -I "$READER" --lane "$FX" --rev "$rev" "$@" 2>&1)
+  rc=$?
+  printf 'CASE %s\nREV %s\nARGS %s\n--- output ---\n%s\n--- rc=%d ---\n' \
+    "$name" "$rev" "$*" "$out" "$rc" > "$OUT/$name.out"
+  echo "== $name rc=$rc :: $(echo "$out" | tail -1)"
+}
+reset_base() { git -C "$FX" reset -q --hard "$BASE_REV"; git -C "$FX" clean -qfd; }
+commit_case() {
+  git -C "$FX" add -A
+  git -C "$FX" -c user.name=fixture -c user.email=fixture@invalid commit -qm "$1"
+  git -C "$FX" rev-parse HEAD
+}
+
+reset_base
+sed -i '0,/^exit=/s/^exit=.*/exit=7/' "$FX/$REL/pos-real.out"
+REV7=$(commit_case "exit edit pos-real (corrected)")
+run_case 07-exit-edit "$REV7" --driver-sha "$PIN"
+reset_base
+
+python3 - "$FX/.ufo/evidence/round-96/c1/controls-v96.py" <<'PYEOF'
+import sys
+p = sys.argv[1]
+s = open(p).read()
+old = 'C["pos-real"] = dict(files={}, expect=(0, {"__pass": True}))'
+new = 'C["pos-real"] = dict(files={}, expect=(1, {"__pass": True}))'
+assert old in s
+open(p, "w").write(s.replace(old, new, 1))
+PYEOF
+REV18=$(commit_case "driver expectation edited at R")
+run_case 18-driver-at-R-oracle "$REV18"
+run_case 19-driver-at-R-pinned "$REV18" --driver-sha "$PIN"
+reset_base
+
+echo "FOLLOW-UP CASES DONE"
+
+=== case driver: cases3.sh ===
+#!/usr/bin/env bash
+# Reproduce the committed C1 forge sequence exactly (controls97.py lines 113-150)
+# to show the exit/payload edits are masked by the carried counter-sha edit.
+set -u
+FX=/fast/scratch/hyaku/tameshi-r97/R97R1/fx
+OUT=/fast/scratch/hyaku/tameshi-r97/R97R1/receipts
+READER=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py
+BASE_REV=5e99c661d21960ad52071a39ebbad59255bb8c1d
+REL=.ufo/evidence/round-96/pre-freeze/controls
+C=$REL/pos-real.out
+mkdir -p "$OUT"
+export HYAKU_SCRATCH=/fast/scratch/hyaku/tameshi-r97/R97R1/hyaku
+top=$(git -C "$FX" rev-parse --show-toplevel) || exit 9
+[ "$top" = "$FX" ] || { echo "REFUSING: $top != $FX"; exit 9; }
+
+run_case() {
+  local name=$1 rev=$2
+  local out rc
+  out=$(cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && python3 -I "$READER" --lane "$FX" --rev "$rev" 2>&1)
+  rc=$?
+  printf 'CASE %s\nREV %s\n--- output ---\n%s\n--- rc=%d ---\n' "$name" "$rev" "$out" "$rc" > "$OUT/$name.out"
+  echo "== $name rc=$rc :: $(echo "$out" | tail -1)"
+}
+commit() { git -C "$FX" add -A; git -C "$FX" -c user.name=f -c user.email=f@invalid commit -qm "$1"; git -C "$FX" rev-parse HEAD; }
+commit_staged() { git -C "$FX" -c user.name=f -c user.email=f@invalid commit -qm "$1"; git -C "$FX" rev-parse HEAD; }
+
+git -C "$FX" reset -q --hard "$BASE_REV"; git -C "$FX" clean -qfd
+
+# (a) drop pos-real from index, leave the file on disk
+orig=$(cat "$FX/$C")
+rm -f "$FX/$C"; printf '%s' "$orig" > "$FX/$C"
+git -C "$FX" rm -q --cached "$C"
+R1=$(commit_staged "drop pos-real from index")
+run_case 20-repro-a-drop "$R1"
+
+# (b) counter_sha edit, reset to R1 (the control's `git reset --hard r`)
+git -C "$FX" reset -q --hard "$R1"
+sed -i '0,/^counter_sha=.*/s//counter_sha=0000000000000000000000000000000000000000000000000000000000000000/' "$FX/$C"
+R2=$(commit "counter-sha edit")
+run_case 21-repro-b-counter "$R2"
+
+# (c) exit edit on top of R2 (control resets to r == R2)
+git -C "$FX" reset -q --hard "$R2"
+sed -i '0,/^exit=/s/^exit=.*/exit=7/' "$FX/$C"
+R3=$(commit "exit edit")
+run_case 22-repro-c-exit "$R3"
+
+# (d) payload flip on top of R3
+git -C "$FX" reset -q --hard "$R3"
+sed -i '0,/^C1_R96_PASS=true/s//C1_R96_PASS=false/' "$FX/$C"
+R4=$(commit "payload edit")
+run_case 23-repro-d-payload "$R4"
+
+git -C "$FX" reset -q --hard "$BASE_REV"; git -C "$FX" clean -qfd
+echo "REPRO DONE"
+
+=== case driver: cases4.sh ===
+#!/usr/bin/env bash
+# Two-edit attack: any receipt can assert a mutant header and be exempted from
+# the counter_sha check, then carry a forged counter_sha and still be matched.
+set -u
+FX=/fast/scratch/hyaku/tameshi-r97/R97R1/fx
+OUT=/fast/scratch/hyaku/tameshi-r97/R97R1/receipts
+READER=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py
+BASE_REV=5e99c661d21960ad52071a39ebbad59255bb8c1d
+PIN=88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+REL=.ufo/evidence/round-96/pre-freeze/controls
+mkdir -p "$OUT"
+export HYAKU_SCRATCH=/fast/scratch/hyaku/tameshi-r97/R97R1/hyaku
+top=$(git -C "$FX" rev-parse --show-toplevel) || exit 9
+[ "$top" = "$FX" ] || { echo "REFUSING: $top != $FX"; exit 9; }
+run_case() {
+  local name=$1 rev=$2; shift 2
+  local out rc
+  out=$(cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && python3 -I "$READER" --lane "$FX" --rev "$rev" "$@" 2>&1)
+  rc=$?
+  printf 'CASE %s\nREV %s\nARGS %s\n--- output ---\n%s\n--- rc=%d ---\n' "$name" "$rev" "$*" "$out" "$rc" > "$OUT/$name.out"
+  echo "== $name rc=$rc :: $(echo "$out" | tail -1)"
+}
+commit_case() { git -C "$FX" add -A; git -C "$FX" -c user.name=f -c user.email=f@invalid commit -qm "$1"; git -C "$FX" rev-parse HEAD; }
+
+git -C "$FX" reset -q --hard "$BASE_REV"; git -C "$FX" clean -qfd
+
+# 28: pos-real + forged mutant header + forged counter_sha -> should be refused, is it?
+sed -i '0,/^counter_sha=.*/s//counter_sha=0000000000000000000000000000000000000000000000000000000000000000/' "$FX/$REL/pos-real.out"
+printf 'mutant=D99\n' >> "$FX/$REL/pos-real.out"
+R28=$(commit_case "pos-real: mutant header + forged counter_sha")
+run_case 28-mutant-header-exempts-counter "$R28" --driver-sha "$PIN"
+
+git -C "$FX" reset -q --hard "$BASE_REV"; git -C "$FX" clean -qfd
+echo "ATTACK4 DONE"
+
+=== case driver: cases5.sh ===
+#!/usr/bin/env bash
+# Exact C1_R96_PASS=false -> true edit on a conjunct-graded receipt.
+set -u
+FX=/fast/scratch/hyaku/tameshi-r97/R97R1/fx
+OUT=/fast/scratch/hyaku/tameshi-r97/R97R1/receipts
+READER=/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py
+BASE_REV=5e99c661d21960ad52071a39ebbad59255bb8c1d
+PIN=88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+REL=.ufo/evidence/round-96/pre-freeze/controls
+mkdir -p "$OUT"
+export HYAKU_SCRATCH=/fast/scratch/hyaku/tameshi-r97/R97R1/hyaku
+top=$(git -C "$FX" rev-parse --show-toplevel) || exit 9
+[ "$top" = "$FX" ] || { echo "REFUSING: $top != $FX"; exit 9; }
+run_case() {
+  local name=$1 rev=$2; shift 2
+  local out rc
+  out=$(cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && python3 -I "$READER" --lane "$FX" --rev "$rev" "$@" 2>&1)
+  rc=$?
+  printf 'CASE %s\nREV %s\nARGS %s\n--- output ---\n%s\n--- rc=%d ---\n' "$name" "$rev" "$*" "$out" "$rc" > "$OUT/$name.out"
+  echo "== $name rc=$rc :: $(echo "$out" | tail -1)"
+}
+commit_case() { git -C "$FX" add -A; git -C "$FX" -c user.name=f -c user.email=f@invalid commit -qm "$1"; git -C "$FX" rev-parse HEAD; }
+
+git -C "$FX" reset -q --hard "$BASE_REV"; git -C "$FX" clean -qfd
+grep -q '^C1_R96_PASS=false$' "$FX/$REL/coverage-absent.out" || { echo "anchor absent"; exit 8; }
+sed -i 's/^C1_R96_PASS=false$/C1_R96_PASS=true/' "$FX/$REL/coverage-absent.out"
+R30=$(commit_case "coverage-absent: payload token false->true")
+run_case 30-payload-token-conjunct-exact "$R30" --driver-sha "$PIN"
+git -C "$FX" reset -q --hard "$BASE_REV"; git -C "$FX" clean -qfd
+echo "CASE30 DONE"
+
+=== receipts (all) ===
+######## 00-positive.out
+CASE 00-positive
+REV 5e99c661d21960ad52071a39ebbad59255bb8c1d
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 01-ghost-untracked.out
+CASE 01-ghost-untracked
+REV 5e99c661d21960ad52071a39ebbad59255bb8c1d
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 02-worktree-edit-ignored.out
+CASE 02-worktree-edit-ignored
+REV 5e99c661d21960ad52071a39ebbad59255bb8c1d
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 03-drop-committed.out
+CASE 03-drop-committed
+REV 9e58dc580c6ebb57f715d9784ca6aa3da8f7139e
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY_ROW pos-real:MISSING(receipt-absent-at-rev)
+BATTERY states=50 matched=49 mismatched=0 missing=1
+--- rc=1 ---
+
+######## 04-drop-staged-only.out
+CASE 04-drop-staged-only
+REV 5e99c661d21960ad52071a39ebbad59255bb8c1d
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 05-counter-sha-nonmutant.out
+CASE 05-counter-sha-nonmutant
+REV ac6dc8a628b4f2e2620b7b02f3e87882c95bf1f7
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY_ROW pos-real:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+--- rc=1 ---
+
+######## 06-counter-sha-mutant.out
+CASE 06-counter-sha-mutant
+REV 71405c54f94e0ea04d7a62450843548be6d97a0a
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 07-exit-edit.out
+CASE 07-exit-edit
+REV e36fa820c32ff05b881db3e359ba33310e42410d
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY_ROW pos-real:MISMATCH(exit=7)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+--- rc=1 ---
+
+######## 08-payload-flip.out
+CASE 08-payload-flip
+REV 911dadf9297f9c00c6902b82ea5f3abd65585cf7
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY_ROW pos-real:MISMATCH(exit=0)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+--- rc=1 ---
+
+######## 09-payload-token-conjunct.out
+CASE 09-payload-token-conjunct
+REV b5d5a0fa766f2d127160f211b3656cc90922c8ca
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 10-control-header.out
+CASE 10-control-header
+REV 0cff05270abbb5364e828ee2786c560fae079f12
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 11-ghost-committed.out
+CASE 11-ghost-committed
+REV 6d45bd1f4aed7888324a922c97730a603c0dd1d4
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 12-driver-sha-wrong.out
+CASE 12-driver-sha-wrong
+REV 5e99c661d21960ad52071a39ebbad59255bb8c1d
+ARGS --driver-sha 0000000000000000000000000000000000000000000000000000000000000000
+--- output ---
+BATTERY_SETUP driver-sha-mismatch
+--- rc=2 ---
+
+######## 13-driver-sha-empty.out
+CASE 13-driver-sha-empty
+REV 5e99c661d21960ad52071a39ebbad59255bb8c1d
+ARGS --driver-sha 
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 14-driver-sha-uppercase.out
+CASE 14-driver-sha-uppercase
+REV 5e99c661d21960ad52071a39ebbad59255bb8c1d
+ARGS --driver-sha 88BCCA8651F6A60568C0B74346796B5CE3407A9B2C8AC70CA7F229102D3C0FF5
+--- output ---
+BATTERY_SETUP driver-sha-mismatch
+--- rc=2 ---
+
+######## 15-no-pin.out
+CASE 15-no-pin
+REV 5e99c661d21960ad52071a39ebbad59255bb8c1d
+ARGS 
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 16-base-grep.out
+CMD git grep -c "BATTERY states=" 07e50d6d0142b21e8443b5417b8edc4d1dd76455
+rc=1
+
+######## 17-base-summary-absent.out
+CMD git cat-file -e 8ed9c5262bd2f36f3cc8a64550897f4d1adb3a3b:.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt
+fatal: path '.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt' does not exist in '8ed9c5262bd2f36f3cc8a64550897f4d1adb3a3b'
+rc=128
+
+######## 18-driver-at-R-oracle.out
+CASE 18-driver-at-R-oracle
+REV 22417816f3578b740147fbfeeb3e595f1cb441e3
+ARGS 
+--- output ---
+BATTERY_ROW pos-real:MISMATCH(exit=0)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+--- rc=1 ---
+
+######## 19-driver-at-R-pinned.out
+CASE 19-driver-at-R-pinned
+REV 22417816f3578b740147fbfeeb3e595f1cb441e3
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY_SETUP driver-sha-mismatch
+--- rc=2 ---
+
+######## 20-repro-a-drop.out
+CASE 20-repro-a-drop
+REV 12ba7dbc67880e99a5eeb492c43611267b9a977e
+--- output ---
+BATTERY_ROW pos-real:MISSING(receipt-absent-at-rev)
+BATTERY states=50 matched=49 mismatched=0 missing=1
+--- rc=1 ---
+
+######## 21-repro-b-counter.out
+CASE 21-repro-b-counter
+REV f40b67d12d71367e3566406f69c8d5853ae1555a
+--- output ---
+BATTERY_ROW pos-real:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+--- rc=1 ---
+
+######## 22-repro-c-exit.out
+CASE 22-repro-c-exit
+REV 6e91491c31a698fca8dec2c30cba50dac4450f4c
+--- output ---
+BATTERY_ROW pos-real:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+--- rc=1 ---
+
+######## 23-repro-d-payload.out
+CASE 23-repro-d-payload
+REV 904189c1830e4941df873645488ef25cb224d46d
+--- output ---
+BATTERY_ROW pos-real:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+--- rc=1 ---
+
+######## 24-reader-at-base.out
+CMD reader --lane . --rev 07e50d6d --driver-sha 88bcca...
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+
+######## 25-selftest-fresh-scratch.out
+CMD HYAKU_SCRATCH=/fast/scratch/hyaku/tameshi-r97/R97R1/fresh-scratch python3 -I .ufo/evidence/round-97/c1/battery-bind.py --selftest
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py", line 322, in <module>
+    main()
+    ~~~~^^
+  File "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py", line 298, in main
+    sys.exit(selftest())
+             ~~~~~~~~^^
+  File "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py", line 175, in selftest
+    base = tempfile.mkdtemp(dir=os.path.join(os.environ.get("HYAKU_SCRATCH", "/fast/scratch/hyaku"),
+                                              "tameshi-r97"), prefix="battery-selftest-")
+  File "/usr/lib/python3.14/tempfile.py", line 381, in mkdtemp
+    _os.mkdir(file, 0o700)
+    ~~~~~~~~~^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/fast/scratch/hyaku/tameshi-r97/R97R1/fresh-scratch/tameshi-r97/battery-selftest-f79su5uj'
+rc=1
+
+######## 26-selftest-default-scratch.out
+CMD HYAKU_SCRATCH=default python3 -I ... --selftest
+BATTERY states=3 matched=3 mismatched=0 missing=0
+SELFTEST clean PASS rc=0
+BATTERY states=3 matched=3 mismatched=0 missing=0
+SELFTEST worktree-extra-ignored PASS rc=0
+BATTERY_ROW b:MISSING(receipt-absent-at-rev)
+BATTERY states=3 matched=2 mismatched=0 missing=1
+SELFTEST missing-receipt PASS rc=1
+BATTERY_ROW b:MISMATCH(counter-sha)
+BATTERY states=3 matched=2 mismatched=1 missing=0
+SELFTEST counter-sha-cheat PASS rc=1
+BATTERY_ROW b:MISMATCH(exit=0)
+BATTERY states=3 matched=2 mismatched=1 missing=0
+SELFTEST exit-cheat PASS rc=1
+BATTERY_ROW a:MISMATCH(exit=1)
+BATTERY states=3 matched=2 mismatched=1 missing=0
+SELFTEST conj-cheat PASS rc=1
+BATTERY_SETUP driver-sha-mismatch
+SELFTEST driver-sha-mismatch PASS rc=2
+BATTERY_SELFTEST: 7/7 pass
+rc=0
+
+######## 27-instrument-rev-positive.out
+CMD reader --lane . --rev 917d7109... --driver-sha 88bcca...
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+
+######## 28-mutant-header-exempts-counter.out
+CASE 28-mutant-header-exempts-counter
+REV 127a7f651c1e50c7948c3442008a5b0a37ca2f6c
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 29-set-equality.out
+fixture sets (base rev 5e99c661d21960ad52071a39ebbad59255bb8c1d)
+states()=41 EXPECT_EXTRA=9 overlap=0 union=50 receipt_files=50
+expect-only: []
+receipt-only: []
+EXPECT_EXTRA-only states: ['D01', 'D02', 'D03', 'D04', 'D05', 'double-pin', 'nowork-base', 'replace-honest', 'selfpin-edit']
+
+######## 30-payload-token-conjunct-exact.out
+CASE 30-payload-token-conjunct-exact
+REV dc562db422819c8565e8f9c49bd76671415c34a5
+ARGS --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+--- output ---
+BATTERY states=50 matched=50 mismatched=0 missing=0
+--- rc=0 ---
+
+######## 31-tip-positive.out
+CASE 31-tip-positive
+CMD reader --lane . --rev 43acfe8125b3586e10fbf8da2b5c5bbe5fff885d --driver-sha 88bcca...
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+

@@ -1,0 +1,358 @@
+R97E3 — C1 declared-limit probe: hand-written / swapped / fabricated receipts and the oracle boundary
+
+Lane clone: scratch `git clone --shared` of /home/vgpnk/Projects/shokunin/tameshi-shokunin,
+checked out at the freeze commit e72a0c8bde44920554dc81c88c0dbb8dde491977.
+Every mutation below was committed inside its own scratch clone (assert toplevel == clone dir
+before each commit); the lane repo was never written. Scratch root:
+/fast/scratch/hyaku/tameshi-r97/R97E3/ (deleted at end of seat).
+
+Reader: python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev <clone HEAD> --driver-sha <pin>
+Frozen driver pin: 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+Frozen counter sha: 69ee68b6fa230e29ef5ddc4e02d619562d5fe5f3620fb2355903c7f9f09a18d9
+Repaired driver pin (E3 only): c563d2e2aca0fab8e22ca7d76fa02f63d4fcbae9a15be2ac2fb6ad64d4e29560
+Verdict vocabulary: accepted / refused / limit-as-declared (the acceptance is exactly the
+behavior the frozen `C1.limits` sentence declares: receipts are checked against the driver,
+never against a re-execution, and the driver is trusted as the oracle).
+
+====================================================================================================
+[E0] baseline at the freeze rev
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev e72a0c8bde44920554dc81c88c0dbb8dde491977 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+verdict: control — the frozen positive reproduces in the clone.
+
+====================================================================================================
+[E1] hand-written pos-real receipt: counter_sha kept, two C1_ROW rows kept, no C1_CONJUNCTS,
+     and a deliberately false C1_SUMMARY (n=2, verdict_tables=0). No state was executed.
+receipt replaced: .ufo/evidence/round-96/pre-freeze/controls/pos-real.out
+--- exact body (431 bytes, sha256 b623513eed884cd5c7c41b80673745900226e104303df5f8cf0a7e72f24c59d6) ---
+control=pos-real hand-written-by-R97E3
+counter_sha=69ee68b6fa230e29ef5ddc4e02d619562d5fe5f3620fb2355903c7f9f09a18d9
+exit=0
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=0000000000000000000000000000000000000000 n=2 killed=1 survived=1 verdict_tables=0
+C1_R96_PASS=true
+--- end body ---
+
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev 83c616e62ca40476cf88877217140b269627ccd7 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+verdict: accepted — limit-as-declared. `grade()` for pos-real only requires exit=0 and the
+  substring `C1_R96_PASS=true`; nothing re-executes the state, and not even the receipt's own
+  summary numbers are parsed. The exact printed line is `BATTERY states=50 matched=50 mismatched=0 missing=0`.
+
+====================================================================================================
+[E2a] swap: hidden-c001.out and hidden-x.out bodies exchanged verbatim. The body now sitting at
+      hidden-c001.out carries `control=hidden-x`; the one at hidden-x.out carries `control=hidden-c001`.
+      Both states declare expect=(1, {"verdict_tables": False}), so each payload satisfies the
+      other file name's grade() — the in-body control= header is never parsed.
+original hidden-c001 body (from `git show e72a0c8bde44920554dc81c88c0dbb8dde491977:.ufo/evidence/round-96/pre-freeze/controls/hidden-c001.out`):
+receipt replaced: (frozen hidden-c001.out, sha256-pinned)
+--- exact body (2185 bytes, sha256 5bf3c73fb6ba1fd71bd2bdee98e68a0a33b9dc2c9e54d3dc1d7167830c605d81) ---
+control=hidden-c001 clone_rev=a7d6f4524e6ffe1f26db7db92917919223903a4a parent=933df6765a921d5480bd7cac8fbaf8de699f0e39
+counter_sha=69ee68b6fa230e29ef5ddc4e02d619562d5fe5f3620fb2355903c7f9f09a18d9
+exit=1
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=a7d6f4524e6ffe1f26db7db92917919223903a4a n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=12 verdict_tables=2
+C1_BADROWS out-of-set:367:C001 out-of-set:368:C002 out-of-set:369:C003 out-of-set:370:C004 out-of-set:371:C005 out-of-set:372:C006 out-of-set:373:C007 out-of-set:374:C008 out-of-set:375:C009 out-of-set:376:C010 out-of-set:377:C011 out-of-set:378:C012
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=false ids=false mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R96_PASS=false
+--- end body ---
+
+original hidden-x body (from `git show e72a0c8bde44920554dc81c88c0dbb8dde491977:.ufo/evidence/round-96/pre-freeze/controls/hidden-x.out`):
+receipt replaced: (frozen hidden-x.out, sha256-pinned)
+--- exact body (2161 bytes, sha256 ba224b3493df5335a0886a5ab5b8ae52e7f53cd4b4cac50fdfd9963a04d63195) ---
+control=hidden-x clone_rev=83bdd50eb4b64e0d9ec60605fbe956c02dc85875 parent=933df6765a921d5480bd7cac8fbaf8de699f0e39
+counter_sha=69ee68b6fa230e29ef5ddc4e02d619562d5fe5f3620fb2355903c7f9f09a18d9
+exit=1
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=83bdd50eb4b64e0d9ec60605fbe956c02dc85875 n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=12 verdict_tables=2
+C1_BADROWS out-of-set:367:X1 out-of-set:368:X2 out-of-set:369:X3 out-of-set:370:X4 out-of-set:371:X5 out-of-set:372:X6 out-of-set:373:X7 out-of-set:374:X8 out-of-set:375:X9 out-of-set:376:X10 out-of-set:377:X11 out-of-set:378:X12
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=false ids=false mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R96_PASS=false
+--- end body ---
+
+after the swap the two files hold those bodies verbatim; the first lines are:
+  hidden-c001.out: control=hidden-x clone_rev=83bdd50e...
+  hidden-x.out:    control=hidden-c001 clone_rev=a7d6f452...
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev 81366c4a36e4c84093f37a7348f7eb1ed40daaed --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+verdict: accepted — limit-as-declared. A receipt is bound to its file name and to the state's
+  expected exit/conjunct class, not to the state that produced it; `control=` is inert text.
+
+====================================================================================================
+[E2b] fabricated but conjunct-consistent hidden-c001 receipt: the body contradicts itself
+      (C1_SUMMARY says verdict_tables=1, badrows=0, PASS=true while exit=1), but its
+      C1_CONJUNCTS line carries `verdict_tables=false`, which is the only key grade() checks.
+receipt replaced: .ufo/evidence/round-96/pre-freeze/controls/hidden-c001.out
+--- exact body (484 bytes, sha256 d0a4644e32819d58fe5bddf01be29ed57e2b20e48446f1ee61673cf81cf4c9ca) ---
+control=hidden-c001 hand-written-by-R97E3
+counter_sha=69ee68b6fa230e29ef5ddc4e02d619562d5fe5f3620fb2355903c7f9f09a18d9
+exit=1
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=1111111111111111111111111111111111111111 n=12 killed=12 survived=0 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=0/0 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_CONJUNCTS verdict_tables=false ids=true note=true
+C1_R96_PASS=true
+--- end body ---
+
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev 86f2ecf5af08b9264befdf8ecf915d70428f3276 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+verdict: accepted — limit-as-declared. grade() reads only `exit=` and the expected conjunct
+  key(s); the rows, summary and PASS line are not cross-checked for consistency.
+
+====================================================================================================
+[E2c] control: cross-class swap — pos-real.out receives the hidden-x body (exit=1).
+      (body: the frozen hidden-x body shown in E2a, written to pos-real.out)
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev a8740458499da41273b4f64c70cf21bb6c5986c8 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY_ROW pos-real:MISMATCH(exit=1)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+verdict: refused — the exit check binds: a payload from a different expectation class cannot
+  stand in for pos-real. (This is the control showing the swaps in E2a/E2h are not universal.)
+
+====================================================================================================
+[E2d] mutant-label bypass on a NON-mutant receipt: hand-written pos-real body carrying a
+      zeroed counter_sha and a `mutant=D99` line. The binder skips the counter_sha comparison
+      whenever the body matches ^mutant=D[0-9]+, so the wrong digest is never refused.
+receipt replaced: .ufo/evidence/round-96/pre-freeze/controls/pos-real.out
+--- exact body (151 bytes, sha256 df120ecb1815c047a70b2866c9642f6773e34a47f67a2bc59206043ae8724fd6) ---
+control=pos-real hand-written-by-R97E3
+mutant=D99
+counter_sha=0000000000000000000000000000000000000000000000000000000000000000
+exit=0
+C1_R96_PASS=true
+--- end body ---
+
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev af6598cad89c58f3d1828b27d3c9f660af09369d --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+verdict: accepted — broader than the declared limit. The limit says a hand-written receipt
+  "carrying the right counter_sha=" cannot be distinguished; here the counter_sha is 64 zeros
+  and the receipt is still counted matched, because the `mutant=` label is producer-controlled.
+
+====================================================================================================
+[E2e] FALSIFIES-WORDING: pure counter_sha edit on the mutant receipt D01.out (first
+      counter_sha= line rewritten to 64 zeros, nothing else touched).
+receipt replaced: .ufo/evidence/round-96/pre-freeze/controls/D01.out
+--- exact body (1843 bytes, sha256 e46e886d231ca9e6061bb31689f7f8c0c813eb8fd07267a77f78305d0fd4f310) ---
+mutant=D01 state=renamed-result
+counter_sha=0000000000000000000000000000000000000000000000000000000000000000
+exit=0
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=4089c9ac94a05a558725d9fa5d424b02cdde910d n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=true ids=true mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R96_PASS=true
+--- end body ---
+
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev 03839e7a7b071c11772db2e71fddfbcce5401e52 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+verdict: accepted — the frozen sentence is contradicted (see report FW-C1-1). The five D
+  receipts name a `mutant=` row, so `is_mutant` suppresses the counter_sha comparison entirely.
+
+====================================================================================================
+[E2f] contrast: the counter_sha LINE deleted from D01.out (no mutant exemption can apply,
+      because parse_counter_sha finds nothing).
+receipt replaced: .ufo/evidence/round-96/pre-freeze/controls/D01.out
+--- exact body (1766 bytes, sha256 1f257ebbaed082127c557430cf764e7da180885f7351e5d286c44aa844b2e418) ---
+mutant=D01 state=renamed-result
+exit=0
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=4089c9ac94a05a558725d9fa5d424b02cdde910d n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=true ids=true mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R96_PASS=true
+--- end body ---
+
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev d1ab805c937d1bf12156ddd2b5fae30a2905cb3d --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY_ROW D01:MISSING(no-counter-sha)
+BATTERY states=50 matched=49 mismatched=0 missing=1
+rc=1
+verdict: refused — deleting the line is caught; editing its value on a mutant receipt is not.
+
+====================================================================================================
+[E2g] contrast: the mutant= line deleted from D01.out, original 812d... counter digest kept.
+      The receipt is no longer a mutant, so the counter comparison runs and fails.
+receipt replaced: .ufo/evidence/round-96/pre-freeze/controls/D01.out
+--- exact body (1811 bytes, sha256 e27e31a86a4ca3bddd794c2c30134ad665e76f9b8304910b8b136d106a95ef8c) ---
+counter_sha=812d74286de911a94fd5136dd85ad228adb2a4e8928a4ecf12dfe852742b4247
+exit=0
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=4089c9ac94a05a558725d9fa5d424b02cdde910d n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=true ids=true mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R96_PASS=true
+--- end body ---
+
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev f43ab90435380de796a808852eb1e6e7d1eacce8 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY_ROW D01:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+verdict: refused — this shows the mutant exemption is load-bearing for the positive path:
+  D01's own counter_sha is the mutant counter digest 812d..., not the frozen 69ee..., so the
+  original 50/50 predicate depends on the exemption.
+
+====================================================================================================
+[E2h] mutant-header swap: D02.out receives D01.out's body verbatim (mutant=D01,
+      state=renamed-result, D01's mutant counter digest). The file-name/expectation pair
+      (D02, exit 0 pass) is still satisfied, and the mutant label suppresses the digest check.
+receipt replaced: .ufo/evidence/round-96/pre-freeze/controls/D02.out (body copied byte-for-byte from D01.out)
+--- exact body (1843 bytes, sha256 e6e31545acecfe79559521cddb03aae44693309f1d497e554df4f347c8bf18bc) ---
+mutant=D01 state=renamed-result
+counter_sha=812d74286de911a94fd5136dd85ad228adb2a4e8928a4ecf12dfe852742b4247
+exit=0
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=4089c9ac94a05a558725d9fa5d424b02cdde910d n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=true ids=true mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R96_PASS=true
+--- end body ---
+
+(D02.out after the copy is byte-identical to the D01 body above: sha256 e6e31545acecfe79559521cddb03aae44693309f1d497e554df4f347c8bf18bc)
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev 708bcd1ef0ffaf82d6fac6cd6d99f9dc7d6b70d3 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+verdict: accepted — limit-as-declared (provenance/header unbound), compounded by the
+  mutant-label counter exemption from E2d/E2e.
+
+====================================================================================================
+[E3a] oracle boundary: in the clone, `states()` expectation for hidden-x flipped
+      (1, {"verdict_tables": False}) -> (1, {"verdict_tables": True}); driver committed;
+      claims.json C1.driver_sha256 updated to the new blob digest; reader invoked with the
+      new digest. The driver blob at R is now the oracle.
+driver diff:
+-                         expect=(1, {"verdict_tables": False}))
++                         expect=(1, {"verdict_tables": True}))
+mutated driver sha256: c563d2e2aca0fab8e22ca7d76fa02f63d4fcbae9a15be2ac2fb6ad64d4e29560
+claims.json C1.driver_sha256 after edit: c563d2e2aca0fab8e22ca7d76fa02f63d4fcbae9a15be2ac2fb6ad64d4e29560
+(claims.C1.wording and claims.C1.counter in the clone still literally name 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5;
+ the tool never reads claims.json.)
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev 6a90e2a51581d3d8142ae1dd7f89438a8f8699e9 --driver-sha c563d2e2aca0fab8e22ca7d76fa02f63d4fcbae9a15be2ac2fb6ad64d4e29560
+BATTERY_ROW hidden-x:MISMATCH(exit=1)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+verdict: limit-as-declared — the reader adopted the tampered driver as oracle: hidden-x is
+  graded against the NEW expectation and the old receipt now fails. No truth check on the
+  driver exists; the only visible effect of the tamper is that receipts disagree with it.
+
+====================================================================================================
+[E3c] same mutated rev, invoked with the ORIGINAL frozen pin 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5:
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev 6a90e2a51581d3d8142ae1dd7f89438a8f8699e9 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY_SETUP driver-sha-mismatch
+rc=2
+verdict: refused — the digest gate holds; the pin is a caller-supplied argument.
+
+====================================================================================================
+[E3b] oracle boundary completed: with the flipped expectation still in place, hidden-x.out is
+      replaced by a hand-written body whose conjunct satisfies the MUTATED oracle (verdict_tables=true).
+receipt replaced: .ufo/evidence/round-96/pre-freeze/controls/hidden-x.out
+--- exact body (266 bytes, sha256 597ebcbf33c445ad34d46d77918a877202d2b391ac5341fae177f9ae4ff4f0be) ---
+control=hidden-x hand-written-by-R97E3
+counter_sha=69ee68b6fa230e29ef5ddc4e02d619562d5fe5f3620fb2355903c7f9f09a18d9
+exit=1
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_CONJUNCTS verdict_tables=true
+C1_R96_PASS=true
+--- end body ---
+
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev edd8d511298acdfe140d798c138a3fe8621a7e1a --driver-sha c563d2e2aca0fab8e22ca7d76fa02f63d4fcbae9a15be2ac2fb6ad64d4e29560
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+verdict: accepted — limit-as-declared. The full predicate is reproduced at a revision whose
+  driver the forger wrote, from a hand-written receipt. This is the declared limit verbatim:
+  the reader verifies receipts against the committed driver, not the driver's expectations
+  against truth.
+
+====================================================================================================
+[E3d] claims.json is inert: same driver mutation, claims.json left at the frozen
+      C1.driver_sha256=88bcc..., reader invoked with the new digest on the CLI.
+claims.json C1.driver_sha256 in this clone: 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5 (unchanged)
+git diff --stat: .ufo/evidence/round-96/c1/controls-v96.py | 2 +- (only the driver changed)
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev 80d92c9d6fbda2eafa442b1747508acecc11163c --driver-sha c563d2e2aca0fab8e22ca7d76fa02f63d4fcbae9a15be2ac2fb6ad64d4e29560
+BATTERY_ROW hidden-x:MISMATCH(exit=1)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+verdict: the reader still used the mutated driver (hidden-x regraded). Updating claims.json is
+  not what makes the tampered oracle usable: the tool has no claims.json reader; the pin is
+  whatever the caller passes. The committed binding to the claims file is documentary only.
+
+====================================================================================================
+[boundary evidence] committed-tool scan at the freeze rev:
+$ grep -c 'claims' .ufo/evidence/round-97/c1/battery-bind.py
+0
+$ git grep -n 'claims.json' -- .ufo/evidence/round-97/
+.ufo/evidence/round-97/c2/guard-inertia.py:94:    with open(os.path.join(repo, ".ufo/waves/round-96/claims.json"), "w") as f:
+  (the only match is C2's fixture writer for the round-96 manifest; nothing reads round-97
+  claims.json, and the C1 reader is silent on it.)

@@ -1,0 +1,37 @@
+# R97CN1 / 06 — command log
+# All commands read-only. Run from /home/vgpnk/Projects/shokunin (fleet root) or
+# /home/vgpnk/Projects/shokunin/tameshi-shokunin (lane). No mutating git/jj command
+# was run. Writes: /fast/scratch/hyaku/tameshi-r97/R97CN1/ and the seat's wave files.
+
+1  mkdir -p /fast/scratch/hyaku/tameshi-r97/R97CN1
+2  cd /home/vgpnk/Projects/shokunin && grep -rIl --exclude-dir=.git \
+     -e 'BATTERY states=' -e 'GUARD_INERTIA' -e 'guard-inertia' -e 'battery-bind' . | sort
+   -> 93 files outside tameshi-shokunin; every one matched only `battery-bind` (receipt 01/01b)
+3  awk -F/ '{print $2}' nontameshi-hits.txt | sort | uniq -c
+   -> 78 souji-shokunin, 15 tabi-shokunin
+4  grep -rIl --exclude-dir=.git --exclude-dir=.jj -e 'GUARD_SETUP' -e 'BATTERY_SETUP' . \
+     | grep -v '^./tameshi-shokunin/'
+   -> no output
+5  grep -rIln --exclude-dir=.git --exclude-dir=.jj 'EXPECT_EXTRA' . | grep -v '^./tameshi-shokunin/'
+   -> no output; inside the fleet the symbol is tameshi-only (rounds 93-97 drivers + binder)
+6  grep -rIn --include=*.py -e 'matched=' -e 'mismatched=' */tools | grep -v '^tameshi-shokunin/'
+   -> kaidoku measure_driver/c2-controls and kama audit tools: their own selftest call sites;
+      none is a receipts-vs-oracle reader
+7  grep -rIl --include=*.py --include=*.md -e 'counter_sha=' */
+   -> kama r98 xcheck (wave scratch), kaidoku r49 forge (wave scratch), mado r26 checker
+      (wave scratch), kengaku r100 driver (wave scratch), kasegi r45 prose. No committed
+      lane tool outside tameshi reads `counter_sha=` as a binding.
+8  grep -rIln 'pristine' */tools/*.py | grep -v '^tameshi-shokunin/'
+   -> kama and tsukuroi tool families, incl. tsukuroi mutation-kill-r82/r83 (receipt 03)
+9  grep -rIln -i 'oracle' */tools/*.py | grep -v '^tameshi-shokunin/'
+   -> chousa/kama/kotodama/mado/mori tool families; none re-derives a battery verdict
+10 sha256sum of the six pinned instruments + tools/conjunct-disposition.py (receipt 05)
+11 per-manifest-anchor count in v96 vs the resident checker (receipt 05)
+12 sed/grep reads of the quoted contract lines (receipts 03, 04, 05)
+13 grep -n 'edit-no-op|edit-ambiguous|count(' guard-inertia.py; sed -n '205,235p'
+   -> C2's anchor refusal: count != 1 -> `GUARD_SETUP edit-ambiguous:<id>:<count>` (so a
+      MISSING anchor, count 0, is refused under the ambiguous token); old == new ->
+      `GUARD_SETUP edit-no-op:<id>`; both exit 2.
+14 grep -n 'hostile-path|shim|env_overrides' guard-inertia.py; sed -n '60,100p' v96
+   -> the checked negative in receipt 05 (the git-absolute limit is the checker's guard,
+      not a harness artifact)

@@ -1,0 +1,17 @@
+# C1 do-nothing at the base: no committed command prints the predicate
+
+$ git grep -c "BATTERY states=" 07e50d6d0142b21e8443b5417b8edc4d1dd76455
+rc=1
+
+$ git cat-file -e 8ed9c5262bd2f36f3cc8a64550897f4d1adb3a3b:.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt
+fatal: path '.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt' does not exist in '8ed9c5262bd2f36f3cc8a64550897f4d1adb3a3b'
+rc=128
+
+$ git cat-file -e 07e50d6d:.ufo/evidence/round-97/c1/battery-bind.py
+fatal: path '.ufo/evidence/round-97/c1/battery-bind.py' exists on disk, but not in '07e50d6d0142b21e8443b5417b8edc4d1dd76455'
+rc=128
+
+# the C1 reader run from the WORKTREE at the base rev (A2 disclosure):
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev 07e50d6d... --driver-sha 88bc...
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0

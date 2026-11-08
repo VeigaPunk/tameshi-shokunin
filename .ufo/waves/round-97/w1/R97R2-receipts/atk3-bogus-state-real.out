@@ -1,0 +1,22 @@
+CMD rc=1
+--- stdout ---
+GUARD_ROW rev-hex expect=killed observed=killed pristine=exit=2/rev-not-a-commit-id mutant=exit=0
+GUARD_ROW rev-unresolvable expect=killed observed=killed pristine=exit=2/rev-unresolvable mutant=exit=2
+GUARD_ROW verify-quiet expect=limit observed=limit pristine=exit=2/rev-unresolvable mutant=exit=2/rev-unresolvable
+GUARD_ROW replace-refs expect=killed observed=killed pristine=exit=2/replace-refs-present mutant=exit=0
+GUARD_ROW counter-sha expect=killed observed=killed pristine=exit=1/receipt-counter-sha-mismatch mutant=exit=0
+
+--- stderr ---
+Traceback (most recent call last):
+  File "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c2/guard-inertia.py", line 342, in <module>
+    main()
+    ~~~~^^
+  File "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c2/guard-inertia.py", line 330, in main
+    rc = run_matrix(checker, manifest, tag)
+  File "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c2/guard-inertia.py", line 222, in run_matrix
+    repo, rev, extra, env_over = build_state(row["state"], base, env)
+                                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c2/guard-inertia.py", line 176, in build_state
+    raise RuntimeError("unknown state: " + name)
+RuntimeError: unknown state: bogus-state
+

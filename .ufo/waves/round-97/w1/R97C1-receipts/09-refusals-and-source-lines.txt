@@ -1,0 +1,30 @@
+# digest refusals
+
+$ python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev HEAD --driver-sha 0...0
+BATTERY_SETUP driver-sha-mismatch
+rc=2
+
+$ python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . --rev HEAD --checker-sha 0...0
+GUARD_SETUP checker-sha-mismatch
+rc=2
+
+# C2 counter flags: --checker-sha exists, --manifest-sha does not
+296:    ap.add_argument("--lane")
+297:    ap.add_argument("--rev")
+298:    ap.add_argument("--checker", default=CHECKER)
+299:    ap.add_argument("--manifest", default=MANIFEST)
+300:    ap.add_argument("--checker-sha", default=None)
+301:    ap.add_argument("--selftest", action="store_true")
+
+# C1 binder: the mutant-receipt counter_sha exemption (line 153-154)
+        got_sha = parse_counter_sha(body)
+        if got_sha is None or not SHA_RE.fullmatch(got_sha):
+            missing += 1
+            bad.append(name + ":MISSING(no-counter-sha)")
+            continue
+        is_mutant = re.search(r"^mutant=D[0-9]+", body, re.M) is not None
+        if not is_mutant and got_sha != counter_sha:
+            mismatched += 1
+            bad.append(name + ":MISMATCH(counter-sha)")
+            continue
+        code = parse_exit(body)

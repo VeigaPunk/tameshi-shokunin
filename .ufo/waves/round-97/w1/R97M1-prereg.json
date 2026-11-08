@@ -1,0 +1,140 @@
+{
+  "seat": "R97M1",
+  "round": 97,
+  "wave": "w1",
+  "written": "2026-11-08, before any mutant was executed",
+  "targets_at_rev": "e72a0c8bde44920554dc81c88c0dbb8dde491977 (freeze)",
+  "target_sha256": {
+    "battery-bind.py": "34d5aaf16545e5712955d4da7746598b0c3b555fe171a2368f746022180895ab",
+    "guard-inertia.py": "96c3829d8a701487a3f08ae91dac20b1115cf247035cf9848ec0c54f9f1a43e3"
+  },
+  "detectors": {
+    "c1_selftest": {"cmd": "python3 -I <tool> --selftest", "green": "exit 0 AND line 'BATTERY_SELFTEST: 7/7 pass'"},
+    "c1_main": {"cmd": "python3 -I <tool> --lane LANE --rev e72a0c8b... --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5", "green": "exit 0 AND line 'BATTERY states=50 matched=50 mismatched=0 missing=0'"},
+    "c2_selftest": {"cmd": "python3 -I <tool> --selftest", "green": "exit 0 AND line 'GUARD_INERTIA_SELFTEST: 7/7 pass'"},
+    "c2_main": {"cmd": "python3 -I <tool> --lane LANE --rev e72a0c8b... --checker-sha 02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80", "green": "exit 0 AND line 'GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0'"}
+  },
+  "verdict_rule": "killed = (selftest red OR main red) AND the tool still executes (no interpreter crash / traceback); survived = both detectors green with the same predicate line; inconclusive = the mutant crashes before producing its own verdict",
+  "rows": [
+    {
+      "id": "M01",
+      "tool": "battery-bind",
+      "class": "fabricated-match (mandated: bind returns matched=len(expectations) without reading receipts)",
+      "old": "    matched = mismatched = missing = 0\n    bad = []\n",
+      "new": "    matched = mismatched = missing = 0\n    bad = []\n    print(\"BATTERY states=%d matched=%d mismatched=%d missing=%d\" % (\n        len(expectations), len(expectations), 0, 0))\n    return 0, len(expectations)\n",
+      "expect": "killed",
+      "predict": {"c1_selftest": "red", "c1_main": "green"},
+      "rationale": "main prints the frozen predicate with exit 0 without opening a single receipt; only the selftest's four planted cheats (which then return rc 0) can see it"
+    },
+    {
+      "id": "M02",
+      "tool": "battery-bind",
+      "class": "check-dropped",
+      "old": "        if not is_mutant and got_sha != counter_sha:\n",
+      "new": "        if False:\n",
+      "expect": "killed",
+      "predict": {"c1_selftest": "red", "c1_main": "green"},
+      "rationale": "counter_sha guard removed from bind(); the selftest counter-sha-cheat arm must go green; the 50 committed receipts already carry the right digest, so the main run cannot notice"
+    },
+    {
+      "id": "M03",
+      "tool": "battery-bind",
+      "class": "comparison-inverted",
+      "old": "        ok = drv.grade(name, code, body, expectations[name])\n",
+      "new": "        ok = not drv.grade(name, code, body, expectations[name])\n",
+      "expect": "killed",
+      "predict": {"c1_selftest": "red", "c1_main": "red"},
+      "rationale": "every state's verdict flipped: clean selftest arm fails, main prints mismatched=50"
+    },
+    {
+      "id": "M04",
+      "tool": "battery-bind",
+      "class": "count-not-incremented",
+      "old": "        if ok:\n            matched += 1\n",
+      "new": "        if ok:\n            pass\n",
+      "expect": "killed",
+      "predict": {"c1_selftest": "green", "c1_main": "red"},
+      "rationale": "matched stays 0 while bad stays empty: main exits 0 with 'matched=0' (green exit, wrong line); the selftest only asserts rc, so it stays 7/7"
+    },
+    {
+      "id": "M05",
+      "tool": "battery-bind",
+      "class": "path/constant-changed",
+      "old": "ROUND_RECEIPTS = \".ufo/evidence/round-96/pre-freeze/controls\"\n",
+      "new": "ROUND_RECEIPTS = \".ufo/evidence/round-96/pre-freeze/controlz\"\n",
+      "expect": "killed",
+      "predict": {"c1_selftest": "green", "c1_main": "red"},
+      "rationale": "default receipts dir typo'd: main reports missing=50 exit 1; the selftest passes its own 'r' path so it stays green"
+    },
+    {
+      "id": "M06",
+      "tool": "battery-bind",
+      "class": "silent-exception-swallow",
+      "old": "        ok = drv.grade(name, code, body, expectations[name])\n",
+      "new": "        try:\n            ok = drv.grade(name, code, body, expectations[name])\n        except Exception:\n            ok = True\n",
+      "expect": "survived",
+      "predict": {"c1_selftest": "green", "c1_main": "green"},
+      "rationale": "a driver grade() that raises is converted to a pass; the fixture driver never raises and the 50 real receipts never trigger it, so neither detector can observe the swallow. Pre-registered as a predicted survivor / coverage gap."
+    },
+    {
+      "id": "M07",
+      "tool": "guard-inertia",
+      "class": "classify-always-killed (mandated)",
+      "old": "    \"\"\"pristine/mutant = (exit, text). Returns observed class.\"\"\"\n    pe, pt = pristine\n",
+      "new": "    \"\"\"pristine/mutant = (exit, text). Returns observed class.\"\"\"\n    return \"killed\"\n    pe, pt = pristine\n",
+      "expect": "killed",
+      "predict": {"c2_selftest": "red", "c2_main": "red"},
+      "rationale": "classify() short-circuits: selftest limit/kill-lie/pristine-unmet arms fail; main classifies all 10 rows killed -> killed=10 limits=0 unmet=2 exit 1"
+    },
+    {
+      "id": "M08",
+      "tool": "guard-inertia",
+      "class": "summary-without-loop (mandated)",
+      "old": "    for i, row in enumerate(manifest[\"rows\"]):\n",
+      "new": "    for i, row in enumerate(manifest[\"rows\"][:0]):\n",
+      "expect": "killed",
+      "predict": {"c2_selftest": "red", "c2_main": "red"},
+      "rationale": "run_matrix enumerates nothing and still prints the summary: main prints rows=0 ... and exits 0; selftest anchor arms get no refusal"
+    },
+    {
+      "id": "M09",
+      "tool": "guard-inertia",
+      "class": "comparison-inverted",
+      "old": "    differs = (me != pe) or bool(pr.get(\"token\") and pr[\"token\"] not in mt)\n",
+      "new": "    differs = (me == pe) or bool(pr.get(\"token\") and pr[\"token\"] not in mt)\n",
+      "expect": "killed",
+      "predict": {"c2_selftest": "red", "c2_main": "red"},
+      "rationale": "exit-difference test inverted: identical runs with no token read as different, limit rows become survived -> survived=2 unmet=2 exit 1"
+    },
+    {
+      "id": "M10",
+      "tool": "guard-inertia",
+      "class": "check-dropped",
+      "old": "    if pe != pr.get(\"exit\") or (pr.get(\"token\") and pr[\"token\"] not in pt):\n",
+      "new": "    if False:\n",
+      "expect": "killed",
+      "predict": {"c2_selftest": "red", "c2_main": "green"},
+      "rationale": "the pristine-unmet precondition is dropped; selftest pristine-unmet arm fails; every main row's pristine run already meets its declared exit/token, so the main line is unchanged"
+    },
+    {
+      "id": "M11",
+      "tool": "guard-inertia",
+      "class": "path/constant-changed",
+      "old": "CHECKER = \".ufo/evidence/round-96/conjunct-disposition-v96.py\"\n",
+      "new": "CHECKER = \".ufo/evidence/round-96/conjunct-disposition-v95.py\"\n",
+      "expect": "killed",
+      "predict": {"c2_selftest": "green", "c2_main": "red"},
+      "rationale": "default checker path typos to v95: main refuses GUARD_SETUP checker-absent-at-rev exit 2; selftest supplies checker bytes directly"
+    },
+    {
+      "id": "M12",
+      "tool": "guard-inertia",
+      "class": "early-sys.exit(0)",
+      "old": "    tag = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, \"tameshi-r97\"), prefix=\"guard-inertia-\")\n",
+      "new": "    sys.exit(0)\n    tag = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, \"tameshi-r97\"), prefix=\"guard-inertia-\")\n",
+      "expect": "killed",
+      "predict": {"c2_selftest": "green", "c2_main": "red"},
+      "rationale": "main reads checker+manifest then exits 0 with no summary line; selftest never reaches main"
+    }
+  ]
+}

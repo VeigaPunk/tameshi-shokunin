@@ -1,0 +1,52 @@
+ancestor-d8f135d2-997ce0c4
+CMD ['git', '-C', '/home/vgpnk/Projects/shokunin/tameshi-shokunin', 'merge-base', '--is-ancestor', 'd8f135d2', '997ce0c4']
+rc=0
+stdout=''
+stderr=''
+
+R96L1-absent-at-base
+CMD ['git', '-C', '/home/vgpnk/Projects/shokunin/tameshi-shokunin', 'cat-file', '-e', '07e50d6d0142b21e8443b5417b8edc4d1dd76455:.ufo/waves/round-96/w1/R96L1.md']
+rc=128
+stdout=''
+stderr="fatal: path '.ufo/waves/round-96/w1/R96L1.md' exists on disk, but not in '07e50d6d0142b21e8443b5417b8edc4d1dd76455'\n"
+
+R96L1-absent-at-8ed9c526
+CMD ['git', '-C', '/home/vgpnk/Projects/shokunin/tameshi-shokunin', 'cat-file', '-e', '8ed9c526:.ufo/waves/round-96/w1/R96L1.md']
+rc=128
+stdout=''
+stderr="fatal: path '.ufo/waves/round-96/w1/R96L1.md' exists on disk, but not in '8ed9c526'\n"
+
+COMMIT d8f135d2
+d8f135d2 2026-11-08 11:02:49 -0300 round-96: records — WAVE-DONE received (13/13 settled); R96L1 absence record corrected, ledger repointed, M5 premature dead-seat call
+
+
+COMMIT 997ce0c4
+997ce0c4 2026-11-08 11:12:54 -0300 round-97: pre-freeze controls (14/14), frozen plan, lesson Gate + S159/S006 re-opens, repaired guard-inertia
+
+
+COMMIT e72a0c8b
+e72a0c8b 2026-11-08 11:13:03 -0300 round-97: claims freeze C1/C2 (wording, shas, kill rules) at 997ce0c4
+
+
+R96L1.md lines 1-9:
+# R96L1 — probe: are the v96 seal guards inert on the honest measurements?
+
+**Verdict: partly refuted.** The two seal guards are *inert* on the twelve `C1_ROW` cells,
+on the `C1_SUMMARY` fields, on the whole 19-row disposition body and on the 11-case checker
+selftest. They are **not inert on the 50-state control battery**: applying the guards alone
+to the round-95 bytes turns `C1_CONTROLS states=50 matched=50` into
+`states=50 matched=44 mismatches=6 [D01,D02,D03,D04,D05,replace-honest]`, exit 1. The cause
+is the counter's `rev-not-a-commit-id` guard rejecting the literal `--rev HEAD` that the
+frozen round-95/v96 driver passes in exactly those six states. Additionally, the frozen
+
+R96L1-absent.md lines 1-10:
+# R96L1 — CORRECTION: the seat settled late; the earlier absence record is withdrawn
+
+**Correction (2026-11-08 ~10:45 -03, after the orchestrator's `WAVE-DONE tameshi r96 w1`).**
+The seat **did** land: `.ufo/waves/round-96/w1/R96L1.md` exists (and `R96L1-runs/`), and the
+orchestrator's `w1-results.json` lists all 13 seats. The absence claim below was written at
+10:39 -03 from the then-present files; it is kept only as the record of what the L1 observed
+and of the defect it caused (a premature dead-seat call, `corpus/lessons/round-96.md` M5).
+**The rounded report and the falsification ledger point at `R96L1.md`, not at this file.**
+The seat's verdict (`partly refuted`) is integrated in the round report and confirms A1/A2/A6
+independently.

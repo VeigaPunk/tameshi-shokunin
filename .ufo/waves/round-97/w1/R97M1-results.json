@@ -1,0 +1,464 @@
+{
+ "rows": 12,
+ "killed": 11,
+ "survived": 1,
+ "inconclusive": 0,
+ "kill_rate": "11/12",
+ "lane_before": {
+  "battery-bind": "34d5aaf16545e5712955d4da7746598b0c3b555fe171a2368f746022180895ab",
+  "guard-inertia": "96c3829d8a701487a3f08ae91dac20b1115cf247035cf9848ec0c54f9f1a43e3"
+ },
+ "lane_after": {
+  "battery-bind": "34d5aaf16545e5712955d4da7746598b0c3b555fe171a2368f746022180895ab",
+  "guard-inertia": "96c3829d8a701487a3f08ae91dac20b1115cf247035cf9848ec0c54f9f1a43e3"
+ },
+ "restored": {
+  "battery-bind": {
+   "sha256": "34d5aaf16545e5712955d4da7746598b0c3b555fe171a2368f746022180895ab",
+   "byte_identical": true,
+   "selftest": {
+    "exit": 0,
+    "green": true,
+    "line": "BATTERY_SETUP driver-sha-mismatch"
+   },
+   "main": {
+    "exit": 0,
+    "green": true,
+    "line": "BATTERY states=50 matched=50 mismatched=0 missing=0"
+   }
+  },
+  "guard-inertia": {
+   "sha256": "96c3829d8a701487a3f08ae91dac20b1115cf247035cf9848ec0c54f9f1a43e3",
+   "byte_identical": true,
+   "selftest": {
+    "exit": 0,
+    "green": true,
+    "line": ""
+   },
+   "main": {
+    "exit": 0,
+    "green": true,
+    "line": "GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0"
+   }
+  }
+ },
+ "baseline": {
+  "battery-bind": {
+   "selftest": {
+    "exit": 0,
+    "green": true,
+    "line": "BATTERY_SETUP driver-sha-mismatch"
+   },
+   "main": {
+    "exit": 0,
+    "green": true,
+    "line": "BATTERY states=50 matched=50 mismatched=0 missing=0"
+   }
+  },
+  "guard-inertia": {
+   "selftest": {
+    "exit": 0,
+    "green": true,
+    "line": ""
+   },
+   "main": {
+    "exit": 0,
+    "green": true,
+    "line": "GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0"
+   }
+  }
+ },
+ "results": [
+  {
+   "id": "M01",
+   "tool": "battery-bind",
+   "class": "fabricated-match (mandated: bind returns matched=len(expectations) without reading receipts)",
+   "old": "    matched = mismatched = missing = 0\n    bad = []\n",
+   "new": "    matched = mismatched = missing = 0\n    bad = []\n    print(\"BATTERY states=%d matched=%d mismatched=%d missing=%d\" % (\n        len(expectations), len(expectations), 0, 0))\n    return 0, len(expectations)\n",
+   "anchor_count": 1,
+   "mutant_sha256": "d43b28a5a8de6c9fe7b2a97209ff3c347a7f2561b085f3e23073dde5016f61f5",
+   "expect": "killed",
+   "verdict": "killed",
+   "predict": {
+    "c1_selftest": "red",
+    "c1_main": "green"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 1,
+    "green": false,
+    "line": "BATTERY_SETUP driver-sha-mismatch",
+    "secs": 0.42
+   },
+   "main": {
+    "exit": 0,
+    "green": true,
+    "line": "BATTERY states=50 matched=50 mismatched=0 missing=0",
+    "secs": 17.26
+   }
+  },
+  {
+   "id": "M02",
+   "tool": "battery-bind",
+   "class": "check-dropped",
+   "old": "        if not is_mutant and got_sha != counter_sha:\n",
+   "new": "        if False:\n",
+   "anchor_count": 1,
+   "mutant_sha256": "fbe6c0b6805a762db4969859bac3ffee7f3524b43723a6d1ef9bba012055a7f9",
+   "expect": "killed",
+   "verdict": "killed",
+   "predict": {
+    "c1_selftest": "red",
+    "c1_main": "green"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 1,
+    "green": false,
+    "line": "BATTERY_SETUP driver-sha-mismatch",
+    "secs": 0.46
+   },
+   "main": {
+    "exit": 0,
+    "green": true,
+    "line": "BATTERY states=50 matched=50 mismatched=0 missing=0",
+    "secs": 13.31
+   }
+  },
+  {
+   "id": "M03",
+   "tool": "battery-bind",
+   "class": "comparison-inverted",
+   "old": "        ok = drv.grade(name, code, body, expectations[name])\n",
+   "new": "        ok = not drv.grade(name, code, body, expectations[name])\n",
+   "anchor_count": 1,
+   "mutant_sha256": "7dd93f9bc7f5597957ade8c5ebc2384a8e1a1333ef92ec9cdeddaa89bdeeb644",
+   "expect": "killed",
+   "verdict": "killed",
+   "predict": {
+    "c1_selftest": "red",
+    "c1_main": "red"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 1,
+    "green": false,
+    "line": "BATTERY_SETUP driver-sha-mismatch",
+    "secs": 0.41
+   },
+   "main": {
+    "exit": 1,
+    "green": false,
+    "line": "BATTERY states=50 matched=0 mismatched=50 missing=0",
+    "secs": 13.0
+   }
+  },
+  {
+   "id": "M04",
+   "tool": "battery-bind",
+   "class": "count-not-incremented",
+   "old": "        if ok:\n            matched += 1\n",
+   "new": "        if ok:\n            pass\n",
+   "anchor_count": 1,
+   "mutant_sha256": "be3283505df89940aa3789d0460d402d1f2f37bd51f2366522d3c38e4888b940",
+   "expect": "killed",
+   "verdict": "killed",
+   "predict": {
+    "c1_selftest": "green",
+    "c1_main": "red"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 0,
+    "green": true,
+    "line": "BATTERY_SETUP driver-sha-mismatch",
+    "secs": 0.5
+   },
+   "main": {
+    "exit": 0,
+    "green": false,
+    "line": "BATTERY states=50 matched=0 mismatched=0 missing=0",
+    "secs": 13.73
+   }
+  },
+  {
+   "id": "M05",
+   "tool": "battery-bind",
+   "class": "path/constant-changed",
+   "old": "ROUND_RECEIPTS = \".ufo/evidence/round-96/pre-freeze/controls\"\n",
+   "new": "ROUND_RECEIPTS = \".ufo/evidence/round-96/pre-freeze/controlz\"\n",
+   "anchor_count": 1,
+   "mutant_sha256": "88bad8cff70efdfa9dd94095cb06cacc7013cb757172a424d462baa023298be9",
+   "expect": "killed",
+   "verdict": "killed",
+   "predict": {
+    "c1_selftest": "green",
+    "c1_main": "red"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 0,
+    "green": true,
+    "line": "BATTERY_SETUP driver-sha-mismatch",
+    "secs": 0.47
+   },
+   "main": {
+    "exit": 1,
+    "green": false,
+    "line": "BATTERY states=50 matched=0 mismatched=0 missing=50",
+    "secs": 15.08
+   }
+  },
+  {
+   "id": "M06",
+   "tool": "battery-bind",
+   "class": "silent-exception-swallow",
+   "old": "        ok = drv.grade(name, code, body, expectations[name])\n",
+   "new": "        try:\n            ok = drv.grade(name, code, body, expectations[name])\n        except Exception:\n            ok = True\n",
+   "anchor_count": 1,
+   "mutant_sha256": "aa5d471303eb522c8118a227eb89970e61951dbbc2b6754386d96d31e4b3f17c",
+   "expect": "survived",
+   "verdict": "survived",
+   "predict": {
+    "c1_selftest": "green",
+    "c1_main": "green"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 0,
+    "green": true,
+    "line": "BATTERY_SETUP driver-sha-mismatch",
+    "secs": 0.51
+   },
+   "main": {
+    "exit": 0,
+    "green": true,
+    "line": "BATTERY states=50 matched=50 mismatched=0 missing=0",
+    "secs": 25.43
+   }
+  },
+  {
+   "id": "M07",
+   "tool": "guard-inertia",
+   "class": "classify-always-killed (mandated)",
+   "old": "    \"\"\"pristine/mutant = (exit, text). Returns observed class.\"\"\"\n    pe, pt = pristine\n",
+   "new": "    \"\"\"pristine/mutant = (exit, text). Returns observed class.\"\"\"\n    return \"killed\"\n    pe, pt = pristine\n",
+   "anchor_count": 1,
+   "mutant_sha256": "beba3970f15bf6dadf9186cdb21f7ac30e3a0da94dd672c99733523186b9734f",
+   "expect": "killed",
+   "verdict": "killed",
+   "predict": {
+    "c2_selftest": "red",
+    "c2_main": "red"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 1,
+    "green": false,
+    "line": "",
+    "secs": 0.1
+   },
+   "main": {
+    "exit": 1,
+    "green": false,
+    "line": "GUARD_INERTIA rows=10 killed=10 limits=0 survived=0 unmet=2",
+    "secs": 3.78
+   }
+  },
+  {
+   "id": "M08",
+   "tool": "guard-inertia",
+   "class": "summary-without-loop (mandated)",
+   "old": "    for i, row in enumerate(manifest[\"rows\"]):\n",
+   "new": "    for i, row in enumerate(manifest[\"rows\"][:0]):\n",
+   "anchor_count": 1,
+   "mutant_sha256": "3028f900fb04906b417cff2043fc0e7dbe0531b0f16da4ae6d3c10a0a1bc66d7",
+   "expect": "killed",
+   "verdict": "killed",
+   "predict": {
+    "c2_selftest": "red",
+    "c2_main": "red"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 1,
+    "green": false,
+    "line": "GUARD_INERTIA rows=0 killed=0 limits=0 survived=0 unmet=0",
+    "secs": 0.1
+   },
+   "main": {
+    "exit": 0,
+    "green": false,
+    "line": "GUARD_INERTIA rows=0 killed=0 limits=0 survived=0 unmet=0",
+    "secs": 0.14
+   }
+  },
+  {
+   "id": "M09",
+   "tool": "guard-inertia",
+   "class": "comparison-inverted",
+   "old": "    differs = (me != pe) or bool(pr.get(\"token\") and pr[\"token\"] not in mt)\n",
+   "new": "    differs = (me == pe) or bool(pr.get(\"token\") and pr[\"token\"] not in mt)\n",
+   "anchor_count": 1,
+   "mutant_sha256": "4142e1512841728177917259cc0db66c40f336933964968d1fd06f3983bbe544",
+   "expect": "killed",
+   "verdict": "killed",
+   "predict": {
+    "c2_selftest": "red",
+    "c2_main": "red"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 1,
+    "green": false,
+    "line": "",
+    "secs": 0.09
+   },
+   "main": {
+    "exit": 1,
+    "green": false,
+    "line": "GUARD_INERTIA rows=10 killed=8 limits=0 survived=2 unmet=2",
+    "secs": 3.68
+   }
+  },
+  {
+   "id": "M10",
+   "tool": "guard-inertia",
+   "class": "check-dropped",
+   "old": "    if pe != pr.get(\"exit\") or (pr.get(\"token\") and pr[\"token\"] not in pt):\n",
+   "new": "    if False:\n",
+   "anchor_count": 1,
+   "mutant_sha256": "3c5530f5b50d88219862f590bfbfae8a8db474c6f603e8e6cca23f6fca15c694",
+   "expect": "killed",
+   "verdict": "killed",
+   "predict": {
+    "c2_selftest": "red",
+    "c2_main": "green"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 1,
+    "green": false,
+    "line": "",
+    "secs": 0.12
+   },
+   "main": {
+    "exit": 0,
+    "green": true,
+    "line": "GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0",
+    "secs": 4.16
+   }
+  },
+  {
+   "id": "M11",
+   "tool": "guard-inertia",
+   "class": "path/constant-changed",
+   "old": "CHECKER = \".ufo/evidence/round-96/conjunct-disposition-v96.py\"\n",
+   "new": "CHECKER = \".ufo/evidence/round-96/conjunct-disposition-v95.py\"\n",
+   "anchor_count": 1,
+   "mutant_sha256": "d668aa04841efc02a3b98912879e5176cefc1265f0bfceff0b346f50467d6731",
+   "expect": "killed",
+   "verdict": "killed",
+   "predict": {
+    "c2_selftest": "green",
+    "c2_main": "red"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 0,
+    "green": true,
+    "line": "",
+    "secs": 0.25
+   },
+   "main": {
+    "exit": 2,
+    "green": false,
+    "line": "GUARD_SETUP checker-absent-at-rev",
+    "secs": 0.1
+   }
+  },
+  {
+   "id": "M12",
+   "tool": "guard-inertia",
+   "class": "early-sys.exit(0)",
+   "old": "    tag = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, \"tameshi-r97\"), prefix=\"guard-inertia-\")\n",
+   "new": "    sys.exit(0)\n    tag = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, \"tameshi-r97\"), prefix=\"guard-inertia-\")\n",
+   "anchor_count": 1,
+   "mutant_sha256": "3f24afd0f78d47e74c70f2c5ae6ed9aeef1c678d7eb4545af622ad9fe8df533f",
+   "expect": "killed",
+   "verdict": "killed",
+   "predict": {
+    "c2_selftest": "green",
+    "c2_main": "red"
+   },
+   "crashed": false,
+   "selftest": {
+    "exit": 0,
+    "green": true,
+    "line": "",
+    "secs": 0.09
+   },
+   "main": {
+    "exit": 0,
+    "green": false,
+    "line": "",
+    "secs": 0.09
+   }
+  }
+ ],
+ "selftest_detail": {
+  "M01": {
+   "exit": 1,
+   "final": "BATTERY_SELFTEST: 3/7 pass"
+  },
+  "M02": {
+   "exit": 1,
+   "final": "BATTERY_SELFTEST: 6/7 pass"
+  },
+  "M03": {
+   "exit": 1,
+   "final": "BATTERY_SELFTEST: 5/7 pass"
+  },
+  "M04": {
+   "exit": 0,
+   "final": "BATTERY_SELFTEST: 7/7 pass"
+  },
+  "M05": {
+   "exit": 0,
+   "final": "BATTERY_SELFTEST: 7/7 pass"
+  },
+  "M06": {
+   "exit": 0,
+   "final": "BATTERY_SELFTEST: 7/7 pass"
+  },
+  "M07": {
+   "exit": 1,
+   "final": "GUARD_INERTIA_SELFTEST: 3/7 pass"
+  },
+  "M08": {
+   "exit": 1,
+   "final": "GUARD_INERTIA_SELFTEST: 5/7 pass"
+  },
+  "M09": {
+   "exit": 1,
+   "final": "GUARD_INERTIA_SELFTEST: 5/7 pass"
+  },
+  "M10": {
+   "exit": 1,
+   "final": "GUARD_INERTIA_SELFTEST: 6/7 pass"
+  },
+  "M11": {
+   "exit": 0,
+   "final": "GUARD_INERTIA_SELFTEST: 7/7 pass"
+  },
+  "M12": {
+   "exit": 0,
+   "final": "GUARD_INERTIA_SELFTEST: 7/7 pass"
+  }
+ },
+ "verdict_counts": {
+  "killed": 11,
+  "survived": 1,
+  "inconclusive": 0
+ }
+}

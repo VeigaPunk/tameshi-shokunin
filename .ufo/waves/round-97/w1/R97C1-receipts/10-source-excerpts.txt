@@ -1,0 +1,112 @@
+# binder bind(): expectations from the driver, mutant counter_sha exemption
+        return die("driver-absent-at-rev"), None
+    if driver_sha_pin and hashlib.sha256(driver_blob).hexdigest() != driver_sha_pin:
+        return die("driver-sha-mismatch"), None
+    counter_blob = blob_at(lane, rev, counter_path, env)
+    if counter_blob is None:
+        return die("counter-absent-at-rev"), None
+    counter_sha = hashlib.sha256(counter_blob).hexdigest()
+    lane_at_rev = os.path.join(tag, "lane-at-rev")
+    checkout_lane_at(lane, rev, lane_at_rev, env)
+    try:
+        drv = load_driver(driver_blob, tag)
+        expectations = {n: c["expect"] for n, c in drv.states(lane_at_rev).items()}
+        expectations.update(drv.EXPECT_EXTRA)
+    except Exception as exc:  # noqa: BLE001 - any import/state failure is setup
+        return die("driver-unusable:" + str(exc)[:160]), None
+    matched = mismatched = missing = 0
+    bad = []
+    for name in sorted(expectations):
+        body_b = blob_at(lane, rev, "%s/%s.out" % (receipts_path.rstrip("/"), name), env)
+        if body_b is None:
+            missing += 1
+            bad.append(name + ":MISSING(receipt-absent-at-rev)")
+            continue
+        body = body_b.decode("utf-8", "replace")
+        got_sha = parse_counter_sha(body)
+        if got_sha is None or not SHA_RE.fullmatch(got_sha):
+            missing += 1
+            bad.append(name + ":MISSING(no-counter-sha)")
+            continue
+        is_mutant = re.search(r"^mutant=D[0-9]+", body, re.M) is not None
+        if not is_mutant and got_sha != counter_sha:
+            mismatched += 1
+            bad.append(name + ":MISMATCH(counter-sha)")
+            continue
+        code = parse_exit(body)
+        ok = drv.grade(name, code, body, expectations[name])
+        if ok:
+            matched += 1
+        else:
+            mismatched += 1
+            bad.append(name + ":MISMATCH(exit=%d)" % code)
+    for line in bad:
+        print("BATTERY_ROW " + line)
+    print("BATTERY states=%d matched=%d mismatched=%d missing=%d" % (
+        len(expectations), matched, mismatched, missing))
+    return (0 if not bad else 1), len(expectations)
+
+
+# guard-inertia classify()/run_matrix()
+        mutant = run_checker(mpath, repo, rev, extra, env_over)
+        cls = classify(row, pristine, mutant)
+        results.append((row["id"], row["expect"], cls, pristine, mutant))
+        print("GUARD_ROW %s expect=%s observed=%s pristine=exit=%d%s mutant=exit=%d%s" % (
+            row["id"], row["expect"], cls, pristine[0],
+            ("/" + row["pristine"]["token"]) if row["pristine"].get("token") else "",
+            mutant[0],
+            ("/" + row["pristine"]["token"]) if row["pristine"].get("token") and row["pristine"]["token"] in mutant[1] else ""))
+    killed = sum(1 for r in results if r[2] == "killed")
+    limits = sum(1 for r in results if r[2] == "limit")
+    survived = sum(1 for r in results if r[2] not in ("killed", "limit"))
+    unmet = sum(1 for r in results if r[2] != r[1])
+    print("GUARD_INERTIA rows=%d killed=%d limits=%d survived=%d unmet=%d" % (
+        len(results), killed, limits, survived, unmet))
+    return 0 if survived == 0 and unmet == 0 else 1
+
+
+def _setup_text(msg):
+    return "GUARD_SETUP " + msg
+
+
+def selftest():
+    base = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, "tameshi-r97"), prefix="guard-selftest-")
+    checker = ("import sys\nGUARD = 'x'\nif len(sys.argv) > 1 and sys.argv[1] == 'boom':\n"
+               "    print('REFUSED boom')\n    sys.exit(2)\nprint('OK')\nsys.exit(0)\n")
+    passed = total = 0
+
+    def cls_arm(name, row, pristine, mutant, want):
+        nonlocal passed, total
+        got = classify(row, pristine, mutant)
+        ok = got == want
+        print("SELFTEST %s %s got=%s want=%s" % (name, "PASS" if ok else "FAIL", got, want))
+        passed += ok
+        total += 1
+
+    cls_arm("kill-real", {"expect": "killed", "pristine": {"exit": 2, "token": "REFUSED boom"}},
+            (2, "REFUSED boom"), (0, "OK"), "killed")
+    cls_arm("limit-real", {"expect": "limit", "pristine": {"exit": 2, "token": "REFUSED boom"}},
+
+# guard-inertia main(): manifest read, no manifest digest pin
+        sys.exit(die("rev-not-a-commit-id"))
+    env = sealed_env()
+    r = git(a.lane, ["rev-parse", "--verify", "--quiet", "--end-of-options",
+                     a.rev + "^{commit}"], env)
+    if r.returncode != 0:
+        sys.exit(die("rev-unresolvable"))
+    a.rev = r.stdout.decode().strip()
+    checker = blob_at(a.lane, a.rev, a.checker, env)
+    if checker is None:
+        sys.exit(die("checker-absent-at-rev"))
+    if a.checker_sha and hashlib.sha256(checker).hexdigest() != a.checker_sha:
+        sys.exit(die("checker-sha-mismatch"))
+    manifest_b = blob_at(a.lane, a.rev, a.manifest, env)
+    if manifest_b is None:
+        sys.exit(die("manifest-absent-at-rev"))
+    try:
+        manifest = json.loads(manifest_b)
+    except Exception:
+        sys.exit(die("manifest-unparsable"))
+    tag = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, "tameshi-r97"), prefix="guard-inertia-")
+    try:
+        rc = run_matrix(checker, manifest, tag)

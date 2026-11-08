@@ -1,0 +1,75 @@
+# R97CN1 / 03 — cross-lane instruments whose SHAPE is near C1/C2 (read-only)
+
+Read at the working tree of each lane; quoted lines are the files' own contract text.
+
+## kama-shokunin/tools/round86-mutant-owners.py  (committed lane tool) — closest to C2
+- :7   "five named mutations of ``tools/round81-append-debt.py`` read as committed
+        bytes at ``--rev`` (never the worktree), each with one declared owning arm"
+- :26  "A mutant is KILLED when it exits 1 with the declared owning arm named on a
+        failure line, or when its exit-0 output breaks a reconciliation clause ...
+        ESCAPED when it exits 0 with a reconcilable green summary; INVALID for a crash,
+        a missing mutation site, two summaries, a foreign owner or a non-reconcilable
+        exit-1 run."
+- :32  Output: "DEBT_MUTANT_OWNERS mutants=5 killed=<k> escaped=<e> invalid=<i> ..."
+- :37  "Exit: 0 every mutant killed and the pristine run reconciles; 1 any survivor, invalid"
+- Observation model: the MUTANT's own exit + its printed owning arm. No pristine-vs-mutant
+  fixture-store differential; no equivalent-mutation (`limit`) class; a bad anchor is a
+  per-row `invalid`, the run continues (C2 refuses the whole run at setup, exit 2).
+
+## kama-shokunin/tools/round75-survivor-probe.py  (committed lane tool)
+- :20  PREDICATE: "`python3 tools/round75-survivor-probe.py --repo <lane>` prints one
+        `SURVIVORS2 mutants=5 killed=5 escaped=0` line and exits 0 only when it applies
+        five named source mutations to a copy of the committed
+        `tools/round74-receipt-claim-binding.py` in its own scratch, runs the pristine
+        module's selftest green and every mutated copy's selftest red, and names for each
+        mutant the selftest arm that fails"
+- :183 prints "SURVIVORS2 mutants={mutants} killed={killed} escaped={escaped}"
+- Mechanism identical to C2 (exact source mutation + pristine control + all-mutants-red
+  predicate); observation is the target's own `--selftest`, and the target is a COPY of a
+  committed file, not a blob-at-rev run against a per-row fixture store.
+
+## tsukuroi-shokunin/tools/mutation-kill-r83.py  (committed lane tool)
+- :5-9  two round-82 recipes stored a two-character `\` + `n` where the bytes carry a real
+        newline, so `source.count(old) == 0` at every revision and the target was
+        unreachable by construction (R82-V1)
+- :28   "A recipe whose `old` string occurs other than exactly once in the pinned tool
+        bytes is not a kill (fail closed). A red pristine baseline is
+        `could-not-evaluate`, never a pass."
+- :134-148  old,new = recipe["old"], recipe["new"]; seen = source.count(old);
+            mutant = source.replace(old, new); is_killed = bool(observed and rc != 0)
+- Same edit machinery; one pristine baseline for the whole run; kill = the mutant tool's
+  own selftest exits nonzero. No per-row shared-store differential, no `limit` class, no
+  setup-refusal exit 2 for a no-op/ambiguous anchor (recorded as not-killed).
+
+## souji-shokunin/census/round-70/c1-counter.py  (committed lane instrument)
+- :1390 `bdir = os.path.join(st, "battery-bind")` — SHA256SUMS member-binding selftest
+        fixture (name collision only).
+- :1125 `def battery_verdict(results)`; :1135 rc = 0 iff all_match and
+        tally["survived"] == 0 and tally["error"] == 0
+- :1539-1540 prints label_only / over_refusal / echo_violation / survived tallies.
+- A mutant-FILE battery (`--battery-manifest`, `--battery-dir`) over pre-authored mutant
+  files; outcome classes are about a caller-injection counter (forgery/over-refusal/
+  label-only/survived/error). Not a reader of committed receipts and not a guard matrix.
+
+## tabi-shokunin/scripts/check-record-drift-r81.mjs  (committed lane script)
+- :122 `claim('battery-binding', ...)` — a lesson-proof receipt sha/cases/failed claim.
+- Name collision only; no battery reader, no guard matrix.
+
+## mado-shokunin/.ufo/waves/round-26/quality/check-control-receipts.py  (WAVE ARTIFACT, not a tool/)
+- Contract: "Reads only git history and blobs at TIP ... `--counter-sha SHA` (repeatable):
+  when given, only receipts whose FIRST line names one of the given 64-hex counter sha256
+  values ... qualify"; rule = oldest qualifying control-receipt commit strictly earlier
+  than the data registry's createdAt + shape coverage.
+- Closest non-tameshi "receipts at a rev + counter-sha filter" reader. Divergent: it
+  measures commit ordering and shape coverage, never a per-state verdict against an
+  executable oracle.
+
+## kaidoku-shokunin/.ufo/waves/round-49/w2/W2C2Forge/harness/forge.py  (WAVE ARTIFACT)
+- A forge harness that runs a frozen counter with `--battery` and mutates the lane clone.
+  It crafts inputs/forgeries; it does not read a battery verdict from committed bytes.
+
+## kengaku-shokunin/.ufo/waves/round-100/w1/MutC2/driver.py  (LIVE WAVE ARTIFACT)
+- "R100-C2 mutation driver (MutC2). One mutant per invocation." Per-mutant fixture clone
+  of the lane, declared `expect` legs, and "M00 ... no-op control (fixture harness itself)".
+- Live-lane convergence on "mutation matrix with declared expectations"; subject is a claims
+  / row-census binding, not a checker's guards; no `limit` class; scratch, not committed.

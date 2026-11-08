@@ -1,0 +1,52 @@
+# the three committed pre-freeze body-edit receipts: all three report MISMATCH(counter-sha)
+
+===== c1-forge-counter-sha.out
+BATTERY_ROW pos-real:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+
+===== c1-forge-exit.out
+BATTERY_ROW pos-real:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+
+===== c1-forge-payload.out
+BATTERY_ROW pos-real:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+
+# controls97.py mutates forward: each control resets to the commit the PREVIOUS control made
+    os.remove(os.path.join(st, c))
+    with open(os.path.join(st, c), "w", encoding="utf-8") as f:
+        f.write(orig)
+    git(st, "rm", "-q", "--cached", c)
+    r = commit(st, "drop pos-real from index", add=False)
+    code, out = run([sys.executable, "-I", binder, "--lane", st, "--rev", r])
+    add("c1-forge-worktree-only", code, out, 1)
+    # (b) counter_sha edit -> mismatched
+    git(st, "reset", "-q", "--hard", r)
+    txt = open(os.path.join(st, c), encoding="utf-8").read()
+    ntxt = re.sub(r"counter_sha=[0-9a-f]{64}", "counter_sha=" + "0" * 64, txt, count=1)
+    assert ntxt != txt
+    open(os.path.join(st, c), "w", encoding="utf-8").write(ntxt)
+    r = commit(st, "counter-sha edit")
+    code, out = run([sys.executable, "-I", binder, "--lane", st, "--rev", r])
+    add("c1-forge-counter-sha", code, out, 1)
+    # (c) exit edit -> mismatched
+    git(st, "reset", "-q", "--hard", r)
+    body = open(os.path.join(st, c), encoding="utf-8").read()
+    open(os.path.join(st, c), "w", encoding="utf-8").write(
+        re.sub(r"exit=\d+", "exit=7", body, count=1))
+    r = commit(st, "exit edit")
+    code, out = run([sys.executable, "-I", binder, "--lane", st, "--rev", r])
+    add("c1-forge-exit", code, out, 1)
+    # (d) conjunct flip -> mismatched
+    git(st, "reset", "-q", "--hard", r)
+    body = open(os.path.join(st, c), encoding="utf-8").read()
+    assert "C1_R96_PASS=true" in body
+    open(os.path.join(st, c), "w", encoding="utf-8").write(
+        body.replace("C1_R96_PASS=true", "C1_R96_PASS=false", 1))
+    r = commit(st, "pass-payload edit")
+    code, out = run([sys.executable, "-I", binder, "--lane", st, "--rev", r])
+    add("c1-forge-payload", code, out, 1)
+    # (e) driver digest mismatch at the real lane (pin not equal)

@@ -1,0 +1,21 @@
+rc=1
+stdout:
+GUARD_ROW rev-hex expect=killed observed=killed pristine=exit=2/rev-not-a-commit-id mutant=exit=0
+GUARD_ROW rev-unresolvable expect=killed observed=killed pristine=exit=2/rev-unresolvable mutant=exit=2
+GUARD_ROW verify-quiet expect=limit observed=limit pristine=exit=2/rev-unresolvable mutant=exit=2/rev-unresolvable
+
+stderr:
+Traceback (most recent call last):
+  File "/fast/scratch/hyaku/tameshi-r97/R97R2/fx/fx4/.ufo/t/old-guard-inertia.py", line 321, in <module>
+    main()
+    ~~~~^^
+  File "/fast/scratch/hyaku/tameshi-r97/R97R2/fx/fx4/.ufo/t/old-guard-inertia.py", line 314, in main
+    rc = run_matrix(checker, manifest, tag)
+  File "/fast/scratch/hyaku/tameshi-r97/R97R2/fx/fx4/.ufo/t/old-guard-inertia.py", line 206, in run_matrix
+    repo, rev, extra, env_over = build_state(row["state"], base, env)
+                                 ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fast/scratch/hyaku/tameshi-r97/R97R2/fx/fx4/.ufo/t/old-guard-inertia.py", line 123, in build_state
+    raise RuntimeError("replace failed: " + r.stderr.decode()[:200])
+RuntimeError: replace failed: error: new commit is the same as the old one: '0a780c26cb4f1cbe780e647fc9959d13526853b2'
+
+

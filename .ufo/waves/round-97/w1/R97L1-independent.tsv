@@ -1,0 +1,24 @@
+# independent
+id	guard	anchor_count	state	pristine_exit	pristine_token_present	mutant_exit	mutant_token_present	stdout_identical	observed	expected	diagnosis
+R97L1-1	GitStore.read_receipt reads the object store at --rev, not the worktree (G1)	1	worktree-only receipt named by a conjunct-false row	1	True	0	False	False	killed	killed	baseline
+R97L1-2	the manifest must equal the sha256 the round-96 claims file names (S10)	1	manifest rewritten to all-unfalsifiable; claims still names the clean manifest digest	2	True	0	False	False	killed	killed	baseline
+R97L1-3	a setup-refusal row's declared token must appear in its receipt (F9)	1	row declares spec-absent-at-rev; receipt prints C1_SETUP other-refusal	1	True	0	False	False	killed	killed	baseline
+R97L1-4	an unfalsifiable reason must name a committed state or a hex digest (F4)	1	reason names a mechanism but no state and no digest	1	True	0	False	False	killed	killed	baseline
+R97L1-5	a receipt's counter_sha must equal the counter blob digest at --rev (F8)	1	receipt carries counter_sha=0*64	1	True	0	False	False	killed	killed	baseline
+R97L1-6	git is resolved by absolute path (G4)	1	hostile git shim first on the checker process PATH	0	False	0	False	True	identical	identical	baseline
+# compare-c2
+c2_id	c2_guard	c2_expect	c2_observed	mine_id	mine_observed	relation	note
+rev-hex	the --rev argument must be a 40-hex object id (S1)	killed	killed	-	-	not-covered	not one of my six; inventory site S1
+rev-unresolvable	the 40-hex id must resolve to a commit (S2)	killed	killed	-	-	not-covered	killed by token loss: measured `git rev-parse <40hex>` prints the arg rc 0, so the mutant proceeds and exits 2 at counter-absent-at-rev; C2's class holds
+verify-quiet	the --verify/--quiet tokens of the resolve call (S2 tokens)	limit	limit	-	-	not-covered	measured `git rev-parse --end-of-options <40hex>^{commit}` rc 128 and `--verify --quiet` rc 1: both nonzero, checker only tests nonzero
+replace-refs	a replace ref must be refused before any read (S6)	killed	killed	-	-	not-covered	inventory site S6; S5 (replace-list-failed) remains unmeasured
+counter-sha	a receipt's counter_sha must equal the counter blob digest (F8)	killed	killed	R97L1-5	killed	agree	different exact edit, same guard site: removing the digest comparison makes the 0*64 receipt clean
+receipt-absent	a receipt absent from the object store is a finding (F7)	killed	killed	-	-	not-covered	different guard from R97L1-1: this kills the finding branch, R97L1-1 kills the object-store read; both are separately killable
+no-flip	a conjunct-false row must show the conjunct false (F11)	killed	killed	-	-	not-covered	inventory site F11
+unknown-key	a manifest key the counter does not print is a finding (F12)	killed	killed	-	-	not-covered	inventory site F12
+min-falsifiable	the --min-falsifiable floor (F13)	killed	killed	-	-	not-covered	inventory site F13
+git-absolute	git is resolved by absolute path (G4)	limit	limit	R97L1-6	identical	agree	same edit; my two-edit diagnostic removes the PATH pin too and the shim returns (exit 2 rev-unresolvable), confirming C2's named mechanism
+-	object-store read is the only receipt source (G1)	-	-	R97L1-1	killed	not-covered-by-c2	the checker's first declared round-96 change; C2 has no row that edits it
+-	manifest digest bound to the round claims file (S10)	-	-	R97L1-2	killed	not-covered-by-c2	tampered all-unfalsifiable manifest is accepted once the pin is removed (rows=3 falsifiable=0 unfalsifiable=3 findings=0)
+-	setup-refusal token must appear in the receipt (F9)	-	-	R97L1-3	killed	not-covered-by-c2	C2 has no setup-refusal row among its ten
+-	unfalsifiable reason must name a state or digest (F4)	-	-	R97L1-4	killed	not-covered-by-c2	C2 has no unfalsifiable-reason row

@@ -1,0 +1,81 @@
+# R97CN1 / 04 — the lane's OWN tools already encoding a near idea (read-only)
+# Step 3 of the seat spec. Quoted lines are the tools' own contract text.
+
+## tools/mutate-and-run.sh  — the closest LANE surface to C2 (mechanism ancestor)
+- :33-39  "green control run; killed/survived recorded per defect; sha256 before/after as
+           the restore proof; a kill-rate headline." / "Per-defect verdicts: KILLED (suite
+           exit != 0) | SURVIVED (suite exit 0) | INCONCLUSIVE (timeout 124, or 126/127 =
+           suite not runnable)."
+- :55     "@new == @old (a no-op edit) is refused."
+- :69-70  "(3) build every mutant and assert count==1 — any failure exits 2 before a single
+           suite run; (4) control run on the pristine — a red control exits 2 (kills could
+           not be attributed)"
+- :78     "DEFECT <id>: KILLED|SURVIVED|INCONCLUSIVE (exit=… duration-ms=…)"
+- :336    "Byte-exact single replace; count==1 asserted; refuses no-ops."
+- :422    die('defect %s: @new equals @old (no-op mutation)')
+- :443    if count != 1:            # uniqueness assert before any run
+- :552    die_setup "control run on the pristine copy is red (exit=$ctl_rc); cannot
+           attribute kills; log: $EVID/control.out"
+- :565-569 SURVIVED | INCONCLUSIVE (timeout / suite-not-executable / suite-not-found) | KILLED
+- r7-1 header: every recorded case is "materialized from its repo's git object store
+           (`git show <rev>:<path>`, immune to working-tree drift)".
+=> C2 re-implements this edit + uniqueness + no-op-refusal + pristine-control machinery.
+   C2 adds: (i) per-row pristine-vs-mutant DIFFERENTIAL over a fresh per-row fixture store
+   with the row's own argv, judged by a declared exit + declared token; (ii) a `limit` class
+   with a named mechanism; (iii) whole-run GUARD_SETUP refusal on a bad anchor; (iv) a
+   checker-blob digest pin. Neither C2's docstring nor plans/round-97.plan.md cites this tool.
+
+## tools/conjunct-disposition.py  — closest LANE surface to C1 on shape; also C2's subject
+- Header: "every conjunct key the frozen counter prints must have a manifest row that is
+  either a committed battery state whose receipt shows that conjunct FALSE ... or a committed
+  setup refusal whose receipt shows the named C1_SETUP token ... or {"unfalsifiable": ...}";
+  "A manifest key the counter does not print is a finding".
+- Reads: counter blob at `--rev`, `tools/conjunct-disposition.json`, receipts dir.
+- Prints: `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`; refuses
+  `DISPOSITION_SETUP ...` exit 2; exit 1 on findings.
+=> Expectations are STATIC manifest rows. C1's expectations are IMPORTED from the committed
+   driver (`states()`, `EXPECT_EXTRA`, `grade()`), i.e. an executable oracle; the population
+   is 50 battery receipts, not 19 conjunct rows. Not a duplicate.
+=> The resident tool is the round-93 version (sha256 1b1c6895…); C2 measures the round-96
+   evidence copy (sha256 02a5482a…). See receipt 05.
+
+## tools/receipt-bytes-bind.py  — closest LANE surface to C1 on the binding axis
+- Header: "a receipt's recorded tool sha must exist in the committed bytes of a revision the
+  receipt names"; states bound/corrected/design/unbound.
+- Prints: `RECEIPT_BIND: receipts=N bound=B corrected=C design=D unbound=U`; exit 1 if any
+  unbound; exit 2 setup refusal.
+=> C1's `counter_sha=` test (receipt names a 64-hex digest; the blob at R must carry it) is a
+   special case of this binding. C1 adds the per-state verdict re-derivation through the
+   driver's `grade()`. Not a duplicate.
+
+## tools/receipt-exists.py  — cited-path existence at a pinned rev
+- "read at a pinned revision via `git show REV:path` ... resolve each against the same
+  revision with `git cat-file -e REV:path`"; `RECEIPT_EXISTS: docs=… paths=… missing=…`;
+  exit 0 all resolve / 1 any missing / 2 usage-setup.
+=> C1's `missing` count is the same object-store resolution, but receipt-exists checks the
+   existence of cited paths, never a receipt body against an oracle. Not a duplicate.
+
+## tools/arm-liveness.py  — a declared red arm must MOVE on committed input
+- "a manifest row PINS one committed input per arm ... the instrument ... is RE-EXECUTED ...
+  the row is ARM_LIVE only when the exit matches, the parsed tally is >= expect_min AND
+  strictly greater than the baseline"; `ARM_LIVENESS: rows=N live=L dead=D`; exit 2 on an
+  empty manifest.
+=> Closest to C2 on INTENT (an arm must be measurably live) but it measures a tally move on
+   real committed input; no mutation, no fixture store, no `limit` class.
+
+## tools/wave-reconcile.py  — record claims vs committed wave artifacts
+- Rows: seats / seat_reports / roles / attack_share, each bound to an artifact re-derivation.
+=> Absent on the battery/guard axis (the round-97 claims are not seat-count claims).
+
+## tools/count-recheck.py  — a printed figure must be what its named command prints at the rev
+- "re-run the printed command at the named revision BEFORE printing the count"; the counting
+  command of record is `git grep -c`; reads blobs from git objects at the named revision.
+=> Re-executes a counting command; never grades a receipt against a driver. Not a duplicate.
+
+## tools/selfstate-freshness.py  — a record's live figures vs the instrument's prints
+- capability/span rows, pinned instrument revision, `figure` regex.
+=> Divergent: reads a printed figure, not a battery verdict.
+
+## tools/golden-verdict.py, tools/pin-disposition.py, tools/evidence-disposition.py
+=> judged: three-outcome diff verdicts / pin-content disposition / declared-expectation
+   disposition. None re-derives a per-state battery from committed receipts.

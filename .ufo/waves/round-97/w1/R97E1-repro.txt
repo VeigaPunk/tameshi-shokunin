@@ -1,0 +1,222 @@
+# R97E1 raw transcript — tameshi round 97, C1 battery reproduction
+# date -u: 2026-11-08T14:27:46Z
+# lane: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# scratch: /fast/scratch/hyaku/tameshi-r97/R97E1  (HYAKU_SCRATCH=/fast/scratch/hyaku/tameshi-r97/R97E1 for the reader's own temp roots)
+# reader worktree sha256 must equal its blob at the freeze rev e72a0c8b
+
+=== 0. identity ===
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin rev-parse HEAD
+43acfe8125b3586e10fbf8da2b5c5bbe5fff885d
+rc=0
+$ sha256sum /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py
+34d5aaf16545e5712955d4da7746598b0c3b555fe171a2368f746022180895ab  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py
+rc=0
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin cat-file blob e72a0c8b:.ufo/evidence/round-97/c1/battery-bind.py | sha256sum
+34d5aaf16545e5712955d4da7746598b0c3b555fe171a2368f746022180895ab  -
+rc=0
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin cat-file blob e72a0c8b:.ufo/evidence/round-96/c1/controls-v96.py | sha256sum
+88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5  -
+rc=0
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin cat-file blob e72a0c8b:.ufo/evidence/round-96/c1/measure-v96.py | sha256sum
+69ee68b6fa230e29ef5ddc4e02d619562d5fe5f3620fb2355903c7f9f09a18d9  -
+rc=0
+
+=== 1. frozen counter at R = e72a0c8bde44920554dc81c88c0dbb8dde491977 ===
+$ cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && HYAKU_SCRATCH=/fast/scratch/hyaku/tameshi-r97/R97E1 python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev e72a0c8bde44920554dc81c88c0dbb8dde491977 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+
+=== 2. selftest ===
+$ cd /home/vgpnk/Projects/shokunin/tameshi-shokunin && HYAKU_SCRATCH=/fast/scratch/hyaku/tameshi-r97/R97E1 python3 -I .ufo/evidence/round-97/c1/battery-bind.py --selftest
+BATTERY states=3 matched=3 mismatched=0 missing=0
+SELFTEST clean PASS rc=0
+BATTERY states=3 matched=3 mismatched=0 missing=0
+SELFTEST worktree-extra-ignored PASS rc=0
+BATTERY_ROW b:MISSING(receipt-absent-at-rev)
+BATTERY states=3 matched=2 mismatched=0 missing=1
+SELFTEST missing-receipt PASS rc=1
+BATTERY_ROW b:MISMATCH(counter-sha)
+BATTERY states=3 matched=2 mismatched=1 missing=0
+SELFTEST counter-sha-cheat PASS rc=1
+BATTERY_ROW b:MISMATCH(exit=0)
+BATTERY states=3 matched=2 mismatched=1 missing=0
+SELFTEST exit-cheat PASS rc=1
+BATTERY_ROW a:MISMATCH(exit=1)
+BATTERY states=3 matched=2 mismatched=1 missing=0
+SELFTEST conj-cheat PASS rc=1
+BATTERY_SETUP driver-sha-mismatch
+SELFTEST driver-sha-mismatch PASS rc=2
+BATTERY_SELFTEST: 7/7 pass
+rc=0
+
+=== 3. independent counts at R ===
+$ git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin ls-tree -r --name-only e72a0c8bde44920554dc81c88c0dbb8dde491977 .ufo/evidence/round-96/pre-freeze/controls | wc -l
+50
+rc=0
+$ mkdir -p probe/lane && git -C <lane> archive e72a0c8bde44920554dc81c88c0dbb8dde491977 | tar -x -C probe/lane
+rc=0
+$ python3 -I probe/step3.py   [imports states() from the archive checkout at R, as the reader does]
+len(states())=41
+len(EXPECT_EXTRA)=9
+len(states())+len(EXPECT_EXTRA)=50
+len(set(states())|set(EXPECT_EXTRA))=50
+overlap(states,EXPECT_EXTRA)=[]
+git_ls_tree_paths=50
+git_ls_tree_non_out=[]
+receipts=50 duplicate_basenames=[]
+receipts_not_expected=[]
+expected_not_receipts=[]
+rc=0
+
+=== 4/5. refusal controls and swaps — every clone built with: git clone --shared <lane> <scratch>/clones/<name>
+=== each clone: toplevel asserted by 'git rev-parse --show-toplevel', then 'git checkout -q --detach e72a0c8b'
+=== reader invoked with an absolute --lane at each clone and --rev at the clone's delta commit
+
+### CONTROL a: receipt dropped from index, left on disk
+$ /usr/bin/git clone --shared -q /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r97/R97E1/clones/a-drop-index
+rc=0
+ASSERT toplevel=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/a-drop-index expected=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/a-drop-index
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/a-drop-index checkout -q --detach e72a0c8bde44920554dc81c88c0dbb8dde491977
+rc=0
+clone HEAD=e72a0c8bde44920554dc81c88c0dbb8dde491977
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/a-drop-index rm -q --cached .ufo/evidence/round-96/pre-freeze/controls/drop-c12.out
+rc=0
+on-disk exists: True
+in-HEAD ls-tree output='.ufo/evidence/round-96/pre-freeze/controls/drop-c12.out\n'
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/a-drop-index -c user.name=r97-fixture -c user.email=r97-fixture@invalid commit -q -m r97 control a: de-index drop-c12
+rc=0
+$ /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py --lane /fast/scratch/hyaku/tameshi-r97/R97E1/clones/a-drop-index --rev d060998a0062aaf53c958f61a2d8f95405763be0 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY_ROW drop-c12:MISSING(receipt-absent-at-rev)
+BATTERY states=50 matched=49 mismatched=0 missing=1
+rc=1
+### CONTROL b: counter_sha= replaced with 64 zeros on non-mutant pos-real
+$ /usr/bin/git clone --shared -q /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r97/R97E1/clones/b-counter-sha
+rc=0
+ASSERT toplevel=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/b-counter-sha expected=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/b-counter-sha
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/b-counter-sha checkout -q --detach e72a0c8bde44920554dc81c88c0dbb8dde491977
+rc=0
+clone HEAD=e72a0c8bde44920554dc81c88c0dbb8dde491977
+edited first line: 'counter_sha=0000000000000000000000000000000000000000000000000000000000000000'
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/b-counter-sha add -A
+rc=0
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/b-counter-sha -c user.name=r97-fixture -c user.email=r97-fixture@invalid commit -q -m r97 control b: counter_sha zeros
+rc=0
+$ /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py --lane /fast/scratch/hyaku/tameshi-r97/R97E1/clones/b-counter-sha --rev cb8ba589d3a9932ffc67a9e415bae5ec7528d6d1 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY_ROW pos-real:MISMATCH(counter-sha)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+### CONTROL c: exit= edited on pos-fixture (0 -> 1)
+$ /usr/bin/git clone --shared -q /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r97/R97E1/clones/c-exit-edit
+rc=0
+ASSERT toplevel=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/c-exit-edit expected=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/c-exit-edit
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/c-exit-edit checkout -q --detach e72a0c8bde44920554dc81c88c0dbb8dde491977
+rc=0
+clone HEAD=e72a0c8bde44920554dc81c88c0dbb8dde491977
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/c-exit-edit add -A
+rc=0
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/c-exit-edit -c user.name=r97-fixture -c user.email=r97-fixture@invalid commit -q -m r97 control c: exit edit
+rc=0
+$ /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py --lane /fast/scratch/hyaku/tameshi-r97/R97E1/clones/c-exit-edit --rev f4bc60174d9c6a0ee3e4c1ba6801593f8b1c11f2 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY_ROW pos-fixture:MISMATCH(exit=1)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+### CONTROL d: C1_R96_PASS=true flipped on pos-honest-a13
+$ /usr/bin/git clone --shared -q /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r97/R97E1/clones/d-pass-flip
+rc=0
+ASSERT toplevel=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/d-pass-flip expected=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/d-pass-flip
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/d-pass-flip checkout -q --detach e72a0c8bde44920554dc81c88c0dbb8dde491977
+rc=0
+clone HEAD=e72a0c8bde44920554dc81c88c0dbb8dde491977
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/d-pass-flip add -A
+rc=0
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/d-pass-flip -c user.name=r97-fixture -c user.email=r97-fixture@invalid commit -q -m r97 control d: pass flip
+rc=0
+$ /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py --lane /fast/scratch/hyaku/tameshi-r97/R97E1/clones/d-pass-flip --rev ec2776cf27aad8195b140d4f27f1dceb7113d55c --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY_ROW pos-honest-a13:MISMATCH(exit=0)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+### CONTROL e: --driver-sha 0...0 on pristine clone at freeze rev
+$ /usr/bin/git clone --shared -q /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r97/R97E1/clones/e-driver-sha
+rc=0
+ASSERT toplevel=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/e-driver-sha expected=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/e-driver-sha
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/e-driver-sha checkout -q --detach e72a0c8bde44920554dc81c88c0dbb8dde491977
+rc=0
+clone HEAD=e72a0c8bde44920554dc81c88c0dbb8dde491977
+$ /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py --lane /fast/scratch/hyaku/tameshi-r97/R97E1/clones/e-driver-sha --rev e72a0c8bde44920554dc81c88c0dbb8dde491977 --driver-sha 0000000000000000000000000000000000000000000000000000000000000000
+BATTERY_SETUP driver-sha-mismatch
+rc=2
+### SWAP 1: pos-real.out replaced by pos-fixture's body (same expectation)
+$ /usr/bin/git clone --shared -q /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s1-swap-positive
+rc=0
+ASSERT toplevel=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/s1-swap-positive expected=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/s1-swap-positive
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s1-swap-positive checkout -q --detach e72a0c8bde44920554dc81c88c0dbb8dde491977
+rc=0
+clone HEAD=e72a0c8bde44920554dc81c88c0dbb8dde491977
+pos-fixture body line1: 'control=pos-fixture clone_rev=fd93138ca15d0a30b477e540991d9565caad7aec parent=933df6765a921d5480bd7cac8fbaf8de699f0e39'
+pos-real body line1 now: 'control=pos-fixture clone_rev=fd93138ca15d0a30b477e540991d9565caad7aec parent=933df6765a921d5480bd7cac8fbaf8de699f0e39'
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s1-swap-positive add -A
+rc=0
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s1-swap-positive -c user.name=r97-fixture -c user.email=r97-fixture@invalid commit -q -m r97 swap1: pos-real carries pos-fixture body
+rc=0
+$ /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py --lane /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s1-swap-positive --rev 019623e5e1659a975d97c4e47c2a660f420c404e --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+### SWAP 2: D01 <-> D02 bodies exchanged (mutant identity moves)
+$ /usr/bin/git clone --shared -q /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s2-swap-mutants
+rc=0
+ASSERT toplevel=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/s2-swap-mutants expected=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/s2-swap-mutants
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s2-swap-mutants checkout -q --detach e72a0c8bde44920554dc81c88c0dbb8dde491977
+rc=0
+clone HEAD=e72a0c8bde44920554dc81c88c0dbb8dde491977
+D01 line1 before: 'mutant=D01 state=renamed-result'
+D02 line1 before: 'mutant=D02 state=coverage-denial'
+D01 line1 after: 'mutant=D02 state=coverage-denial'
+D02 line1 after: 'mutant=D01 state=renamed-result'
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s2-swap-mutants add -A
+rc=0
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s2-swap-mutants -c user.name=r97-fixture -c user.email=r97-fixture@invalid commit -q -m r97 swap2: D01/D02 bodies exchanged
+rc=0
+$ /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py --lane /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s2-swap-mutants --rev dc5afaf9cf4163446ac90241eaf0107f984c5540 --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY states=50 matched=50 mismatched=0 missing=0
+rc=0
+### SWAP 3 (contrast): pos-real.out replaced by drop-c12's body (different expectation)
+$ /usr/bin/git clone --shared -q /home/vgpnk/Projects/shokunin/tameshi-shokunin /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s3-swap-cross
+rc=0
+ASSERT toplevel=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/s3-swap-cross expected=/fast/scratch/hyaku/tameshi-r97/R97E1/clones/s3-swap-cross
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s3-swap-cross checkout -q --detach e72a0c8bde44920554dc81c88c0dbb8dde491977
+rc=0
+clone HEAD=e72a0c8bde44920554dc81c88c0dbb8dde491977
+pos-real body line1 now: 'control=drop-c12 clone_rev=db039d6ba9f22c3590d77d81764522280bb307e9 parent=933df6765a921d5480bd7cac8fbaf8de699f0e39'
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s3-swap-cross add -A
+rc=0
+$ /usr/bin/git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s3-swap-cross -c user.name=r97-fixture -c user.email=r97-fixture@invalid commit -q -m r97 swap3: pos-real carries drop-c12 body
+rc=0
+$ /usr/bin/python3 -I /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-97/c1/battery-bind.py --lane /fast/scratch/hyaku/tameshi-r97/R97E1/clones/s3-swap-cross --rev ed6e8e3ee8703d900f18ad77319ead6f26fa3b8e --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5
+BATTERY_ROW pos-real:MISMATCH(exit=1)
+BATTERY states=50 matched=49 mismatched=1 missing=0
+rc=1
+### CONTROL a post-commit verification (HEAD of the de-index clone)
+$ git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/a-drop-index rev-parse HEAD
+d060998a0062aaf53c958f61a2d8f95405763be0
+rc=0
+$ git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/a-drop-index ls-tree -r --name-only HEAD -- .ufo/evidence/round-96/pre-freeze/controls/drop-c12.out | wc -l
+0
+rc=0
+$ test -f /fast/scratch/hyaku/tameshi-r97/R97E1/clones/a-drop-index/.ufo/evidence/round-96/pre-freeze/controls/drop-c12.out && echo on-disk-present
+on-disk-present
+rc=0
+$ git -C /fast/scratch/hyaku/tameshi-r97/R97E1/clones/a-drop-index diff --name-status e72a0c8b HEAD -- .ufo/evidence/round-96/pre-freeze/controls
+D	.ufo/evidence/round-96/pre-freeze/controls/drop-c12.out
+rc=0
+
+=== 5b. expectation-signature classes (states whose receipt bodies grade() treats identically) ===
+$ python3 -I probe/groups.py
+expectation-signature classes with >1 interchangeable member (grade() reads exit + these tokens only):
+  exit=0 tokens={'__pass': True} -> 15: D01, D02, D03, D04, D05, escaped-backslash-pipe, indent-code-row, indent-token, pos-coverage-fenced-denial, pos-fenced-hidden, pos-fixture, pos-honest-a13, pos-honest-verdict-cell, pos-real, two-hyphen-delimiter
+  exit=1 tokens={'ids': False} -> 10: drop-c12, dup-row, position, pseudo-row, renamed-result, sharp-delim-5-4, sharp-position-nodup, sharp-two-verdict-cols, sharp-width-firstrow, sharp-width-lastrow
+  exit=1 tokens={'source': False} -> 3: sharp-source-wrongquote, source-noquote, source-status
+  exit=1 tokens={'coverage': False} -> 2: coverage-absent, coverage-denial
+  exit=1 tokens={'figure': False} -> 2: figure, sharp-figure-two
+  exit=1 tokens={'valid0': False} -> 2: noop-mutant, syntax-mutant
+  exit=1 tokens={'verdict_tables': False} -> 2: hidden-c001, hidden-x
+rc=0

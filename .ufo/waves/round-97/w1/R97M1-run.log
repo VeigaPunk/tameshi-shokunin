@@ -1,0 +1,113 @@
+=== pristine baseline (same env as mutants)
+PRISTINE battery-bind  selftest exit=0 green=True line='BATTERY_SETUP driver-sha-mismatch' secs=0.68
+PRISTINE battery-bind  main     exit=0 green=True line='BATTERY states=50 matched=50 mismatched=0 missing=0' secs=37.60
+PRISTINE guard-inertia selftest exit=0 green=True line='' secs=0.09
+PRISTINE guard-inertia main     exit=0 green=True line='GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0' secs=3.88
+
+=== M01 battery-bind [fabricated-match (mandated: bind returns matched=len(expectations) without reading receipts)] expect=killed verdict=killed mutant_sha=d43b28a5a8de6c9f
+OLD '    matched = mismatched = missing = 0\n    bad = []\n'
+NEW '    matched = mismatched = missing = 0\n    bad = []\n    print("BATTERY states=%d matched=%d mismatched=%d missing=%d" % (\n        len(expectations), len(expectations), 0, 0))\n    return 0, len(expectations)\n'
+SELFTEST exit=1 green=False line='BATTERY_SETUP driver-sha-mismatch' secs=0.42
+MAIN     exit=0 green=True line='BATTERY states=50 matched=50 mismatched=0 missing=0' secs=17.26
+
+=== M02 battery-bind [check-dropped] expect=killed verdict=killed mutant_sha=fbe6c0b6805a762d
+OLD '        if not is_mutant and got_sha != counter_sha:\n'
+NEW '        if False:\n'
+SELFTEST exit=1 green=False line='BATTERY_SETUP driver-sha-mismatch' secs=0.46
+MAIN     exit=0 green=True line='BATTERY states=50 matched=50 mismatched=0 missing=0' secs=13.31
+
+=== M03 battery-bind [comparison-inverted] expect=killed verdict=killed mutant_sha=7dd93f9bc7f55979
+OLD '        ok = drv.grade(name, code, body, expectations[name])\n'
+NEW '        ok = not drv.grade(name, code, body, expectations[name])\n'
+SELFTEST exit=1 green=False line='BATTERY_SETUP driver-sha-mismatch' secs=0.41
+MAIN     exit=1 green=False line='BATTERY states=50 matched=0 mismatched=50 missing=0' secs=13.00
+
+=== M04 battery-bind [count-not-incremented] expect=killed verdict=killed mutant_sha=be3283505df89940
+OLD '        if ok:\n            matched += 1\n'
+NEW '        if ok:\n            pass\n'
+SELFTEST exit=0 green=True line='BATTERY_SETUP driver-sha-mismatch' secs=0.50
+MAIN     exit=0 green=False line='BATTERY states=50 matched=0 mismatched=0 missing=0' secs=13.73
+
+=== M05 battery-bind [path/constant-changed] expect=killed verdict=killed mutant_sha=88bad8cff70efdfa
+OLD 'ROUND_RECEIPTS = ".ufo/evidence/round-96/pre-freeze/controls"\n'
+NEW 'ROUND_RECEIPTS = ".ufo/evidence/round-96/pre-freeze/controlz"\n'
+SELFTEST exit=0 green=True line='BATTERY_SETUP driver-sha-mismatch' secs=0.47
+MAIN     exit=1 green=False line='BATTERY states=50 matched=0 mismatched=0 missing=50' secs=15.08
+
+=== M06 battery-bind [silent-exception-swallow] expect=survived verdict=survived mutant_sha=aa5d471303eb522c
+OLD '        ok = drv.grade(name, code, body, expectations[name])\n'
+NEW '        try:\n            ok = drv.grade(name, code, body, expectations[name])\n        except Exception:\n            ok = True\n'
+SELFTEST exit=0 green=True line='BATTERY_SETUP driver-sha-mismatch' secs=0.51
+MAIN     exit=0 green=True line='BATTERY states=50 matched=50 mismatched=0 missing=0' secs=25.43
+
+=== M07 guard-inertia [classify-always-killed (mandated)] expect=killed verdict=killed mutant_sha=beba3970f15bf6da
+OLD '    """pristine/mutant = (exit, text). Returns observed class."""\n    pe, pt = pristine\n'
+NEW '    """pristine/mutant = (exit, text). Returns observed class."""\n    return "killed"\n    pe, pt = pristine\n'
+SELFTEST exit=1 green=False line='' secs=0.10
+MAIN     exit=1 green=False line='GUARD_INERTIA rows=10 killed=10 limits=0 survived=0 unmet=2' secs=3.78
+  GUARD_ROW rev-hex expect=killed observed=killed pristine=exit=2/rev-not-a-commit-id mutant=exit=0
+  GUARD_ROW rev-unresolvable expect=killed observed=killed pristine=exit=2/rev-unresolvable mutant=exit=2
+  GUARD_ROW verify-quiet expect=limit observed=killed pristine=exit=2/rev-unresolvable mutant=exit=2/rev-unresolvable
+  GUARD_ROW replace-refs expect=killed observed=killed pristine=exit=2/replace-refs-present mutant=exit=0
+  GUARD_ROW counter-sha expect=killed observed=killed pristine=exit=1/receipt-counter-sha-mismatch mutant=exit=0
+  GUARD_ROW receipt-absent expect=killed observed=killed pristine=exit=1/receipt-absent-at-rev mutant=exit=0
+  GUARD_ROW no-flip expect=killed observed=killed pristine=exit=1/no-flip mutant=exit=0
+  GUARD_ROW unknown-key expect=killed observed=killed pristine=exit=1/unknown-key mutant=exit=0
+  GUARD_ROW min-falsifiable expect=killed observed=killed pristine=exit=1/falsifiable-below-minimum mutant=exit=0
+  GUARD_ROW git-absolute expect=limit observed=killed pristine=exit=0 mutant=exit=0
+
+=== M08 guard-inertia [summary-without-loop (mandated)] expect=killed verdict=killed mutant_sha=3028f900fb04906b
+OLD '    for i, row in enumerate(manifest["rows"]):\n'
+NEW '    for i, row in enumerate(manifest["rows"][:0]):\n'
+SELFTEST exit=1 green=False line='GUARD_INERTIA rows=0 killed=0 limits=0 survived=0 unmet=0' secs=0.10
+MAIN     exit=0 green=False line='GUARD_INERTIA rows=0 killed=0 limits=0 survived=0 unmet=0' secs=0.14
+
+=== M09 guard-inertia [comparison-inverted] expect=killed verdict=killed mutant_sha=4142e15128417281
+OLD '    differs = (me != pe) or bool(pr.get("token") and pr["token"] not in mt)\n'
+NEW '    differs = (me == pe) or bool(pr.get("token") and pr["token"] not in mt)\n'
+SELFTEST exit=1 green=False line='' secs=0.09
+MAIN     exit=1 green=False line='GUARD_INERTIA rows=10 killed=8 limits=0 survived=2 unmet=2' secs=3.68
+  GUARD_ROW rev-hex expect=killed observed=killed pristine=exit=2/rev-not-a-commit-id mutant=exit=0
+  GUARD_ROW rev-unresolvable expect=killed observed=killed pristine=exit=2/rev-unresolvable mutant=exit=2
+  GUARD_ROW verify-quiet expect=limit observed=survived pristine=exit=2/rev-unresolvable mutant=exit=2/rev-unresolvable
+  GUARD_ROW replace-refs expect=killed observed=killed pristine=exit=2/replace-refs-present mutant=exit=0
+  GUARD_ROW counter-sha expect=killed observed=killed pristine=exit=1/receipt-counter-sha-mismatch mutant=exit=0
+  GUARD_ROW receipt-absent expect=killed observed=killed pristine=exit=1/receipt-absent-at-rev mutant=exit=0
+  GUARD_ROW no-flip expect=killed observed=killed pristine=exit=1/no-flip mutant=exit=0
+  GUARD_ROW unknown-key expect=killed observed=killed pristine=exit=1/unknown-key mutant=exit=0
+  GUARD_ROW min-falsifiable expect=killed observed=killed pristine=exit=1/falsifiable-below-minimum mutant=exit=0
+  GUARD_ROW git-absolute expect=limit observed=survived pristine=exit=0 mutant=exit=0
+
+=== M10 guard-inertia [check-dropped] expect=killed verdict=killed mutant_sha=3c5530f5b50d8821
+OLD '    if pe != pr.get("exit") or (pr.get("token") and pr["token"] not in pt):\n'
+NEW '    if False:\n'
+SELFTEST exit=1 green=False line='' secs=0.12
+MAIN     exit=0 green=True line='GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0' secs=4.16
+  GUARD_ROW rev-hex expect=killed observed=killed pristine=exit=2/rev-not-a-commit-id mutant=exit=0
+  GUARD_ROW rev-unresolvable expect=killed observed=killed pristine=exit=2/rev-unresolvable mutant=exit=2
+  GUARD_ROW verify-quiet expect=limit observed=limit pristine=exit=2/rev-unresolvable mutant=exit=2/rev-unresolvable
+  GUARD_ROW replace-refs expect=killed observed=killed pristine=exit=2/replace-refs-present mutant=exit=0
+  GUARD_ROW counter-sha expect=killed observed=killed pristine=exit=1/receipt-counter-sha-mismatch mutant=exit=0
+  GUARD_ROW receipt-absent expect=killed observed=killed pristine=exit=1/receipt-absent-at-rev mutant=exit=0
+  GUARD_ROW no-flip expect=killed observed=killed pristine=exit=1/no-flip mutant=exit=0
+  GUARD_ROW unknown-key expect=killed observed=killed pristine=exit=1/unknown-key mutant=exit=0
+  GUARD_ROW min-falsifiable expect=killed observed=killed pristine=exit=1/falsifiable-below-minimum mutant=exit=0
+  GUARD_ROW git-absolute expect=limit observed=limit pristine=exit=0 mutant=exit=0
+
+=== M11 guard-inertia [path/constant-changed] expect=killed verdict=killed mutant_sha=d668aa04841efc02
+OLD 'CHECKER = ".ufo/evidence/round-96/conjunct-disposition-v96.py"\n'
+NEW 'CHECKER = ".ufo/evidence/round-96/conjunct-disposition-v95.py"\n'
+SELFTEST exit=0 green=True line='' secs=0.25
+MAIN     exit=2 green=False line='GUARD_SETUP checker-absent-at-rev' secs=0.10
+
+=== M12 guard-inertia [early-sys.exit(0)] expect=killed verdict=killed mutant_sha=3f24afd0f78d47e7
+OLD '    tag = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, "tameshi-r97"), prefix="guard-inertia-")\n'
+NEW '    sys.exit(0)\n    tag = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, "tameshi-r97"), prefix="guard-inertia-")\n'
+SELFTEST exit=0 green=True line='' secs=0.09
+MAIN     exit=0 green=False line='' secs=0.09
+
+=== restored bytes
+RESTORED battery-bind  selftest exit=0 green=True line='BATTERY_SETUP driver-sha-mismatch'
+RESTORED battery-bind  main     exit=0 green=True line='BATTERY states=50 matched=50 mismatched=0 missing=0'
+RESTORED guard-inertia selftest exit=0 green=True line=''
+RESTORED guard-inertia main     exit=0 green=True line='GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0'

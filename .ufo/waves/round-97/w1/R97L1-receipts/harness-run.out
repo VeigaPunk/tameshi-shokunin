@@ -1,0 +1,44 @@
+
+ROW R97L1-1 :: GitStore.read_receipt reads the object store at --rev, not the worktree
+  anchor_count=1
+  state=worktree-only receipt named by a conjunct-false row rev=cde1d56af3282b8ef95a0c460fd685f0b55e48d0
+  pristine: exit=1 token_present=True
+  mutant:   exit=0 token_present=False stdout_identical=False
+  observed=killed expected=killed
+
+ROW R97L1-2 :: the manifest must equal the sha256 the round-96 claims file names
+  anchor_count=1
+  state=manifest rewritten to all-unfalsifiable; claims still names the clean manifest digest rev=845571df33e160ce8f8a27be2e24da7c4c535a85
+  pristine: exit=2 token_present=True
+  mutant:   exit=0 token_present=False stdout_identical=False
+  observed=killed expected=killed
+
+ROW R97L1-3 :: a setup-refusal row's declared token must appear in its receipt
+  anchor_count=1
+  state=row declares spec-absent-at-rev, receipt prints C1_SETUP other-refusal rev=f28be93f9b91c1ff9d6a4d470d2174e0fe6b65b2
+  pristine: exit=1 token_present=True
+  mutant:   exit=0 token_present=False stdout_identical=False
+  observed=killed expected=killed
+
+ROW R97L1-4 :: an unfalsifiable reason must name a committed state or a hex digest
+  anchor_count=1
+  state=reason names a mechanism but no state and no digest rev=a8a4bf29abfa5268869ed82a006cc654e2f4b5c7
+  pristine: exit=1 token_present=True
+  mutant:   exit=0 token_present=False stdout_identical=False
+  observed=killed expected=killed
+
+ROW R97L1-5 :: a receipt's counter_sha must equal the counter blob digest at --rev
+  anchor_count=1
+  state=receipt carries counter_sha=0*64 rev=beec220b8e07e639ee0147b06f4956e14b93da0f
+  pristine: exit=1 token_present=True
+  mutant:   exit=0 token_present=False stdout_identical=False
+  observed=killed expected=killed
+
+ROW R97L1-6 :: git is resolved by absolute path
+  anchor_count=1
+  state=hostile git shim first on the checker process PATH rev=c88f506572b1201b6c4da5d5e61cb3ef817014c8
+  pristine: exit=0 token_present=False
+  mutant:   exit=0 token_present=False stdout_identical=True
+  observed=identical expected=identical
+
+WROTE /fast/scratch/hyaku/tameshi-r97/R97L1/R97L1-independent.tsv

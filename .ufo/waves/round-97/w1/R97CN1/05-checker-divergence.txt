@@ -1,0 +1,62 @@
+# R97CN1 / 05 — pin verification, anchor divergence, and a checked negative
+
+## Digests (working tree, read-only) vs claims.json pins
+$ sha256sum .ufo/evidence/round-97/c1/battery-bind.py \
+            .ufo/evidence/round-97/c2/guard-inertia.py \
+            .ufo/evidence/round-97/c2/guard-inertia.json \
+            .ufo/evidence/round-96/c1/controls-v96.py \
+            .ufo/evidence/round-96/c1/measure-v96.py \
+            .ufo/evidence/round-96/conjunct-disposition-v96.py \
+            tools/conjunct-disposition.py
+34d5aaf16545e5712955d4da7746598b0c3b555fe171a2368f746022180895ab  battery-bind.py
+96c3829d8a701487a3f08ae91dac20b1115cf247035cf9848ec0c54f9f1a43e3  guard-inertia.py
+1a1d9d903ca971ef3b881b6f3687dd083db079baaa3b7083292449b38c42dac8  guard-inertia.json
+88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5  controls-v96.py
+69ee68b6fa230e29ef5ddc4e02d619562d5fe5f3620fb2355903c7f9f09a18d9  measure-v96.py
+02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80  conjunct-disposition-v96.py
+1b1c6895ebf1d167900113030beebb071d04ed5e8bbb46988176c82b26764a9a  tools/conjunct-disposition.py
+
+All six pins in claims.json match the worktree bytes (C1 instrument 34d5aaf1…, C2 instrument
+96c3829d…, C2 manifest 1a1d9d90…, C1 driver 88bcca86…, C1 counter 69ee68b6…, C2 checker
+02a5482a…). So the shapes compared below are the frozen ones, not drifted worktree copies.
+
+## C2's manifest anchors vs the RESIDENT checker
+For every manifest row, count `checker_bytes.count(edit.old)` in each file
+(`.ufo/evidence/round-96/conjunct-disposition-v96.py` vs `tools/conjunct-disposition.py`):
+
+id                 live_count  frozen_count
+rev-hex            0           1
+rev-unresolvable   0           1
+verify-quiet       0           1
+replace-refs       0           1
+counter-sha        0           1
+receipt-absent     0           1
+no-flip            1           1
+unknown-key        1           1
+min-falsifiable    0           1
+git-absolute       0           1
+
+2 of 10 anchors are shared; 8 of 10 occur only in the round-96 evidence copy. The eight are
+the round-96 changes themselves (40-hex rev guard, rev resolution, replace-ref seal,
+counter_sha binding, object-store receipts, --min-falsifiable, absolute GIT). The divergence
+is RECORDED: plans/round-96.plan.md:30 names the evidence copy as the C2 surface, and
+SCORECARD.md:5773 scores R96-C1 against it. Consequence: `killed=8 limits=2` describes the
+pinned round-96 variant, not the resident tool; the transfer is not claimed by the wording.
+
+## Checked negative — is the `git-absolute` `limit` an artifact of the harness?
+Hypothesis: `run_checker` launches both runs with `env = sealed_env(); env.update(...)`
+(guard-inertia.py:179-183), so the bare `git` would resolve the same binary no matter what
+the checker's own pin does.
+Refuted by the code:
+- guard-inertia.py:167-175 `hostile-path` returns
+  `{"PATH": shim + ":/usr/local/bin:/usr/bin:/bin"}` as the env override, i.e. the checker
+  process DOES see the exit-99 shim first.
+- conjunct-disposition-v96.py:66-79 defines its own `sealed_env()` (PATH pinned to
+  /usr/local/bin:/usr/bin:/bin) and every audit-path git call passes that env
+  (:84-86 wrapper; :144, :157, :396, :407). The checker therefore discards the harness's
+  hostile PATH for its own git calls.
+- The checker's own selftest has the arm "hostile-path-cheat" (:350-367) asserting identical
+  output under a hostile PATH — the guard the row edits.
+So the `limit` is caused by the checker's guard, and removing the pin too (the two-edit
+combination the plan excludes) would kill it. No finding. The manifest's `limit_mechanism`
+sentence is accurate.

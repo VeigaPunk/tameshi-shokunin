@@ -1,0 +1,19 @@
+== verify-quiet: git rev-parse forms on an unresolvable 40-hex ==
+with --verify --quiet                          rc=1 stdout='' stderr=''
+without them                                   rc=128 stdout='--end-of-options\ndeadbeefdeadbeefdeadbeefdeadbeefdeadbeef^{commit}\n' stderr="fatal: ambiguous argument 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^{commit}': unknown revision or p"
+bare rev-parse (manifest edit rev-unresolvable) rc=0 stdout='deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\n' stderr=''
+
+== git-absolute: one edit vs the same edit plus the PATH pin removed ==
+fixture repo=/fast/scratch/hyaku/tameshi-r97/R97C1/limit-mech/store rev=6c7169d3d7a531bb525dec4afa236e8c3eae7341 env_over={'PATH': '/fast/scratch/hyaku/tameshi-r97/R97C1/limit-mech/shim:/usr/local/bin:/usr/bin:/bin'}
+PATH-pin anchor count in checker: 1
+--- pristine exit=0
+    DISPOSITION_INSTRUMENT rev=6c7169d3d7a531bb525dec4afa236e8c3eae7341 sha256=85f680ed66f919269e670d906a759570e6a8167e82b5b61ae68729d93d4df308 conjuncts=3
+    DISPOSITION_ROW alpha state=pos mode=conjunct-false
+    DISPOSITION_ROW beta state=pos2 mode=conjunct-false
+--- one-edit exit=0
+    DISPOSITION_INSTRUMENT rev=6c7169d3d7a531bb525dec4afa236e8c3eae7341 sha256=85f680ed66f919269e670d906a759570e6a8167e82b5b61ae68729d93d4df308 conjuncts=3
+    DISPOSITION_ROW alpha state=pos mode=conjunct-false
+    DISPOSITION_ROW beta state=pos2 mode=conjunct-false
+--- two-edit (GIT bare + PATH pin moved under the shim) exit=2
+    DISPOSITION_SETUP rev-unresolvable
+rc=0

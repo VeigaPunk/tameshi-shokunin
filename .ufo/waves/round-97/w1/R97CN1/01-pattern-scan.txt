@@ -1,0 +1,35 @@
+# R97CN1 / 01 — prescribed fleet scan for equivalent battery / guard-inertia surfaces
+# Direction: read-only. Run from the fleet root.
+
+## Command (verbatim from the seat spec)
+$ cd /home/vgpnk/Projects/shokunin && grep -rIl --exclude-dir=.git \
+    -e 'BATTERY states=' -e 'GUARD_INERTIA' -e 'guard-inertia' -e 'battery-bind' . | sort
+
+## Observed
+- 93 files outside tameshi-shokunin matched. Per-file pattern attribution
+  (01b-nontameshi-hits.txt) shows every one matched only `battery-bind`.
+- NO file outside tameshi-shokunin matched `BATTERY states=`, `GUARD_INERTIA`
+  or `guard-inertia`.
+- Per-lane count: 78 souji-shokunin, 15 tabi-shokunin.
+- tameshi-shokunin hits are the lane itself: .ufo/evidence/round-97/c1/battery-bind.py,
+  .ufo/evidence/round-97/c2/guard-inertia.py, .ufo/evidence/round-97/controls97.py,
+  .ufo/evidence/round-97/pre-freeze/*.out, .ufo/evidence/round-97/repeat/*.txt,
+  plans/round-97.plan.md, .ufo/waves/round-97/{claims.json,w1/*},
+  corpus/lessons/round-97.md, corpus/QUALITY.md, and .jj op-store/tree_state blobs
+  (the prescribed command excludes .git only, so .jj internals are in the raw hit set).
+
+## What the `battery-bind` hits are (not equivalent surfaces)
+- souji-shokunin (78 files): a literal scratch-directory name inside the counter's own
+  member-binding selftest:
+    census/round-70/c1-counter.py:1390
+      bdir = os.path.join(st, "battery-bind")
+  The directory holds M1.py / M2.py / SHA256SUMS and is consumed by `verify_members`
+  (a SHA256SUMS membership check), not by a battery reader. The 78 files are that
+  counter, its control variants and mutants (census/round-70..75) and the wave mirror
+  (.ufo/waves/round-70..71).
+- tabi-shokunin (15 files): the claim id `battery-binding` in a round-81 record-drift
+  gate and its committed evidence copies:
+    scripts/check-record-drift-r81.mjs:122
+      claim('battery-binding', b !== null && b.receipt && b.receipt.sha256 === receiptSha
+            && b.cases === 102 && b.failed === 0 && /battery-bound-a\.json/.test(lesson),
+  A lesson-proof receipt-sha claim (cases/failed/receipt sha), not a battery of states.

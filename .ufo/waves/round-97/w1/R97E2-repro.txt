@@ -1,0 +1,243 @@
+R97E2 — C2 guard-inertia reproduction transcript
+seat: executor; lane: tameshi; round 97, wave w1; date 2026-11-08
+lane: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+records rev measured: 43acfe8125b3586e10fbf8da2b5c5bbe5fff885d (HEAD at measurement)
+freeze rev also measured: e72a0c8bde44920554dc81c88c0dbb8dde491977
+base (before-state): 07e50d6d0142b21e8443b5417b8edc4d1dd76455
+scratch: /fast/scratch/hyaku/tameshi-r97/R97E2 (removed after this file was copied)
+host python: 3.14 (/usr/lib/python3.14)
+
+0. BLOB DIGESTS AT THE MEASURED REVS
+   command: git cat-file blob <rev>:<path> | sha256sum
+   tool .ufo/evidence/round-97/c2/guard-inertia.py
+     e72a0c8b 96c3829d8a701487a3f08ae91dac20b1115cf247035cf9848ec0c54f9f1a43e3  (= claims C2.instrument_sha256)
+     43acfe81 96c3829d8a701487a3f08ae91dac20b1115cf247035cf9848ec0c54f9f1a43e3
+     917d7109 880bc4d6ab855561cd3b5e47cad309d4d3a47a60a288e9a40e2a24969d2a8295  (NOT the pinned tool)
+   manifest .ufo/evidence/round-97/c2/guard-inertia.json
+     e72a0c8b 1a1d9d903ca971ef3b881b6f3687dd083db079baaa3b7083292449b38c42dac8  (= claims C2.manifest_sha256)
+     43acfe81 1a1d9d903ca971ef3b881b6f3687dd083db079baaa3b7083292449b38c42dac8
+     917d7109 1a1d9d903ca971ef3b881b6f3687dd083db079baaa3b7083292449b38c42dac8
+   checker .ufo/evidence/round-96/conjunct-disposition-v96.py
+     e72a0c8b 02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80  (= claims C2.checker_sha256)
+     43acfe81 02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80
+     917d7109 02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80
+   claims C2 block: identical at e72a0c8b and 43acfe81 for wording, counter,
+   predicate, battery_predicate, instrument_sha256, manifest_sha256, checker_sha256.
+
+1. FROZEN COUNTER COMMAND (literal, from the lane root, no env override)
+   $ python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --lane . \
+       --rev 43acfe8125b3586e10fbf8da2b5c5bbe5fff885d \
+       --checker-sha 02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80
+   GUARD_ROW rev-hex expect=killed observed=killed pristine=exit=2/rev-not-a-commit-id mutant=exit=0
+   GUARD_ROW rev-unresolvable expect=killed observed=killed pristine=exit=2/rev-unresolvable mutant=exit=2
+   GUARD_ROW verify-quiet expect=limit observed=limit pristine=exit=2/rev-unresolvable mutant=exit=2/rev-unresolvable
+   GUARD_ROW replace-refs expect=killed observed=killed pristine=exit=2/replace-refs-present mutant=exit=0
+   GUARD_ROW counter-sha expect=killed observed=killed pristine=exit=1/receipt-counter-sha-mismatch mutant=exit=0
+   GUARD_ROW receipt-absent expect=killed observed=killed pristine=exit=1/receipt-absent-at-rev mutant=exit=0
+   GUARD_ROW no-flip expect=killed observed=killed pristine=exit=1/no-flip mutant=exit=0
+   GUARD_ROW unknown-key expect=killed observed=killed pristine=exit=1/unknown-key mutant=exit=0
+   GUARD_ROW min-falsifiable expect=killed observed=killed pristine=exit=1/falsifiable-below-minimum mutant=exit=0
+   GUARD_ROW git-absolute expect=limit observed=limit pristine=exit=0 mutant=exit=0
+   GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0
+   exit 0.
+
+   Same command with --rev e72a0c8bde44920554dc81c88c0dbb8dde491977: byte-identical 11 lines, exit 0.
+   $ cmp <(run at 43acfe81) <(run at e72a0c8b)  -> identical.
+   $ diff <(run at 43acfe81) .ufo/evidence/round-97/repeat/c2-run-1.txt -> IDENTICAL
+     (the three committed repeat receipts c2-run-1/2/3.txt are byte-identical to each other
+      and to both of my runs).
+
+2. SELFTEST
+   2a. declared battery command, no env override (SCRATCH_ROOT default /fast/scratch/hyaku):
+   $ python3 -I .ufo/evidence/round-97/c2/guard-inertia.py --selftest
+   SELFTEST kill-real PASS got=killed want=killed
+   SELFTEST limit-real PASS got=limit want=limit
+   SELFTEST kill-lie PASS got=survived want=survived
+   SELFTEST limit-lie PASS got=survived want=survived
+   SELFTEST pristine-unmet PASS got=pristine-unmet want=pristine-unmet
+   SELFTEST noop-anchor PASS got=GUARD_SETUP edit-no-op:noop want=GUARD_SETUP edit-no-op:noop
+   SELFTEST ambiguous-anchor PASS got=GUARD_SETUP edit-ambiguous:amb:3 want=GUARD_SETUP edit-ambiguous:amb:
+   GUARD_INERTIA_SELFTEST: 7/7 pass
+   exit 0.
+
+   2b. same command with HYAKU_SCRATCH=<fresh empty dir> (parent <root>/tameshi-r97 absent):
+   FileNotFoundError at guard-inertia.py:247
+     base = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, "tameshi-r97"), prefix="guard-selftest-")
+   ... [Errno 2] No such file or directory: '<fresh>/tameshi-r97/guard-selftest-pwxgwwzb'
+   exit 1, no GUARD_INERTIA_SELFTEST line printed.
+
+   2c. same command with HYAKU_SCRATCH=<fresh dir> where <root>/tameshi-r97 was pre-created:
+   the 7 PASS lines + GUARD_INERTIA_SELFTEST: 7/7 pass, exit 0.
+   => --selftest is not hermetic: it needs <SCRATCH_ROOT>/tameshi-r97 to exist. The main
+      command creates it as a side effect of sealed_env() (guard-home/tmp); the selftest
+      calls mkdtemp before sealed_env().
+
+3. INDEPENDENT PER-ROW MATRIX (own harness; does not import guard-inertia.py)
+   harness: /fast/scratch/hyaku/tameshi-r97/R97E2/verify_rows.py
+   $ R97E2_SCRATCH=.../verify python3 -I verify_rows.py --lane <lane> \
+       --rev 43acfe81... --checker-sha 02a5... --manifest-sha 1a1d...
+   Fixture builder is independent (own four-file store: counter stub, manifest, round-96
+   claims digest, receipts; init/add/commit in a scratch repo). Deviations from the tool's
+   builder: single commit instead of the tool's rewrite commit for counter-sha/no-flip, own
+   commit identity, and HYAKU_SCRATCH passed to the checker so its temp dirs stay in my
+   scratch (the tool's sealed env drops HYAKU_SCRATCH, so its nested checker uses
+   /fast/scratch/hyaku/tameshi-r96, which pre-exists on this host). The checker reads blobs
+   at the row rev, so commit history and scratch location do not change content.
+
+   CHECKER_SHA256=02a5482a573193c37bd9ebfa9303e84284561f50326043967834c9fdbf0d1c80
+   MANIFEST_SHA256=1a1d9d903ca971ef3b881b6f3687dd083db079baaa3b7083292449b38c42dac8
+   CHECKER_SHA_PIN_MATCH=True
+   MANIFEST_SHA_PIN_MATCH=True
+
+   ANCHORS (exact-anchor count in the checker blob at rev; new != old)
+   ANCHOR rev-hex          count=1 new_ne_old=True
+   ANCHOR rev-unresolvable count=1 new_ne_old=True
+   ANCHOR verify-quiet     count=1 new_ne_old=True
+   ANCHOR replace-refs     count=1 new_ne_old=True
+   ANCHOR counter-sha      count=1 new_ne_old=True
+   ANCHOR receipt-absent   count=1 new_ne_old=True
+   ANCHOR no-flip          count=1 new_ne_old=True
+   ANCHOR unknown-key      count=1 new_ne_old=True
+   ANCHOR min-falsifiable  count=1 new_ne_old=True
+   ANCHOR git-absolute     count=1 new_ne_old=True
+
+   ROWS (pristine/mutant: exit / declared-token-present; "token_present=False" on a killed
+   mutant means the declared token was lost, which is the killed condition)
+   ROW rev-hex          state=clean           rev=master
+       pristine exit=2 token_present=True | mutant exit=0 token_present=False | observed=killed expect=killed
+   ROW rev-unresolvable state=clean           rev=deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+       pristine exit=2 token_present=True | mutant exit=2 token_present=False | observed=killed expect=killed
+       mutant stdout: DISPOSITION_SETUP counter-absent-at-rev (exit 2; token lost, exit equal)
+   ROW verify-quiet     state=clean           rev=deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+       pristine exit=2 token_present=True | mutant exit=2 token_present=True | observed=limit expect=limit
+       pristine_out='DISPOSITION_SETUP rev-unresolvable\n'
+       mutant_out='DISPOSITION_SETUP rev-unresolvable\n'
+   ROW replace-refs     state=replace-refs    rev=c7c8331f9357607184b9cdaa8101914567d8e14a
+       pristine exit=2 token_present=True | mutant exit=0 token_present=False | observed=killed expect=killed
+   ROW counter-sha      state=counter-sha     rev=3a2b155a2a0d57f820d46420a3fb980340ecb61d
+       pristine exit=1 token_present=True | mutant exit=0 token_present=False | observed=killed expect=killed
+   ROW receipt-absent   state=receipt-absent  rev=db21cf63042a9bdf5e108acdde5991bff2ebb450
+       pristine exit=1 token_present=True | mutant exit=0 token_present=False | observed=killed expect=killed
+   ROW no-flip          state=no-flip         rev=70902e0c60e86b2987f675776e1eccbbc8d3ba22
+       pristine exit=1 token_present=True | mutant exit=0 token_present=False | observed=killed expect=killed
+   ROW unknown-key      state=unknown-key     rev=e8d314c7a3fea7b6304db726670df28785b3cd01
+       pristine exit=1 token_present=True | mutant exit=0 token_present=False | observed=killed expect=killed
+   ROW min-falsifiable  state=min-falsifiable rev=f714d0c7a62f01f105985505587c9e5c90e5e925
+       pristine exit=1 token_present=True | mutant exit=0 token_present=False | observed=killed expect=killed
+   ROW git-absolute     state=hostile-path    rev=84b977b9dd0ca1e07ec03128442dbacf034b3bd7
+       pristine exit=0 token_present=False | mutant exit=0 token_present=False | observed=limit expect=limit
+       pristine_out='DISPOSITION_INSTRUMENT rev=... conjuncts=3\nDISPOSITION_ROW alpha ...\nDISPOSITION rows=3 falsifiable=2 unfalsifiable=1 findings=0\n'
+       mutant_out  = same bytes
+       shim_invocations_during_two_runs=0
+
+   INDEPENDENT_MATRIX rows=10 killed=8 limits=2 survived=0 unmet=0
+   ANCHOR_ALL_EXACT_ONE=True
+   INDEPENDENT_EXIT=0
+
+   Rows whose classification I could not reproduce: none (10/10).
+
+4. LIMIT ROWS RE-MEASURED
+   4a. verify-quiet (row declares rev deadbeef..., edit removes "--verify", "--quiet"):
+       $ git -C <store> rev-parse --end-of-options deadbeef...^{commit}
+         rc=128  fatal: ambiguous argument 'deadbeef...^{commit}': unknown revision or path not in the working tree
+       $ git -C <store> rev-parse --verify --quiet --end-of-options deadbeef...^{commit}
+         rc=1    (no output)
+       The checker tests only `_res.returncode != 0` (conjunct-disposition-v96.py:398), so both
+       branches print DISPOSITION_SETUP rev-unresolvable and exit 2. Identical exit+token: limit.
+   4b. git-absolute (row declares state hostile-path, edit GIT="/usr/bin/git" -> "git"):
+       single edit: pristine exit=0 / mutant exit=0, identical full output; the PATH-shim `git`
+       that exits 99 was invoked 0 times in either run.
+       Why: the checker's own sealed_env() pins PATH to /usr/local/bin:/usr/bin:/bin
+       (conjunct-disposition-v96.py:75) and its git() calls use GIT (line 81); the hostile PATH
+       the harness passes is overwritten inside the checker.
+       Counterfactual (also remove the checker's PATH pin):
+       mutant+pathpin-removed exit=2 shim_invocations=1 out='DISPOSITION_SETUP rev-unresolvable'
+       => the manifest's limit_mechanism sentence ("equivalent unless the PATH pin is removed
+          too") is measured, not asserted.
+
+5. REFUSAL CONTROLS (git clone --shared of the lane at 43acfe81, under scratch;
+   clone toplevel asserted before every add/commit; each control committed a manifest-only
+   change and the tool was run with --lane <clone> --rev <that commit> --checker-sha 02a5...)
+   $ git clone --shared --no-checkout <lane> <scratch>/ctl/lane   # 3.7M, objects via alternates
+   $ git read-tree HEAD                                            # index = HEAD tree
+
+   5a. flipped expectation: rev-hex expect "killed" -> "limit"
+       GUARD_ROW rev-hex expect=limit observed=survived pristine=exit=2/rev-not-a-commit-id mutant=exit=0
+       (other nine rows unchanged)
+       GUARD_INERTIA rows=10 killed=7 limits=2 survived=1 unmet=1
+       rc=1
+   5b. no-op edit: rev-hex edit.new set equal to edit.old
+       GUARD_SETUP edit-no-op:rev-hex
+       rc=2, stdout (stderr empty)   [pinned tool, main catch at guard-inertia.py:331-335]
+   5c. ambiguous anchor (extra probe): rev-hex edit.old = "    return None" (4 occurrences)
+       GUARD_SETUP edit-ambiguous:rev-hex:4
+       rc=2
+   5d. checker digest pin (extra probe): --checker-sha 0*64 at the unmodified rev
+       GUARD_SETUP checker-sha-mismatch
+       rc=2
+
+6. COMMENT-ONLY EDIT DECLARED killed (step 5 of the spec)
+   Clone control 3: row min-falsifiable's edit replaced by a comment-only change on the checker
+     old = "    # A4 (R96SN1 F10): the manifest is bound to the sha256 the round's claims file"
+     new = "    # A4 (R96SN1 F10): comment-only mutation, behaviour identical"
+   (anchor count in the checker = 1; edit.new != edit.old, so it is not refused as a no-op)
+   Observed:
+     GUARD_ROW min-falsifiable expect=killed observed=survived pristine=exit=1/falsifiable-below-minimum mutant=exit=1/falsifiable-below-minimum
+     GUARD_INERTIA rows=10 killed=7 limits=2 survived=1 unmet=1
+     rc=1
+   => the tool counts an observationally inert edit survived (and unmet=1, exit 1), never killed.
+
+7. INSTRUMENT-COMMIT PROBE (plan's "Instrument commit ... 917d7109" vs the pinned tool)
+   tool at 917d7109 sha256 = 880bc4d6ab855561cd3b5e47cad309d4d3a47a60a288e9a40e2a24969d2a8295
+   tool at e72a0c8b/43acfe81 sha256 = 96c3829d... (= claims C2.instrument_sha256; first appears at 997ce0c4)
+   Same no-op manifest commit (4932f878...), same --checker-sha:
+     917d7109 tool: stdout 0 bytes, stderr "GUARD_SETUP edit-no-op:rev-hex", exit 1
+     96c3829d tool: stdout "GUARD_SETUP edit-no-op:rev-hex", stderr 0 bytes, exit 2
+   => at the plan's instrument commit the tool does NOT satisfy the frozen refusal wording
+      ("GUARD_SETUP edit-no-op ... exit 2"); the pinned repaired tool does. The claims are
+      consistent at R; the plan's instrument-commit label is stale for C2.
+
+8. BEFORE-STATE GREP
+   $ git grep -c 'GUARD_INERTIA' 07e50d6d0142b21e8443b5417b8edc4d1dd76455
+     (no output) rc=1
+   $ git grep -c 'GUARD_INERTIA' 917d7109c9c4e43dd8fd69e59b147181e2e94d85
+     917d7109...:.ufo/evidence/round-97/c2/guard-inertia.py:2   rc=0
+   $ git grep -c 'BATTERY states=' 07e50d6d0142b21e8443b5417b8edc4d1dd76455
+     (no output) rc=1
+
+9. TOOLING
+   No installs, no upgrades, no pacman. Only host python3 3.14 and git.
+
+10. CLEANUP (interim)
+   Scratch /fast/scratch/hyaku/tameshi-r97/R97E2 was removed after the first copy of this
+   transcript; it was recreated once for the §11 probe and deleted again. No lane file was
+   modified; only the two wave-dir artifacts were written.
+
+11. CLEAN-HOST SIMULATION FOR THE NESTED CHECKER'S SCRATCH (F4/F5)
+    The tool's sealed env drops HYAKU_SCRATCH, so the nested round-96 checker uses
+    /fast/scratch/hyaku/tameshi-r96 for TemporaryDirectory (checker :417). To measure the
+    consequence of that path being absent (a clean host), I copied the pinned tool blob to
+    scratch (sha 96c3829d... unchanged except for the probe line) and injected one env key in
+    sealed_env(): "HYAKU_SCRATCH": "<scratch>/no-such-root" (a path that does not exist).
+    The pinned lane file was NOT modified. Command:
+    $ python3 -I <scratch>/guard-inertia-cleanhost.py --lane . --rev 43acfe81... \
+        --checker-sha 02a5482a...
+    GUARD_ROW rev-hex expect=killed observed=killed pristine=exit=2/rev-not-a-commit-id mutant=exit=1
+    GUARD_ROW rev-unresolvable expect=killed observed=killed pristine=exit=2/rev-unresolvable mutant=exit=2
+    GUARD_ROW verify-quiet expect=limit observed=limit pristine=exit=2/rev-unresolvable mutant=exit=2/rev-unresolvable
+    GUARD_ROW replace-refs expect=killed observed=killed pristine=exit=2/replace-refs-present mutant=exit=1
+    GUARD_ROW counter-sha expect=killed observed=pristine-unmet pristine=exit=1/receipt-counter-sha-mismatch mutant=exit=1
+    GUARD_ROW receipt-absent expect=killed observed=pristine-unmet pristine=exit=1/receipt-absent-at-rev mutant=exit=1
+    GUARD_ROW no-flip expect=killed observed=pristine-unmet pristine=exit=1/no-flip mutant=exit=1/no-flip
+    GUARD_ROW unknown-key expect=killed observed=pristine-unmet pristine=exit=1/unknown-key mutant=exit=1/unknown-key
+    GUARD_ROW min-falsifiable expect=killed observed=pristine-unmet pristine=exit=1/falsifiable-below-minimum mutant=exit=1
+    GUARD_ROW git-absolute expect=limit observed=pristine-unmet pristine=exit=1 mutant=exit=1
+    GUARD_INERTIA rows=10 killed=3 limits=1 survived=6 unmet=6
+    exit 1.
+    => the clean-host failure mode fails closed (unmet=6, exit 1), never prints the predicate.
+    => artifact: the no-flip/unknown-key mutants report "token present" because run_checker
+       returns r.stdout + r.stderr and the crash traceback embeds the mutant path
+       .../row06-no-flip/checker-no-flip.py (.../row07-unknown-key/checker-unknown-key.py).
+       The token test is a substring search, so the row id in the path injects the token.
+       Direction is safe (it can only turn a lost token into a present one, i.e. killed ->
+       survived), and the frozen run has no crashing checker, so the predicate is unaffected.

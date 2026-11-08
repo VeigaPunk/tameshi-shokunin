@@ -1,0 +1,22 @@
+# R97CN1 / 02 — token uniqueness across the fleet (read-only)
+
+All commands run from /home/vgpnk/Projects/shokunin, with `grep -rIl --exclude-dir=.git
+--exclude-dir=.jj` and the tameshi lane filtered out.
+
+$ grep ... -e 'GUARD_SETUP' -e 'BATTERY_SETUP' . | grep -v '^./tameshi-shokunin/'
+  observed: no output (empty). Both setup tokens occur only inside tameshi-shokunin
+  (.ufo/evidence/round-97/c2/guard-inertia.py, .ufo/evidence/round-97/c1/battery-bind.py).
+
+$ grep ... -e 'EXPECT_EXTRA' . | grep -v '^./tameshi-shokunin/'
+  observed: no output (empty). In the fleet the symbol occurs only in the tameshi lane:
+  .ufo/evidence/round-{93,94,95,96}/c1/controls-v9*.py, .ufo/evidence/round-97/c1/battery-bind.py,
+  and the round-94/95 wave dirs.
+
+$ grep ... -e 'BATTERY states=' -e 'GUARD_INERTIA' -e 'guard-inertia' . | grep -v '^./tameshi-shokunin/'
+  observed: no output (empty). The two summary-line tokens do not occur outside the lane.
+
+# Consequence for C1/C2's frozen base sentences:
+#   C1: "at base 07e50d6d git grep -c 'BATTERY states=' prints nothing"
+#   C2: "at base 07e50d6d git grep -c 'GUARD_INERTIA' prints nothing"
+# are consistent with this fleet-wide scan: no lane, at any revision, prints either line.
+# The scan is the fleet surface; the claim sentences are pinned to the lane base.
