@@ -111,6 +111,17 @@ def setup_store(base, env, *, manifest=None, receipts=None, prefix="store"):
     return repo, rev, csha
 
 
+def rewrite_receipt(repo, env, name, body):
+    with open(os.path.join(repo, ".ufo/evidence/round-96/pre-freeze/controls/%s.out" % name), "w") as f:
+        f.write(body)
+    git(repo, ["add", "-A"], env)
+    r = git(repo, ["-c", "user.name=guard-fixture", "-c", "user.email=guard@invalid",
+                   "commit", "-qm", "state edit " + name], env)
+    if r.returncode != 0:
+        raise RuntimeError("state commit failed: " + r.stderr.decode("utf-8", "replace")[:200])
+    return git(repo, ["rev-parse", "HEAD"], env).stdout.decode().strip()
+
+
 def build_state(name, base, env):
     """Returns (repo, rev, extra_args, env_overrides)."""
     if name == "clean":
@@ -118,14 +129,19 @@ def build_state(name, base, env):
         return repo, rev, [], {}
     if name == "replace-refs":
         repo, rev, _ = setup_store(base, env)
-        r = git(repo, ["replace", "--graft", rev], env)
+        alt = git(repo, ["-c", "user.name=guard-fixture", "-c", "user.email=guard@invalid",
+                        "commit-tree", rev + "^{tree}", "-p", rev, "-m", "alt"], env)
+        altid = alt.stdout.decode().strip()
+        if not altid:
+            raise RuntimeError("commit-tree failed: " + alt.stderr.decode()[:200])
+        r = git(repo, ["replace", rev, altid], env)
         if r.returncode != 0:
             raise RuntimeError("replace failed: " + r.stderr.decode()[:200])
         return repo, rev, [], {}
     if name == "counter-sha":
-        repo, rev, csha = setup_store(base, env, receipts={
-            "pos": "counter_sha=%s\nexit=1\nC1_CONJUNCTS alpha=false beta=true gamma=true\n" % ("0" * 64),
-            "pos2": "counter_sha=%s\nexit=1\nC1_CONJUNCTS alpha=true beta=false gamma=true\n" % csha})
+        repo, rev, csha = setup_store(base, env)
+        rev = rewrite_receipt(repo, env, "pos",
+                              "counter_sha=%s\nexit=1\nC1_CONJUNCTS alpha=false beta=true gamma=true\n" % ("0" * 64))
         return repo, rev, [], {}
     if name == "receipt-absent":
         repo, rev, _ = setup_store(base, env, manifest={
@@ -134,9 +150,9 @@ def build_state(name, base, env):
             "gamma": {"unfalsifiable": "the sealed pin at state pos2 forbids a committed falsifier for gamma"}})
         return repo, rev, [], {}
     if name == "no-flip":
-        repo, rev, csha = setup_store(base, env, receipts={
-            "pos": "counter_sha=%s\nexit=1\nC1_CONJUNCTS alpha=true beta=true gamma=true\n" % csha,
-            "pos2": "counter_sha=%s\nexit=1\nC1_CONJUNCTS alpha=true beta=false gamma=true\n" % csha})
+        repo, rev, csha = setup_store(base, env)
+        rev = rewrite_receipt(repo, env, "pos",
+                              "counter_sha=%s\nexit=1\nC1_CONJUNCTS alpha=true beta=true gamma=true\n" % csha)
         return repo, rev, [], {}
     if name == "unknown-key":
         m = {"alpha": {"state": "pos", "mode": "conjunct-false"},
@@ -312,6 +328,11 @@ def main():
     tag = tempfile.mkdtemp(dir=os.path.join(SCRATCH_ROOT, "tameshi-r97"), prefix="guard-inertia-")
     try:
         rc = run_matrix(checker, manifest, tag)
+    except SystemExit as exc:
+        if isinstance(exc.code, str) and exc.code.startswith("GUARD_SETUP "):
+            print(exc.code)
+            sys.exit(2)
+        raise
     finally:
         shutil.rmtree(tag, ignore_errors=True)
     sys.exit(rc)
