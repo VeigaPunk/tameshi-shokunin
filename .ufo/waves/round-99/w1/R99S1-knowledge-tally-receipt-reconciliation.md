@@ -5,6 +5,16 @@
 > named receipt prints; the source quotes were located in the committed snapshots by the
 > lane's own tag-strip convention, and the two facts the renderer cannot show are cited by
 > raw snapshot line and named as such (§6).
+>
+> **Status at hand-off:** the L1 landed the records revision `808a4377` and the landing
+> `7cd85a42` while this draft was being written. `corpus/knowledge/tally-receipt-reconciliation.md`
+> and `corpus/QUALITY.md` criterion 178 now exist, built from this seat's draft. The two
+> figures that moved under the landing are corrected below: the instrument at R is the
+> **amended** one (`a1c50bb4…`, amendments A2-A4, A9, A10) whose `--selftest` prints
+> `25/25`, and the receipt paths at R are `.ufo/evidence/round-99/records/`. The
+> twelve-record numbers are unchanged (re-derived at R below). The S325 anchor correction
+> in §6 and the pairing-limit correction in §4 stand and are **not** reflected in the landed
+> corpus entry — see `R99S1.md` §7.
 
 source: S324 — Nuijten, Hartgerink, van Assen, Epskamp, Wicherts, "The prevalence of
 statistical reporting errors in psychology (1985-13)", *Behavior Research Methods* 48(4),
@@ -20,7 +30,13 @@ S325 — statcheck // web, FAQ (`http://statcheck.io/`, Nuijten, Epskamp et al.)
 `.ufo/evidence/round-99/sources/s325.headers`
 verified-at: 2026-11-08 — every figure in §3–§5 is a line a named receipt prints at the
 named revision; the two source quotes are located in the committed snapshots by the lane
-renderer `.ufo/waves/round-93/w1/R93S1-tagstrip.py`
+renderer `.ufo/waves/round-93/w1/R93S1-tagstrip.py`. The instrument figures below are the
+**frozen** ones at the instruments revision `46651051` (`sha256 60d59bea…bf40c`,
+`.ufo/evidence/round-99/pre-freeze/`); at the records revision R the instrument is the
+amended one (`sha256 a1c50bb4…b09b482`) and its selftest prints `25/25`
+(`.ufo/evidence/round-99/records/c1-selftest.out`) — the twelve-record numbers are the same
+at both revisions (re-derived at R: `records=12 tallies=28 pairs=9 matched=2 mismatched=1
+unbound=6 uncited=19`, rc 1)
 recheck: 365d — reopen S324/S325 and re-run the reconciler over the newest six rounds; a
 change to the tool's grammar (the tally forms, the citation forms, the pairing rule)
 changes §3 and §4
@@ -95,15 +111,31 @@ The instrument's own battery prints `TALLY_RECONCILE_SELFTEST: 17/17 pass` and e
 ## 4. Why same-line pairing, and why the grammar limits, are the rule
 
 **Same-line pairing.** The reconciler pairs a tally with a receipt only when the citation
-sits on the tally's own line. That is what makes the round-98 shape detectable: the report
-sentence "Selftest `18/18` (`pre-freeze/c1-audit-selftest.out` at the freeze;
-`records/c1-audit-selftest.out` at R)" names two receipts for one figure, and the two
-receipts disagree — the freeze receipt prints `CONTROL_ASSERT_SELFTEST: 12/12 pass` while the
-records receipt prints `CONTROL_ASSERT_SELFTEST: 18/18 pass`. The instrument's selftest arm
+sits on the tally's own line, and with *each* citation on that line. That is what makes the
+round-98 shape detectable: the report sentence "Selftest `18/18`
+(`pre-freeze/c1-audit-selftest.out` at the freeze; `records/c1-audit-selftest.out` at R)"
+names two receipts for one figure, and the two receipts disagree — the freeze receipt prints
+`CONTROL_ASSERT_SELFTEST: 12/12 pass` while the records receipt prints
+`CONTROL_ASSERT_SELFTEST: 18/18 pass`. The instrument's selftest arm
 `selftest-word-r98-d2-shape` reproduces that shape: one line, two citations, one pair
 `matched` and one `mismatched` (`.ufo/evidence/round-99/pre-freeze/c1-selftest.out`,
 `records=1 tallies=1 pairs=2 matched=1 mismatched=1`). Pairing per line is what turns "the
 figure disagrees with its receipt" into a counted mismatch rather than a reading task.
+
+**Which lines exemplify the multi-citation shape.** The *rule* is exercised by the tool's
+own selftest arm, above. In the twelve committed records the shape has **no instance**: at
+both the freeze and R, a sweep of all twelve records finds zero tally lines carrying more
+than one citation (`multi_citation_tally_lines=0`). The two round-98 lesson lines the lane's
+own frozen wording names (`corpus/lessons/round-98.md:124` and `:127`) each carry exactly
+one citation — `records/c2-refusals-red.out` and `records/registry-green-r97-records.out`
+— and they grade `unbound no-selftest-line` for a different reason: their single cited
+receipt contains no `*_SELFTEST` line. The enforceable property is therefore two clauses:
+*a line citing several receipts pairs the tally with each* (the tool's
+`selftest-word-r98-d2-shape` arm), and *a line whose single cited receipt carries no
+`*_SELFTEST` line grades `unbound no-selftest-line`* (the round-98 lesson lines). The
+frozen `plans/round-99.plan.md` wording, which calls those two lines "such pairs" (i.e.
+instances of the several-receipts case), over-attributes; `.ufo/waves/round-99/w1/claims.json`
+worded the same limit without that clause and is correct.
 
 **The grammar limits are the rule, not a defect.** A reconciler that recognises only
 `TOKEN: N/M pass` and the `selftest` word-form leaves `6/6 killed`, `9 of 9` and bare table
@@ -123,9 +155,10 @@ record error.
   code blocks with the receipt named elsewhere in the paragraph, or not at all. That is a
   calibration finding about how the lane writes, not a claim that 26 tallies are wrong.
 - **Unbound is not wrong.** Four of the six unbound pairs cite a receipt by basename under a
-  sub-directory the grammar does not search; two pair a tally with a receipt that carries no
-  selftest line for that figure. Whether a given unbound pair has a confirming receipt
-  elsewhere under the same round's dirs is a separate question the round's wave answered
+  sub-directory the grammar does not search (`detail=unresolved`); two pair a tally with a
+  single cited receipt that carries no `*_SELFTEST` line at all (`detail=no-selftest-line`).
+  Whether a given unbound pair has a confirming receipt elsewhere under the same round's
+  dirs is a separate question the round's wave answered
   (`.ufo/waves/round-99/w1/R99L1.md`).
 - **The practice that makes the counter useful:** state a tally on the same line as the
   receipt that prints it, by a path the tree resolves. A record written that way is

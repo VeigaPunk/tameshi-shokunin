@@ -134,4 +134,11 @@ a new green pair over `3b7ae127..ab598d03`; R1 falsified C1's grading/citation s
 fail; SN1 found the provenance gap (A11), the isolation gap (A10), the non-UTF-8 digit residual
 (A9) and the tree dependence; CN1 found no prior reconciler with the same-line pairing rule
 (F1), the two-grammar and two-walker duplication (A8) and the `add`-rebinding asymmetry (A1
-limit); RV1 timed D2 (12→18 at `3b7ae127`) and corrected the mined mistake's history (A7).
+limit); RV1 timed D2 (12→18 at `3b7ae127`) and corrected the mined mistake's history (A7);
+SC1 re-fetched S324 (41 JSON-equal refetches) and S325, located and counted both quotes, and
+proposed and refused its own reject candidate (nbval, `R99SC1-candidate-nbval.txt`); S1 drafted
+the knowledge entry and QUALITY criterion (`R99S1-*.md`, integrated as QUALITY 178 and the
+entry), measured that zero of the twelve records carry a line with more than one citation
+(A12, recorded after the records run as a declared-limit correction), and found that the lane
+renderer's `<[^>]+>` tag regex eats S325's "recalculates the p-value …" sentence at `p < .05`
+(the S325 row quotes only the two sentences that survive the renderer, lines 135-137 and 163).

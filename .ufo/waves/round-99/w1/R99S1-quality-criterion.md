@@ -1,12 +1,20 @@
 # QUALITY criterion 178 — draft by seat R99S1 (scribe), round 99 wave w1
 
-> Draft for the L1's integration. Next free number is **178** (the highest criterion
-> currently in `corpus/QUALITY.md` is 177; `grep -c '^178\.' corpus/QUALITY.md` prints 0).
-> Appended under a new `## Criteria appended — round 99` heading, or as the next
+> Draft for the L1's integration. Next free number was **178** (the highest criterion
+> in `corpus/QUALITY.md` at drafting time was 177; `grep -c '^178\.' corpus/QUALITY.md`
+> printed 0). Appended under a new `## Criteria appended — round 99` heading, or as the next
 > numbered item after 177 under the existing section, per the L1's call. The criterion
 > follows the format of the last three criteria (175, 176, 177): one numbered rule, the
 > failure it captures, and an "Able to fail:" block naming commands, observed output and
 > exit codes, with a source list in parentheses.
+>
+> **Status at hand-off:** the L1 landed criterion **178** in the landing commit `7cd85a42`,
+> built from this draft and re-pointed at the records revision (its selftest figure is
+> `25/25` at R, the amended instrument's own tally, and its receipts are
+> `.ufo/evidence/round-99/records/`). The text below is the seat's original draft, kept as
+> written, with the two points the landing corrected or should correct noted underneath.
+> The criterion is **landed**; the notes below are what remains open for the L1, not a
+> request to re-land it.
 
 ---
 
@@ -68,18 +76,35 @@
   It does not assert that every unbound pair is a record error, which the frozen wording
   explicitly declines (`plans/round-99.plan.md` C1 declared limits; `claims.json` C1
   `limits`).
-- **The instrument is being amended in the worktree.** During wave w1 the L1 amended
-  `tools/tally-reconcile.py` in place (worktree sha256
-  `c78e0c630aeda375dae0e6a3c9c9a75ec90356756ed2238f2526562a77f70f56`, `--selftest`
-  prints `24/24 pass` instead of the frozen `17/17`). The criterion's figures are the
-  **frozen** ones, measured against the committed bytes at `46651051` extracted with
-  `git show` (`R99S1-c1-population.txt`, `R99S1-c1-selftest.txt`). If the amended
-  instrument lands, the selftest tally in this criterion must be re-derived from the
-  amended tool's own receipt and this criterion re-checked — the criterion is written
-  against the freeze, as the round's own record requires.
+- **The instrument amendment landed; the criterion's selftest figure moved.** During wave
+  w1 the L1 amended `tools/tally-reconcile.py` in place (I measured the interim worktree
+  copy at sha256 `c78e0c630aeda375dae0e6a3c9c9a75ec90356756ed2238f2526562a77f70f56`,
+  `--selftest` printing `24/24 pass` against the frozen `17/17`). The amendment landed as
+  the records revision `808a4377`, where the instrument is `a1c50bb41599cfd663749855c7924c03360a46be2811812fb66f25c37b09b482`
+  and its selftest prints **`25/25 pass`** (A6 records the `17/17 → 25/25` move; A9 added
+  the non-UTF-8 arm after A6's count). The landed criterion 178 correctly uses `25/25` and
+  the records receipts. This draft's `17/17` was measured against the committed bytes at
+  `46651051` extracted with `git show` (`R99S1-c1-population.txt`, `R99S1-c1-selftest.txt`)
+  and is superseded by the landed text; the twelve-record numbers are unchanged by the
+  amendment, re-derived at R (`records=12 tallies=28 pairs=9 matched=2 mismatched=1
+  unbound=6 uncited=19`, rc 1).
 - **Receipt pointers used.** `.ufo/evidence/round-99/pre-freeze/c1-population.out`,
   `c1-r94-only.out`, `c1-selftest.out` (committed at the freeze `ab598d03`), and
   `.ufo/evidence/round-94/pre-freeze/c2-selftest.out:10`. The seat's own re-derivations
   of the same figures, run against the committed instrument bytes rather than the
   worktree copy, are at `.ufo/waves/round-99/w1/R99S1-c1-population.txt`,
   `R99S1-c1-population-freeze.txt`, `R99S1-c1-r94-only.txt`, `R99S1-c1-selftest.txt`.
+- **One correction the landed text still needs (the L1's call).** The landed criterion
+  178 says "the reconciler recognises only `TOKEN: N/M pass` and `selftest … N/M` within 12
+  characters". That is accurate for the **record side** (the line being graded), but after
+  amendment A2 the **receipt side** reads `TOKEN: n/m` with whatever follows it
+  (`pass`, `fail`, nothing) — the landed corpus entry says so correctly
+  ("`matched` only when every receipt line carrying the token (`TOKEN: n/m`, whatever
+  follows it) shows the claimed N/M"), while criterion 178's phrase "the tally equals every
+  line of that receipt carrying the token" is right but its grammar sentence names only the
+  record-side forms. A one-clause addition naming the receipt-side rule would close it:
+  *a receipt line is read as `TOKEN: n/m` whatever follows it, so a contradicting `fail`
+  line is graded, not invisible* (A2's own wording, `.ufo/evidence/round-99/records/
+  c1-selftest.out` arms `receipt-fail-suffix-is-graded`, `receipt-no-suffix-is-graded`).
+  The same applies to the citation rule: after A3 the suffix must **end** the path, and
+  after A4 a scheme-less host path *is* cited.

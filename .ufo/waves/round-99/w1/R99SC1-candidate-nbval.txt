@@ -1,7 +1,9 @@
 # seat: R99SC1 (scout) — tameshi round 99 wave w1
 # scratch: /fast/scratch/hyaku/tameshi-r99/R99SC1  (bytes kept in scratch; digests copied here)
 # cwd for repo commands: /home/vgpnk/Projects/shokunin/tameshi-shokunin
-# scope: proposed REJECT candidate — nbval (IPython Notebook Validation for py.test); docs, not a stats-paper checker
+# scope: proposed REJECT candidate — nbval (IPython Notebook Validation for py.test)
+# candidate URL: https://nbval.readthedocs.io/en/latest/
+# duplicate-URL check across every fleet lane registry
 
 $ curl -sSL -D nbval.headers -o nbval.html -w 'nbval_http=%{http_code} bytes=%{size_download}\n' 'https://nbval.readthedocs.io/en/latest/'; echo rc=$?; sha256sum nbval.html; grep -o -m1 '<title>[^<]*</title>' nbval.html
 nbval_http=200 bytes=34947
@@ -23,16 +25,20 @@ lines=strip_tags(open('nbval.html',encoding='utf-8',errors='replace').read())
 q='Validating the notebook means to rerun the notebook and make sure that it is generating the same output as has been stored.'
 print('quote_present:',any(q in l for l in lines),'words:',len(q.split()))
 for n,l in enumerate(lines,1):
-    if 'rerun the notebook' in l: print('line',n,':',repr(l[:200]))
+    if 'rerun the notebook' in l: print('line',n,':',repr(l))
 EOF
 quote_present: True words: 22
-line 96 : ' One of the powerful uses of the IPython notebook is for documentation purposes, here we use a notebook to demonstrate the behaviour and usage of the IPython Notebook Validation plugin for py.test. Th'
+line 96 : ' One of the powerful uses of the IPython notebook is for documentation purposes, here we use a notebook to demonstrate the behaviour and usage of the IPython Notebook Validation plugin for py.test. The IPython notebook format   .ipynb   stores outputs as well as inputs. Validating the notebook means to rerun the notebook and make sure that it is generating the same output as has been stored.'
 rc=0
 
-$ curl -sSL -o nbval2.html -w 'refetch_http=%{http_code} bytes=%{size_download}\n' 'https://nbval.readthedocs.io/en/latest/'; sha256sum nbval.html nbval2.html; grep -rc 'nbval' corpus/SOURCES.md
+$ curl -sSL -o nbval2.html -w 'refetch_http=%{http_code} bytes=%{size_download}\n' 'https://nbval.readthedocs.io/en/latest/'; sha256sum nbval.html nbval2.html
 refetch_http=200 bytes=34947
 004918d670ee39964a8f520a9d7b483a1e0e8eeffc8d23e269afe6ea31dd272e  nbval.html
 004918d670ee39964a8f520a9d7b483a1e0e8eeffc8d23e269afe6ea31dd272e  nbval2.html
--- stderr --
-grep: corpus/SOURCES.md: No such file or directory
-rc=2
+rc=0
+
+$ grep -rn -i 'nbval' /home/vgpnk/Projects/shokunin/*/corpus/SOURCES.md; echo fleet_grep_rc=$?; grep -c 'readthedocs' corpus/SOURCES.md; echo tameshi_readthedocs_rows_above
+fleet_grep_rc=1
+2
+tameshi_readthedocs_rows_above
+rc=0
