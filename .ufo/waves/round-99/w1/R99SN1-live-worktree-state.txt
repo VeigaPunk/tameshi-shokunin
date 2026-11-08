@@ -1,0 +1,35 @@
+# cmd: LIVE worktree state of the two tools at the time of this seat's run (the L1 writer is applying round-99 amendments)
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# git status -- tools/:
+ M tools/control-assertion-audit-v2.py
+ M tools/tally-reconcile.py
+# HEAD: 27a5e49e85307a5ffa492ae3770b54562225d458
+# worktree sha vs freeze-rev blob sha:
+tools/tally-reconcile.py
+  worktree_sha=c78e0c630aeda375dae0e6a3c9c9a75ec90356756ed2238f2526562a77f70f56
+  freeze_sha=60d59bead569157fb888dbb68301e290522e5837a482e84f36f858d2566bf40c
+tools/control-assertion-audit-v2.py
+  worktree_sha=27e1473484e36394759a7aacbd625b2645f371b73ac44c837f5511c19a8193ca
+  freeze_sha=acd67ab67acf011d50952886afe284d331da424360d9a7a79f391284ecfaceb6
+
+# ---- C1 --selftest (WORKTREE tool) ----
+SELFTEST PASS worktree-edit-ignored rc=1
+TALLY_RECONCILE_SELFTEST: 24/24 pass
+# exit: 0
+# ---- C2 v2 --selftest (WORKTREE tool) ----
+SELFTEST alias-and-bare-two-sites PASS got=2 rc=1
+CONTROL_ASSERT_V2_SELFTEST: 36/36 pass
+# exit: 0
+# frozen battery predicates in claims.json: TALLY_RECONCILE_SELFTEST 17/17 ; CONTROL_ASSERT_V2_SELFTEST 27/27
+
+# ---- C1 twelve-record counter with the WORKTREE tool at the freeze rev ----
+TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19
+# exit: 1
+# ---- C1 with the FREEZE-REV blob tool (the instrument the claims pin) ----
+TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19
+# exit: 1
+# ---- C2 v2 with the WORKTREE tool on the alias fixture ----
+CONTROL_ASSERT_SITE line=29 name=alias-literal measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record
+CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1
+# exit: 1

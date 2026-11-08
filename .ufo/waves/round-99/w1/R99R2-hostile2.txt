@@ -1,0 +1,283 @@
+# probe_hostile.py — same source, same exit as CLI; rev not applicable (audit_text in-process)
+# tool: /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit-v2.py
+# instrument_rev: ab598d03da34bbaffc35010b4e0f7c33ed0a18ae (freeze)
+
+=== S5-walrus-only ===
+def main():
+    (rec := add)
+    rec("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=3 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+
+=== S5-match-only ===
+def main():
+    match add:
+        case rec:
+            rec("y", 0)
+rc=0
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+
+=== S5-starred-only ===
+def main():
+    *rec, rest = [add, 1]
+    rec("y", 0)
+rc=0
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+
+=== S5-comprehension-only ===
+def main():
+    recs = [rec for rec in [add]]
+    rec("y", 0)
+rc=0
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+
+=== S5-import-only-not-site ===
+def main():
+    from os import path as rec
+    rec("y", 0)
+rc=0
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+
+=== S5-annotated-no-value ===
+rec: object
+def main():
+    rec("y", 0)
+rc=0
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+
+=== S7-import-after-alias ===
+rec = add
+def main():
+    from os import path as rec
+    rec("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=4 name=y measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S7-walrus-after-alias ===
+rec = add
+def main():
+    (rec := print)
+    rec("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=4 name=y measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S7-match-after-alias ===
+rec = add
+def main():
+    match print:
+        case rec:
+            rec("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=5 name=y measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S7-del-after-alias ===
+rec = add
+del rec
+def main():
+    rec("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=4 name=y measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S7-global-rebind-no-call ===
+rec = add
+def main():
+    global rec
+    rec = print
+rc=0
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+
+=== S8-partial-from-import-as ===
+from functools import partial as p
+rec = p(add, "x")
+def main():
+    rec(0, "b", 0)
+rc=1
+CONTROL_ASSERT_SITE line=4 name=? measured=no class=unresolved detail=partial-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=1 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S8-partial-attr-import-as ===
+import functools as f
+rec = f.partial(add, "x")
+def main():
+    rec(0, "b", 0)
+rc=1
+CONTROL_ASSERT_SITE line=4 name=? measured=no class=unresolved detail=partial-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=1 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S8-partial-kw-func ===
+import functools
+rec = functools.partial(func=add)
+def main():
+    rec("y", 0)
+rc=0
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+
+=== S6-cycle ===
+a = b
+b = a
+def main():
+    a("y", 0)
+    b("z", 0)
+rc=0
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+
+=== S6-selfcycle ===
+a = a
+def main():
+    a("y", 0)
+rc=0
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+
+=== S6-alias-of-ambiguous ===
+rec = add
+rec = print
+r2 = rec
+def main():
+    r2("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=5 name=y measured=no class=unresolved detail=ambiguous-recorder:r2
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=2 partial=0 names=add,r2,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S6-alias-of-partial ===
+import functools
+prec = functools.partial(add, "x")
+r2 = prec
+def main():
+    r2(0, "b", 0)
+rc=1
+CONTROL_ASSERT_SITE line=5 name=? measured=no class=unresolved detail=partial-recorder:r2
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=2 names=add,prec,r2
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S6-partial-nested ===
+import functools
+p1 = functools.partial(add, "x")
+p2 = functools.partial(p1, 0)
+def main():
+    p2("b", 0)
+rc=1
+CONTROL_ASSERT_SITE line=5 name=b measured=no class=unresolved detail=partial-recorder:p2
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=2 names=add,p1,p2
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S7-with-after-alias ===
+rec = add
+def main():
+    with open("f") as rec:
+        pass
+    rec("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=5 name=y measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S7-except-after-alias ===
+rec = add
+def main():
+    try:
+        pass
+    except Exception as rec:
+        rec("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=6 name=y measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S7-comprehension-after-alias ===
+rec = add
+def main():
+    xs = [rec for rec in [print]]
+    rec("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=4 name=y measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+
+=== S9-note-same-line-order ===
+rec = add
+def main():
+    add("a", 0); rec("b", 0); add("c", 0); rec("d", 0)
+rc=1
+CONTROL_ASSERT_SITE line=3 name=a measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=3 name=b measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=3 name=c measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=3 name=d measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=4 measured=0 literal=4 unmeasured=4
+
+=== X-add-shadowed ===
+add = print
+def main():
+    add("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=3 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+
+=== X-class-body ===
+class C:
+    rec = add
+def main():
+    rec("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=4 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+
+=== X-chained ===
+a = b = add
+def main():
+    a("y", 0)
+    b("z", 0)
+rc=1
+CONTROL_ASSERT_SITE line=3 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=4 name=z measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=2 ambiguous=0 partial=0 names=a,add,b
+CONTROL_ASSERT sites=2 measured=0 literal=2 unmeasured=2
+
+=== X-paren ===
+rec = (add)
+def main():
+    rec("y", 0)
+rc=1
+CONTROL_ASSERT_SITE line=3 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+
+=== X-few-args ===
+rec = add
+def main():
+    rec("x")
+rc=2
+AUDIT_SETUP add-without-code:line=3
+
+=== X-kw-code ===
+rec = add
+def main():
+    rec("x", code=0)
+rc=1
+CONTROL_ASSERT_SITE line=3 name=x measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1

@@ -1,0 +1,22 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.78rKonxBsu --rev 6fa5a594347d0b84152adce05dd6d86e62ef948c --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): rec,other = add,print: tuple targets not plain assignment -> other bindings -> NOT a site
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/tuplebind.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+rec, other = add, print
+def main():
+    rec("a-lit", 0, b"", 0)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=6fa5a594347d0b84152adce05dd6d86e62ef948c driver=driver.py sha256=cd4feeb087ace2c819fca4f9b2c28362fce2c76074f0f10158846ea833a5014c
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=6fa5a594347d0b84152adce05dd6d86e62ef948c driver=driver.py sha256=cd4feeb087ace2c819fca4f9b2c28362fce2c76074f0f10158846ea833a5014c
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

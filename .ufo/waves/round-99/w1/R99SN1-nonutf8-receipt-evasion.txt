@@ -1,0 +1,23 @@
+# cmd: NON-UTF-8 receipt byte hides a CONTRADICTING line from the grader
+# fixture: /fast/scratch/hyaku/tameshi-r99/R99SN1/tmp.25Sv7NlB9U rev 130b17190ae3b0470ea6b3087ef3556cf2f04cae
+# receipt bytes:
+0000000   X   _   S   E   L   F   T   E   S   T   :       9   /   9    
+0000020   p   a   s   s  \n   X   _   S   E   L   F   T   E   S   T   :
+0000040       8   /   8 377       p   a   s   s  \n
+0000053
+# claim: X_SELFTEST 9/9 ; receipt also contains 'X_SELFTEST: 8/8 <0xff> pass'
+# expected under the declared limit 'mixed-observed-is-mismatch': MISMATCHED
+
+---- FROZEN-BLOB C1 tool (the instrument claims.json pins: sha 60d59bea) ----
+TALLY matched p/round-3.md:1 token X_SELFTEST claimed=9/9 receipt=.ufo/evidence/round-3/mix.out observed=9/9 detail=equal
+TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=1 mismatched=0 unbound=0 uncited=0
+# exit: 0
+
+---- CURRENT WORKTREE C1 tool (L1 amendment A2, sha c78e0c63) ----
+TALLY mismatched p/round-3.md:1 token X_SELFTEST claimed=9/9 receipt=.ufo/evidence/round-3/mix.out observed=8/8,9/9 detail=differs
+TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=0 mismatched=1 unbound=0 uncited=0
+# exit: 1
+
+---- FROZEN-BLOB C2 v2 on a NON-UTF-8 driver (does it refuse?) ----
+AUDIT_SETUP driver-not-utf8
+# exit: 2

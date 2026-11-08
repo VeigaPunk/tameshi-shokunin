@@ -1,0 +1,24 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.9cXG7CJNn4 --rev 0c9cc3a7b50b3b284414eeb3a91c46a23a59dabd --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): rec = add then del rec: deletion unmodelled in frozen wording (no del clause) -> alias, class=literal; amendment A1 (unfrozen worktree) treats del as other
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/del.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+rec = add
+del rec
+def main():
+    rec("a-lit", 0, b"", 0)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=0c9cc3a7b50b3b284414eeb3a91c46a23a59dabd driver=driver.py sha256=c953a52344b68e6f46285d27548bd397dc4aa4af2f036343e4886fefc62e062b
+CONTROL_ASSERT_SITE line=10 name=a-lit measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+rc=1
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=0c9cc3a7b50b3b284414eeb3a91c46a23a59dabd driver=driver.py sha256=c953a52344b68e6f46285d27548bd397dc4aa4af2f036343e4886fefc62e062b
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

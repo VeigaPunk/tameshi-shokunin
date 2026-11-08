@@ -1,0 +1,89 @@
+# seat: R99CN1 (connector) — a concurrent wave repair moves the C2 battery predicate and the instrument sha
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+
+$ git status --porcelain | head -6
+ M corpus/SOURCES.md
+ M tools/control-assertion-audit-v2.py
+?? .ufo/evidence/round-99/sources/s326.headers
+?? .ufo/evidence/round-99/sources/s326.json
+?? .ufo/waves/round-99/w1.ready
+?? .ufo/waves/round-99/w1.ready.dispatched
+
+$ git diff --stat
+ corpus/SOURCES.md                   |   3 +
+ tools/control-assertion-audit-v2.py | 140 +++++++++++++++++++++++++++++-------
+ 2 files changed, 116 insertions(+), 27 deletions(-)
+
+$ sha256sum tools/control-assertion-audit-v2.py   (worktree bytes now)
+27e1473484e36394759a7aacbd625b2645f371b73ac44c837f5511c19a8193ca  tools/control-assertion-audit-v2.py
+
+$ git show 46651051:tools/control-assertion-audit-v2.py > $TMPDIR/v2-at-46651051.py; sha256sum
+acd67ab67acf011d50952886afe284d331da424360d9a7a79f391284ecfaceb6  /fast/scratch/hyaku/tameshi-r99/R99CN1chk/v2-at-46651051.py
+
+$ python3 -I "$TMPDIR/v2-at-46651051.py" --selftest   (the pinned instrument blob)
+CONTROL_ASSERT_V2_SELFTEST: 27/27 pass
+rc=0
+
+$ python3 -I tools/control-assertion-audit-v2.py --selftest   (the worktree file)
+CONTROL_ASSERT_V2_SELFTEST: 36/36 pass
+rc=0
+
+$ git diff tools/control-assertion-audit-v2.py | grep -E "^\+.*[Aa]mendment|^\+.*rebinding"
++  (Round-99 amendment A1 repaired walrus, tuple, `del`, match-capture, alias-of-
++declarations (not bindings). The base name `add` is always a recorder: rebinding it
++    Round-99 repair (amendment A1, from R99R2): a walrus `(n := r)` and an element of an
++    # round-99 amendment A1 arms (R99R2 S5-S8, R99M1 v10/v11 survivors)
+
+$ python3 -c "<claims.json C2: battery_predicate, instrument_sha256, limits>"
+battery_predicate: CONTROL_ASSERT_V2_SELFTEST: 27/27 pass
+instrument_sha256: acd67ab67acf011d50952886afe284d331da424360d9a7a79f391284ecfaceb6
+limits: [
+ "attribute calls, getattr/globals()/dict dispatch, a wrapper def/lambda forwarding to add, and a recorder passed as an argument are not sites",
+ "alias detection is module-wide and scope-insensitive: an alias in one function bound otherwise elsewhere is ambiguous everywhere (conservative)",
+ "the fixture is lane-authored; no committed lane driver registers through an alias today, so the claim is coverage of an edge class, not a defect found in history",
+ "v1's classification limits (call-name runner matching, provenance not command identity, the want_code tautology) carry over unchanged"
+]
+rc=0
+
+$ sed -n "/^## Amendments/,/^| id/p" plans/round-99.plan.md   (the table is still empty)
+## Amendments
+
+Pre-data: rows are added only from this round's wave artifacts, before the records run.
+
+| id | artifact | falsified sentence | amendment |
+
+# --- the frozen site predicates still hold under the amended worktree:
+$ python3 -I tools/control-assertion-audit-v2.py --repo . --rev 46651051 --driver .ufo/evidence/round-99/c2/alias-driver.py
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record
+CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1
+rc=1
+$ ... --driver .ufo/evidence/round-98/controls98.py
+CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0
+rc=0
+$ ... --driver .ufo/evidence/round-97/controls97.py
+CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1
+rc=1
+
+# --- rebound fixture against the amended worktree (its docstring now declares the case)
+toplevel=/fast/scratch/hyaku/tameshi-r99/R99CN1chk/fx.PTrS  expected=/fast/scratch/hyaku/tameshi-r99/R99CN1chk/fx.PTrS
+toplevel-assert rc=0
+commit=c925c69ab0a9c7206149f1c1456f8673569710d5
+CONTROL_ASSERT_DRIVER rev=c925c69ab0a9c7206149f1c1456f8673569710d5 driver=drv/f1.py sha256=cbfc0e1d6b5d310259bc35c82d17540216ce165d9c7a94587f0500cec79b3d23
+CONTROL_ASSERT_SITE line=8 name=rebound-add-measured measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+rc=0
+
+$ python3 - (ast comparison: v1 rule functions vs the AMENDED worktree v2)
+sealed_env IDENTICAL
+call_name IDENTICAL
+is_runner_call IDENTICAL
+Scope IDENTICAL
+collect_scopes IDENTICAL
+resolve IDENTICAL
+classify IDENTICAL
+audit_text DIFFERS
+selftest DIFFERS
+main IDENTICAL
+v2-only: ['_target_names', '_partial_spellings', 'recorder_names']
+rc=0

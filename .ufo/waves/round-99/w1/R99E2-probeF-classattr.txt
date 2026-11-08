@@ -1,0 +1,23 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.boyjTHxD1H --rev 2793f21800cdb5fa06fa761bec6d9dcc13647122 --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): attribute calls are declared not-sites -> 0 sites
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/classattr.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+class R: pass
+R.rec = add
+def main():
+    R.rec("a-lit", 0, b"", 0)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=2793f21800cdb5fa06fa761bec6d9dcc13647122 driver=driver.py sha256=9e60fecdb4cf73cfa5f814cf3a15ad890ef5de074c17bff0fc8d81df689bed31
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=2793f21800cdb5fa06fa761bec6d9dcc13647122 driver=driver.py sha256=9e60fecdb4cf73cfa5f814cf3a15ad890ef5de074c17bff0fc8d81df689bed31
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

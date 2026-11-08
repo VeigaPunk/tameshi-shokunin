@@ -15,7 +15,11 @@ Grammar (declared, not inferred):
   selftest tally  the word `selftest` (any case) followed within 12 non-digit characters
                   by `N/M`, on a span no token tally covers.
   citation        a path on the same line ending `.out`, `.txt`, `.log` or `.json`
-                  (`[A-Za-z0-9_./-]+`), not part of a URL and not the record itself.
+                  (`[A-Za-z0-9_./-]+`) where the suffix ends the path (`a.out.bak` is not a
+                  citation; a sentence-ending `.` is allowed), not within 12 characters
+                  after a `://` or anywhere after an `http(s)://` on the line, and not the
+                  record itself. A scheme-less host path (`www.h.example/a.out`) IS cited
+                  as a path and grades `unbound unresolved` (round-99 A4, declared).
 
 Resolution of a citation, against the tree at --rev only (never the worktree): the path
 itself if it is a blob in the tree; otherwise `<root>/<path>` for each receipt root — the
@@ -25,10 +29,10 @@ more than one -> unbound `ambiguous-path`.
 
 Grading of one (tally, citation) pair, reading the receipt blob at --rev:
 
-  token tally     the receipt's lines `TOKEN: n/m pass` with the same TOKEN; none ->
-                  unbound `token-absent`; every observed n/m equal to the claim -> matched;
-                  otherwise mismatched.
-  selftest tally  the receipt's `*_SELFTEST: n/m pass` lines; none -> unbound
+  token tally     the receipt's lines `TOKEN: n/m` with the same TOKEN, whatever follows
+                  (`pass`, `fail`, nothing; round-99 A2); none -> unbound `token-absent`;
+                  every observed n/m equal to the claim -> matched; otherwise mismatched.
+  selftest tally  the receipt's `*_SELFTEST: n/m` lines (any suffix); none -> unbound
                   `no-selftest-line`; more than one distinct token -> unbound
                   `ambiguous-selftest`; else as above.
 
@@ -59,8 +63,13 @@ GIT = "/usr/bin/git"
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 TOKEN_RE = re.compile(r"\b([A-Z][A-Z0-9_]{2,}):\s+(\d+)/(\d+)\s+pass\b")
 SELFTEST_RE = re.compile(r"(?i)\bselftest\b[^0-9\n]{0,12}?(\d+)/(\d+)\b")
-CITE_RE = re.compile(r"[A-Za-z0-9_./-]+\.(?:out|txt|log|json)\b")
-RECEIPT_SELFTEST_RE = re.compile(r"\b([A-Z][A-Z0-9_]*_SELFTEST):\s+(\d+)/(\d+)\s+pass\b")
+# Round-99 A3 (R99R1 F3): the suffix must end the path — `a.out.bak` is not a citation of
+# `a.out`; a sentence-ending period after the suffix is allowed.
+CITE_RE = re.compile(r"[A-Za-z0-9_./-]+\.(?:out|txt|log|json)(?!\.?[A-Za-z0-9_/-])")
+# Round-99 A2 (R99R1 F1): a receipt line carrying the token is graded whatever follows N/M
+# (`pass`, `fail`, nothing), so a contradicting `TOKEN: 9/9 fail` line is not invisible.
+RECEIPT_TOKEN_RE = re.compile(r"\b([A-Z][A-Z0-9_]{2,}):\s+(\d+)/(\d+)")
+RECEIPT_SELFTEST_RE = re.compile(r"\b([A-Z][A-Z0-9_]*_SELFTEST):\s+(\d+)/(\d+)")
 ROUND_RE = re.compile(r"round-(\d+)")
 
 
@@ -75,7 +84,11 @@ def sealed_env():
 
 
 def git(repo, *args):
-    p = subprocess.run([GIT, "-C", repo] + list(args), capture_output=True, env=sealed_env())
+    try:
+        p = subprocess.run([GIT, "-C", repo] + list(args), capture_output=True, env=sealed_env(),
+                           timeout=120)
+    except subprocess.TimeoutExpired:
+        raise Setup("git-timeout")
     return p.returncode, p.stdout
 
 
@@ -95,6 +108,7 @@ class Tree:
         if rc != 0:
             raise Setup("ls-tree-failed")
         self.repo, self.rev = repo, rev
+        self._cache = {}
         self.blobs = set(x for x in out.decode("utf-8", "surrogateescape").split("\0") if x)
         self.dirs = set()
         for b in self.blobs:
@@ -103,10 +117,19 @@ class Tree:
                 self.dirs.add("/".join(parts[:i]))
 
     def read(self, path):
+        # Round-99 A9 (R99SN1 F3/F4): a blob that is not UTF-8 is refused (a byte inside the
+        # N/M digits must not hide a contradicting line); each blob is read once.
+        if path in self._cache:
+            return self._cache[path]
         rc, out = git(self.repo, "cat-file", "blob", "%s:%s" % (self.rev, path))
         if rc != 0:
             raise Setup("blob-unreadable:%s" % path)
-        return out.decode("utf-8", "replace")
+        try:
+            text = out.decode("utf-8")
+        except UnicodeDecodeError:
+            raise Setup("blob-not-utf8:%s" % path)
+        self._cache[path] = text
+        return text
 
 
 def norm(p):
@@ -164,7 +187,7 @@ def resolve(tree, cite, roots):
 
 def grade(form, token, n, m, receipt_text):
     if form == "token":
-        obs = [(int(a), int(b)) for t, a, b in TOKEN_RE.findall(receipt_text) if t == token]
+        obs = [(int(a), int(b)) for t, a, b in RECEIPT_TOKEN_RE.findall(receipt_text) if t == token]
         if not obs:
             return "unbound", "-", "token-absent"
     else:
@@ -279,6 +302,30 @@ SELFTEST_CASES = [
      {"p/round-3.md": "`A_SELFTEST: 2/2 pass` and `B_SELFTEST: 4/4 pass` (`a.out`)\n",
       ".ufo/evidence/round-3/a.out": "A_SELFTEST: 2/2 pass\nB_SELFTEST: 3/4 pass\n"},
      ["p/round-3.md"], [], {"tallies": 2, "pairs": 2, "matched": 1, "mismatched": 1}, 1),
+    # round-99 amendment arms (R99R1 F1/F3, R99M1 t4/t9 survivors)
+    ("receipt-fail-suffix-is-graded",
+     {"p/round-3.md": "`D_SELFTEST: 8/8 pass` (`a.out`)\n",
+      ".ufo/evidence/round-3/a.out": "D_SELFTEST: 8/8 pass\nD_SELFTEST: 9/9 fail\n"},
+     ["p/round-3.md"], [], {"pairs": 1, "mismatched": 1}, 1),
+    ("receipt-no-suffix-is-graded",
+     {"p/round-3.md": "selftest 8/8 (`a.out`)\n", ".ufo/evidence/round-3/a.out": "C_SELFTEST: 9/9\n"},
+     ["p/round-3.md"], [], {"pairs": 1, "mismatched": 1}, 1),
+    ("suffix-must-end-path",
+     {"p/round-3.md": "`Y_SELFTEST: 2/2 pass` (`a.out.bak`)\n",
+      ".ufo/evidence/round-3/a.out": "Y_SELFTEST: 2/2 pass\n"},
+     ["p/round-3.md"], [], {"pairs": 0, "uncited": 1}, 0),
+    ("sentence-end-period-cited",
+     {"p/round-3.md": "Y_SELFTEST: 2/2 pass, see a.out.\n", ".ufo/evidence/round-3/a.out": "Y_SELFTEST: 1/2 pass\n"},
+     ["p/round-3.md"], [], {"pairs": 1, "mismatched": 1}, 1),
+    ("selftest-window-13-not-a-tally",
+     {"p/round-3.md": "selftest:abcdefghijk 2/2 (`a.out`)\n", ".ufo/evidence/round-3/a.out": "Y_SELFTEST: 1/2 pass\n"},
+     ["p/round-3.md"], [], {"tallies": 0, "pairs": 0}, 0),
+    ("selftest-window-12-is-a-tally",
+     {"p/round-3.md": "selftest:abcdefghij 2/2 (`a.out`)\n", ".ufo/evidence/round-3/a.out": "Y_SELFTEST: 1/2 pass\n"},
+     ["p/round-3.md"], [], {"tallies": 1, "mismatched": 1}, 1),
+    ("two-char-token-not-a-tally",
+     {"p/round-3.md": "`AB: 2/2 pass` (`a.out`)\n", ".ufo/evidence/round-3/a.out": "AB: 1/2 pass\n"},
+     ["p/round-3.md"], [], {"tallies": 0}, 0),
 ]
 
 
@@ -294,7 +341,7 @@ def build_fixture(base, files):
     for p, body in files.items():
         fp = os.path.join(d, p)
         os.makedirs(os.path.dirname(fp), exist_ok=True)
-        with open(fp, "w") as fh:
+        with open(fp, "wb" if isinstance(body, bytes) else "w") as fh:
             fh.write(body)
     subprocess.run([GIT, "-C", d, "add", "-A"], check=True, env=env)
     subprocess.run([GIT, "-C", d, "commit", "-q", "-m", "fx"], check=True, env=env)
@@ -321,11 +368,16 @@ def selftest():
             print("SELFTEST %s %s rc=%d %s" % ("PASS" if ok else "FAIL", name, rc, lines[-1]))
         # setup arms
         d, rev = build_fixture(base, {"a.md": "x\n"})
+        d3, rev3 = build_fixture(base, {"p/round-3.md": "`X_SELFTEST: 9/9 pass` (`dig.out`)\n",
+                                        ".ufo/evidence/round-3/dig.out":
+                                        b"X_SELFTEST: 9/9 pass\nX_SELFTEST: 8\xff/8 pass\n"})
         for name, fn in (
             ("setup-rev-short", lambda: Tree(d, rev[:12])),
             ("setup-record-absent", lambda: reconcile(Tree(d, rev), ["nope.md"], [])),
             ("setup-root-not-tree", lambda: reconcile(Tree(d, rev), ["a.md"], ["nope"])),
             ("setup-subdir-not-toplevel", lambda: Tree(os.path.join(d, ".git"), rev)),
+            # round-99 A9 (R99SN1 F3): a non-UTF-8 byte inside N/M must not hide a contradiction
+            ("setup-receipt-not-utf8", lambda: reconcile(Tree(d3, rev3), ["p/round-3.md"], [])),
         ):
             total += 1
             try:
@@ -361,6 +413,10 @@ def main():
     try:
         a = ap.parse_args()
     except SystemExit:
+        return 64
+    # Round-99 A10 (R99SN1 F2): without -I a hostile PYTHONPATH can replace subprocess/re.
+    if not sys.flags.isolated:
+        print("TALLY_USAGE run as python3 -I (isolated mode is required)")
         return 64
     if a.selftest:
         return selftest()

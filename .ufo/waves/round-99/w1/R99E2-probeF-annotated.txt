@@ -1,0 +1,23 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.MeIRvMokKC --rev b4827a0794bd5b642d9d451047cd6f2b4ff7f51a --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): annotated assignment from recorder -> alias, class=literal
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/annotated.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+rec: Callable = add
+def main():
+    rec("a-lit", 0, b"", 0)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=b4827a0794bd5b642d9d451047cd6f2b4ff7f51a driver=driver.py sha256=2877d5b3d90eb65f3b13a91a2b1484bbcc16cdec4c56ca88df7984eae4f0c327
+CONTROL_ASSERT_SITE line=9 name=a-lit measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+rc=1
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=b4827a0794bd5b642d9d451047cd6f2b4ff7f51a driver=driver.py sha256=2877d5b3d90eb65f3b13a91a2b1484bbcc16cdec4c56ca88df7984eae4f0c327
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

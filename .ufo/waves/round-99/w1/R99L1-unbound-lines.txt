@@ -1,0 +1,537 @@
+# cmd: git -C "$R" cat-file -p "$REV:<record>" | sed -n "<line>p" and context; also ls-tree of round dirs
+REV=ab598d03da34bbaffc35010b4e0f7c33ed0a18ae
+=== corpus/lessons/round-95.md : line 99 ===
+     1	  `DISPOSITION_INSTRUMENT sha256=5f0d1770…` — the substituted counter bytes are read.
+     2	- **C2 after.** `.ufo/evidence/round-95/pre-freeze/c2/c2-pos.out` at `4bd1e88f` prints
+     3	  `DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0`, exit 0.
+     4	  `c2-selftest.out` prints `DISPOSITION_SELFTEST: 11/11 pass`, exit 0. The forge matrix
+     5	  prints: `forge-handwritten` exit 1 `DISPOSITION_FINDING receipt-absent-at-rev figure`;
+     6	  `forge-counter-sha` exit 1 `DISPOSITION_FINDING receipt-counter-sha-mismatch
+     7	  mismatched0`; `forge-replace-ref` exit 2 `DISPOSITION_SETUP replace-refs-present`;
+---convénient full line 99 ---
+  `c2-selftest.out` prints `DISPOSITION_SELFTEST: 11/11 pass`, exit 0. The forge matrix
+=== corpus/lessons/round-96.md : line 44 ===
+     1	|---|---|---|---|---|
+     2	| M1 | **wrong-path default**: the successor checker's `COUNTER` constant still named round 95's `measure-v95.py`, which does not exist in round 96, so every run of the documented command died `counter-absent-at-rev` — kill rule (d)-class, found by the round's own reviewer before any positive existed. | `w1/R96R1.md` FALSIFIES-WORDING #1 (`R96R1-probe1-positive-default.out`: `DISPOSITION_SETUP counter-absent-at-rev`, exit 2); the constant was at `conjunct-disposition-v96.py:53`. | the plan's own counter command (`plans/round-96.plan.md` §C1) was never executed at the freeze — no pre-freeze run of the documented command existed. | A1 repaired the constant; QUALITY 173 now requires the printed instrument line to name the revision and the digest the verdict was read at, so a wrong default is visible in the receipt. |
+     3	| M2 | **inherited label**: the round-95 to round-96 copy carried `C1_R95_`, `round-95/` paths and a `--rev` string into the new instruments; the path rewrites were mechanical and left `measure-v95.py` and a `v95` name in prose and code. | `git show 10d8fa5d:.ufo/evidence/round-96/conjunct-disposition-v96.py` line 53; `w1/R96C1.md` C1.1. | none — the copy step had no post-copy assertion that every `round-95`/`v95` token had been replaced or deliberately kept. | A1; the round-96 instruments now carry a `ROUND = 96` constant and the receipts prove the run (`counter_sha=` on every graded body, validated by the driver since A9). |
+     4	| M3 | **no-op selftest cases**: the two print statements added for the new cases asserted nothing that could fail, so kill rule (c) was tripped by the shipped selftest itself. | `w1/R96C1.md` C1.8 (`selftest.txt` 13/13 while a reverted seal would still pass); the block was `selftest()` cases 12-13. | the plan's kill rule (c) was written but not read against the new cases before the freeze. | A5 rewrote them to run the real main path — `hostile-path-cheat` under a poisoned `PATH`, `branch-revspec-cheat` with `--rev master` — and both now fail if the seal or the guard is removed. |
+     5	| M4 | **renderer drift**: the Gate's cited line numbers did not follow from the rendering the Gate itself named. The first landed preamble said the numbers come from a rendering where each tag is replaced by one space; under *that* rendering the S321/S322/S323 quotes sit at 4512/4605/2723/2463, while the lesson printed 4403/4496/2618/2358 — the numbers the canonical lane renderer (script/style and comments removed as well) produces. A reader following the lesson's own stated convention landed 109 lines off on every quote with a script block before it. | `w1/SC1-lesson.md` and `w1/SC1-sources.append.md` (renderer-variants and locate receipts); the round-95 spot-check's D1. | the round-95 D1 rule existed but was checked against the numbers, not against the preamble that claimed to produce them. | the preamble now names the canonical renderer (`.ufo/waves/round-93/w1/R93S1-tagstrip.py`), wrapped quotes are located by span, and the registry's S323 `anchor` cell moves `2355` -> `2358` (QUALITY 172: a cited line is one the named rendering shows carrying the sentence). |
+     6	| M5 | **premature dead-seat call**: at 10:39 -03, with twelve of thirteen seat reports on disk and no orchestrator `w1-results.json`, the L1 recorded the revenger seat as dead (`w1/R96L1-absent.md`) and considered filing on that basis. The seat landed at ~10:45 and its probe refuted part of the hypothesis. A stalled seat is not a dead seat: the dispatcher's `WAVE-DONE` had not arrived AND the accounting file was missing, which the L1 read as final. | `w1/R96L1-absent.md` (correction block) vs `w1/R96L1.md` and the orchestrator's `w1-results.json` (13 results); the dispatcher log has no `done tameshi w1` line before 10:44. | none — the round has no rule that a missing `w1-results.json` means "settled"; the addendum's own run-10 rule says to wait for `WAVE-DONE`, and the L1 was about to file without it. | the absence record now opens with the correction and the ledger points at the seat's real report; the rule read into practice: never call a seat dead on file presence alone. |
+     7	
+---convénient full line 44 ---
+| M3 | **no-op selftest cases**: the two print statements added for the new cases asserted nothing that could fail, so kill rule (c) was tripped by the shipped selftest itself. | `w1/R96C1.md` C1.8 (`selftest.txt` 13/13 while a reverted seal would still pass); the block was `selftest()` cases 12-13. | the plan's kill rule (c) was written but not read against the new cases before the freeze. | A5 rewrote them to run the real main path — `hostile-path-cheat` under a poisoned `PATH`, `branch-revspec-cheat` with `--rev master` — and both now fail if the seal or the guard is removed. |
+=== corpus/lessons/round-97.md : line 89 ===
+     1	- **C1 pin refusals (A4).** `c1-forge-driver-sha-empty.out` and
+     2	  `c1-forge-driver-sha-short.out` both print `BATTERY_SETUP driver-sha-invalid`, rc 2;
+     3	  `c1-forge-driver-sha.out` prints `driver-sha-mismatch`, rc 2.
+     4	- **C1 selftest.** `c1-selftest.out`: `BATTERY_SELFTEST: 7/7 pass`, rc 0.
+     5	- **C2 positive at `2a57b42f`.** `.ufo/evidence/round-97/landing/c2-positive-1.out` reads
+     6	  `GUARD_INERTIA rows=10 killed=8 limits=2 survived=0 unmet=0`, rc 0; runs 2 and 3 are
+     7	  byte-identical (sha256 `254536aa…`). The per-row lines show `rev-hex`, `rev-unresolvable`
+---convénient full line 89 ---
+- **C1 selftest.** `c1-selftest.out`: `BATTERY_SELFTEST: 7/7 pass`, rc 0.
+=== corpus/lessons/round-97.md : line 99 ===
+     1	  (`GUARD_SETUP edit-no-op`, rc 2), `c2-forge-manifest-subst.out`
+     2	  (`GUARD_SETUP manifest-sha-mismatch`, rc 2), `c2-forge-manifest-empty.out`
+     3	  (`GUARD_SETUP manifest-empty`, rc 2).
+     4	- **C2 selftest.** `c2-selftest.out`: `GUARD_INERTIA_SELFTEST: 7/7 pass`, rc 0.
+     5	- **Controls.** `CONTROLS97 states=18 matched=18 mismatched=0` (`.ufo/evidence/round-97/pre-freeze/`).
+     6	- **Census.** `census-before.txt` and the round-end run both exit 0, rows 183, mined 149 ·
+     7	  queued 23 · rejected 11, unchanged.
+---convénient full line 99 ---
+- **C2 selftest.** `c2-selftest.out`: `GUARD_INERTIA_SELFTEST: 7/7 pass`, rc 0.
+=== corpus/lessons/round-98.md : line 124 ===
+     1	  (`records/c2-refusals-positive.out`); the red arm prints
+     2	  `GUARD_REFUSALS_RED state-unbuildable observed=missed rc=0` and
+     3	  `classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable`, rc 1
+     4	  (`records/c2-refusals-red.out`); selftest 9/9.
+     5	- **Registry at R.** Green pair from `29734beb` to the records revision: `changed=0 removed=0
+     6	  added=0`, rc 0
+     7	  (`records/registry-green-r97-records.out`); selftest 10/10; the historical red pair
+---convénient full line 124 ---
+  (`records/c2-refusals-red.out`); selftest 9/9.
+=== corpus/lessons/round-98.md : line 127 ===
+     1	  (`records/c2-refusals-red.out`); selftest 9/9.
+     2	- **Registry at R.** Green pair from `29734beb` to the records revision: `changed=0 removed=0
+     3	  added=0`, rc 0
+     4	  (`records/registry-green-r97-records.out`); selftest 10/10; the historical red pair
+     5	  (`0b19af5f..29734beb`) prints two `anchor` findings, `changed=2`, rc 1
+     6	  (`pre-freeze/registry-red-r96-r97.out`).
+     7	- **Census after.** Exit 0, rows 183 (A 165 · B 14 · C 4), mined 149 · queued 23 ·
+---convénient full line 127 ---
+  (`records/registry-green-r97-records.out`); selftest 10/10; the historical red pair
+
+# ls-tree round dirs top-level
+=== .ufo/evidence/round-95 ===
+.ufo/evidence/round-95/c1/census-mutants.json
+.ufo/evidence/round-95/c1/controls-v95.py
+.ufo/evidence/round-95/c1/make-pins95.py
+.ufo/evidence/round-95/c1/measure-v95.py
+.ufo/evidence/round-95/c1/pins.json
+.ufo/evidence/round-95/c2-forge.py
+.ufo/evidence/round-95/conjunct-disposition-v95.py
+.ufo/evidence/round-95/conjunct-disposition.json
+.ufo/evidence/round-95/landing/c1-at-records.out
+.ufo/evidence/round-95/pre-freeze/before-v94/double-pin.out
+.ufo/evidence/round-95/pre-freeze/before-v94/escaped-backslash-pipe.out
+.ufo/evidence/round-95/pre-freeze/before-v94/indent-code-row.out
+.ufo/evidence/round-95/pre-freeze/before-v94/indent-token.out
+.ufo/evidence/round-95/pre-freeze/before-v94/two-hyphen-delimiter.out
+.ufo/evidence/round-95/pre-freeze/c2/c2-pos.out
+.ufo/evidence/round-95/pre-freeze/c2/c2-selftest.out
+.ufo/evidence/round-95/pre-freeze/c2/forge-baseline.v94.out
+.ufo/evidence/round-95/pre-freeze/c2/forge-baseline.v95.out
+.ufo/evidence/round-95/pre-freeze/c2/forge-counter-sha.v94.out
+.ufo/evidence/round-95/pre-freeze/c2/forge-counter-sha.v95.out
+.ufo/evidence/round-95/pre-freeze/c2/forge-handwritten.v94.out
+.ufo/evidence/round-95/pre-freeze/c2/forge-handwritten.v95.out
+.ufo/evidence/round-95/pre-freeze/c2/forge-matrix.txt
+.ufo/evidence/round-95/pre-freeze/c2/forge-replace-ref.v94.out
+.ufo/evidence/round-95/pre-freeze/c2/forge-replace-ref.v95.out
+.ufo/evidence/round-95/pre-freeze/controls-run.log
+.ufo/evidence/round-95/pre-freeze/controls/C1-summary.txt
+.ufo/evidence/round-95/pre-freeze/controls/D01.out
+.ufo/evidence/round-95/pre-freeze/controls/D02.out
+.ufo/evidence/round-95/pre-freeze/controls/D03.out
+.ufo/evidence/round-95/pre-freeze/controls/D04.out
+.ufo/evidence/round-95/pre-freeze/controls/D05.out
+.ufo/evidence/round-95/pre-freeze/controls/coverage-absent.out
+.ufo/evidence/round-95/pre-freeze/controls/coverage-denial.out
+.ufo/evidence/round-95/pre-freeze/controls/double-pin.out
+.ufo/evidence/round-95/pre-freeze/controls/drop-c12.out
+.ufo/evidence/round-95/pre-freeze/controls/dup-row.out
+.ufo/evidence/round-95/pre-freeze/controls/escaped-backslash-pipe.out
+.ufo/evidence/round-95/pre-freeze/controls/figure.out
+.ufo/evidence/round-95/pre-freeze/controls/gate-foreign.out
+.ufo/evidence/round-95/pre-freeze/controls/hidden-c001.out
+.ufo/evidence/round-95/pre-freeze/controls/hidden-x.out
+.ufo/evidence/round-95/pre-freeze/controls/indent-code-row.out
+.ufo/evidence/round-95/pre-freeze/controls/indent-token.out
+.ufo/evidence/round-95/pre-freeze/controls/inverted.out
+.ufo/evidence/round-95/pre-freeze/controls/noop-mutant.out
+.ufo/evidence/round-95/pre-freeze/controls/note-absent.out
+.ufo/evidence/round-95/pre-freeze/controls/nowork-base.out
+.ufo/evidence/round-95/pre-freeze/controls/pin-mismatch.out
+.ufo/evidence/round-95/pre-freeze/controls/pins-mutated.out
+.ufo/evidence/round-95/pre-freeze/controls/pos-coverage-fenced-denial.out
+.ufo/evidence/round-95/pre-freeze/controls/pos-fenced-hidden.out
+.ufo/evidence/round-95/pre-freeze/controls/pos-fixture.out
+.ufo/evidence/round-95/pre-freeze/controls/pos-honest-a13.out
+.ufo/evidence/round-95/pre-freeze/controls/pos-honest-verdict-cell.out
+.ufo/evidence/round-95/pre-freeze/controls/pos-real.out
+.ufo/evidence/round-95/pre-freeze/controls/position.out
+.ufo/evidence/round-95/pre-freeze/controls/pseudo-row.out
+.ufo/evidence/round-95/pre-freeze/controls/renamed-result.out
+.ufo/evidence/round-95/pre-freeze/controls/replace-honest.out
+=== .ufo/evidence/round-96 ===
+.ufo/evidence/round-96/c1/census-mutants.json
+.ufo/evidence/round-96/c1/controls-v96.py
+.ufo/evidence/round-96/c1/make-pins96.py
+.ufo/evidence/round-96/c1/measure-v96.py
+.ufo/evidence/round-96/c1/pins.json
+.ufo/evidence/round-96/c2-forge.py
+.ufo/evidence/round-96/conjunct-disposition-v96.py
+.ufo/evidence/round-96/conjunct-disposition.json
+.ufo/evidence/round-96/landing/c1-hostile-path.out
+.ufo/evidence/round-96/landing/c1-nowork-base.out
+.ufo/evidence/round-96/landing/c1-positive.out
+.ufo/evidence/round-96/landing/c1-rev-branch.out
+.ufo/evidence/round-96/landing/c1-rev-empty.out
+.ufo/evidence/round-96/landing/c1-rev-unresolvable.out
+.ufo/evidence/round-96/landing/c2-nowork-base.out
+.ufo/evidence/round-96/landing/c2-outdir-symlink.out
+.ufo/evidence/round-96/landing/c2-pins-empty-lane.out
+.ufo/evidence/round-96/landing/c2-pins-positive.out
+.ufo/evidence/round-96/landing/c2-pins-symlink.out
+.ufo/evidence/round-96/landing/c2-receipt-symlink.out
+.ufo/evidence/round-96/landing/c2-rerun-plant.out
+.ufo/evidence/round-96/landing/c2-selftest.out
+.ufo/evidence/round-96/landing/forge-baseline.v94.out
+.ufo/evidence/round-96/landing/forge-baseline.v95.out
+.ufo/evidence/round-96/landing/forge-counter-sha.v94.out
+.ufo/evidence/round-96/landing/forge-counter-sha.v95.out
+.ufo/evidence/round-96/landing/forge-handwritten.v94.out
+.ufo/evidence/round-96/landing/forge-handwritten.v95.out
+.ufo/evidence/round-96/landing/forge-matrix.txt
+.ufo/evidence/round-96/landing/forge-replace-ref.v94.out
+.ufo/evidence/round-96/landing/forge-replace-ref.v95.out
+.ufo/evidence/round-96/pre-freeze/controls/D01.out
+.ufo/evidence/round-96/pre-freeze/controls/D02.out
+.ufo/evidence/round-96/pre-freeze/controls/D03.out
+.ufo/evidence/round-96/pre-freeze/controls/D04.out
+.ufo/evidence/round-96/pre-freeze/controls/D05.out
+.ufo/evidence/round-96/pre-freeze/controls/coverage-absent.out
+.ufo/evidence/round-96/pre-freeze/controls/coverage-denial.out
+.ufo/evidence/round-96/pre-freeze/controls/double-pin.out
+.ufo/evidence/round-96/pre-freeze/controls/drop-c12.out
+.ufo/evidence/round-96/pre-freeze/controls/dup-row.out
+.ufo/evidence/round-96/pre-freeze/controls/escaped-backslash-pipe.out
+.ufo/evidence/round-96/pre-freeze/controls/figure.out
+.ufo/evidence/round-96/pre-freeze/controls/gate-foreign.out
+.ufo/evidence/round-96/pre-freeze/controls/hidden-c001.out
+.ufo/evidence/round-96/pre-freeze/controls/hidden-x.out
+.ufo/evidence/round-96/pre-freeze/controls/indent-code-row.out
+.ufo/evidence/round-96/pre-freeze/controls/indent-token.out
+.ufo/evidence/round-96/pre-freeze/controls/inverted.out
+.ufo/evidence/round-96/pre-freeze/controls/noop-mutant.out
+.ufo/evidence/round-96/pre-freeze/controls/note-absent.out
+.ufo/evidence/round-96/pre-freeze/controls/nowork-base.out
+.ufo/evidence/round-96/pre-freeze/controls/pin-mismatch.out
+.ufo/evidence/round-96/pre-freeze/controls/pins-mutated.out
+.ufo/evidence/round-96/pre-freeze/controls/pos-coverage-fenced-denial.out
+.ufo/evidence/round-96/pre-freeze/controls/pos-fenced-hidden.out
+.ufo/evidence/round-96/pre-freeze/controls/pos-fixture.out
+.ufo/evidence/round-96/pre-freeze/controls/pos-honest-a13.out
+.ufo/evidence/round-96/pre-freeze/controls/pos-honest-verdict-cell.out
+.ufo/evidence/round-96/pre-freeze/controls/pos-real.out
+=== .ufo/evidence/round-97 ===
+.ufo/evidence/round-97/c1/battery-bind.py
+.ufo/evidence/round-97/c2/guard-inertia.json
+.ufo/evidence/round-97/c2/guard-inertia.py
+.ufo/evidence/round-97/controls97.py
+.ufo/evidence/round-97/landing/c1-positive-1.out
+.ufo/evidence/round-97/landing/c1-positive-2.out
+.ufo/evidence/round-97/landing/c1-positive-3.out
+.ufo/evidence/round-97/landing/c2-positive-1.out
+.ufo/evidence/round-97/landing/c2-positive-2.out
+.ufo/evidence/round-97/landing/c2-positive-3.out
+.ufo/evidence/round-97/pre-freeze/CONTROLS97-summary.txt
+.ufo/evidence/round-97/pre-freeze/NOTE-superseded-r98.txt
+.ufo/evidence/round-97/pre-freeze/c1-forge-conjunct.out
+.ufo/evidence/round-97/pre-freeze/c1-forge-counter-sha.out
+.ufo/evidence/round-97/pre-freeze/c1-forge-driver-sha-empty.out
+.ufo/evidence/round-97/pre-freeze/c1-forge-driver-sha-short.out
+.ufo/evidence/round-97/pre-freeze/c1-forge-driver-sha.out
+.ufo/evidence/round-97/pre-freeze/c1-forge-exit.out
+.ufo/evidence/round-97/pre-freeze/c1-forge-payload.out
+.ufo/evidence/round-97/pre-freeze/c1-forge-worktree-only.out
+.ufo/evidence/round-97/pre-freeze/c1-nowork-bind-absent.out
+.ufo/evidence/round-97/pre-freeze/c1-nowork-summary-absent.out
+.ufo/evidence/round-97/pre-freeze/c1-positive.out
+.ufo/evidence/round-97/pre-freeze/c1-selftest.out
+.ufo/evidence/round-97/pre-freeze/c2-forge-flipped-expect.out
+.ufo/evidence/round-97/pre-freeze/c2-forge-manifest-empty.out
+.ufo/evidence/round-97/pre-freeze/c2-forge-manifest-subst.out
+.ufo/evidence/round-97/pre-freeze/c2-forge-noop.out
+.ufo/evidence/round-97/pre-freeze/c2-nowork-absent.out
+.ufo/evidence/round-97/pre-freeze/c2-positive.out
+.ufo/evidence/round-97/pre-freeze/c2-selftest.out
+.ufo/evidence/round-97/repeat/c1-run-1.txt
+.ufo/evidence/round-97/repeat/c1-run-2.txt
+.ufo/evidence/round-97/repeat/c1-run-3.txt
+.ufo/evidence/round-97/repeat/c2-run-1.txt
+.ufo/evidence/round-97/repeat/c2-run-2.txt
+.ufo/evidence/round-97/repeat/c2-run-3.txt
+.ufo/evidence/round-97/sources/equiv.html
+.ufo/evidence/round-97/sources/headers-equiv.txt
+.ufo/evidence/round-97/sources/headers-s006.txt
+.ufo/evidence/round-97/sources/headers-s009.txt
+.ufo/evidence/round-97/sources/headers-s159.txt
+.ufo/evidence/round-97/sources/s006.html
+.ufo/evidence/round-97/sources/s009.html
+.ufo/evidence/round-97/sources/s159.html
+=== .ufo/evidence/round-98 ===
+.ufo/evidence/round-98/controls98.py
+.ufo/evidence/round-98/pre-freeze/c1-audit-controls98.out
+.ufo/evidence/round-98/pre-freeze/c1-audit-r97-driver.out
+.ufo/evidence/round-98/pre-freeze/c1-audit-selftest.out
+.ufo/evidence/round-98/pre-freeze/c1-before-token.out
+.ufo/evidence/round-98/pre-freeze/c1c2-before-tokens.out
+.ufo/evidence/round-98/pre-freeze/c2-before-limit-mechanism.out
+.ufo/evidence/round-98/pre-freeze/c2-before-state-unbuildable.out
+.ufo/evidence/round-98/pre-freeze/c2-before-token.out
+.ufo/evidence/round-98/pre-freeze/c2-before-tokens.out
+.ufo/evidence/round-98/pre-freeze/c2-refusals-positive.out
+.ufo/evidence/round-98/pre-freeze/c2-refusals-red.out
+.ufo/evidence/round-98/pre-freeze/c2-refusals-selftest.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-forge-counter-sha.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-forge-driver-sha-empty.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-forge-driver-sha-short.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-forge-driver-sha.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-forge-exit.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-forge-payload.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-forge-worktree-only.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-nowork-bind-absent.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-nowork-summary-absent.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-positive.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c1-selftest.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-forge-flipped-expect.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-forge-manifest-empty.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-forge-manifest-subst.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-forge-noop.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-nowork-absent.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-positive.out
+.ufo/evidence/round-98/pre-freeze/controls-at-round-base/c2-selftest.out
+.ufo/evidence/round-98/pre-freeze/controls/c1-forge-counter-sha.out
+.ufo/evidence/round-98/pre-freeze/controls/c1-forge-driver-sha-empty.out
+.ufo/evidence/round-98/pre-freeze/controls/c1-forge-driver-sha-short.out
+.ufo/evidence/round-98/pre-freeze/controls/c1-forge-driver-sha.out
+.ufo/evidence/round-98/pre-freeze/controls/c1-forge-exit.out
+.ufo/evidence/round-98/pre-freeze/controls/c1-forge-payload.out
+.ufo/evidence/round-98/pre-freeze/controls/c1-forge-worktree-only.out
+.ufo/evidence/round-98/pre-freeze/controls/c1-nowork-bind-absent.out
+.ufo/evidence/round-98/pre-freeze/controls/c1-nowork-summary-absent.out
+.ufo/evidence/round-98/pre-freeze/controls/c1-positive.out
+.ufo/evidence/round-98/pre-freeze/controls/c1-selftest.out
+.ufo/evidence/round-98/pre-freeze/controls/c2-forge-flipped-expect.out
+.ufo/evidence/round-98/pre-freeze/controls/c2-forge-manifest-empty.out
+.ufo/evidence/round-98/pre-freeze/controls/c2-forge-manifest-subst.out
+.ufo/evidence/round-98/pre-freeze/controls/c2-forge-noop.out
+.ufo/evidence/round-98/pre-freeze/controls/c2-nowork-absent.out
+.ufo/evidence/round-98/pre-freeze/controls/c2-positive.out
+.ufo/evidence/round-98/pre-freeze/controls/c2-selftest.out
+.ufo/evidence/round-98/pre-freeze/controls98-at-round-base.out
+.ufo/evidence/round-98/pre-freeze/controls98-run.out
+.ufo/evidence/round-98/pre-freeze/registry-green-r97-instr.out
+.ufo/evidence/round-98/pre-freeze/registry-red-r96-r97.out
+.ufo/evidence/round-98/pre-freeze/registry-selftest.out
+.ufo/evidence/round-98/records-run.sh
+.ufo/evidence/round-98/records/c1-audit-controls98.out
+.ufo/evidence/round-98/records/c1-audit-r97-driver.out
+.ufo/evidence/round-98/records/c1-audit-selftest.out
+.ufo/evidence/round-98/records/c2-refusals-positive.out
+.ufo/evidence/round-98/records/c2-refusals-red.out
+=== .ufo/waves/round-95 ===
+.ufo/waves/round-95/census-before.txt
+.ufo/waves/round-95/claim-falsification.tsv
+.ufo/waves/round-95/claims.json
+.ufo/waves/round-95/freeze-rev.txt
+.ufo/waves/round-95/w1-dispatch.json
+.ufo/waves/round-95/w1-results.json
+.ufo/waves/round-95/w1-spec.json
+.ufo/waves/round-95/w1.ready
+.ufo/waves/round-95/w1.ready.dispatched
+.ufo/waves/round-95/w1/R95C1-runs/before-probe.py
+.ufo/waves/round-95/w1/R95C1-runs/before-summary.txt
+.ufo/waves/round-95/w1/R95C1-runs/c1-battery-only-pos-real.out
+.ufo/waves/round-95/w1/R95C1-runs/c1-battery-only-sharp-source-wrongquote.out
+.ufo/waves/round-95/w1/R95C1-runs/c1-battery-seven-at-20fabad4.out
+.ufo/waves/round-95/w1/R95C1-runs/c1-double-pin-v95-exact.out
+.ufo/waves/round-95/w1/R95C1-runs/c1-driver-count.txt
+.ufo/waves/round-95/w1/R95C1-runs/c1-five-states-v95-reader.txt
+.ufo/waves/round-95/w1/R95C1-runs/c1-full-note-no-lesson.out
+.ufo/waves/round-95/w1/R95C1-runs/c1-nowork-base.out
+.ufo/waves/round-95/w1/R95C1-runs/c1-positive-head-20fabad4.out
+.ufo/waves/round-95/w1/R95C1-runs/c1-positive-instrument-rev.out
+.ufo/waves/round-95/w1/R95C1-runs/c1-v95-probe.py
+.ufo/waves/round-95/w1/R95C1-runs/c2-forge-probe.py
+.ufo/waves/round-95/w1/R95C1-runs/c2-nowork-base.out
+.ufo/waves/round-95/w1/R95C1-runs/c2-v94-pos.out
+.ufo/waves/round-95/w1/R95C1-runs/c2-v94-selftest.out
+.ufo/waves/round-95/w1/R95C1-runs/c2-v95-forge-counter-sha-absent.out
+.ufo/waves/round-95/w1/R95C1-runs/c2-v95-forge-counter-sha.out
+.ufo/waves/round-95/w1/R95C1-runs/c2-v95-forge-handwritten.out
+.ufo/waves/round-95/w1/R95C1-runs/c2-v95-forge-replace-ref.out
+.ufo/waves/round-95/w1/R95C1-runs/c2-v95-forge-replace-unrelated.out
+.ufo/waves/round-95/w1/R95C1-runs/c2-v95-instrument-only-rev.out
+.ufo/waves/round-95/w1/R95C1-runs/c2-v95-probe.py
+.ufo/waves/round-95/w1/R95C1-runs/c2-v95-selftest.out
+.ufo/waves/round-95/w1/R95C1-runs/c2-v95-synthetic-positive.out
+.ufo/waves/round-95/w1/R95C1-runs/control-pos-real-summary.txt
+.ufo/waves/round-95/w1/R95C1-runs/control-pos-real.out
+.ufo/waves/round-95/w1/R95C1-runs/control-sharp-source-wrongquote-summary.txt
+.ufo/waves/round-95/w1/R95C1-runs/control-sharp-source-wrongquote.out
+.ufo/waves/round-95/w1/R95C1-runs/control20-double-pin.out
+.ufo/waves/round-95/w1/R95C1-runs/control20-escaped-backslash-pipe.out
+.ufo/waves/round-95/w1/R95C1-runs/control20-indent-code-row.out
+.ufo/waves/round-95/w1/R95C1-runs/control20-indent-token.out
+.ufo/waves/round-95/w1/R95C1-runs/control20-pos-real.out
+.ufo/waves/round-95/w1/R95C1-runs/control20-sharp-source-wrongquote.out
+.ufo/waves/round-95/w1/R95C1-runs/control20-summary.txt
+.ufo/waves/round-95/w1/R95C1-runs/control20-two-hyphen-delimiter.out
+.ufo/waves/round-95/w1/R95C1-runs/counter-v94.py
+.ufo/waves/round-95/w1/R95C1-runs/double-pin-A2-exact.out
+.ufo/waves/round-95/w1/R95C1-runs/double-pin.out
+.ufo/waves/round-95/w1/R95C1-runs/doublepin-diffdigest-setup.out
+.ufo/waves/round-95/w1/R95C1-runs/doublepin-r94r1-conjuncts.out
+.ufo/waves/round-95/w1/R95C1-runs/escaped-backslash-pipe-DRIVER-EXACT2.out
+.ufo/waves/round-95/w1/R95C1-runs/escaped-backslash-pipe-interior.out
+.ufo/waves/round-95/w1/R95C1-runs/escaped-backslash-pipe-trailing.out
+.ufo/waves/round-95/w1/R95C1-runs/forge-counter-sha-v94.out
+.ufo/waves/round-95/w1/R95C1-runs/forge-handwritten-v94-untracked.out
+.ufo/waves/round-95/w1/R95C1-runs/forge-handwritten-v94.out
+.ufo/waves/round-95/w1/R95C1-runs/forge-replace-ref-v94-correct.out
+.ufo/waves/round-95/w1/R95C1-runs/indent-code-row.out
+=== .ufo/waves/round-96 ===
+.ufo/waves/round-96/census-after.txt
+.ufo/waves/round-96/census-before.txt
+.ufo/waves/round-96/claim-falsification.tsv
+.ufo/waves/round-96/claims.json
+.ufo/waves/round-96/freeze-rev.txt
+.ufo/waves/round-96/w1-dispatch.json
+.ufo/waves/round-96/w1-results.json
+.ufo/waves/round-96/w1-spec.json
+.ufo/waves/round-96/w1.ready
+.ufo/waves/round-96/w1.ready.dispatched
+.ufo/waves/round-96/w1/R96C1-runs/base-checker.txt
+.ufo/waves/round-96/w1/R96C1-runs/counter-empty.txt
+.ufo/waves/round-96/w1/R96C1-runs/driver-readside.txt
+.ufo/waves/round-96/w1/R96C1-runs/f1-honest.txt
+.ufo/waves/round-96/w1/R96C1-runs/f1-honest2.txt
+.ufo/waves/round-96/w1/R96C1-runs/f1-hostile.txt
+.ufo/waves/round-96/w1/R96C1-runs/f1-hostile2.txt
+.ufo/waves/round-96/w1/R96C1-runs/f1-hostile3.txt
+.ufo/waves/round-96/w1/R96C1-runs/f1-hostile4.txt
+.ufo/waves/round-96/w1/R96C1-runs/hostile-checker.txt
+.ufo/waves/round-96/w1/R96C1-runs/hostile-git-shim.py
+.ufo/waves/round-96/w1/R96C1-runs/hostile-override.txt
+.ufo/waves/round-96/w1/R96C1-runs/lane-empty-checker.txt
+.ufo/waves/round-96/w1/R96C1-runs/pins-branch.txt
+.ufo/waves/round-96/w1/R96C1-runs/pins-check.txt
+.ufo/waves/round-96/w1/R96C1-runs/pins-empty.txt
+.ufo/waves/round-96/w1/R96C1-runs/pins-hostile.txt
+.ufo/waves/round-96/w1/R96C1-runs/pins-positive.txt
+.ufo/waves/round-96/w1/R96C1-runs/pins-symlink.txt
+.ufo/waves/round-96/w1/R96C1-runs/pins-tmp-symlink.txt
+.ufo/waves/round-96/w1/R96C1-runs/positive-override.txt
+.ufo/waves/round-96/w1/R96C1-runs/positive.txt
+.ufo/waves/round-96/w1/R96C1-runs/r95-branch.txt
+.ufo/waves/round-96/w1/R96C1-runs/r95-driver-base.txt
+.ufo/waves/round-96/w1/R96C1-runs/r95-empty-lane.txt
+.ufo/waves/round-96/w1/R96C1-runs/r95-grading-isolated.txt
+.ufo/waves/round-96/w1/R96C1-runs/r95-rev-empty.txt
+.ufo/waves/round-96/w1/R96C1-runs/r95-symlink.txt
+.ufo/waves/round-96/w1/R96C1-runs/replace.txt
+.ufo/waves/round-96/w1/R96C1-runs/rev-branch.txt
+.ufo/waves/round-96/w1/R96C1-runs/rev-dead.txt
+.ufo/waves/round-96/w1/R96C1-runs/rev-empty.txt
+.ufo/waves/round-96/w1/R96C1-runs/rev-short.txt
+.ufo/waves/round-96/w1/R96C1-runs/rev-unresolvable.txt
+.ufo/waves/round-96/w1/R96C1-runs/selftest.txt
+.ufo/waves/round-96/w1/R96C1-runs/v96-hostile-empty.txt
+.ufo/waves/round-96/w1/R96C1.md
+.ufo/waves/round-96/w1/R96CN1-sweep.out
+.ufo/waves/round-96/w1/R96CN1.md
+.ufo/waves/round-96/w1/R96E1-before-witness.out
+.ufo/waves/round-96/w1/R96E1-honest.out
+.ufo/waves/round-96/w1/R96E1-hostile-path.out
+.ufo/waves/round-96/w1/R96E1-rev-refusals.out
+.ufo/waves/round-96/w1/R96E1.md
+.ufo/waves/round-96/w1/R96E2-before-witness.out
+.ufo/waves/round-96/w1/R96E2-receipt-symlink.out
+.ufo/waves/round-96/w1/R96E2-rerun-plant.out
+.ufo/waves/round-96/w1/R96E2.md
+.ufo/waves/round-96/w1/R96E3-atomic.out
+.ufo/waves/round-96/w1/R96E3-before-witness.out
+=== .ufo/waves/round-97 ===
+.ufo/waves/round-97/census-after.txt
+.ufo/waves/round-97/census-before.txt
+.ufo/waves/round-97/claim-falsification.tsv
+.ufo/waves/round-97/claims.json
+.ufo/waves/round-97/freeze-rev.txt
+.ufo/waves/round-97/records-rev.txt
+.ufo/waves/round-97/w1-dispatch.json
+.ufo/waves/round-97/w1-results.json
+.ufo/waves/round-97/w1-spec.json
+.ufo/waves/round-97/w1.ready
+.ufo/waves/round-97/w1.ready.dispatched
+.ufo/waves/round-97/w1/NOTE-superseded-r98.txt
+.ufo/waves/round-97/w1/R97C1-receipts/00-counters-and-selftests.txt
+.ufo/waves/round-97/w1/R97C1-receipts/01-pins.txt
+.ufo/waves/round-97/w1/R97C1-receipts/02-c1-base-nowork.txt
+.ufo/waves/round-97/w1/R97C1-receipts/03-c1-shadowed-controls.txt
+.ufo/waves/round-97/w1/R97C1-receipts/04-c1-handwritten-receipt.txt
+.ufo/waves/round-97/w1/R97C1-receipts/05-c1-mutant-counter-sha.txt
+.ufo/waves/round-97/w1/R97C1-receipts/06-c2-nonguard-manifest.txt
+.ufo/waves/round-97/w1/R97C1-receipts/07-c2-limit-mechanisms.txt
+.ufo/waves/round-97/w1/R97C1-receipts/08-c1-driver-posreal-base.txt
+.ufo/waves/round-97/w1/R97C1-receipts/08b-driver-summary.txt
+.ufo/waves/round-97/w1/R97C1-receipts/08c-driver-pos-real.out
+.ufo/waves/round-97/w1/R97C1-receipts/09-refusals-and-source-lines.txt
+.ufo/waves/round-97/w1/R97C1-receipts/10-source-excerpts.txt
+.ufo/waves/round-97/w1/R97C1-receipts/11-repaired-tool-nonguard.txt
+.ufo/waves/round-97/w1/R97C1-receipts/12-worktree-amendments.txt
+.ufo/waves/round-97/w1/R97C1-receipts/scripts/c1_mutant_sha.py
+.ufo/waves/round-97/w1/R97C1-receipts/scripts/c1_tautology.py
+.ufo/waves/round-97/w1/R97C1-receipts/scripts/c2_clone_donothing.py
+.ufo/waves/round-97/w1/R97C1-receipts/scripts/do_nothing_c2.py
+.ufo/waves/round-97/w1/R97C1-receipts/scripts/limit_mech.py
+.ufo/waves/round-97/w1/R97C1.md
+.ufo/waves/round-97/w1/R97CN1.md
+.ufo/waves/round-97/w1/R97CN1/01-pattern-scan.txt
+.ufo/waves/round-97/w1/R97CN1/01b-nontameshi-hits.txt
+.ufo/waves/round-97/w1/R97CN1/02-token-uniqueness.txt
+.ufo/waves/round-97/w1/R97CN1/03-cross-lane-matrices.txt
+.ufo/waves/round-97/w1/R97CN1/04-lane-tools.txt
+.ufo/waves/round-97/w1/R97CN1/05-checker-divergence.txt
+.ufo/waves/round-97/w1/R97CN1/06-commands.txt
+.ufo/waves/round-97/w1/R97E1-repro.txt
+.ufo/waves/round-97/w1/R97E1.md
+.ufo/waves/round-97/w1/R97E2-repro.txt
+.ufo/waves/round-97/w1/R97E2.md
+.ufo/waves/round-97/w1/R97E3-forgeries.txt
+.ufo/waves/round-97/w1/R97E3.md
+.ufo/waves/round-97/w1/R97L1-independent.tsv
+.ufo/waves/round-97/w1/R97L1-receipts/R97L1-independent-raw.tsv
+.ufo/waves/round-97/w1/R97L1-receipts/c2-rerun.out
+.ufo/waves/round-97/w1/R97L1-receipts/diag_two_edit.py
+.ufo/waves/round-97/w1/R97L1-receipts/git-mechanics.out
+.ufo/waves/round-97/w1/R97L1-receipts/harness-run.out
+.ufo/waves/round-97/w1/R97L1-receipts/independent.log
+.ufo/waves/round-97/w1/R97L1-receipts/independent.py
+.ufo/waves/round-97/w1/R97L1-receipts/provenance.out
+.ufo/waves/round-97/w1/R97L1-receipts/real-lane-at-base.out
+.ufo/waves/round-97/w1/R97L1-receipts/two-edit-diag.out
+.ufo/waves/round-97/w1/R97L1.md
+.ufo/waves/round-97/w1/R97M1-baseline.log
+=== .ufo/waves/round-98 ===
+.ufo/waves/round-98/base-rev.txt
+.ufo/waves/round-98/census-after.txt
+.ufo/waves/round-98/census-before.txt
+.ufo/waves/round-98/claim-falsification.tsv
+.ufo/waves/round-98/claims.json
+.ufo/waves/round-98/freeze-rev.txt
+.ufo/waves/round-98/instruments-rev.txt
+.ufo/waves/round-98/make-w1-dispatch.py
+.ufo/waves/round-98/make-w1-spec.py
+.ufo/waves/round-98/records-rev.txt
+.ufo/waves/round-98/w1-dispatch.json
+.ufo/waves/round-98/w1-plan-full.json
+.ufo/waves/round-98/w1-results.json
+.ufo/waves/round-98/w1-spec.json
+.ufo/waves/round-98/w1.ready
+.ufo/waves/round-98/w1.ready.dispatched
+.ufo/waves/round-98/w1/R98C1-amendment-state.txt
+.ufo/waves/round-98/w1/R98C1-base-tokens.txt
+.ufo/waves/round-98/w1/R98C1-c1-classifier-probes.txt
+.ufo/waves/round-98/w1/R98C1-c1-do-nothing.txt
+.ufo/waves/round-98/w1/R98C1-c1-expectation-slot.txt
+.ufo/waves/round-98/w1/R98C1-c1-kill-a-shadow.txt
+.ufo/waves/round-98/w1/R98C1-c2-classes.txt
+.ufo/waves/round-98/w1/R98C1-c2-toolsha.txt
+.ufo/waves/round-98/w1/R98C1-c2-transcript.txt
+.ufo/waves/round-98/w1/R98C1.md
+.ufo/waves/round-98/w1/R98CN1-demo-and-quotes.txt
+.ufo/waves/round-98/w1/R98CN1-sibling-scan.txt
+.ufo/waves/round-98/w1/R98CN1.md
+.ufo/waves/round-98/w1/R98E1-fixtures/case_a.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_b.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_c.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_d.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_e.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_f.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_g_committed.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_g_worktree.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_h.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_i.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_j.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_k1.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_k2.py
+.ufo/waves/round-98/w1/R98E1-fixtures/case_l.py
+.ufo/waves/round-98/w1/R98E1-r00-pins.txt
+.ufo/waves/round-98/w1/R98E1-r01-audit-r97.txt
+.ufo/waves/round-98/w1/R98E1-r02-audit-controls98.txt
+.ufo/waves/round-98/w1/R98E1-r03-audit-selftest.txt
+.ufo/waves/round-98/w1/R98E1-r04-static-count.txt
+.ufo/waves/round-98/w1/R98E1-r05-classifier-attacks.txt
+.ufo/waves/round-98/w1/R98E1-r05b-scope-shadow.txt
+.ufo/waves/round-98/w1/R98E1-r05c-attribute-recorder.txt
+.ufo/waves/round-98/w1/R98E1-r06-nowork-can-fail.txt
+.ufo/waves/round-98/w1/R98E1-r06b-token-grep.txt
+.ufo/waves/round-98/w1/R98E1-repro.txt
+.ufo/waves/round-98/w1/R98E1.md
+.ufo/waves/round-98/w1/R98E2-base-tokens.out
+.ufo/waves/round-98/w1/R98E2-fixture-probe.out
+.ufo/waves/round-98/w1/R98E2-hand-attack-echoed-field.out
+.ufo/waves/round-98/w1/R98E2-hand-attack-unused-field.out
+.ufo/waves/round-98/w1/R98E2-hand-edit-ambiguous.out

@@ -1,0 +1,61 @@
+# cmd: for round-98 pairs: is there a DIFFERENT receipt nearby carrying the *_SELFTEST N/M that the line actually claims? (limit vs record-error check)
+=== round-98 lesson lines 120-130 ===
+- **C2 battery at R.** Six `GUARD_REFUSAL <class> rc=2 token=ok` lines, the ten
+  `GUARD_ROW` lines, `GUARD_REFUSAL_POSITIVE rows=10 rc=0`, and
+  `GUARD_REFUSALS classes=6 refused=6 wrong=0 positive=ok`, rc 0
+  (`records/c2-refusals-positive.out`); the red arm prints
+  `GUARD_REFUSALS_RED state-unbuildable observed=missed rc=0` and
+  `classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable`, rc 1
+  (`records/c2-refusals-red.out`); selftest 9/9.
+- **Registry at R.** Green pair from `29734beb` to the records revision: `changed=0 removed=0
+  added=0`, rc 0
+  (`records/registry-green-r97-records.out`); selftest 10/10; the historical red pair
+  (`0b19af5f..29734beb`) prints two `anchor` findings, `changed=2`, rc 1
+  (`pre-freeze/registry-red-r96-r97.out`).
+- **Census after.** Exit 0, rows 183 (A 165 · B 14 · C 4), mined 149 · queued 23 ·
+  rejected 11 (`.ufo/waves/round-98/census-after.txt`).
+
+## Wave
+
+`w1`, 13 seats (executor 4, scribe 1, scout 1, reviewer 2, critic 1, mutation-tester 1,
+
+=== receipts carrying GUARD_REFUSALS_SELFTEST 9/9 (the 9/9 claim on :124) ===
+ab598d03da34bbaffc35010b4e0f7c33ed0a18ae:.ufo/evidence/round-98/pre-freeze/c2-refusals-selftest.out:10:GUARD_REFUSALS_SELFTEST: 9/9 pass
+ab598d03da34bbaffc35010b4e0f7c33ed0a18ae:.ufo/evidence/round-98/records/c2-refusals-selftest.out:10:GUARD_REFUSALS_SELFTEST: 9/9 pass
+=== receipts carrying REGISTRY_IMMUTABLE_SELFTEST 10/10 (the 10/10 claim on :127) ===
+ab598d03da34bbaffc35010b4e0f7c33ed0a18ae:.ufo/evidence/round-98/pre-freeze/registry-selftest.out:11:REGISTRY_IMMUTABLE_SELFTEST: 10/10 pass
+ab598d03da34bbaffc35010b4e0f7c33ed0a18ae:.ufo/evidence/round-98/records/registry-selftest.out:11:REGISTRY_IMMUTABLE_SELFTEST: 10/10 pass
+=== cited receipt c2-refusals-red.out: GUARD_REFUSALS line (red arm, intentionally wrong) ===
+GUARD_REFUSALS_RED state-unbuildable observed=missed rc=0
+GUARD_REFUSALS classes=6 refused=5 wrong=1 positive=ok red=state-unbuildable
+=== cited registry-green: REGISTRY_IMMUTABLE line (green, carries no selftest token) ===
+REGISTRY_IMMUTABLE from=29734beb0959 to=3b7ae1272d16 shared=183 changed=0 removed=0 added=0
+rc=0
+
+# cmd: confirm the four unresolved check: tool root top-level grep shows none of c2-selftest.out / selftest.txt / c1-selftest.out / c2-selftest.out at root
+=== .ufo/evidence/round-95/selftest.txt? .ufo/evidence/round-95/c2-selftest.out? .ufo/waves variants ===
+.ufo/evidence/round-95/c2-selftest.out : fatal: path '.ufo/evidence/round-95/c2-selftest.out' does not exist in 'ab598d03da34bbaffc35010b4e0f7c33ed0a18ae'
+ABSENT
+.ufo/waves/round-95/c2-selftest.out : fatal: path '.ufo/waves/round-95/c2-selftest.out' does not exist in 'ab598d03da34bbaffc35010b4e0f7c33ed0a18ae'
+ABSENT
+.ufo/evidence/round-96/selftest.txt : fatal: path '.ufo/evidence/round-96/selftest.txt' does not exist in 'ab598d03da34bbaffc35010b4e0f7c33ed0a18ae'
+ABSENT
+.ufo/waves/round-96/selftest.txt : fatal: path '.ufo/waves/round-96/selftest.txt' does not exist in 'ab598d03da34bbaffc35010b4e0f7c33ed0a18ae'
+ABSENT
+.ufo/evidence/round-97/c1-selftest.out : fatal: path '.ufo/evidence/round-97/c1-selftest.out' does not exist in 'ab598d03da34bbaffc35010b4e0f7c33ed0a18ae'
+ABSENT
+.ufo/waves/round-97/c1-selftest.out : fatal: path '.ufo/waves/round-97/c1-selftest.out' does not exist in 'ab598d03da34bbaffc35010b4e0f7c33ed0a18ae'
+ABSENT
+.ufo/evidence/round-97/c2-selftest.out : fatal: path '.ufo/evidence/round-97/c2-selftest.out' does not exist in 'ab598d03da34bbaffc35010b4e0f7c33ed0a18ae'
+ABSENT
+.ufo/waves/round-97/c2-selftest.out : fatal: path '.ufo/waves/round-97/c2-selftest.out' does not exist in 'ab598d03da34bbaffc35010b4e0f7c33ed0a18ae'
+ABSENT
+
+# What WOULD the tool grade each pair if resolved to the real subdir receipt? (simulate grade())
+95:99 token DISP 11/11 -> .ufo/evidence/round-95/pre-freeze/c2/c2-selftest.out => matched
+96:44 selftest 13/13 -> .ufo/waves/round-96/w1/R96C1-runs/selftest.txt (or evidence/round-96/landing/c2-selftest.out) => matched
+97:89 token BATTERY 7/7 -> .ufo/evidence/round-97/pre-freeze/c1-selftest.out => matched
+97:99 token GUARD 7/7 -> .ufo/evidence/round-97/pre-freeze/c2-selftest.out => matched
+98:124 selftest 9/9 -> cited .ufo/evidence/round-98/records/c2-refusals-red.out => unbound no-selftest-line
+98:127 selftest 10/10 -> cited .ufo/evidence/round-98/records/registry-green-r97-records.out => unbound no-selftest-line
+rc=0

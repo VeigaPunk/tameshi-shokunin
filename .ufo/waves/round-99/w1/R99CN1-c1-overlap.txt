@@ -1,0 +1,52 @@
+# seat: R99CN1 (connector) — C1 overlap: existing lane tools vs tools/tally-reconcile.py
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# lane rev used: 466510515d02759427158a9b16e9daa889d44907 (instruments commit; records unchanged since base ff93fa16)
+
+$ git grep -c TALLY_RECONCILE ff93fa16a1f65e66385b7c7f564f03b218d91ea2 -- .
+rc=1
+
+$ python3 -I tools/quoted-line-exists.py --repo . --doc ff93fa16:corpus/lessons/round-94.md   (tail -8; full extraction summary line)
+QUOTE MISSING receipt=- "pin=true pins=true green=true canary=true"
+QUOTE MISSING receipt=- "SELFTEST clean FAIL findings=1 ... reason-names-no-state-or-digest"
+QUOTE MISSING receipt=- "states=45 matched=45"
+QUOTE backed receipt=.ufo/evidence/round-93/pre-freeze/controls/D01.out "mutant=D01 state=renamed-result"
+QUOTE backed receipt=.ufo/waves/round-93/w1/R93SN1-probe18.log "C1_R93_PASS=false"
+QUOTE backed receipt=.ufo/evidence/round-93/pre-freeze/controls/D01.out "C1_R93_PASS=true"
+QUOTED_LINE_EXISTS: doc={'quotes': 6, 'backed': 3, 'missing': 3, 'skipped': 4, 'receipts': 11, 'absent': 0, 'ambiguous': 19, 'doc': 'corpus/lessons/round-94.md'} quotes=6 backed=3 missing=3 skipped=4 receipts=11 absent=0 ambiguous=19
+QUOTED_LINE_EXISTS TOTAL: docs=1 quotes=6 backed=3 missing=3 skipped=4
+rc=1
+
+$ python3 -I tools/quoted-line-exists.py --repo . --receipt ff93fa16:.ufo/evidence/round-94/pre-freeze/c2-selftest.out --quote "DISPOSITION_SELFTEST: 8/8 pass"
+QUOTE MISSING receipt=.ufo/evidence/round-94/pre-freeze/c2-selftest.out "DISPOSITION_SELFTEST: 8/8 pass"
+rc=1
+
+$ git show ff93fa16:.ufo/evidence/round-94/pre-freeze/c2-selftest.out | tail -2
+SELFTEST a4-digest-named PASS findings=0 want_clean=1 
+DISPOSITION_SELFTEST: 9/9 pass
+rc=0
+
+$ python3 -c "<manifest row dump: count-recheck.json / figure-attribution.json / registry-figure-bind.json / defect-bind.json>"
+tools/count-recheck.json schema=tameshi-count-recheck-v1 rows=7
+   records: ['SCORECARD.md', 'corpus/lessons/round-69.md']
+tools/figure-attribution.json schema=tameshi-figure-attribution-v1 rows=3
+   docs: ['SCORECARD.md', 'corpus/lessons/round-66.md', 'SCORECARD.md']
+tools/registry-figure-bind.json schema=tameshi-registry-figure-bind-v1 rows=9
+tools/defect-bind.json schema=tameshi-defect-bind-v1 rows=6
+rc=0
+
+$ python3 -I tools/tally-reconcile.py --repo . --rev 46651051 <twelve records, round-93..98 lessons+plans>
+28
+(pair-line count above; rc of tool below)
+rc=1
+
+$ python3 -I tools/tally-reconcile.py --selftest
+TALLY_RECONCILE_SELFTEST: 17/17 pass
+rc=0
+
+# --- .ufo/reports/round-98/tameshi.md:29-33 (the D2 sentence quoted in the report; fleet root cwd)
+$ sed -n "29,33p" .ufo/reports/round-98/tameshi.md
+  a driver blob at `--rev` through `git cat-file` and classifies every bare-name `add(...)` site's
+  recorded-code expression as measured / literal / unresolved, following a name through the
+  call's scope chain to every assignment before the call. Selftest `18/18`
+  (`pre-freeze/c1-audit-selftest.out` at the freeze; `records/c1-audit-selftest.out` at R). The
+  round-97 driver prints `CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1` exit 1, line

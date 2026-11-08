@@ -1,0 +1,18 @@
+# cmd: PYTHONPATH=<hostile dir with a fake subprocess module> python3 (WITHOUT -I) tools/tally-reconcile.py ...
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# ---- output (no -I) ----
+TALLY_SETUP rev-not-commit
+# exit: 2
+# ---- same injection WITH -I (the frozen invocation form) ----
+TALLY mismatched corpus/lessons/round-94.md:66 token DISPOSITION_SELFTEST claimed=8/8 receipt=.ufo/evidence/round-94/pre-freeze/c2-selftest.out observed=9/9 detail=differs
+TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=0 mismatched=1 unbound=0 uncited=0
+# exit: 1
+# ---- C2 without -I under the same injection ----
+CONTROL_ASSERT_DRIVER rev=/home/vgpnk/Projects/shokunin/tameshi-shokunin driver=.ufo/evidence/round-99/c2/alias-driver.py sha256=ad9ab42a73a73dad0246304bb915168de23875e72f8465ca1dfaa7fbd7ff5b7f
+AUDIT_SETUP unparsable:invalid syntax (<unknown>, line 1)
+# exit: 2
+# ---- C2 with -I under the same injection ----
+CONTROL_ASSERT_SITE line=29 name=alias-literal measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record
+CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1
+# exit: 1

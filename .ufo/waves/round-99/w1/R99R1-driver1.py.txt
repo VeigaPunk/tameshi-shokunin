@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+"""Hostile fixtures for C1 wording attacks. Each case: build a tiny git repo,
+commit, run tally-reconcile.py CLI, print summary + TALLY lines."""
+import os, subprocess, sys, tempfile, shutil
+
+LANE = "/home/vgpnk/Projects/shokunin/tameshi-shokunin"
+TOOL = os.path.join(LANE, "tools/tally-reconcile.py")
+GIT = "/usr/bin/git"
+ENV = {"PATH": "/usr/local/bin:/usr/bin:/bin", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8",
+       "GIT_AUTHOR_NAME": "fx", "GIT_AUTHOR_EMAIL": "fx@fixture.invalid",
+       "GIT_COMMITTER_NAME": "fx", "GIT_COMMITTER_EMAIL": "fx@fixture.invalid"}
+
+def build(files, record, roots=()):
+    d = tempfile.mkdtemp(dir="/fast/scratch/hyaku/tameshi-r99/R99R1")
+    def run(*a):
+        return subprocess.run([GIT, "-C", d] + list(a), capture_output=True, env=ENV)
+    assert run("init", "-q").returncode == 0
+    top = run("rev-parse", "--show-toplevel").stdout.decode().strip()
+    assert os.path.realpath(top) == os.path.realpath(d), "toplevel mismatch"
+    for p, body in files.items():
+        fp = os.path.join(d, p)
+        if body is None:
+            os.makedirs(fp, exist_ok=True)
+            continue
+        os.makedirs(os.path.dirname(fp) or d, exist_ok=True)
+        mode = "wb" if isinstance(body, bytes) else "w"
+        with open(fp, mode) as fh:
+            fh.write(body)
+    assert run("add", "-A").returncode == 0
+    assert run("commit", "-q", "-m", "fx").returncode == 0
+    rev = run("rev-parse", "HEAD").stdout.decode().strip()
+    cmd = ["python3", "-I", TOOL, "--repo", d, "--rev", rev, "--record", record]
+    for r in roots:
+        cmd += ["--receipt-root", r]
+    p = subprocess.run(cmd, capture_output=True, text=True)
+    return d, rev, p
+
+def show(label, files, record, roots=(), keep=False):
+    d, rev, p = build(files, record, roots)
+    summ = [l for l in p.stdout.splitlines() if l.startswith("TALLY_RECONCILE")]
+    tall = [l for l in p.stdout.splitlines() if l.startswith("TALLY ")]
+    print(f"### {label} rc={p.returncode}")
+    for l in tall:
+        print("   " + l)
+    print("   SUMMARY: " + (" | ".join(summ) if summ else "(no summary)"))
+    if p.stderr.strip():
+        print("   STDERR: " + p.stderr.strip()[:200])
+    if not keep:
+        shutil.rmtree(d, ignore_errors=True)
+
+REC = "p/round-3.md"
+EV = ".ufo/evidence/round-3/a.out"
+
+# ---- 1. tally forms ----
+# selftests (plural): \bselftest\b must NOT match 'selftests'
+show("tally-selftests-plural",
+     {REC: "selftests 2/2 (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+# self-test (hyphen): \bselftest\b must NOT match
+show("tally-self-test-hyphen",
+     {REC: "self-test 2/2 (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+# SELFTEST_X as the word (not *_SELFTEST token): selftest then _X then N/M
+show("tally-SELFTEST_X-word",
+     {REC: "SELFTEST_X 2/2 (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+# lowercase token
+show("tally-token-lowercase",
+     {REC: "x_selftest: 2/2 pass (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+# token starting with digit
+show("tally-token-digit-first",
+     {REC: "1A_SELFTEST: 2/2 pass (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+# two-letter token (needs {2,} after first char = min 3)
+show("tally-token-two-letter",
+     {REC: "AB: 2/2 pass (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+# token missing colon-space: 'TOKEN:2/2'
+show("tally-token-no-space",
+     {REC: "AB_SELFTEST:2/2 pass (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+# selftest with 'pass' word after N/M (word form does not need pass)
+show("tally-selftest-word-no-pass",
+     {REC: "selftest 2/2 (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+# selftest within 12 non-digit chars: exactly 12 vs 13
+show("tally-window-12-exact",
+     {REC: "selftest abcdefghijkl2/2 (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+show("tally-window-13-over",
+     {REC: "selftest abcdefghijklm2/2 (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+# digit inside the 12-char window: [^0-9]{0,12}? allows gap only before first digit; 'selftest abc3def 2/2'
+show("tally-window-digit-inside",
+     {REC: "selftest abc3def 2/2 (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+# TOKEN form without 'pass'
+show("tally-token-no-pass",
+     {REC: "AB_SELFTEST: 2/2 (`a.out`)\n", EV: "AB_SELFTEST: 2/2 pass\n"}, REC)
+# SELFTEST case-insensitivity: 'SelfTest', 'SELFTEST'
+show("tally-selftest-case",
+     {REC: "SelfTest 2/2 (`a.out`)\n", EV: "C_SELFTEST: 2/2 pass\n"}, REC)
+# token tally shadows selftest on same span: 'AB_SELFTEST: 2/2 pass' has selftest inside token
+show("tally-token-shadows-selftest",
+     {REC: "AB_SELFTEST: 2/2 pass (`a.out`)\n", EV: "AB_SELFTEST: 2/2 pass\n"}, REC)
+print("DONE-batch1")

@@ -1,0 +1,29 @@
+# cmd: does C2 disclose the RESOLVED rev when --rev names a tag object (peeled via ^{commit})?
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin ; tagsha=1f78b77fad8ab8bcef3b1d6d024ceda8a88064c1 (an annotated tag object)
+---- C2 --repo clone --rev tagsha (full output) ----
+CONTROL_ASSERT_DRIVER rev=466510515d02759427158a9b16e9daa889d44907 driver=.ufo/evidence/round-99/c2/alias-driver.py sha256=e01fce0dc84a24cbc529075edfcd3c5317fdac1316f2ba84a93c93890c1bb82f
+CONTROL_ASSERT_SITE line=24 name=bare-measured measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=26 name=bare-measured-2 measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=28 name=alias-measured measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=29 name=alias-literal measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record
+CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1
+# exit: 1
+---- the tag object and its target ----
+tag
+466510515d02759427158a9b16e9daa889d44907
+
+# cmd: does the WORKTREE C1 tool still decode receipts with errors='replace' (silent non-utf8)?
+96:        if rc != 0 or os.path.realpath(out.decode().strip()) != os.path.realpath(repo):
+101:        if rc != 0 or out.decode().strip() != "commit":
+107:        self.blobs = set(x for x in out.decode("utf-8", "surrogateescape").split("\0") if x)
+118:        return out.decode("utf-8", "replace")
+325:    if os.path.realpath(top.stdout.decode().strip()) != os.path.realpath(d):
+334:    rev = subprocess.run([GIT, "-C", d, "rev-parse", "HEAD"], capture_output=True, env=env).stdout.decode().strip()
+# and the frozen blob:
+87:        if rc != 0 or os.path.realpath(out.decode().strip()) != os.path.realpath(repo):
+92:        if rc != 0 or out.decode().strip() != "commit":
+98:        self.blobs = set(x for x in out.decode("utf-8", "surrogateescape").split("\0") if x)
+109:        return out.decode("utf-8", "replace")
+292:    if os.path.realpath(top.stdout.decode().strip()) != os.path.realpath(d):
+301:    rev = subprocess.run([GIT, "-C", d, "rev-parse", "HEAD"], capture_output=True, env=env).stdout.decode().strip()

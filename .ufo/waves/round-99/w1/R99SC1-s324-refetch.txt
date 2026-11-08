@@ -1,0 +1,70 @@
+# seat: R99SC1 (scout) — tameshi round 99 wave w1
+# scratch: /fast/scratch/hyaku/tameshi-r99/R99SC1  (bytes kept in scratch; digests copied here)
+# cwd for repo commands: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# scope: S324 re-open — Europe PMC REST record (DOI:10.3758/s13428-015-0664-2)
+# snapshot under test: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-99/sources/s324.json
+
+$ curl -sS -D s324.fetch.headers -o s324.fetch.json 'https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.3758/s13428-015-0664-2&resultType=core&format=json'; echo curl_rc=$?; wc -c < s324.fetch.json; sha256sum s324.fetch.json; sha256sum /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-99/sources/s324.json
+curl_rc=0
+6409
+346dcf46d3e6ccfe20d269b5b74ca4d21df98c8731c57858808d4c856d0f0349  s324.fetch.json
+346dcf46d3e6ccfe20d269b5b74ca4d21df98c8731c57858808d4c856d0f0349  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-99/sources/s324.json
+rc=0
+
+$ python3 - <<'EOF'
+import json,glob,hashlib,collections
+COMMITTED='/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-99/sources/s324.json'
+c=open(COMMITTED,'rb').read(); cj=json.loads(c)
+def canon(b): return hashlib.sha256(json.dumps(json.loads(b),sort_keys=True,separators=(',',':')).encode()).hexdigest()
+files=sorted(glob.glob('/fast/scratch/hyaku/tameshi-r99/R99SC1/s324*.json'))
+raws=collections.Counter(); cans=collections.Counter(); eq=0; lens=set()
+for f in files:
+    b=open(f,'rb').read()
+    raws[hashlib.sha256(b).hexdigest()]+=1; cans[canon(b)]+=1; lens.add(len(b))
+    if json.loads(b)==cj: eq+=1
+print('samples',len(files))
+print('json_equal_to_committed',eq)
+print('distinct_byte_lengths',sorted(lens))
+print('distinct_raw_digests',len(raws))
+for h,n in raws.most_common(): print('  raw_digest',h,n)
+print('distinct_canonical_digests',len(cans))
+for h,n in cans.most_common(): print('  canonical_digest',h,n)
+print('committed_raw',hashlib.sha256(c).hexdigest())
+print('committed_canonical',canon(c))
+EOF
+samples 41
+json_equal_to_committed 41
+distinct_byte_lengths [6409]
+distinct_raw_digests 2
+  raw_digest 346dcf46d3e6ccfe20d269b5b74ca4d21df98c8731c57858808d4c856d0f0349 29
+  raw_digest 6a2f294a44ec753c47b91444899d104795530c1f4b88267b1e2ddc9ae9b25c9d 12
+distinct_canonical_digests 1
+  canonical_digest 41ef1a7b6d998d3778145aef0da33215c34f2c271d7baf2a49b189145ec06d02 41
+committed_raw 346dcf46d3e6ccfe20d269b5b74ca4d21df98c8731c57858808d4c856d0f0349
+committed_canonical 41ef1a7b6d998d3778145aef0da33215c34f2c271d7baf2a49b189145ec06d02
+rc=0
+
+$ python3 - <<'EOF'
+a=open('/fast/scratch/hyaku/tameshi-r99/R99SC1/s324.r5.json','rb').read()
+b=open('/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-99/sources/s324.json','rb').read()
+d=[i for i in range(min(len(a),len(b))) if a[i]!=b[i]]
+print('num_differing_bytes',len(d),'len_a',len(a),'len_b',len(b))
+for s,e in [(2880,2896),(2898,2914),(2916,2916),(2918,2934)]:
+    print('bytes',s,'-',e)
+    print('  variant  :',a[s-1:e+1])
+    print('  committed:',b[s-1:e+1])
+EOF
+num_differing_bytes 52 len_a 6409 len_b 6409
+bytes 2880 - 2896
+  variant  : b'"isoabbreviation":'
+  committed: b'"nlmid":"101244316'
+bytes 2898 - 2914
+  variant  : b'"Behav Res Methods'
+  committed: b'","isoabbreviation'
+bytes 2916 - 2916
+  variant  : b'",'
+  committed: b'":'
+bytes 2918 - 2934
+  variant  : b'"nlmid":"101244316'
+  committed: b'"Behav Res Methods'
+rc=0

@@ -1,0 +1,49 @@
+# seat: R99SC1 (scout) — tameshi round 99 wave w1
+# scratch: /fast/scratch/hyaku/tameshi-r99/R99SC1  (bytes kept in scratch; digests copied here)
+# cwd for repo commands: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# scope: frozen C1/C2 wording re-derived independently at the freeze revision ab598d03da34bbaffc35010b4e0f7c33ed0a18ae
+
+$ python3 -I tools/tally-reconcile.py --repo . --rev ab598d03da34bbaffc35010b4e0f7c33ed0a18ae --record corpus/lessons/round-93.md --record plans/round-93.plan.md --record corpus/lessons/round-94.md --record plans/round-94.plan.md --record corpus/lessons/round-95.md --record plans/round-95.plan.md --record corpus/lessons/round-96.md --record plans/round-96.plan.md --record corpus/lessons/round-97.md --record plans/round-97.plan.md --record corpus/lessons/round-98.md --record plans/round-98.plan.md | tail -4
+TALLY uncited plans/round-98.plan.md:177 token CONTROL_ASSERT_SELFTEST claimed=12/12 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-98.plan.md:182 token GUARD_REFUSALS_SELFTEST claimed=9/9 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-98.plan.md:185 token REGISTRY_IMMUTABLE_SELFTEST claimed=10/10 receipt=- observed=- detail=no-citation
+TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19
+rc=0
+
+$ python3 -I tools/tally-reconcile.py --repo . --rev ab598d03da34bbaffc35010b4e0f7c33ed0a18ae --record corpus/lessons/round-94.md
+TALLY mismatched corpus/lessons/round-94.md:66 token DISPOSITION_SELFTEST claimed=8/8 receipt=.ufo/evidence/round-94/pre-freeze/c2-selftest.out observed=9/9 detail=differs
+TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=0 mismatched=1 unbound=0 uncited=0
+rc=1
+
+$ python3 -I tools/tally-reconcile.py --selftest | tail -2
+SELFTEST PASS worktree-edit-ignored rc=1
+TALLY_RECONCILE_SELFTEST: 24/24 pass
+rc=0
+
+$ python3 -I tools/control-assertion-audit-v2.py --repo . --rev ab598d03da34bbaffc35010b4e0f7c33ed0a18ae --driver .ufo/evidence/round-99/c2/alias-driver.py | tail -3
+CONTROL_ASSERT_SITE line=29 name=alias-literal measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record
+CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1
+rc=0
+
+$ python3 -I tools/control-assertion-audit.py --repo . --rev ab598d03da34bbaffc35010b4e0f7c33ed0a18ae --driver .ufo/evidence/round-99/c2/alias-driver.py | tail -2
+CONTROL_ASSERT_SITE line=26 name=bare-measured-2 measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=2 measured=2 literal=0 unmeasured=0
+rc=0
+
+$ python3 -I tools/control-assertion-audit-v2.py --selftest | tail -2
+SELFTEST alias-and-bare-two-sites PASS got=2 rc=1
+CONTROL_ASSERT_V2_SELFTEST: 38/38 pass
+rc=0
+
+$ python3 -I tools/control-assertion-audit.py --selftest | tail -2
+SELFTEST loop-site-count PASS got=1 want=1
+CONTROL_ASSERT_SELFTEST: 18/18 pass
+rc=0
+
+$ sha256sum tools/tally-reconcile.py tools/control-assertion-audit-v2.py tools/control-assertion-audit.py .ufo/evidence/round-99/c2/alias-driver.py
+c78e0c630aeda375dae0e6a3c9c9a75ec90356756ed2238f2526562a77f70f56  tools/tally-reconcile.py
+7667ffb55cf62017b546e019879225f4e154ccbad18c68084120dc74e03160b5  tools/control-assertion-audit-v2.py
+82c2e54b24bab55e9f01bb3f15afcb2c3b2654c3486bf6de29a06981cc5c0cd4  tools/control-assertion-audit.py
+e01fce0dc84a24cbc529075edfcd3c5317fdac1316f2ba84a93c93890c1bb82f  .ufo/evidence/round-99/c2/alias-driver.py
+rc=0

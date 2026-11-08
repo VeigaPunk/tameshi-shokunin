@@ -1,0 +1,20 @@
+# cmd: confirm the two selftest tallies and the C1 round-94-only red arm, clean, at the freeze rev
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# ---- C1 --selftest ----
+SELFTEST PASS worktree-edit-ignored rc=1
+TALLY_RECONCILE_SELFTEST: 17/17 pass
+# exit: 0
+# ---- C2 v2 --selftest ----
+SELFTEST alias-and-bare-two-sites PASS got=2 rc=1
+CONTROL_ASSERT_V2_SELFTEST: 36/36 pass
+# exit: 0
+# ---- C1 round-94-only red arm ----
+TALLY mismatched corpus/lessons/round-94.md:66 token DISPOSITION_SELFTEST claimed=8/8 receipt=.ufo/evidence/round-94/pre-freeze/c2-selftest.out observed=9/9 detail=differs
+TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=0 mismatched=1 unbound=0 uncited=0
+# exit: 1
+# ---- C1 v2 (round-98 audit) on the alias fixture: the unmoved comparison ----
+CONTROL_ASSERT_DRIVER rev=ab598d03da34bbaffc35010b4e0f7c33ed0a18ae driver=.ufo/evidence/round-99/c2/alias-driver.py sha256=e01fce0dc84a24cbc529075edfcd3c5317fdac1316f2ba84a93c93890c1bb82f
+CONTROL_ASSERT_SITE line=24 name=bare-measured measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=26 name=bare-measured-2 measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=2 measured=2 literal=0 unmeasured=0
+# exit: 0

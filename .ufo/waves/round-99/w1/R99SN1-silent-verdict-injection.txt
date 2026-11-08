@@ -1,0 +1,18 @@
+# cmd: PYTHONPATH=<hostile dir with a delegating fake `subprocess`> python3 (WITHOUT -I) tools/tally-reconcile.py
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# ---- C1 WITHOUT -I: does the round-94 mismatch VANISH SILENTLY (exit flips 1 -> 0)? ----
+TALLY matched corpus/lessons/round-94.md:66 token DISPOSITION_SELFTEST claimed=8/8 receipt=.ufo/evidence/round-94/pre-freeze/c2-selftest.out observed=8/8 detail=equal
+TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=1 mismatched=0 unbound=0 uncited=0
+# exit: 0
+# ---- same injection, TWELVE records: does the frozen number survive? ----
+TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19
+# exit: 1
+# ---- C1 WITH -I (the frozen invocation form) ----
+TALLY mismatched corpus/lessons/round-94.md:66 token DISPOSITION_SELFTEST claimed=8/8 receipt=.ufo/evidence/round-94/pre-freeze/c2-selftest.out observed=9/9 detail=differs
+TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=0 mismatched=1 unbound=0 uncited=0
+# exit: 1
+# ---- C2 WITH -I under the same injection (driver read is also forged-able) ----
+CONTROL_ASSERT_SITE line=29 name=alias-literal measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record
+CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1
+# exit: 1

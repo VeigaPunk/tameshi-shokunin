@@ -1,0 +1,46 @@
+# seat: R99SC1 (scout) — tameshi round 99 wave w1
+# scratch: /fast/scratch/hyaku/tameshi-r99/R99SC1  (bytes kept in scratch; digests copied here)
+# cwd for repo commands: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# scope: fact-check of the round-99 registry rows S324/S325/S326 against the committed snapshots
+
+$ python3 - <<'EOF'
+import re,html,hashlib
+raw=open('/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md',encoding='utf-8').read()
+rows={}
+for line in raw.split('\n'):
+    m=re.match(r'\| (S32[456]) \|',line)
+    if m: rows[m.group(1)]=line
+for k in ('S324','S325','S326'):
+    l=rows[k]
+    print('==',k,'cells=',len(l.split('|'))-2)
+    print('   url_ok:', 'https://' in l or 'http://' in l)
+    d=re.search(r'sha256 ([0-9a-f]{64})',l)
+    print('   row_digest:',d.group(1) if d else None)
+    for mm in re.finditer(r'\((\d+) words[^)]*\)',l): print('   wordcount_claim:',mm.group(0))
+    for mm in re.finditer(r'lines? ([0-9]+(?:-[0-9]+)?(?: and [0-9]+)?)',l): print('   line_claim:',mm.group(0))
+EOF
+== S324 cells= 11
+   url_ok: True
+   row_digest: 346dcf46d3e6ccfe20d269b5b74ca4d21df98c8731c57858808d4c856d0f0349
+   wordcount_claim: (25 words)
+== S325 cells= 11
+   url_ok: True
+   row_digest: 477e0088c987eabd845a81bd38e716959296c2a691b0ae57d9df45e66cb3e9a7
+   wordcount_claim: (21 words)
+   wordcount_claim: (7 words)
+   line_claim: lines 135-137 and 163
+== S326 cells= 11
+   url_ok: True
+   row_digest: 4bfd47c2baad3e68d2765f58909b53993287dd1ef07fdbe4baa6353a772b7b0c
+   wordcount_claim: (25 words)
+rc=0
+
+$ sha256sum .ufo/evidence/round-99/sources/s324.json .ufo/evidence/round-99/sources/s325.html .ufo/evidence/round-99/sources/s326.json; wc -c .ufo/evidence/round-99/sources/s324.json .ufo/evidence/round-99/sources/s325.html .ufo/evidence/round-99/sources/s326.json
+346dcf46d3e6ccfe20d269b5b74ca4d21df98c8731c57858808d4c856d0f0349  .ufo/evidence/round-99/sources/s324.json
+477e0088c987eabd845a81bd38e716959296c2a691b0ae57d9df45e66cb3e9a7  .ufo/evidence/round-99/sources/s325.html
+4bfd47c2baad3e68d2765f58909b53993287dd1ef07fdbe4baa6353a772b7b0c  .ufo/evidence/round-99/sources/s326.json
+ 6409 .ufo/evidence/round-99/sources/s324.json
+27778 .ufo/evidence/round-99/sources/s325.html
+ 4679 .ufo/evidence/round-99/sources/s326.json
+38866 total
+rc=0

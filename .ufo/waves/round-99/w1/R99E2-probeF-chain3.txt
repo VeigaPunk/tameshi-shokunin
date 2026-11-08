@@ -1,0 +1,25 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.o4V8k45emZ --rev c6b97c8e022883a9a6c45cf52bfc0d382dc646b2 --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): alias chain of 3: chains followed to a fixpoint -> counts, class=literal
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/chain3.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+rec = add
+r2 = rec
+r3 = r2
+def main():
+    r3("a-lit", 0, b"", 0)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=c6b97c8e022883a9a6c45cf52bfc0d382dc646b2 driver=driver.py sha256=b05f0b240177468ef5dd979ccfb96c645df98327ab9925df3ddadf589257d919
+CONTROL_ASSERT_SITE line=11 name=a-lit measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=3 ambiguous=0 partial=0 names=add,r2,r3,rec
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+rc=1
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=c6b97c8e022883a9a6c45cf52bfc0d382dc646b2 driver=driver.py sha256=b05f0b240177468ef5dd979ccfb96c645df98327ab9925df3ddadf589257d919
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

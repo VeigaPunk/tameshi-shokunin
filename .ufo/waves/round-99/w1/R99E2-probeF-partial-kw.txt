@@ -1,0 +1,31 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.7HJ1SU15qC --rev 737f1891916b21f9dfdd9f03bca12b55d95dc18d --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): partial(add) and functools.partial(add) with code= keyword: counted, graded unresolved partial-recorder
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/partial-kw.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+from functools import partial
+import functools
+rec = partial(add)
+rec2 = functools.partial(add)
+def main():
+    p = sh(["x"])
+    rec("pk-lit", code=0, body=b"", want=0)
+    rec("pk-meas", code=p.returncode, body=p.stdout, want=1)
+    rec2("pk2-lit", code=0, body=b"", want=0)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=737f1891916b21f9dfdd9f03bca12b55d95dc18d driver=driver.py sha256=ec3363f33e05d0283f43b3654a4f20f645f3d48f9cb754c708979a65b0ce4262
+CONTROL_ASSERT_SITE line=13 name=pk-lit measured=no class=unresolved detail=partial-recorder:rec
+CONTROL_ASSERT_SITE line=14 name=pk-meas measured=no class=unresolved detail=partial-recorder:rec
+CONTROL_ASSERT_SITE line=15 name=pk2-lit measured=no class=unresolved detail=partial-recorder:rec2
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=2 names=add,rec,rec2
+CONTROL_ASSERT sites=3 measured=0 literal=0 unmeasured=3
+rc=1
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=737f1891916b21f9dfdd9f03bca12b55d95dc18d driver=driver.py sha256=ec3363f33e05d0283f43b3654a4f20f645f3d48f9cb754c708979a65b0ce4262
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

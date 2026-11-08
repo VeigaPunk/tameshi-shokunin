@@ -1,0 +1,41 @@
+# seat: R99SC1 (scout) — tameshi round 99 wave w1
+# scratch: /fast/scratch/hyaku/tameshi-r99/R99SC1  (bytes kept in scratch; digests copied here)
+# cwd for repo commands: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# scope: Springer DOI landing page — default UA vs browser UA
+
+$ curl -sSL -D springer.default.headers -o springer.default.html -w 'default_http=%{http_code} bytes=%{size_download}\n' 'https://link.springer.com/article/10.3758/s13428-015-0664-2'; echo rc=$?; curl -sSL -D springer.ua.headers -o springer.ua.html -w 'ua_http=%{http_code} bytes=%{size_download}\n' -A 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36' 'https://link.springer.com/article/10.3758/s13428-015-0664-2'; echo rc=$?; sha256sum springer.default.html springer.ua.html
+default_http=200 bytes=467680
+rc=0
+ua_http=200 bytes=3038
+rc=0
+f57938fba0f05092f39ac7d54fa5c80d6012dae913bfcbf2ac6cc029d9b32f06  springer.default.html
+32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea  springer.ua.html
+rc=0
+
+$ python3 - <<'EOF'
+import re,html
+for f in ('springer.default.html','springer.ua.html'):
+    raw=open(f,encoding='utf-8',errors='replace').read()
+    t=re.search(r'<title>(.*?)</title>',raw,re.S)
+    print(f,'title=',repr(t.group(1)) if t else None)
+    s=re.sub(r'(?is)<script.*?</script>',' ',raw); s=re.sub(r'(?is)<style.*?</style>',' ',s)
+    s=re.sub(r'(?s)<[^>]+>',' ',s); s=html.unescape(s); s=re.sub(r'\s+',' ',s)
+    q='half of all published psychology papers that use NHST'
+    print(f,'quote_present=',q in s)
+    print(f,'js_challenge_markers=',len(re.findall(r'(?i)client challenge|enable javascript|_fs-ch-',raw)))
+EOF
+springer.default.html title= 'The prevalence of statistical reporting errors in psychology (1985–2013) | Behavior Research Methods | Springer Nature Link'
+springer.default.html quote_present= True
+springer.default.html js_challenge_markers= 0
+springer.ua.html title= 'Client Challenge'
+springer.ua.html quote_present= False
+springer.ua.html js_challenge_markers= 7
+rc=0
+
+$ for i in 1 2; do curl -sSL -o springer.d$i.html -w "sp_default_run$i http=%{http_code} bytes=%{size_download}\n" 'https://link.springer.com/article/10.3758/s13428-015-0664-2'; done; sha256sum springer.default.html springer.d1.html springer.d2.html
+sp_default_run1 http=200 bytes=467714
+sp_default_run2 http=200 bytes=467680
+f57938fba0f05092f39ac7d54fa5c80d6012dae913bfcbf2ac6cc029d9b32f06  springer.default.html
+d410039a88295f79410274e562577d3ce7356ee2c0a330f5d68eeced536bc513  springer.d1.html
+443b953f1b38bec02552b9a62fdc33dbee300435a8532b3c7542b3659d97cb98  springer.d2.html
+rc=0

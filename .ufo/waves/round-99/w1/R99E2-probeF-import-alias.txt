@@ -1,0 +1,18 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.eXnVczsuoa --rev 0661bf09a8821455d5ae8f284f34d6dfe04ca379 --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): from x import add as rec, no add def: rec bound only by import (other) and x != recorder; wording: counted only names bound by plain/annotated assignment from recorder -> rec call NOT a site
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/import-alias.py):
+from x import add as rec
+STATES = []
+def main():
+    p = None
+    rec("a-lit", 0, b"", 0)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=0661bf09a8821455d5ae8f284f34d6dfe04ca379 driver=driver.py sha256=5a9d73aa3f35b68918453e56ebcb1b5ca507e1551de1aeaa89623a70666f3e93
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=0661bf09a8821455d5ae8f284f34d6dfe04ca379 driver=driver.py sha256=5a9d73aa3f35b68918453e56ebcb1b5ca507e1551de1aeaa89623a70666f3e93
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

@@ -7,19 +7,35 @@ through a renamed recorder (`rec = add; rec("x", 0, ...)`) is zero-site for thos
 states and passes vacuously (round-98 declared limit; SCORECARD round-98 Planned).
 v2 keeps v1's classification rules byte-for-byte and widens the SITE set only:
 
-  recorder    `add`, plus every name bound anywhere in the module by a plain
-              assignment `name = <recorder>` (fixpoint over chains `r2 = r1 = add`).
-  ambiguous   a recorder alias that has any other binding anywhere in the module
-              (another assignment, a def, an argument, a loop/with/except target,
-              an import, an augmented assignment): its call sites are counted and
+  binding     a plain or annotated assignment `n = <value>`, a walrus `(n := <value>)`,
+              and each element of an equal-length tuple/list assignment without a
+              starred element (`n, x = <value>, 1`); a conditional value `a if c else b`
+              of two names binds n from both (R99E2). Every other way a name is bound
+              (augmented assignment, `del`, def/class, argument, for/comprehension,
+              with/except target, import, match capture, starred element, a value-less
+              annotation) is an OTHER binding.
+  recorder    `add`, plus every name with a binding whose value is a recorder name
+              (fixpoint over chains `r2 = r1 = add`).
+  partial     a name with a binding whose value is `partial(<recorder or partial>, ...)`
+              spelled `partial`, `functools.partial`, or an import alias of either
+              (`from functools import partial as p`, `import functools as f`), or
+              whose value is a partial name: its call sites are counted and graded
+              `unresolved` / `partial-recorder` (argument positions shift).
+  ambiguous   a recorder alias or partial with any OTHER binding, any binding from a
+              non-recorder value, both alias and partial bindings, or a binding from an
+              ambiguous name (propagated to a fixpoint): its call sites are counted and
               graded `unresolved` / `ambiguous-recorder`.
-  partial     a name bound by `partial(<recorder>, ...)` or
-              `functools.partial(<recorder>, ...)`: its call sites are counted and
-              graded `unresolved` / `partial-recorder` (argument positions shift).
+  (Round-99 amendment A1 repaired walrus, tuple, `del`, match-capture, alias-of-
+  ambiguous, alias-of-partial and partial-import-alias spellings from R99R2/R99M1.)
 
 Not sites (declared limits): attribute calls (`c.add(...)`, `self.rec(...)`),
 `getattr`/`globals()`/dict dispatch, wrappers that forward to `add` inside a def or
-lambda body, and a recorder passed as an argument and called under another name.
+lambda body, a recorder passed as an argument and called under another name, a name
+bound from a recorder only by a match capture or starred unpacking (not a recorder),
+a source-less cycle `a = b; b = a` (not a recorder), and `global`/`nonlocal`
+declarations (not bindings). The base name `add` is always a recorder: rebinding it
+(`add = print`) is not detected, exactly as in v1. Alias detection is module-wide and
+scope-insensitive (conservative).
 
 v2 prints one extra line, `CONTROL_ASSERT_RECORDERS aliases=<n> ambiguous=<n>
 partial=<n> names=<comma list>`, before the unchanged summary line.
@@ -250,30 +266,81 @@ def _target_names(node):
     return [n.id for n in ast.walk(node) if isinstance(n, ast.Name)]
 
 
+def _partial_spellings(tree):
+    """`partial`/`functools.partial` plus the import aliases this module gives them (R99R2 S8)."""
+    names = set(PARTIALS)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module == "functools":
+            for al in node.names:
+                if al.name == "partial":
+                    names.add(al.asname or al.name)
+        elif isinstance(node, ast.Import):
+            for al in node.names:
+                if al.name == "functools":
+                    names.add((al.asname or al.name) + ".partial")
+    return names
+
+
 def recorder_names(tree):
-    """Returns (aliases, ambiguous, partials): name sets beyond `add` that record states."""
+    """Returns (aliases, ambiguous, partials): name sets beyond `add` that record states.
+
+    Round-99 repair (amendment A1, from R99R2): a walrus `(n := r)` and an element of an
+    equal-length tuple/list assignment `n, x = r, 1` bind like a plain assignment; `del`,
+    match captures and starred targets are other bindings; an alias or partial of an
+    ambiguous name is ambiguous; an alias of a partial is a partial; import aliases of
+    `functools.partial` are recognised."""
     binds = {}
+    partial_calls = _partial_spellings(tree)
 
     def bind(name, kind):
         binds.setdefault(name, []).append(kind)
 
+    def bind_value(tgt, value):
+        if isinstance(value, ast.NamedExpr):
+            value = value.value
+        if (isinstance(tgt, ast.Name) and isinstance(value, ast.IfExp)
+                and isinstance(value.body, ast.Name) and isinstance(value.orelse, ast.Name)):
+            # R99E2: `n = a if c else b` binds n from both names (clean only if both record)
+            bind(tgt.id, ("alias", value.body.id))
+            bind(tgt.id, ("alias", value.orelse.id))
+            return
+        if isinstance(tgt, ast.Name):
+            if isinstance(value, ast.Name):
+                bind(tgt.id, ("alias", value.id))
+            elif (isinstance(value, ast.Call) and call_name(value) in partial_calls
+                  and value.args and isinstance(value.args[0], ast.Name)):
+                bind(tgt.id, ("partial", value.args[0].id))
+            else:
+                bind(tgt.id, ("other", None))
+            return
+        if (isinstance(tgt, (ast.Tuple, ast.List)) and isinstance(value, (ast.Tuple, ast.List))
+                and len(tgt.elts) == len(value.elts)
+                and not any(isinstance(e, ast.Starred) for e in list(tgt.elts) + list(value.elts))):
+            for t, v in zip(tgt.elts, value.elts):
+                bind_value(t, v)
+            return
+        for n in _target_names(tgt):
+            bind(n, ("other", None))
+
     for node in ast.walk(tree):
-        if isinstance(node, (ast.Assign, ast.AnnAssign)):
-            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
-            value = node.value
-            for tgt in targets:
-                if isinstance(tgt, ast.Name) and isinstance(value, ast.Name):
-                    bind(tgt.id, ("alias", value.id))
-                elif (isinstance(tgt, ast.Name) and isinstance(value, ast.Call)
-                      and call_name(value) in PARTIALS and value.args
-                      and isinstance(value.args[0], ast.Name)):
-                    bind(tgt.id, ("partial", value.args[0].id))
-                else:
-                    for n in _target_names(tgt):
-                        bind(n, ("other", None))
+        if isinstance(node, ast.Assign):
+            for tgt in node.targets:
+                bind_value(tgt, node.value)
+        elif isinstance(node, ast.AnnAssign):
+            if node.value is None:
+                for n in _target_names(node.target):
+                    bind(n, ("other", None))
+            else:
+                bind_value(node.target, node.value)
+        elif isinstance(node, ast.NamedExpr):
+            bind_value(node.target, node.value)
         elif isinstance(node, ast.AugAssign):
             for n in _target_names(node.target):
                 bind(n, ("other", None))
+        elif isinstance(node, ast.Delete):
+            for t in node.targets:
+                for n in _target_names(t):
+                    bind(n, ("other", None))
         elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             bind(node.name, ("other", None))
         elif isinstance(node, ast.arg):
@@ -289,8 +356,10 @@ def recorder_names(tree):
         elif isinstance(node, (ast.Import, ast.ImportFrom)):
             for al in node.names:
                 bind((al.asname or al.name).split(".")[0], ("other", None))
-        elif isinstance(node, ast.NamedExpr):
-            bind(node.target.id, ("other", None))
+        elif isinstance(node, (ast.MatchAs, ast.MatchStar)) and node.name:
+            bind(node.name, ("other", None))
+        elif isinstance(node, ast.MatchMapping) and node.rest:
+            bind(node.rest, ("other", None))
     rec = {"add"}
     aliases, partials = set(), set()
     changed = True
@@ -304,16 +373,25 @@ def recorder_names(tree):
                     aliases.add(name)
                     rec.add(name)
                     changed = True
-                elif kind == "partial" and src in rec and name not in partials:
+                elif ((kind == "alias" and src in partials) or (kind == "partial" and (src in rec or src in partials))) \
+                        and name not in partials:
                     partials.add(name)
                     changed = True
     ambiguous = set()
     for name in aliases | partials:
         kinds = binds.get(name, [])
         clean_alias = all(k == "alias" and s in rec for k, s in kinds)
-        clean_partial = all(k == "partial" and s in rec for k, s in kinds)
+        clean_partial = all(k in ("alias", "partial") and (s in rec or s in partials) for k, s in kinds) \
+            and name not in aliases
         if name in aliases and name in partials or not (clean_alias or clean_partial):
             ambiguous.add(name)
+    changed = True
+    while changed:
+        changed = False
+        for name in (aliases | partials) - ambiguous:
+            if any(s in ambiguous for k, s in binds.get(name, []) if k in ("alias", "partial")):
+                ambiguous.add(name)
+                changed = True
     return aliases - ambiguous, ambiguous, partials - ambiguous
 
 
@@ -421,6 +499,24 @@ SELFTEST_CASES = [
     ("annotated-alias-literal", 'rec: object = add\ndef main():\n    rec("x", 0, "b", 0)\n', "literal"),
     ("non-recorder-name-not-a-site", 'rec = print\ndef main():\n    rec("x", 0, "b", 0)\n    add("y", 0, "b", 0)\n',
      "literal"),
+    # round-99 amendment A1 arms (R99R2 S5-S8, R99M1 v10/v11 survivors)
+    ("walrus-alias-literal", 'def main():\n    (rec := add)\n    rec("x", 0, "b", 0)\n', "literal"),
+    ("tuple-alias-literal", 'def main():\n    rec, other = add, 1\n    rec("x", 0, "b", 0)\n', "literal"),
+    ("del-makes-ambiguous", 'rec = add\ndef main():\n    rec("x", 0, "b", 0)\ndel rec\n', "unresolved"),
+    ("alias-of-ambiguous", 'rec = add\nrec = print\nr2 = rec\ndef main():\n    r2("x", 0, "b", 0)\n',
+     "unresolved"),
+    ("alias-of-partial", 'import functools\nprec = functools.partial(add, "x")\nr2 = prec\ndef main():\n    r2(0, "b", 0)\n',
+     "unresolved"),
+    ("partial-import-as", 'from functools import partial as p\nrec = p(add, "x")\ndef main():\n    rec(0, "b", 0)\n',
+     "unresolved"),
+    ("with-target-ambiguous", 'rec = add\ndef main():\n    with open("f") as rec:\n        pass\n    rec("x", 0, "b", 0)\n',
+     "unresolved"),
+    ("augassign-alias-ambiguous", 'rec = add\ndef main():\n    rec += 1\n    rec("x", 0, "b", 0)\n', "unresolved"),
+    ("match-capture-ambiguous", 'rec = add\ndef main(v):\n    match v:\n        case rec:\n            pass\n    rec("x", 0, "b", 0)\n',
+     "unresolved"),
+    ("ifexp-alias-literal", 'def main(c):\n    rec = add if c else add\n    rec("x", 0, "b", 0)\n', "literal"),
+    ("ifexp-mixed-ambiguous", 'def main(c):\n    rec = add if c else print\n    rec("x", 0, "b", 0)\n',
+     "unresolved"),
 ]
 
 CASE = {name: text for name, text, _ in SELFTEST_CASES}
@@ -469,6 +565,10 @@ def main():
     ap.add_argument("--driver", default=DRIVER)
     ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
+    # Round-99 A10 (R99SN1 F2): without -I a hostile PYTHONPATH can replace subprocess/re.
+    if not sys.flags.isolated:
+        print("AUDIT_USAGE run as python3 -I (isolated mode is required)")
+        sys.exit(64)
     if a.selftest:
         sys.exit(selftest())
     if not a.repo or not a.rev:

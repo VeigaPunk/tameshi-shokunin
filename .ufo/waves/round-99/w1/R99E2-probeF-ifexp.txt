@@ -1,0 +1,23 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.P3A4yOLP8B --rev bdd811e37a97d5fc7bb49e9e1483904d0cf02e1e --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): rec = add if cond else add: value is IfExp not Name -> other binding; wording: not plain assignment from recorder -> NOT a site (or ambiguous if it were counted)
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/ifexp.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+import sys
+rec = add if sys.argv else add
+def main():
+    rec("a-lit", 0, b"", 0)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=bdd811e37a97d5fc7bb49e9e1483904d0cf02e1e driver=driver.py sha256=36a9a28a81146643bc7a45aca0cb80d78f6d6731f0cf9db706a1197ba6014584
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=bdd811e37a97d5fc7bb49e9e1483904d0cf02e1e driver=driver.py sha256=36a9a28a81146643bc7a45aca0cb80d78f6d6731f0cf9db706a1197ba6014584
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

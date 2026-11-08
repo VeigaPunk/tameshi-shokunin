@@ -1,0 +1,24 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.1d4sMKaioe --rev 3c121c2cac7b39f900e2610a1517ec7e551b5eb2 --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): rec=add then rec=print: name with other binding -> counted and graded unresolved ambiguous-recorder (kill-c test)
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/rebound.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+rec = add
+rec = print
+def main():
+    rec("a-lit", 0, b"", 0)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=3c121c2cac7b39f900e2610a1517ec7e551b5eb2 driver=driver.py sha256=4ad107202a4c221c3f63e3033822f21ac459e4638cd5ac13af5ef57832c7b612
+CONTROL_ASSERT_SITE line=10 name=a-lit measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+rc=1
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=3c121c2cac7b39f900e2610a1517ec7e551b5eb2 driver=driver.py sha256=4ad107202a4c221c3f63e3033822f21ac459e4638cd5ac13af5ef57832c7b612
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

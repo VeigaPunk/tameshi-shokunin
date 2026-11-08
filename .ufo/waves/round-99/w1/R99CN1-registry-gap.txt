@@ -1,0 +1,78 @@
+# seat: R99CN1 (connector) — item 3: rows/statements a new instrument must update
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+
+$ grep -n "control-assertion\|tally-reconcile\|TALLY_RECONCILE\|CONTROL_ASSERT_RECORDERS" tools/registry.json SKILL.md corpus/QUALITY.md
+rc=1
+
+$ python3 -c "row count + names of the audit/tally family in tools/registry.json"
+schema=tameshi-entry-registry-v1 rows=86
+names containing audit/reconcile/tally: ['wave-reconcile-selftest', 'wave-reconcile-mutants']
+rc=0
+
+$ grep -n "^### Gate/probe registry\|^## Gate registry" SKILL.md
+1541:### Gate/probe registry
+2216:### Gate/probe registry — round 76 (r74 closure defect 4 / r75 spotcheck §6 item 5 paid)
+2225:### Gate/probe registry — round 80 (r79 closure defect 5 paid)
+2241:### Gate/probe registry — round 81 (round-80 closure defects D1–D6 paid)
+2258:### Gate/probe registry — round 82 (r81 closure §6 items 1 and 6 paid)
+2273:### Gate/probe registry — round 83 (R82 closure §2.3/§6 and the R82 plan's round-83 carry paid)
+2294:### Gate/probe registry — round 84
+2307:### Gate/probe registry — round 85
+2360:## Gate registry — round 90 (retained instrument: ledger witness)
+rc=0
+
+$ sed -n "2360,2365p" SKILL.md   (the round-90 registry section's own statement of the R-4 class)
+## Gate registry — round 90 (retained instrument: ledger witness)
+
+Appended; earlier registry tables are unchanged. `tools/ledger-witness.py` (round 89) is a
+retained instrument that had no registry row (round-89 closure §6 item 4, the R-4 class).
+Its capability is **not admitted**: R89-C1 was killed by its own rule (T89E2 alias runners).
+The row records how to run it and what it cannot see; it certifies nothing.
+
+$ sed -n "1556,1566p" corpus/QUALITY.md   (criterion 103 — the rule the spec calls the ~1564 criterion)
+Lesson: `corpus/lessons/round-51.md` `## Mistakes` row 1. The kagi `drift-pins.sh` K_GONE_ARM / K_AMBIG_GT / K_SHAPE_OPTIN mutants survive under `sandbox-$DEFECT_ID` but are killed under neutral names; the committed red/green scripts and 3-repeat results are in `.ufo/waves/round-51/w1/T51LabSandboxLeak/`.
+
+Falsifier that must fail: `.ufo/waves/round-51/w1/T51LabSandboxLeak/red-gone-id.sh` exits 0 (`DRIFT_SELFTEST: PASS (13 cases)`) while `green-gone-neutral.sh` exits 1 (`no /GONE/ in output`); the paired check must report `DIFF`, not accept the recorded kill-rate. The same one-variable result holds for K_AMBIG_GT and K_SHAPE_OPTIN; K_MODE_CMP and K_COUNT_GE are negative controls that stay killed. Evidence: `.ufo/waves/round-51/w1/T51LabSandboxLeak.md:52-60,72-93`.
+
+## Criteria appended — round 52 (2026-10-27)
+
+### Criterion 103 — a tool change lands with its registered gate row and its SKILL statements
+
+A round that changes a lane tool's observable output (a leg count, a tally, a printed verdict line) changes, in the same content revision, every `tools/registry.json` row whose expectation pins that output and every SKILL.md statement that restates it; a row is superseded only by an active successor that is replayed. A scope monitor that allows the tool change does not allow the stale row.
+
+Check that can fail: at the candidate revision run `python3 tools/registry-check.py --rev REV` over every active row (it clones into a fleet mirror built from `--root`'s parent, so run it from the lane checkout or a clone that sits in a fleet mirror) and require `REGISTRY_CHECK: held=N/N`; for counted panels compare the tool's own table (for `tools/mte-interop.py`, `len(LEG_TABLE)`) with every "<count> ledger legs" and `(K/K)` statement of SKILL.md. Round 52's frozen counter `.ufo/evidence/round-52/c1/measure.py` is the operative form.
+
+$ grep -n "registry row" tools/registry-check.py tools/registry-figure-bind.py | head -4
+tools/registry-check.py:293:                f"rows[{i}].superseded_by {target!r} names no registry row"
+tools/registry-check.py:649:    """Execute one registry row; optionally retain complete streams for replay."""
+tools/registry-check.py:872:            report["error"] = f"--only {only!r} matches no registry row"
+tools/registry-check.py:882:                f"--tag {sorted(wanted)!r} selects no registry row"
+rc=0
+
+# reading: registry-check.py replays only rows present in tools/registry.json;
+# registry-figure-bind.py binds only rows named in tools/registry-figure-bind.json (9 rows).
+# Neither new instrument has a row or a SKILL statement, so neither printed tally is bound by a gate.
+
+# --- QUALITY criterion 177 names the round-98 audit and its arms (the rule text a successor must update)
+$ grep -n "^177\. " corpus/QUALITY.md
+2805:177. A control's graded code is **measurement-derived**: the value a control driver
+$ sed -n "2805,2819p" corpus/QUALITY.md
+177. A control's graded code is **measurement-derived**: the value a control driver
+    compares against its expectation is the process result the state claims to run,
+    never a constant typed beside it. A driver is conforming only when every
+    `add(...)` site's recorded code resolves to a runner call (`sh`, `git`, `run`,
+    `subprocess.run`); a constant, a constant bound through a name, a loop variable,
+    or a `returncode` attribute on a non-runner value is unmeasured. Able to fail:
+    the round-97 driver at `d32043ec` prints `CONTROL_ASSERT sites=15 measured=14
+    literal=1 unmeasured=1` exit 1 and names line 156 (`c2-nowork-absent`, whose
+    committed receipt carries outer `rc=0` while the wrapped `git grep` returns 1),
+    while the repaired driver prints `sites=15 measured=15 literal=0 unmeasured=0`
+    exit 0; the audit's eighteen selftest arms include a literal-through-a-name, a
+    nested-scope shadow, a `returncode` reassignment, an augmented assignment and a
+    duplicate `add` definition (`--selftest` 18/18). The rule is the repaired v3
+    instrument (round-98 A5): every pre-call assignment in the call's scope chain must
+    be measured; a call spelled `run` may still be a stub, which the limits declare. (`lessons/round-98.md`; round-97
+
+$ grep -n "eighteen selftest arms\|repaired v3 instrument" corpus/QUALITY.md
+2815:    exit 0; the audit's eighteen selftest arms include a literal-through-a-name, a
+rc=0

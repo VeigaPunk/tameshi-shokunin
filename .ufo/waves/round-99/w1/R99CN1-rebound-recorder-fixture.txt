@@ -1,0 +1,53 @@
+# seat: R99CN1 (connector) — measured edge: a rebound base recorder vs a rebound alias
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin   (fixture repo lives under /fast/scratch/hyaku/tameshi-r99/R99CN1; lane repo is read-only)
+
+$ D=$(mktemp -d -p $TMPDIR fx.XXXX); git -C "$D" init -q
+toplevel=/fast/scratch/hyaku/tameshi-r99/R99CN1/fx.LWcF
+D=/fast/scratch/hyaku/tameshi-r99/R99CN1/fx.LWcF
+$ test "$(git -C "$D" rev-parse --show-toplevel)" = "$D"
+rc=0
+
+$ (fixtures written: f1 rebound base recorder, f2 control, f3 rebound alias)
+commit=042bbfd7f127e6d38211787191b03185f61d3c69
+
+$ python3 -I tools/control-assertion-audit.py --repo "$D" --rev $C --driver drv/f1.py
+CONTROL_ASSERT_DRIVER rev=042bbfd7f127e6d38211787191b03185f61d3c69 driver=drv/f1.py sha256=cbfc0e1d6b5d310259bc35c82d17540216ce165d9c7a94587f0500cec79b3d23
+CONTROL_ASSERT_SITE line=8 name=rebound-add-measured measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+rc=0
+
+$ python3 -I tools/control-assertion-audit-v2.py --repo "$D" --rev $C --driver drv/f1.py
+CONTROL_ASSERT_DRIVER rev=042bbfd7f127e6d38211787191b03185f61d3c69 driver=drv/f1.py sha256=cbfc0e1d6b5d310259bc35c82d17540216ce165d9c7a94587f0500cec79b3d23
+CONTROL_ASSERT_SITE line=8 name=rebound-add-measured measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+rc=0
+
+$ python3 -I tools/control-assertion-audit.py --repo "$D" --rev $C --driver drv/f2.py
+CONTROL_ASSERT_DRIVER rev=042bbfd7f127e6d38211787191b03185f61d3c69 driver=drv/f2.py sha256=1ccd9a171addd1d0da41983a85868dfb66ce331b0fd6e8cf606d3826a8479aa7
+CONTROL_ASSERT_SITE line=7 name=clean-add-measured measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+rc=0
+
+$ python3 -I tools/control-assertion-audit-v2.py --repo "$D" --rev $C --driver drv/f2.py
+CONTROL_ASSERT_DRIVER rev=042bbfd7f127e6d38211787191b03185f61d3c69 driver=drv/f2.py sha256=1ccd9a171addd1d0da41983a85868dfb66ce331b0fd6e8cf606d3826a8479aa7
+CONTROL_ASSERT_SITE line=7 name=clean-add-measured measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+rc=0
+
+$ python3 -I tools/control-assertion-audit.py --repo "$D" --rev $C --driver drv/f3.py
+CONTROL_ASSERT_DRIVER rev=042bbfd7f127e6d38211787191b03185f61d3c69 driver=drv/f3.py sha256=f565edd1cae9db9f4150810ca279a7e293a3eb83fba7d1d01ef42015552e8056
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0
+
+$ python3 -I tools/control-assertion-audit-v2.py --repo "$D" --rev $C --driver drv/f3.py
+CONTROL_ASSERT_DRIVER rev=042bbfd7f127e6d38211787191b03185f61d3c69 driver=drv/f3.py sha256=f565edd1cae9db9f4150810ca279a7e293a3eb83fba7d1d01ef42015552e8056
+CONTROL_ASSERT_SITE line=9 name=rebound-alias-measured measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+rc=1
+
+# reading: f1 (add -> print) is graded measured, exit 0, exactly as the unreduced control f2;
+# f3 (rec = add; rec = print) is ambiguous-recorder, exit 1. recorder_names() skips name=='add'
+# (tools/control-assertion-audit-v2.py:300-301), so the base recorder never enters the ambiguity set.

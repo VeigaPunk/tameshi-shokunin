@@ -1,0 +1,80 @@
+# cmd: for each of 19 uncited tallies (record:line claimed token/NM), read record line at REV, grep same round dirs for TOKEN:N/M pass; count confirming
+REV=ab598d03da34bbaffc35010b4e0f7c33ed0a18ae
+TALLY uncited plans/round-93.plan.md:126 token DISPOSITION_SELFTEST claimed=6/6 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-94.plan.md:165 token DISPOSITION_SELFTEST claimed=8/8 receipt=- observed=- detail=no-citation
+TALLY uncited corpus/lessons/round-95.md:29 token DISPOSITION_SELFTEST claimed=8/8 receipt=- observed=- detail=no-citation
+TALLY uncited corpus/lessons/round-95.md:33 token DISPOSITION_SELFTEST claimed=9/9 receipt=- observed=- detail=no-citation
+TALLY uncited corpus/lessons/round-95.md:37 token DISPOSITION_SELFTEST claimed=8/8 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-95.plan.md:86 token DISPOSITION_SELFTEST claimed=11/11 receipt=- observed=- detail=no-citation
+TALLY uncited corpus/lessons/round-96.md:82 token DISPOSITION_SELFTEST claimed=13/13 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-96.plan.md:57 token DISPOSITION_SELFTEST claimed=13/13 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-96.plan.md:163 token DISPOSITION_SELFTEST claimed=13/13 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-97.plan.md:108 selftest - claimed=7/7 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-97.plan.md:139 token BATTERY_SELFTEST claimed=7/7 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-97.plan.md:144 token GUARD_INERTIA_SELFTEST claimed=7/7 receipt=- observed=- detail=no-citation
+TALLY uncited corpus/lessons/round-98.md:73 selftest - claimed=10/10 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-98.plan.md:68 token CONTROL_ASSERT_SELFTEST claimed=18/18 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-98.plan.md:77 selftest - claimed=18/18 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-98.plan.md:134 token GUARD_REFUSALS_SELFTEST claimed=9/9 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-98.plan.md:177 token CONTROL_ASSERT_SELFTEST claimed=12/12 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-98.plan.md:182 token GUARD_REFUSALS_SELFTEST claimed=9/9 receipt=- observed=- detail=no-citation
+TALLY uncited plans/round-98.plan.md:185 token REGISTRY_IMMUTABLE_SELFTEST claimed=10/10 receipt=- observed=- detail=no-citation
+
+# Detailed per-uncited probe: show line text and search receipts
+=== plans/round-93.plan.md:126 token=DISPOSITION_SELFTEST claimed=6/6 round=93 ===
+(line 126)
+    DISPOSITION_SELFTEST: 6/6 pass                                     (exit 0)
+=== plans/round-94.plan.md:165 token=DISPOSITION_SELFTEST claimed=8/8 round=94 ===
+(line 165)
+    DISPOSITION_SELFTEST: 8/8 pass                                     (exit 0)
+=== corpus/lessons/round-95.md:29 token=DISPOSITION_SELFTEST claimed=8/8 round=95 ===
+(line 29)
+The frozen round-94 record says `DISPOSITION_SELFTEST: 8/8 pass` in three places —
+=== corpus/lessons/round-95.md:33 token=DISPOSITION_SELFTEST claimed=9/9 round=95 ===
+(line 33)
+`DISPOSITION_SELFTEST: 9/9 pass` (rev 2 added the `a4-prose-state-word-cheat` case; rev 3
+=== corpus/lessons/round-95.md:37 token=DISPOSITION_SELFTEST claimed=8/8 round=95 ===
+(line 37)
+This paragraph is the erratum: the superseded sentence is `DISPOSITION_SELFTEST: 8/8 pass`
+=== plans/round-95.plan.md:86 token=DISPOSITION_SELFTEST claimed=11/11 round=95 ===
+(line 86)
+  named findings; the selftest prints `DISPOSITION_SELFTEST: 11/11 pass`; the 50 committed
+=== corpus/lessons/round-96.md:82 token=DISPOSITION_SELFTEST claimed=13/13 round=96 ===
+(line 82)
+  `DISPOSITION_SELFTEST: 13/13 pass` exit 0, including
+=== plans/round-96.plan.md:57 token=DISPOSITION_SELFTEST claimed=13/13 round=96 ===
+(line 57)
+  `DISPOSITION_SELFTEST: 13/13 pass` (2 new cases: hostile-PATH, branch-revspec).
+=== plans/round-96.plan.md:163 token=DISPOSITION_SELFTEST claimed=13/13 round=96 ===
+(line 163)
+| A5 | `w1/R96C1.md` C1.8 | "`DISPOSITION_SELFTEST: 13/13 pass` (2 new cases)" with kill rule (c) | the two new cases passed on a clean fixture without exercising anything. Repaired: `hostile-path-cheat` runs the real main path under a poisoned `PATH` and requires a verdict identical to the honest run; `branch-revspec-cheat` runs the real main path with `--rev master` and requires exit 2 `rev-not-a-commit-id`. Both now fail if the seal or the guard is removed. |
+=== plans/round-97.plan.md:108 token=- claimed=7/7 round=97 ===
+(line 108)
+- **After:** the line above at R, exit 0; the selftest 7/7; a manifest whose killed row is
+=== plans/round-97.plan.md:139 token=BATTERY_SELFTEST claimed=7/7 round=97 ===
+(line 139)
+| `c1-selftest` | the shipped battery | `BATTERY_SELFTEST: 7/7 pass` |
+=== plans/round-97.plan.md:144 token=GUARD_INERTIA_SELFTEST claimed=7/7 round=97 ===
+(line 144)
+| `c2-selftest` | the shipped matrix | `GUARD_INERTIA_SELFTEST: 7/7 pass` |
+=== corpus/lessons/round-98.md:73 token=- claimed=10/10 round=98 ===
+(line 73)
+| M3 | **append-only violation in the registry** (mined from round 97): the `anchor` cells of S006 and S159 gained round-97 re-open text in place. `CORPUS.md` rule 2 allows only `status`/`recheck`/`used-by` to change. | `git diff --numstat 0b19af5f..29734beb -- corpus/SOURCES.md` → `2 2 corpus/SOURCES.md`; the census passes (it checks shape, not cell mutability). | the non-author spot-check (D-1) — no lane instrument compared cells between revisions. | `tools/registry-cell-immutability.py`: the live red pair prints the two `anchor` findings (`changed=2`, exit 1), the green pair over `29734beb..d32043ec` prints `changed=0 removed=0 added=0` (exit 0), and the selftest is 10/10 including an indented-row arm. |
+=== plans/round-98.plan.md:68 token=CONTROL_ASSERT_SELFTEST claimed=18/18 round=98 ===
+(line 68)
+  `python3 -I tools/control-assertion-audit.py --selftest` → `CONTROL_ASSERT_SELFTEST: 18/18 pass`.
+=== plans/round-98.plan.md:77 token=- claimed=18/18 round=98 ===
+(line 77)
+- **After:** the two audit lines and exits, the selftest tally (`18/18`), and
+=== plans/round-98.plan.md:134 token=GUARD_REFUSALS_SELFTEST claimed=9/9 round=98 ===
+(line 134)
+  `GUARD_REFUSALS_SELFTEST: 9/9 pass`.
+=== plans/round-98.plan.md:177 token=CONTROL_ASSERT_SELFTEST claimed=12/12 round=98 ===
+(line 177)
+| `c1-audit-selftest` | the audit's 12 fixture arms at the freeze; the repaired audit's 18 arms at the records revision (A5) | `CONTROL_ASSERT_SELFTEST: 12/12 pass` at `d32043ec`; `18/18 pass` at R |
+=== plans/round-98.plan.md:182 token=GUARD_REFUSALS_SELFTEST claimed=9/9 round=98 ===
+(line 182)
+| `c2-refusals-selftest` | the battery's nine grading arms | `GUARD_REFUSALS_SELFTEST: 9/9 pass`, rc 0 |
+=== plans/round-98.plan.md:185 token=REGISTRY_IMMUTABLE_SELFTEST claimed=10/10 round=98 ===
+(line 185)
+| `registry-selftest` | the registry audit's ten arms | `REGISTRY_IMMUTABLE_SELFTEST: 10/10 pass`, rc 0 |

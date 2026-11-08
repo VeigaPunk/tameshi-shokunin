@@ -1,0 +1,22 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.MMPLk2TF1l --rev 29d9bbc3584253a2f5de83f0c3d58b3dda4054d3 --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): (rec := add): NamedExpr is not a plain/annotated assignment -> other binding -> NOT a site; if counted as clean alias literal that is kill-c
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/walrus.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+def main():
+    (rec := add)
+    rec("a-lit", 0, b"", 0)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=29d9bbc3584253a2f5de83f0c3d58b3dda4054d3 driver=driver.py sha256=5e5e2e29987fb576d71c117be19d5559e437bc45ece64d4edda541f60d47ec12
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=29d9bbc3584253a2f5de83f0c3d58b3dda4054d3 driver=driver.py sha256=5e5e2e29987fb576d71c117be19d5559e437bc45ece64d4edda541f60d47ec12
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

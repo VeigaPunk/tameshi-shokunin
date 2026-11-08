@@ -1,0 +1,51 @@
+# seat: R99SC1 (scout) — tameshi round 99 wave w1
+# scratch: /fast/scratch/hyaku/tameshi-r99/R99SC1  (bytes kept in scratch; digests copied here)
+# cwd for repo commands: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# scope: SOURCES census — before (at instruments) and after (working tree, with the round-99 rows S324/S325/S326)
+# note: the committed .ufo/waves/round-99/census-before.txt is the output of `validate` mode (E/W code lines + an 'ok' line + exit=)
+
+$ timeout 300 /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census /home/vgpnk/Projects/shokunin/tameshi-shokunin --out /fast/scratch/hyaku/tameshi-r99/R99SC1/census-before.tsv; echo census_rc=$?; cat /fast/scratch/hyaku/tameshi-r99/R99SC1/census-before.tsv
+census_rc=0
+tameshi-shokunin	rows	186
+tameshi-shokunin	tier.A	168
+tameshi-shokunin	tier.B	14
+tameshi-shokunin	tier.C	4
+tameshi-shokunin	status.mined	151
+tameshi-shokunin	status.queued	23
+tameshi-shokunin	status.rejected	12
+FLEET	rows	186
+FLEET	tier.A	168
+FLEET	tier.B	14
+FLEET	tier.C	4
+FLEET	tier.invalid	0
+FLEET	status.queued	23
+FLEET	status.mined	151
+FLEET	status.rejected	12
+FLEET	status.invalid	0
+FLEET	missing	0
+rc=0
+
+$ timeout 300 /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi --out /fast/scratch/hyaku/tameshi-r99/R99SC1/census-validate.tsv; echo validate_rc=$?; grep -P '\tE[0-9]{2}\t' /fast/scratch/hyaku/tameshi-r99/R99SC1/census-validate.tsv; echo grep_rc=$?
+validate_rc=1
+tameshi	E11	S324 missing used-by corpus/lessons/round-99.md
+tameshi	E11	S325 missing used-by corpus/lessons/round-99.md
+grep_rc=0
+rc=0
+
+$ timeout 300 /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi --out /fast/scratch/hyaku/tameshi-r99/R99SC1/census-repro.tsv; echo repro_rc=$?; diff <(git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 466510515d02759427158a9b16e9daa889d44907:.ufo/waves/round-99/census-before.txt | grep -v '^exit=') /fast/scratch/hyaku/tameshi-r99/R99SC1/census-repro.tsv; echo diff_rc=$?
+repro_rc=1
+23c23,24
+< tameshi	ok	/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
+---
+> tameshi	E11	S324 missing used-by corpus/lessons/round-99.md
+> tameshi	E11	S325 missing used-by corpus/lessons/round-99.md
+diff_rc=1
+rc=0
+
+$ ls -la /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-99.md 2>&1; echo ls_rc=$?; mkdir -p /fast/scratch/hyaku/tameshi-r99/R99SC1/shadow/corpus && cp /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md /fast/scratch/hyaku/tameshi-r99/R99SC1/shadow/corpus/SOURCES.md && cp -r /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/knowledge /fast/scratch/hyaku/tameshi-r99/R99SC1/shadow/corpus/knowledge && cp -r /home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons /fast/scratch/hyaku/tameshi-r99/R99SC1/shadow/corpus/lessons && cp -r /home/vgpnk/Projects/shokunin/tameshi-shokunin/tools /fast/scratch/hyaku/tameshi-r99/R99SC1/shadow/tools && printf 'placeholder lesson\n' > /fast/scratch/hyaku/tameshi-r99/R99SC1/shadow/corpus/lessons/round-99.md && timeout 300 /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /fast/scratch/hyaku/tameshi-r99/R99SC1/shadow/corpus/SOURCES.md --out /fast/scratch/hyaku/tameshi-r99/R99SC1/census-shadow.tsv; echo shadow_validate_rc=$?; grep -cP '\tE[0-9]{2}\t' /fast/scratch/hyaku/tameshi-r99/R99SC1/census-shadow.tsv; echo grep_rc=$?
+ls: cannot access '/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/lessons/round-99.md': No such file or directory
+ls_rc=2
+shadow_validate_rc=0
+0
+grep_rc=1
+rc=0

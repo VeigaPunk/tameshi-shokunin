@@ -1,0 +1,20 @@
+# cmd: PYTHONPATH=<hostile dir with a delegating fake `re`> python3 (WITHOUT -I) tools/tally-reconcile.py
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# the fake neuters findall -> ZERO tallies found -> the round-94 mismatch VANISHES SILENTLY
+# ---- output (no -I, injected re) ----
+  File "<frozen importlib._bootstrap_external>", line 896, in get_code
+  File "<frozen importlib._bootstrap_external>", line 954, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/lib/python3.14/re.py'
+# exit: 1
+# ---- same with -I (the frozen invocation form) ----
+TALLY mismatched corpus/lessons/round-94.md:66 token DISPOSITION_SELFTEST claimed=8/8 receipt=.ufo/evidence/round-94/pre-freeze/c2-selftest.out observed=9/9 detail=differs
+TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=0 mismatched=1 unbound=0 uncited=0
+# exit: 1
+# ---- injected re against the TWELVE records (does the frozen number survive?) ----
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/lib/python3.14/re.py'
+# exit: 1
+# ---- injected re against C2 v2 (does sites=4 survive?) ----
+  File "<frozen importlib._bootstrap_external>", line 896, in get_code
+  File "<frozen importlib._bootstrap_external>", line 954, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/lib/python3.14/re.py'
+# exit: 1

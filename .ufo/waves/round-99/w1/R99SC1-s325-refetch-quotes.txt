@@ -1,0 +1,64 @@
+# seat: R99SC1 (scout) — tameshi round 99 wave w1
+# scratch: /fast/scratch/hyaku/tameshi-r99/R99SC1  (bytes kept in scratch; digests copied here)
+# cwd for repo commands: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# scope: S325 re-open — statcheck.io FAQ
+# snapshot under test: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-99/sources/s325.html
+# lane tag-strip renderer: .ufo/waves/round-93/w1/R93S1-tagstrip.py strip_tags()
+
+$ curl -sSL -D s325.fetch.headers -o s325.fetch.html http://statcheck.io/; echo curl_rc=$?; wc -c < s325.fetch.html; sha256sum s325.fetch.html; sha256sum /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-99/sources/s325.html
+curl_rc=0
+27778
+477e0088c987eabd845a81bd38e716959296c2a691b0ae57d9df45e66cb3e9a7  s325.fetch.html
+477e0088c987eabd845a81bd38e716959296c2a691b0ae57d9df45e66cb3e9a7  /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-99/sources/s325.html
+rc=0
+
+$ python3 - <<'EOF'
+import re, html as htmlmod
+def strip_tags(raw):
+    s = re.sub(r'<script\b[^>]*>.*?</script\s*>', ' ', raw, flags=re.S | re.I)
+    s = re.sub(r'<style\b[^>]*>.*?</style\s*>', ' ', s, flags=re.S | re.I)
+    s = re.sub(r'<!--.*?-->', ' ', s, flags=re.S)
+    s = re.sub(r'<[^>]+>', ' ', s)
+    s = htmlmod.unescape(s).replace('\u00a0',' ')
+    return [ln.rstrip() for ln in s.split('\n')]
+raw=open('/home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-99/sources/s325.html',encoding='utf-8',errors='replace').read()
+lines=strip_tags(raw)
+print('total_lines',len(lines))
+for q in ["statcheck usually can't find statistics in tables",
+          "Statcheck usually can't find statistics in tables",
+          'statcheck is a "spellchecker" for statistics']:
+    hits=[n for n,l in enumerate(lines,1) if q in l]
+    print('QUERY',repr(q),'hits',hits)
+    for n in hits: print('   line',n,':',repr(lines[n-1]))
+print('135:',repr(lines[134])); print('136:',repr(lines[135])); print('137:',repr(lines[136])); print('163:',repr(lines[162]))
+EOF
+total_lines 573
+QUERY "statcheck usually can't find statistics in tables" hits []
+QUERY "Statcheck usually can't find statistics in tables" hits [163]
+   line 163 : "            Style . Statcheck usually can't find statistics in tables."
+QUERY 'statcheck is a "spellchecker" for statistics' hits [135]
+   line 135 : '          statcheck is a "spellchecker" for statistics. It checks whether your'
+135: '          statcheck is a "spellchecker" for statistics. It checks whether your'
+136: '           p -values match their accompanying test statistic and degrees'
+137: '          of freedom.'
+163: "            Style . Statcheck usually can't find statistics in tables."
+rc=0
+
+$ python3 - <<'EOF'
+q1='statcheck is a "spellchecker" for statistics. It checks whether your p -values match their accompanying test statistic and degrees of freedom.'
+q2="Statcheck usually can't find statistics in tables."
+q3='half of all published psychology papers that use NHST contained at least one p-value that was inconsistent with its test statistic and degrees of freedom'
+for n,q in (('q1_spellchecker',q1),('q2_tables',q2),('q3_abstract',q3)):
+    print(n,'words=',len(q.split()))
+EOF
+q1_spellchecker words= 21
+q2_tables words= 7
+q3_abstract words= 25
+rc=0
+
+$ curl -sSL -o s325.https.html -w 'https_http=%{http_code} bytes=%{size_download}\n' https://statcheck.io/; sha256sum s325.https.html; for i in 1 2; do curl -sSL -o s325.ref$i.html http://statcheck.io/; printf 'refetch%s ' $i; sha256sum s325.ref$i.html | cut -c1-24; done
+https_http=200 bytes=27778
+477e0088c987eabd845a81bd38e716959296c2a691b0ae57d9df45e66cb3e9a7  s325.https.html
+refetch1 477e0088c987eabd845a81bd
+refetch2 477e0088c987eabd845a81bd
+rc=0

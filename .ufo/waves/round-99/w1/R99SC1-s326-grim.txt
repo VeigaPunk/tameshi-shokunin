@@ -1,0 +1,24 @@
+# seat: R99SC1 (scout) — tameshi round 99 wave w1
+# scratch: /fast/scratch/hyaku/tameshi-r99/R99SC1  (bytes kept in scratch; digests copied here)
+# cwd for repo commands: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# scope: independent re-fetch of the S326 (GRIM) Crossref record the lane draft already carries
+
+$ curl -sSL -D crossref.headers -o crossref.json -w 'crossref_http=%{http_code} bytes=%{size_download}\n' 'https://api.crossref.org/works/10.1177/1948550616673876'; echo rc=$?; sha256sum crossref.json; sha256sum .ufo/evidence/round-99/sources/s326.json
+crossref_http=200 bytes=4679
+rc=0
+4bfd47c2baad3e68d2765f58909b53993287dd1ef07fdbe4baa6353a772b7b0c  crossref.json
+-- stderr --
+sha256sum: .ufo/evidence/round-99/sources/s326.json: No such file or directory
+rc=1
+
+$ python3 - <<'EOF'
+import json
+m=json.load(open('crossref.json'))['message']
+print('DOI',m.get('DOI')); print('title',m.get('title'))
+q='This technique evaluates whether the reported means of integer data such as Likert-type scales are consistent with the given sample size and number of items.'
+print('quote_present:',q in m.get('abstract',''),'words:',len(q.split()))
+EOF
+DOI 10.1177/1948550616673876
+title ['The GRIM Test']
+quote_present: True words: 25
+rc=0

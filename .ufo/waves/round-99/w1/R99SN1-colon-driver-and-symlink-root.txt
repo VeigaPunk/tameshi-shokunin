@@ -1,0 +1,26 @@
+# cmd: C2 --driver with a COLON (git '<rev>:<path>' object-name ambiguity) and other odd shapes
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+--- C2 --driver 'corpus/lessons/round-94.md:corpus/lessons/round-94.md' ---
+AUDIT_SETUP driver-absent-at-rev:corpus/lessons/round-94.md:corpus/lessons/round-94.md
+# exit: 2
+--- C2 --driver '.ufo/evidence/round-99/c2/alias-driver.py:x' ---
+AUDIT_SETUP driver-absent-at-rev:.ufo/evidence/round-99/c2/alias-driver.py:x
+# exit: 2
+--- C2 --driver '-x' ---
+                                     [--driver DRIVER] [--selftest]
+control-assertion-audit-v2.py: error: argument --driver: expected one argument
+# exit: 2
+--- C2 --driver '--driver' ---
+                                     [--driver DRIVER] [--selftest]
+control-assertion-audit-v2.py: error: argument --driver: expected one argument
+# exit: 2
+--- C2 --driver 'a b.out' ---
+AUDIT_SETUP driver-absent-at-rev:a b.out
+# exit: 2
+
+# cmd: C1 --receipt-root that is a SYMLINK to a directory OUTSIDE the tree (must be refused as not-a-tree)
+TALLY_SETUP receipt-root-not-tree:/fast/scratch/hyaku/tameshi-r99/R99SN1/rootlink
+# exit: 2
+--- and a symlink root that POINTS INTO the tree ---
+TALLY_SETUP receipt-root-not-tree:/fast/scratch/hyaku/tameshi-r99/R99SN1/inlink
+# exit: 2

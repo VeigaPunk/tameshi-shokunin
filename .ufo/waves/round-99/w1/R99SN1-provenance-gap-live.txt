@@ -1,0 +1,27 @@
+# cmd: PROVENANCE GAP, demonstrated against the LIVE worktree the L1 is amending (no tampering by this seat)
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# seat: R99SN1
+# date: 2026-11-08T20:22:49-03:00
+# the pre-freeze runner's rec() recipe: sha = git show $I:$tool | sha256sum ; execution = $L/tools/<tool> (WORKTREE)
+# ---- output ----
+--- I=466510515d02759427158a9b16e9daa889d44907 tool=tools/tally-reconcile.py ---
+  header would record tool_sha256_at_rev = 60d59bead569157fb888dbb68301e290522e5837a482e84f36f858d2566bf40c
+  bytes actually executed          = c78e0c630aeda375dae0e6a3c9c9a75ec90356756ed2238f2526562a77f70f56
+  MISMATCH: the receipt's tool_sha256_at_rev header would NOT describe the bytes that ran
+--- I=466510515d02759427158a9b16e9daa889d44907 tool=tools/control-assertion-audit-v2.py ---
+  header would record tool_sha256_at_rev = acd67ab67acf011d50952886afe284d331da424360d9a7a79f391284ecfaceb6
+  bytes actually executed          = 7667ffb55cf62017b546e019879225f4e154ccbad18c68084120dc74e03160b5
+  MISMATCH: the receipt's tool_sha256_at_rev header would NOT describe the bytes that ran
+--- I=ab598d03da34bbaffc35010b4e0f7c33ed0a18ae tool=tools/tally-reconcile.py ---
+  header would record tool_sha256_at_rev = 60d59bead569157fb888dbb68301e290522e5837a482e84f36f858d2566bf40c
+  bytes actually executed          = c78e0c630aeda375dae0e6a3c9c9a75ec90356756ed2238f2526562a77f70f56
+  MISMATCH: the receipt's tool_sha256_at_rev header would NOT describe the bytes that ran
+--- I=ab598d03da34bbaffc35010b4e0f7c33ed0a18ae tool=tools/control-assertion-audit-v2.py ---
+  header would record tool_sha256_at_rev = acd67ab67acf011d50952886afe284d331da424360d9a7a79f391284ecfaceb6
+  bytes actually executed          = 7667ffb55cf62017b546e019879225f4e154ccbad18c68084120dc74e03160b5
+  MISMATCH: the receipt's tool_sha256_at_rev header would NOT describe the bytes that ran
+
+# ---- consequence: which bytes produced which selftest tally ----
+# worktree C1 selftest: TALLY_RECONCILE_SELFTEST: 24/24 pass
+# frozen-blob C1 selftest: TALLY_RECONCILE_SELFTEST: 17/17 pass
+# exit: 0

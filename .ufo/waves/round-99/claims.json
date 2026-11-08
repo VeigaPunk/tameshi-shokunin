@@ -12,11 +12,11 @@
    "counter": "python3 -I tools/tally-reconcile.py --repo . --rev RECORDS_REV --record corpus/lessons/round-93.md --record plans/round-93.plan.md --record corpus/lessons/round-94.md --record plans/round-94.plan.md --record corpus/lessons/round-95.md --record plans/round-95.plan.md --record corpus/lessons/round-96.md --record plans/round-96.plan.md --record corpus/lessons/round-97.md --record plans/round-97.plan.md --record corpus/lessons/round-98.md --record plans/round-98.plan.md",
    "battery": "python3 -I tools/tally-reconcile.py --selftest",
    "predicate": "TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19",
-   "battery_predicate": "TALLY_RECONCILE_SELFTEST: 17/17 pass",
+   "battery_predicate": "TALLY_RECONCILE_SELFTEST: 25/25 pass",
    "red": "python3 -I tools/tally-reconcile.py --repo . --rev RECORDS_REV --record corpus/lessons/round-94.md prints TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=0 mismatched=1 unbound=0 uncited=0 and exits 1",
    "before": "at base ff93fa16 no committed tool prints a TALLY_RECONCILE line (git grep -c TALLY_RECONCILE ff93fa16 -- . prints nothing, exit 1; .ufo/evidence/round-99/pre-freeze/c1-before-token.out); the round-94 and round-98 tally mismatches were found by non-author closures, not by a lane instrument",
    "after": "the twelve-record line and exit 1, the single round-94 mismatched line, the round-94-only line, and the selftest tally, all at R",
-   "instrument_sha256": "60d59bead569157fb888dbb68301e290522e5837a482e84f36f858d2566bf40c",
+   "instrument_sha256": "a1c50bb41599cfd663749855c7924c03360a46be2811812fb66f25c37b09b482",
    "kill": [
     "a: a pair whose receipt shows a different N/M for the claimed token is graded matched",
     "b: a citation or receipt is read from the worktree instead of the blob at R",
@@ -31,7 +31,26 @@
     "tallies in other spellings (6/6 killed, 9 of 9, table cells without pass) are not recognised",
     "an append-only erratum elsewhere does not clear a record line",
     "one repository only: the round-98 report sentence (fleet repo) is reproduced only as selftest shape selftest-word-r98-d2-shape",
-    "the counts measure the twelve records as committed; an unbound pair is not asserted to be a record error"
+    "the counts measure the twelve records as committed; an unbound pair is not asserted to be a record error",
+    "URL exclusion is only after a scheme:// (A4): a scheme-less host path is cited as a path and grades unbound unresolved",
+    "a non-UTF-8 record or receipt blob is a setup refusal (exit 2), not a graded pair (A9)",
+    "the twelve-record counts are a property of the tree at R: a new file under a cited round dir can resolve an unbound basename (R99SN1 F5); receipts record the tree id",
+    "neither the frozen inputs nor the conjunct set exclude a forgery that prints the frozen strings verbatim; the out-of-set round-93 control separates it (A5)"
+   ],
+   "battery_predicate_frozen": "TALLY_RECONCILE_SELFTEST: 17/17 pass",
+   "instrument_sha256_frozen": "60d59bead569157fb888dbb68301e290522e5837a482e84f36f858d2566bf40c",
+   "out_of_set_controls": [
+    "--record corpus/lessons/round-93.md alone prints TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=1 mismatched=0 unbound=0 uncited=0 and exits 0 (A5)"
+   ],
+   "amendments": [
+    "A2",
+    "A3",
+    "A4",
+    "A5",
+    "A6",
+    "A9",
+    "A10",
+    "A11"
    ]
   },
   "C2": {
@@ -42,11 +61,11 @@
    "counter": "python3 -I tools/control-assertion-audit-v2.py --repo . --rev RECORDS_REV --driver .ufo/evidence/round-99/c2/alias-driver.py",
    "battery": "python3 -I tools/control-assertion-audit-v2.py --selftest",
    "predicate": "CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1",
-   "battery_predicate": "CONTROL_ASSERT_V2_SELFTEST: 27/27 pass",
+   "battery_predicate": "CONTROL_ASSERT_V2_SELFTEST: 38/38 pass",
    "red": "python3 -I tools/control-assertion-audit.py --repo . --rev RECORDS_REV --driver .ufo/evidence/round-99/c2/alias-driver.py prints CONTROL_ASSERT sites=2 measured=2 literal=0 unmeasured=0 and exits 0 (the unmoved round-98 audit)",
    "before": "at base ff93fa16 no committed tool prints a CONTROL_ASSERT_RECORDERS line (git grep rc 1); the round-98 audit counts two sites on the alias fixture and exits 0 (round-98 declared limit: a differently named recorder is zero-site and passes vacuously)",
    "after": "the v2 fixture lines and exit 1, the two v1/v2 equalities on controls98.py and controls97.py, and the selftest tally, all at R",
-   "instrument_sha256": "acd67ab67acf011d50952886afe284d331da424360d9a7a79f391284ecfaceb6",
+   "instrument_sha256": "7527e40fd021505d9f0c4c028c797596efb4b13a9958269ce1ff12f5a9626368",
    "v1_sha256": "82c2e54b24bab55e9f01bb3f15afcb2c3b2654c3486bf6de29a06981cc5c0cd4",
    "fixture_sha256": "e01fce0dc84a24cbc529075edfcd3c5317fdac1316f2ba84a93c93890c1bb82f",
    "kill": [
@@ -61,8 +80,27 @@
     "attribute calls, getattr/globals()/dict dispatch, a wrapper def/lambda forwarding to add, and a recorder passed as an argument are not sites",
     "alias detection is module-wide and scope-insensitive: an alias in one function bound otherwise elsewhere is ambiguous everywhere (conservative)",
     "the fixture is lane-authored; no committed lane driver registers through an alias today, so the claim is coverage of an edge class, not a defect found in history",
-    "v1's classification limits (call-name runner matching, provenance not command identity, the want_code tautology) carry over unchanged"
-   ]
+    "v1's classification limits (call-name runner matching, provenance not command identity, the want_code tautology) carry over unchanged",
+    "rebinding the base name add (add = print) is not detected, exactly as in v1 (R99CN1 F5)",
+    "a name bound from a recorder only by a match capture or starred unpacking is not a recorder; global/nonlocal are declarations, not bindings; a source-less cycle a = b; b = a is not a recorder",
+    "neither the frozen fixture nor the conjunct set exclude a forgery that special-cases the name record; the renamed and chain fixtures separate it (A5)"
+   ],
+   "battery_predicate_frozen": "CONTROL_ASSERT_V2_SELFTEST: 27/27 pass",
+   "instrument_sha256_frozen": "acd67ab67acf011d50952886afe284d331da424360d9a7a79f391284ecfaceb6",
+   "out_of_set_controls": [
+    "alias-driver-renamed.py (log_entry = add): v2 aliases=1 names=add,log_entry, sites=4 measured=3 literal=1 unmeasured=1, exit 1; v1 sites=2 measured=2 literal=0 unmeasured=0, exit 0 (A5)",
+    "alias-driver-chain.py (rec2 = record): v2 aliases=2 names=add,rec2,record, sites=4 measured=3 literal=1 unmeasured=1, exit 1; v1 sites=2, exit 0 (A5)"
+   ],
+   "renamed_fixture_sha256": "51dd96c04be27a2b078ba0a8b23c7bfc16b67db60c7cda05ae9051ea359d0807",
+   "chain_fixture_sha256": "9e3133ebaaa217e40fbb48871ac440ae6562d22a009c25f96fc0bd93dc832706",
+   "amendments": [
+    "A1",
+    "A5",
+    "A8",
+    "A10",
+    "A11"
+   ],
+   "binding_rule_amended": "A1: a binding is a plain or annotated assignment with a value, a walrus, an element of an equal-length tuple/list assignment without a starred element, or a two-name conditional value (binds from both); del, match captures, starred elements and value-less annotations are OTHER bindings; an alias or partial bound from an ambiguous name is ambiguous; an alias of a partial is a partial; functools.partial import aliases are recognised"
   }
  },
  "controls": {
@@ -82,5 +120,5 @@
   "D4",
   "D5"
  ],
- "note": "two claims, distinct axes, causally separable (C1 reads records, C2 reads drivers); pre-freeze controls committed before this freeze; wave artifacts amend wording before the records run"
+ "note": "two claims, distinct axes, causally separable (C1 reads records, C2 reads drivers); pre-freeze controls committed before this freeze; wave artifacts amend wording before the records run; amendments A1-A11 from wave w1 artifacts before the records run (plan §Amendments); predicates unchanged, battery tallies and instrument digests moved"
 }

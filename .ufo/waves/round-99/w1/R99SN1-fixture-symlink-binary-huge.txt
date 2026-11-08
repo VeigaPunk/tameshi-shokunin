@@ -1,0 +1,26 @@
+# cmd: C1 on fixture repo (symlink blob / non-utf8 receipt / 840MB receipt)
+# fixture: /fast/scratch/hyaku/tameshi-r99/R99SN1/tmp.wOX7W5w4a0 rev 80f208c8aae9f7680afc8642dd40ab25dcd26883
+# note: .ufo/evidence/round-3/link.out is a SYMLINK to /fast/scratch/hyaku/tameshi-r99/R99SN1/outside/evil.out (content 'X_SELFTEST: 9/9 pass')
+# note: binary.out contains a non-utf8 byte; huge.out is 840MB
+# ---- output ----
+TALLY unbound p/round-3.md:1 token X_SELFTEST claimed=8/8 receipt=.ufo/evidence/round-3/link.out observed=- detail=token-absent
+TALLY matched p/round-3.md:2 token X_SELFTEST claimed=7/7 receipt=.ufo/evidence/round-3/binary.out observed=7/7 detail=equal
+TALLY matched p/round-3.md:3 token X_SELFTEST claimed=5/5 receipt=.ufo/evidence/round-3/huge.out observed=5/5 detail=equal
+TALLY_RECONCILE records=1 tallies=3 pairs=3 matched=2 mismatched=0 unbound=1 uncited=0
+Command exited with non-zero status 1
+	User time (seconds): 6.16
+	System time (seconds): 1.71
+	Percent of CPU this job got: 101%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:07.79
+	Maximum resident set size (kbytes): 6796716
+# exit: 1
+---- raw git view of the symlink blob in the tree ----
+100644 blob d024b9486f9d190519694970caa9eae0abeddc45	.ufo/evidence/round-3/binary.out
+100644 blob b3edf15edf5a9fab5a7358db74afd6a231cb06ab	.ufo/evidence/round-3/huge.out
+120000 blob 7a1b859f55fdef0d5bfe470f291d1f1243b6d390	.ufo/evidence/round-3/link.out
+---- git cat-file blob of the symlink path (does git follow it?) ----
+0000000   /   f   a   s   t   /   s   c   r   a   t   c   h   /   h   y
+0000020   a   k   u   /   t   a   m   e   s   h   i   -   r   9   9   /
+0000040   R   9   9   S   N   1   /   o   u   t   s   i   d   e   /   e
+---- the outside target file ----
+X_SELFTEST: 9/9 pass

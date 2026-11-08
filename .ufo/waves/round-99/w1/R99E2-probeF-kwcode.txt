@@ -1,0 +1,26 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.pBm89x8XaL --rev a1f9cfd06873c4d67039f94d9b387364b4aa2c30 --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): aliased calls with code= keyword: literal -> class=literal; returncode -> measured
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/kwcode.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+rec = add
+def main():
+    p = sh(["x"])
+    rec("k-literal", code=0, body=b"", want=0)
+    rec("k-meas", code=p.returncode, body=p.stdout, want=1)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=a1f9cfd06873c4d67039f94d9b387364b4aa2c30 driver=driver.py sha256=b12c9291048d3e69e2bea96d6a6e3eeb04373d182d2804a97fba9f82108d55da
+CONTROL_ASSERT_SITE line=10 name=k-literal measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=11 name=k-meas measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=1 unmeasured=1
+rc=1
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=a1f9cfd06873c4d67039f94d9b387364b4aa2c30 driver=driver.py sha256=b12c9291048d3e69e2bea96d6a6e3eeb04373d182d2804a97fba9f82108d55da
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

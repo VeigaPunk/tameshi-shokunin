@@ -1,0 +1,19 @@
+# cmd: a SYMLINK blob used as a --record (C1) and as a --driver (C2)
+# fixture: /fast/scratch/hyaku/tameshi-r99/R99SN1/tmp.Uh8lI4Mg88 rev 11087205d0d4aee9445fac31a3d4813c675156c6 ; the symlink targets live OUTSIDE the repo worktree
+# ---- git ls-tree (mode 120000 = symlink) ----
+100644 blob 60a4e2a1158eaa70c3934135377a3e607869e189	outside/forged.md
+100644 blob 361778c616b182f282a1d041c2003296793f3641	outside/forged.py
+120000 blob 05aa6bd14c28f8a3931e0bebcae29d760c6a48f3	p/drv.py
+120000 blob 20ad10135a6b170c204ab63c0fa64be20f67c39f	p/rec.md
+# ---- what git cat-file blob returns for the symlink path (link TEXT, not the target file) ----
+/fast/scratch/hyaku/tameshi-r99/R99SN1/tmp.Uh8lI4Mg88/outside/forged.md(end)
+# ---- C1 --record p/rec.md (the symlink) ----
+TALLY_RECONCILE records=1 tallies=0 pairs=0 matched=0 mismatched=0 unbound=0 uncited=0
+# exit: 0
+# ---- C2 --driver p/drv.py (the symlink) ----
+CONTROL_ASSERT_DRIVER rev=11087205d0d4aee9445fac31a3d4813c675156c6 driver=p/drv.py sha256=d0fd8487a8ac84b133feba9055806e3aa5df354def133b22c6691eef87ebf1ff
+AUDIT_SETUP unparsable:invalid syntax (<unknown>, line 1)
+# exit: 2
+# ---- the OUTSIDE target content that a worktree-following reader would have graded ----
+X_SELFTEST: 9/9 pass
+add("x", 0, "b", 0)

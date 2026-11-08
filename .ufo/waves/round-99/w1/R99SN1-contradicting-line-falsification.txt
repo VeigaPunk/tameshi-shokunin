@@ -1,0 +1,29 @@
+# cmd: FALSIFICATION TEST — a receipt line carrying the claimed token but NOT showing the claimed N/M
+# fixture: /fast/scratch/hyaku/tameshi-r99/R99SN1/tmp.SzybxHRa7f rev 956d25a38b0fc748549ddba721421ac6b5628916
+# receipt fail.out:
+X_SELFTEST: 9/9 pass
+X_SELFTEST: 8/8 fail
+# receipt bare.out:
+X_SELFTEST: 9/9 pass
+X_SELFTEST: 8/8
+# claim in the record: X_SELFTEST 9/9 (both lines)
+# frozen wording: 'grades a pair matched only when every line of the receipt carrying the claimed token
+#                 (or the receipt's single *_SELFTEST token) shows the claimed N/M'
+
+---- FROZEN-BLOB C1 tool (sha 60d59bea, the instrument claims.json pins) ----
+TALLY matched p/round-3.md:1 token X_SELFTEST claimed=9/9 receipt=.ufo/evidence/round-3/fail.out observed=9/9 detail=equal
+TALLY matched p/round-3.md:2 token X_SELFTEST claimed=9/9 receipt=.ufo/evidence/round-3/bare.out observed=9/9 detail=equal
+TALLY_RECONCILE records=1 tallies=2 pairs=2 matched=2 mismatched=0 unbound=0 uncited=0
+# exit: 0
+
+---- CURRENT WORKTREE C1 tool (L1 amendment A2, sha c78e0c630aeda375...) ----
+TALLY mismatched p/round-3.md:1 token X_SELFTEST claimed=9/9 receipt=.ufo/evidence/round-3/fail.out observed=8/8,9/9 detail=differs
+TALLY mismatched p/round-3.md:2 token X_SELFTEST claimed=9/9 receipt=.ufo/evidence/round-3/bare.out observed=8/8,9/9 detail=differs
+TALLY_RECONCILE records=1 tallies=2 pairs=2 matched=0 mismatched=2 unbound=0 uncited=0
+# exit: 1
+
+---- does the frozen selftest cover this shape? (its 'mixed-observed-is-mismatch' arm) ----
+    ("mixed-observed-is-mismatch",
+     {"p/round-3.md": "`Y_SELFTEST: 2/2 pass` (`a.out`)\n",
+      ".ufo/evidence/round-3/a.out": "Y_SELFTEST: 2/2 pass\nY_SELFTEST: 1/2 pass\n"},
+     ["p/round-3.md"], [], {"mismatched": 1}, 1),

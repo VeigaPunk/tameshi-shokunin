@@ -1,0 +1,762 @@
+FIXTURE_REV=53cf29e879af6279471c4c19832d59e7f9a1360c
+V2=/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit-v2.py V1=/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/control-assertion-audit.py
+
+=== add-add-alias ===
+import subprocess
+rec = add
+add = rec
+def main():
+    p = subprocess.run(["true"])
+    rec("x", p.returncode, "b", 0)
+    add("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/add-add-alias.py sha256=a5bc19a4c5becc6513135e782ef0b640a7092a6daf675388b309d1f54c7e4d12
+CONTROL_ASSERT_SITE line=6 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=7 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=1 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/add-add-alias.py sha256=a5bc19a4c5becc6513135e782ef0b640a7092a6daf675388b309d1f54c7e4d12
+CONTROL_ASSERT_SITE line=7 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+exit=1
+
+=== add-shadowed ===
+import subprocess
+add = print
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    add("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/add-shadowed.py sha256=e3f55ddcc983e1f537dd5ff7afd2a1bd27acfc204688ec92a57ed2333571b8ca
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=6 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=2 measured=1 literal=1 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/add-shadowed.py sha256=e3f55ddcc983e1f537dd5ff7afd2a1bd27acfc204688ec92a57ed2333571b8ca
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=6 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT sites=2 measured=1 literal=1 unmeasured=1
+exit=1
+
+=== alias-few-args ===
+import subprocess
+rec = add
+def main():
+    p = subprocess.run(["true"])
+    rec("x")
+    rec("y", p.returncode)
+    rec("z", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-few-args.py sha256=ff4791c083d744b3cdebb9fc2258c9718cc572e730211d04cc8f8c6277025396
+AUDIT_SETUP add-without-code:line=5
+exit=2
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-few-args.py sha256=ff4791c083d744b3cdebb9fc2258c9718cc572e730211d04cc8f8c6277025396
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== alias-kw-code ===
+import subprocess
+rec = add
+def main():
+    p = subprocess.run(["true"])
+    rec("x", code=p.returncode, body="b", want=0)
+    add("y", code=0, body="b", want=0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-kw-code.py sha256=cbd53c3a9eb604e2aea88929b0c5ab1fcaa2fbd091c912ab9665eff5b49b61b5
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=6 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=1 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-kw-code.py sha256=cbd53c3a9eb604e2aea88929b0c5ab1fcaa2fbd091c912ab9665eff5b49b61b5
+CONTROL_ASSERT_SITE line=6 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+exit=1
+
+=== alias-of-ambiguous ===
+import subprocess
+rec = add
+rec = print
+r2 = rec
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    r2("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-of-ambiguous.py sha256=22dc54d64144f821b1a4f66fd14ab306bbabd84b5c1a3d3465daba49bee73e53
+CONTROL_ASSERT_SITE line=7 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=8 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=1 partial=0 names=add,r2,rec
+CONTROL_ASSERT sites=2 measured=1 literal=1 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-of-ambiguous.py sha256=22dc54d64144f821b1a4f66fd14ab306bbabd84b5c1a3d3465daba49bee73e53
+CONTROL_ASSERT_SITE line=7 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== alias-of-partial-chain2 ===
+import functools
+prec = functools.partial(add, "x")
+r2 = prec
+def main():
+    r2(0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-of-partial-chain2.py sha256=7dfe5556cba6fa6b0bfbf80fb4a154abb67a352384bdb445265bfe19755400ab
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=1 names=add,prec
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-of-partial-chain2.py sha256=7dfe5556cba6fa6b0bfbf80fb4a154abb67a352384bdb445265bfe19755400ab
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== alias-of-partial ===
+import functools
+prec = functools.partial(add, "x")
+r2 = prec
+def main():
+    prec(0, "b", 0)
+    r2(0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-of-partial.py sha256=19eb4b788cff83b49b6ec5bcfafee6fb5fb99f0e3c07ea93afda8ff024c7b012
+CONTROL_ASSERT_SITE line=5 name=? measured=no class=unresolved detail=partial-recorder:prec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=1 names=add,prec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-of-partial.py sha256=19eb4b788cff83b49b6ec5bcfafee6fb5fb99f0e3c07ea93afda8ff024c7b012
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== alias-rebound ===
+import subprocess
+rec = add
+rec = add
+def main():
+    p = subprocess.run(["true"])
+    rec("x", p.returncode, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-rebound.py sha256=9beb3e43548947b06482cd9be44e3df4917bf89c512c693f52c3f9b92112671c
+CONTROL_ASSERT_SITE line=6 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/alias-rebound.py sha256=9beb3e43548947b06482cd9be44e3df4917bf89c512c693f52c3f9b92112671c
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== annotated-no-value ===
+import subprocess
+rec: object
+def main():
+    rec("x", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/annotated-no-value.py sha256=e2a2909e1d1511b6d143722570417eb9e8e32a256a186547e2f03d67e24b8053
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/annotated-no-value.py sha256=e2a2909e1d1511b6d143722570417eb9e8e32a256a186547e2f03d67e24b8053
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== augassign ===
+import subprocess
+rec = add
+rec += 1
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/augassign.py sha256=badccb05c27d0d72bf108c789d37ebaa35aab3b054b591131f578de24722022c
+CONTROL_ASSERT_SITE line=6 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=7 name=y measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=0 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/augassign.py sha256=badccb05c27d0d72bf108c789d37ebaa35aab3b054b591131f578de24722022c
+CONTROL_ASSERT_SITE line=6 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== bare-few ===
+import subprocess
+def main():
+    add("x")
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/bare-few.py sha256=ba86eb406b2278b6e567decb946cd5db4ebce12036b71bf0bc61090b9787d5ba
+AUDIT_SETUP add-without-code:line=3
+exit=2
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/bare-few.py sha256=ba86eb406b2278b6e567decb946cd5db4ebce12036b71bf0bc61090b9787d5ba
+AUDIT_SETUP add-without-code:line=3
+exit=2
+
+=== chained ===
+import subprocess
+a = b = add
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    a("y", 0, "b", 0)
+    b("z", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/chained.py sha256=45ca2dd0973b61f2ef55d2806963bad1c87809b08a39227cf9c74daa87481e24
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=6 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=7 name=z measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=2 ambiguous=0 partial=0 names=a,add,b
+CONTROL_ASSERT sites=3 measured=1 literal=2 unmeasured=2
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/chained.py sha256=45ca2dd0973b61f2ef55d2806963bad1c87809b08a39227cf9c74daa87481e24
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== class-body ===
+import subprocess
+class C:
+    rec = add
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/class-body.py sha256=1d1e9061a7b4a4f9e4702cadf1d5efc2b8ec0b352ddc53f8124ec77191c3a3e8
+CONTROL_ASSERT_SITE line=6 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=7 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=1 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/class-body.py sha256=1d1e9061a7b4a4f9e4702cadf1d5efc2b8ec0b352ddc53f8124ec77191c3a3e8
+CONTROL_ASSERT_SITE line=6 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== comprehension ===
+import subprocess
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    recs = [rec for rec in [add]]
+    recs[0]("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/comprehension.py sha256=780eb32320f51d5b1277903c60cf001ae573d2dbbfbbdf798fd8f01bfdbedeeb
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/comprehension.py sha256=780eb32320f51d5b1277903c60cf001ae573d2dbbfbbdf798fd8f01bfdbedeeb
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== cycle ===
+import subprocess
+a = b
+b = a
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    a("y", 0, "b", 0)
+    b("z", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/cycle.py sha256=3c39843f7f20c97ab77cc3ce07401683c4d2dc452140492c4bbe851bb73b6c8b
+CONTROL_ASSERT_SITE line=6 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/cycle.py sha256=3c39843f7f20c97ab77cc3ce07401683c4d2dc452140492c4bbe851bb73b6c8b
+CONTROL_ASSERT_SITE line=6 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== default-arg ===
+import subprocess
+rec = add
+def helper(rec=add):
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/default-arg.py sha256=642757763fd7f39510b1454416961817a59937e1d768fe6a7536f19bcc73f35b
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=6 name=y measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=0 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/default-arg.py sha256=642757763fd7f39510b1454416961817a59937e1d768fe6a7536f19bcc73f35b
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== except-as ===
+import subprocess
+rec = add
+def main():
+    try:
+        pass
+    except Exception as rec:
+        rec("x", 0, "b", 0)
+    p = subprocess.run(["true"])
+    add("y", p.returncode, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/except-as.py sha256=6b6b9b90c8bebb0d0c6ec109ddee35bd962fb0424a44203304e623168bdb9297
+CONTROL_ASSERT_SITE line=7 name=x measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_SITE line=9 name=y measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=0 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/except-as.py sha256=6b6b9b90c8bebb0d0c6ec109ddee35bd962fb0424a44203304e623168bdb9297
+CONTROL_ASSERT_SITE line=9 name=y measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== extra-other-binding-alias ===
+import subprocess
+rec = add
+def rec(): pass
+def main():
+    p = subprocess.run(["true"])
+    rec("x", p.returncode, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/extra-other-binding-alias.py sha256=55e3d6d74ee178b424d96b2663e32c3d66bebdd42d8fb368b77ac991c5785782
+CONTROL_ASSERT_SITE line=6 name=x measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/extra-other-binding-alias.py sha256=55e3d6d74ee178b424d96b2663e32c3d66bebdd42d8fb368b77ac991c5785782
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== for-target ===
+import subprocess
+rec = add
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    for rec in [add]:
+        rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/for-target.py sha256=487273fe0bfadd7d67e34115253eee3a389e76a405f588e81008edab52d7c1a4
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=7 name=y measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=0 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/for-target.py sha256=487273fe0bfadd7d67e34115253eee3a389e76a405f588e81008edab52d7c1a4
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== global-del ===
+import subprocess
+rec = add
+def main():
+    global rec
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    rec("y", 0, "b", 0)
+del rec
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/global-del.py sha256=d83f94adb771b20e16ca90a11807e2ccf9f8af13e161bc08ececa6471cf13d1d
+CONTROL_ASSERT_SITE line=6 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=7 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=1 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/global-del.py sha256=d83f94adb771b20e16ca90a11807e2ccf9f8af13e161bc08ececa6471cf13d1d
+CONTROL_ASSERT_SITE line=6 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== import-as ===
+import subprocess
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    from os import path as rec
+    rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/import-as.py sha256=28b8693144fa38da1fce0fd8b7d5419aa8124f4e407cb3905b82986e85fc741c
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/import-as.py sha256=28b8693144fa38da1fce0fd8b7d5419aa8124f4e407cb3905b82986e85fc741c
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== keyword-only ===
+import subprocess
+rec = add
+def main():
+    rec("x", code=0, body="b", want=0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/keyword-only.py sha256=5f21dabf252210ef69ac5c150c2d9410b389ee937aebe46656ae759b7e27e3e5
+CONTROL_ASSERT_SITE line=4 name=x measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/keyword-only.py sha256=5f21dabf252210ef69ac5c150c2d9410b389ee937aebe46656ae759b7e27e3e5
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== lambda-param ===
+import subprocess
+rec = add
+f = lambda rec=add: rec("x", 0, "b", 0)
+def main():
+    p = subprocess.run(["true"])
+    add("y", p.returncode, "b", 0)
+    f()
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/lambda-param.py sha256=1976b35f5e62c3e6bd01fb3103d840eda7907534a577e225d6f34bf2bcb3aa65
+CONTROL_ASSERT_SITE line=3 name=x measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_SITE line=6 name=y measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=0 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/lambda-param.py sha256=1976b35f5e62c3e6bd01fb3103d840eda7907534a577e225d6f34bf2bcb3aa65
+CONTROL_ASSERT_SITE line=6 name=y measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== long-chain ===
+import subprocess
+a0 = add
+a1 = a0
+a2 = a1
+a3 = a2
+a4 = a3
+a5 = a4
+a6 = a5
+a7 = a6
+a8 = a7
+a9 = a8
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    a9("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/long-chain.py sha256=1e328bbcff3eb408ed0e859950e60fc478f64cba1e151593b89862aafef615a1
+CONTROL_ASSERT_SITE line=14 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=15 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=10 ambiguous=0 partial=0 names=a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,add
+CONTROL_ASSERT sites=2 measured=1 literal=1 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/long-chain.py sha256=1e328bbcff3eb408ed0e859950e60fc478f64cba1e151593b89862aafef615a1
+CONTROL_ASSERT_SITE line=14 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== match-capture ===
+import subprocess
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    match add:
+        case rec:
+            rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/match-capture.py sha256=e5c93224867a36d724579458cfff2fd8437bed49e59e1423df8aae3dc46bae80
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/match-capture.py sha256=e5c93224867a36d724579458cfff2fd8437bed49e59e1423df8aae3dc46bae80
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== nonlocal ===
+import subprocess
+rec = add
+def outer():
+    def inner():
+        nonlocal rec
+        rec("x", 0, "b", 0)
+    inner()
+def main():
+    p = subprocess.run(["true"])
+    add("y", p.returncode, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/nonlocal.py sha256=91427d0dc8332879c2675a024be4c6e98add9442f65755ebf94667136fc17d09
+CONTROL_ASSERT_SITE line=6 name=x measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=10 name=y measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=1 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/nonlocal.py sha256=91427d0dc8332879c2675a024be4c6e98add9442f65755ebf94667136fc17d09
+CONTROL_ASSERT_SITE line=10 name=y measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== paren ===
+import subprocess
+rec = (add)
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/paren.py sha256=43c89b66138785fca38b25ed43ec93499f0d71e2b89f26237f786a47c6cb1993
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=6 name=y measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=2 measured=1 literal=1 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/paren.py sha256=43c89b66138785fca38b25ed43ec93499f0d71e2b89f26237f786a47c6cb1993
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== partial-alias-chain ===
+import functools
+prec = functools.partial(add, "x")
+r2 = prec
+prec2 = functools.partial(prec, 0)
+def main():
+    r2(0, "b", 0)
+    prec2("b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/partial-alias-chain.py sha256=e25107b096f07c951b84a4fb0f7ab3d129378a14204139af2221b9710db5f590
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=1 names=add,prec
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/partial-alias-chain.py sha256=e25107b096f07c951b84a4fb0f7ab3d129378a14204139af2221b9710db5f590
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== partial-attr ===
+import functools
+import x as f
+rec = f.partial(add, "x")
+def main():
+    rec(0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/partial-attr.py sha256=8ed92a820b18d20bfefb442444c63e8c5e220a108e456fcfe47912875f67ee5f
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/partial-attr.py sha256=8ed92a820b18d20bfefb442444c63e8c5e220a108e456fcfe47912875f67ee5f
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== partial-from-import ===
+from functools import partial as p
+rec = p(add, "x")
+def main():
+    rec(0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/partial-from-import.py sha256=2baafe0b1f2b3c286d2e74e1a9f395a1b318f08972a720b0847694d7b86451a6
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/partial-from-import.py sha256=2baafe0b1f2b3c286d2e74e1a9f395a1b318f08972a720b0847694d7b86451a6
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== partial-plain ===
+from functools import partial
+rec = partial(add, "x")
+def main():
+    rec(0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/partial-plain.py sha256=e8a420041203ed658d34661cbd2e5fa2a562d85199842ec060dbacc62f25dfd5
+CONTROL_ASSERT_SITE line=4 name=? measured=no class=unresolved detail=partial-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=1 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/partial-plain.py sha256=e8a420041203ed658d34661cbd2e5fa2a562d85199842ec060dbacc62f25dfd5
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== partial-rebind ===
+import functools
+rec = functools.partial(add, "x")
+rec = add
+def main():
+    rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/partial-rebind.py sha256=2f3ca4b1c72e90a5f42ef40cf388619ebb198944b5099877a8edbb12dfe22a1f
+CONTROL_ASSERT_SITE line=5 name=y measured=no class=unresolved detail=ambiguous-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=1 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/partial-rebind.py sha256=2f3ca4b1c72e90a5f42ef40cf388619ebb198944b5099877a8edbb12dfe22a1f
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+exit=0
+
+=== same-line ===
+import subprocess
+rec = add
+def main():
+    p = subprocess.run(["true"]); add("a", p.returncode, "b", 0); rec("c", 0, "b", 0)
+    add("d", p.returncode, "b", 0); rec("e", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/same-line.py sha256=15f3786927230241244d45232999fcb03ab5c5846f120135826101691982e60f
+CONTROL_ASSERT_SITE line=4 name=a measured=no class=unresolved detail=returncode-of-unresolved
+CONTROL_ASSERT_SITE line=4 name=c measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=5 name=d measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=5 name=e measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=4 measured=1 literal=2 unmeasured=3
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/same-line.py sha256=15f3786927230241244d45232999fcb03ab5c5846f120135826101691982e60f
+CONTROL_ASSERT_SITE line=4 name=a measured=no class=unresolved detail=returncode-of-unresolved
+CONTROL_ASSERT_SITE line=5 name=d measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=2 measured=1 literal=0 unmeasured=1
+exit=1
+
+=== same-line2 ===
+import subprocess
+rec = add
+def main():
+    p = subprocess.run(["true"])
+    add("a", p.returncode, "b", 0); rec("b", 0, "b", 0); add("c", p.returncode, "b", 0); rec("d", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/same-line2.py sha256=6e452c2b3bcb768a967f6537806e9ea67b297617dbb189d8425c88d26a47ceb4
+CONTROL_ASSERT_SITE line=5 name=a measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=5 name=b measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=5 name=c measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=5 name=d measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=4 measured=2 literal=2 unmeasured=2
+exit=1
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/same-line2.py sha256=6e452c2b3bcb768a967f6537806e9ea67b297617dbb189d8425c88d26a47ceb4
+CONTROL_ASSERT_SITE line=5 name=a measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=5 name=c measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=2 measured=2 literal=0 unmeasured=0
+exit=0
+
+=== self-cycle ===
+import subprocess
+a = a
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    a("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/self-cycle.py sha256=145c6608a39534ae80a98f5a535d4bcfb4de2477562c06327d84e567fba9bab4
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/self-cycle.py sha256=145c6608a39534ae80a98f5a535d4bcfb4de2477562c06327d84e567fba9bab4
+CONTROL_ASSERT_SITE line=5 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== starred ===
+import subprocess
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    *rec, rest = [add, 1]
+    rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/starred.py sha256=c3e9cc7cdfc7f2d242111da083933dd79e78eb59cd454ba2a17cabd88742ad77
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/starred.py sha256=c3e9cc7cdfc7f2d242111da083933dd79e78eb59cd454ba2a17cabd88742ad77
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== tuple-target ===
+import subprocess
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    rec, x = add, 1
+    rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/tuple-target.py sha256=0a52b2797ca9c3c784523fd442d61922dc7933a87bb88ac08ec6cd70c83524af
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/tuple-target.py sha256=0a52b2797ca9c3c784523fd442d61922dc7933a87bb88ac08ec6cd70c83524af
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== walrus ===
+import subprocess
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    (rec := add)
+    rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/walrus.py sha256=6839a639179544e3cc5032cc980193e27b49d47d03730fbc9a77666e352a334d
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/walrus.py sha256=6839a639179544e3cc5032cc980193e27b49d47d03730fbc9a77666e352a334d
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+
+=== with-target ===
+import subprocess
+def main():
+    p = subprocess.run(["true"])
+    add("x", p.returncode, "b", 0)
+    with open("f") as rec:
+        pass
+    rec("y", 0, "b", 0)
+--- v2 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/with-target.py sha256=9c9c9a6db8c34f79f999adb9eb5270b6a8fd42724221cdaaefac0a655d75b938
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0
+--- v1 ---
+CONTROL_ASSERT_DRIVER rev=53cf29e879af6279471c4c19832d59e7f9a1360c driver=hostile/with-target.py sha256=9c9c9a6db8c34f79f999adb9eb5270b6a8fd42724221cdaaefac0a655d75b938
+CONTROL_ASSERT_SITE line=4 name=x measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=1 measured=1 literal=0 unmeasured=0
+exit=0

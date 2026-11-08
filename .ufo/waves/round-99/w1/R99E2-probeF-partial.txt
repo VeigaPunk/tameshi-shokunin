@@ -1,0 +1,24 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.p5YYmZ7xLI --rev 43e4b455d64e4d70c219505585c40dbc49f9f441 --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): rec = partial(add): counted, graded unresolved partial-recorder
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/partial.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+from functools import partial
+rec = partial(add)
+def main():
+    rec("a-lit", 0, b"", 0)
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=43e4b455d64e4d70c219505585c40dbc49f9f441 driver=driver.py sha256=a936986eb9e5addbfc3e871469120bc8e0a9ed90ee7f6d36cee40c2ae6c5f625
+CONTROL_ASSERT_SITE line=10 name=a-lit measured=no class=unresolved detail=partial-recorder:rec
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=1 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=0 unmeasured=1
+rc=1
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=43e4b455d64e4d70c219505585c40dbc49f9f441 driver=driver.py sha256=a936986eb9e5addbfc3e871469120bc8e0a9ed90ee7f6d36cee40c2ae6c5f625
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

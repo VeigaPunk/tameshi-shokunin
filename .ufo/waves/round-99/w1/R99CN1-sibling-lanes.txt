@@ -1,0 +1,318 @@
+# seat: R99CN1 (connector) — item 2: sibling-lane overlap (fleet root read-only)
+# cwd: /home/vgpnk/Projects/shokunin
+# scope: */tools under the fleet root, excluding tameshi-shokunin
+
+# --- sibling reconcilers of recorded numbers against receipts / self-assessment
+
+=== kaidoku-shokunin/tools/round-25/a2/c1-calibration.py:1-11
+#!/usr/bin/env python3
+"""Round 25 (attempt 2) C1: count self-assessment mismatches at one revision.
+
+Five fixed items, each comparing a lane self-assessment statement (SCORECARD,
+LOG, SHONEN, QUALITY) with observed repository state or with the recorded
+outside verdict of round 24. Reads only Git blobs at --rev; never the work tree.
+
+Usage: python3 -I -B tools/round-25/a2/c1-calibration.py --root <lane> --rev <rev>
+Prints one JSON object. Exit 0 when mismatches == 0, 1 when any item
+mismatches, 2 when the revision or a required blob cannot be read.
+"""
+
+=== kaidoku-shokunin/tools/round-100/registry-selftest-truth.py:1-45
+#!/usr/bin/env python3
+"""registry-selftest-truth.py - round-100 frozen counter for R100-C2 (calibration).
+
+Self-assessment surface: the self-test column (fourth cell) of the SKILL.md
+instrument registry (`<!-- instrument-registry v2 -->` ... `<!-- /instrument-registry -->`).
+Each row in the frozen population states how many cases its tool's self-test
+runs ("N cases", "cases=N", "N/N cases").  The round-99 counter checked that
+rows exist and carry a pinned sha256 (presence and shape); the round-99
+closure and lesson (named limit 1, L1/L6) left the prose unchecked.  This
+counter checks the stated count against the tool itself: it runs the
+self-test the row documents, at the measured revision, and parses the count
+the tool prints.
+
+Population (frozen, POPULATION below): every registry row at the base
+revision whose self-test cell states a case count and whose documented
+self-test runs on this host with exit 0 and prints a parseable count.  Each
+entry pins the tool's sha256 at the base revision and the argv of the
+documented self-test (placeholders: {work} a per-row scratch dir, {pkg65} the
+rea-agents 6.5.0 package root, {rev} the measured revision).  Rows excluded
+at the freeze are listed in EXCLUDED with the reason; they are reported,
+never scored.
+
+Per row atoms:
+  row       the registry has exactly one row whose first cell is the path;
+  pin       sha256 of the tool at --rev equals the frozen pin (a tool edited
+            to print the claimed number is not a correction of the claim);
+  claimed   the self-test cell states a count (first match of CLAIM_RE);
+  green     the documented self-test exits 0 (timeout 900 s);
+  counted   the output carries a count (whole stdout as JSON with an integer
+            `cases`, else a list `cases` -> its length, else the LAST match of
+            OBS_RE over stdout then stderr);
+  agree     claimed == counted.
+A row is a mismatch unless all six atoms hold.
+
+Label: `rows R; claimed C of R; green G of R; counted K of R; agree A of R;
+mismatches M`.  Frozen predicate (R100-C2): the label equals TARGET and the
+exit is 0.  Exit 1 otherwise; exit 2 could-not-evaluate (unknown revision,
+clone failure, missing or doubled registry markers, no --work, bad argv).
+
+The self-tests run in a `git clone --shared` of --root checked out at --rev
+under --work (never in the lane checkout); HYAKU_SCRATCH and TMPDIR point
+into --work.  The receipt is written through mkstemp in its own directory.
+--selftest exercises the two parsers and the row extractor in memory.
+"""
+import argparse
+
+=== kama-shokunin/tools/round73-receipt-claim-binding.py:1-20
+#!/usr/bin/env python3
+"""round73-receipt-claim-binding.py — grade every tip claim against the receipt it cites.
+
+Round 72's critic recorded survivor B6 (`.ufo/waves/round-72/w1/CRT01ReceiptAttack/attack.md`
+§4.2 and §S3): a receipt graded at an earlier revision passes the frozen
+``tools/round72-receipt-tip-binding.py`` gate, because the delta between the receipt's own
+header and the report tip is record-only, while the citing line says the measurement ran
+"at the report tip". The base tool grades the receipt *population* (does every cited receipt
+exist, carry a header, name an ancestor, and sit behind a record-only delta?); it never reads
+what the citing line claims about it. The r71 defect 4 the base tool was built from is
+therefore certified by the base tool itself whenever the certified receipt is old and the
+delta to the tip is the round's own record.
+
+This module composes that byte-frozen gate unchanged and adds the claim pass. It runs
+
+    python3 tools/round72-receipt-tip-binding.py --repo <repo> --round <N> --tip <rev> --json
+
+keeps its counts (``cited/bound/unbound/shifted/stale``) and its findings verbatim, then reads
+the same two record blobs at the resolved tip (``SCORECARD.md``'s ``## Round <N>`` section and
+``corpus/lessons/round-<N>.md``, the base tool's own heading semantics) and grades every line
+
+=== souji-shokunin/tools/souji-citation-reconcile.py:1-26
+#!/usr/bin/env python3
+"""souji-citation-reconcile.py — r37 C1 self-assessment citation reconciler.
+
+The r36 non-author spot-check routed one calibration defect class: cells in the
+lane's own self-assessment quote after-values that never lived in any committed
+receipt (`cases=11`/`cases=9`/`cases=8`/`cases=20` against receipts reading
+21/12/9), and their measured-commit cells name a commit where the cited receipt
+does not exist.
+
+This counter re-derives one register row per routed cell over committed bytes
+only. A row binds when, at the audit revision:
+
+  citation  exactly one line of the named file contains the row's `anchor`;
+            that line contains `expected` (as a whole token), names the row's
+            `receipt`, and does not contain `stale` (whole token);
+  receipt   a line of the receipt blob at `receipt_rev` starts with `SUMMARY`
+            and carries `expected` (whole token); the receipt path must differ
+            from the citation file.
+
+Register schema (TSV, header line required, ids unique, `stale` mandatory):
+
+  id<TAB>file<TAB>anchor<TAB>expected<TAB>stale<TAB>receipt<TAB>receipt_rev
+      [<TAB>commit]
+
+The optional eighth `commit` cell is the r38 commit arm (the r37 named limit:
+"the schema binds an expected token to both a citation line and a receipt
+
+=== mori-shokunin/tools/mori-round41-calibration.py:1-14
+#!/usr/bin/env python3
+"""Count round-40 C2 self-assessment mismatches against the frozen r40 gate.
+
+Usage: python3 tools/mori-round41-calibration.py <revision> --repo DIR --reference-rev REV
+       python3 tools/mori-round41-calibration.py --selftest
+The reference gate is loaded byte-for-byte from <reference-rev>; recorded
+values are read from committed SCORECARD/LOG/lesson bytes at <revision>.
+
+--selftest builds a synthetic git repository and record files under TMPDIR
+(no network, nothing written outside it), exercises the parse and verdict
+arms, prints ``MORI_R41_CALIBRATION_SELFTEST pass=<n> fail=<n>`` and exits 0
+when every arm passes, 1 when one fails and 2 when the fixtures cannot be
+built.
+"""
+
+=== kama-shokunin/tools/shortcut-tally.py:1-10
+#!/usr/bin/env python3
+"""shortcut-tally.py (v3) - tally counters that a shortcut can satisfy.
+
+Question (unchanged from the round-47 draft): across the lane's rounds, is the
+record saying that counter design is getting harder to fool, or only that
+shortcuts are disclosed better? For each round report (a) how many frozen
+counters the round's own `met=True` disclosure says a shortcut met, (b) how many
+counter/tool mutants survived their mutation battery, and (c) whether a falsify
+wave ran.
+
+
+=== chousa-shokunin/tools/claims-audit-v2.py:1-12
+#!/usr/bin/env python3
+"""claims-audit-v2 — flags self-assessment statements in a frozen claims file that committed files contradict.
+
+v2 (round 64, claim R64-C2): the round-63 attempt-2 checker (`tools/claims-audit.py`, frozen bytes
+`d48247f9c77ac1e7`) with three additions and every rule class below byte-identical:
+  1. `load_rules` rejects duplicate rule ids (`duplicate rule id`, exit 1) — mutant class A10.
+  2. `--selftest` runs ten cases (the three attempt-2 fixtures plus C4 a stale anchor exiting 2, C5 a
+     case-only verbatim-heading mismatch firing, C6 an unreadable revision firing, C7 a duplicate rule id
+     rejected, C8 the `nothing in the lane` quantifier arm firing, C9 a digit inside a word not counting
+     as a named count, C10 the FLAG lines required on stdout) and prints one `CASE <n> <tag> ok` line per
+     case before `AUDIT_SELFTEST=PASS (10 cases)`.
+  3. `--selftest-fault N` forces case N's verdict check to fail — the selftest shown able to fail; it
+
+# --- the one sibling that bounds the static call-site method C2 uses
+=== kama-shokunin/tools/round58-battery-exec-check.py:1-8
+#!/usr/bin/env python3
+"""Round-58 C1 checker: bind the declared battery roster to *executed* battery legs.
+
+Replaces the round-57 syntactic call-site walk of tools/round56-prereg-check.py (which
+dead code, an unused function, an early return or a rebound `run` all satisfy).  The
+committed battery blob at --tip is executed as `__main__` in a child interpreter under
+a hermetic harness:
+  * subprocess.run/call/check_call/check_output are replaced by a recorder that returns a
+
+# --- does ANY sibling parse the tameshi tally grammar `TOKEN: N/M pass` against a cited receipt?
+$ grep -rn "pass\\\\b" --include=*.py */tools | grep -E "re\\.(compile|search|match)" | grep -Ev "^tameshi" | head -12
+rc=0
+
+$ grep -rn "SELFTEST" --include=*.py */tools | grep -E "re\\.(compile|search|match)" | grep Ev tameshi | head -12
+kaidoku-shokunin/tools/round-45/c1-counter.py:108:    m = re.search(r"PREFLIGHT_SELFTEST: cases=(\d+) failures=(\d+)", proc.stdout)
+kaidoku-shokunin/tools/round-79/gate-mutation.py:134:SELFTEST_LINE = re.compile(r"^SELFTEST cases=(?P<cases>\d+) failures=(?P<failures>\d+)$")
+kaidoku-shokunin/tools/round-80/guard-battery.py:115:    summary = re.search(r"SELFTEST cases=(\d+) failures=(\d+)", proc.stdout)
+kaidoku-shokunin/tools/round-84/mutation-closure.py:34:JSON_FAIL_RE = re.compile(r"^SELFTEST cases=(\d+) failures=(\d+)$", re.M)
+kama-shokunin/tools/pre-report-gate.py:338:ROUND77_SELFTEST_RE = re.compile(r"[A-Z][A-Z0-9_]*_SELFTEST pass=[0-9]+ fail=0")
+kama-shokunin/tools/round43-registry-audit.py:173:    m = re.search(r"`GATE_SELFTEST pass=(\d+) fail=0`", skill)
+kama-shokunin/tools/round46-append-audit-check.py:211:            m = re.search(r"AOA_SELFTEST pass=(\d+) fail=(\d+)", out)
+kama-shokunin/tools/round47-append-audit-v2-check.py:341:    m = re.search(r"AOA_SELFTEST pass=(\d+) fail=(\d+)", p.stdout)
+kama-shokunin/tools/round48-append-audit-v3-check.py:660:            m = re.search(r"AOA_SELFTEST pass=(\d+) fail=(\d+)", p.stdout)
+kama-shokunin/tools/round78-selfrecord-round77.py:79:TALLY_RE = re.compile(r"^PRE_REPORT_SELFTEST pass=(\d+) fail=0", re.M)
+kama-shokunin/tools/round80-selfrecord-round79.py:54:SELFTEST_RE = re.compile(r"PRE_REPORT_SELFTEST pass=([0-9]+) fail=([0-9]+)")
+kama-shokunin/tools/round81-selfrecord-round80.py:61:SELFTEST_RE = re.compile(r"pass=([0-9]+) fail=([0-9]+)")
+rc=141
+
+# --- recorder-alias handling anywhere outside tameshi?
+$ grep -rn "ambiguous-recorder\|recorder alias\|CONTROL_ASSERT" --include=*.py */tools (excluding tameshi)
+rc=0
+
+$ grep -rn "alias" --include=*.py */tools (excluding tameshi) | grep -vi "argv\|path\|route\|import\|symlink" | head -10
+kaidoku-shokunin/tools/round-100/gen-forgeries.py:14:  h4-oracle-alias   the round-99 repair plus a call of `upx -t` through an
+kaidoku-shokunin/tools/round-100/gen-forgeries.py:15:                    aliased `os` module (no FORBIDDEN token; the static leg
+kaidoku-shokunin/tools/round-100/gen-forgeries.py:19:                    an aliased `os`: every other arm passes, so only the exec
+kaidoku-shokunin/tools/round-100/gen-forgeries.py:77:    out["h4-oracle-alias"] = h4
+kaidoku-shokunin/tools/round-100/pe-upx-corrupt-battery.py:11:`os` alias, CriticC2 fg/fg3).  Every round-99 arm is kept unchanged as the
+kaidoku-shokunin/tools/round-100/pe-upx-corrupt-battery.py:69:             guard: an aliased `os`/`subprocess` call is caught where the
+kaidoku-shokunin/tools/round-33/disk-command-audit.py:38:    "command is seen; cwd (cd /fast/scratch && find .), variables, aliases, and "
+kaidoku-shokunin/tools/round-43/verify-copies-r43.py:233:    aliases = sorted(c for c in set(copies) if copies.count(c) > 1)
+kaidoku-shokunin/tools/round-43/verify-copies-r43.py:234:    emit("copy-unique", args.map, not aliases, ",".join(aliases))
+kaidoku-shokunin/tools/round-44/c1-oracle.py:918:            # `output_tree_digest_def` are kept as the historical aliases.
+rc=141
+
+# --- corrected negative test (the earlier pass\\\\b grep was over-escaped; this is the precise form)
+$ python3 - (every */tools/*.py outside tameshi that BOTH parses an N/M-style tally AND reads a receipt path)
+siblings matching N/M-pattern AND receipt: 0
+rc=0
+
+$ grep -rn "TALLY_RECONCILE\|ambiguous-recorder" --include=*.py . 2>/dev/null | grep -v "^./tameshi-shokunin"
+rc=0
+
+$ ls */tools/*.py | grep -c "selftest\|calibrat\|reconcil\|receipt" (excluding tameshi)
+37
+
+# reading of the negative: no sibling implements the tameshi grammar (a record line carrying
+# `TOKEN: N/M pass` + a same-line .out/.txt/.log/.json citation graded against that receipt blob).
+# The nearest siblings each pick a different source of truth: a live run (kaidoku r100), a
+# hand-written register (souji, kama r73), or fixed items (kaidoku r25, mori r41).
+
+# --- corrected negative test v2 (the two attempts above mangled the escapes; this script is committed
+#     verbatim below, run from the fleet root, and does not touch any sibling file)
+$ cd /home/vgpnk/Projects/shokunin && python3 /fast/scratch/hyaku/tameshi-r99/R99CN1/nm_scan.py
+scanned sibling tools: 871
+parse an N/M tally shape: 17
+N/M tally shape AND receipt-path handling: 7
+  both: kaidoku-shokunin/tools/round-47/record.py
+  both: kaidoku-shokunin/tools/round-48/record2.py
+  both: kaidoku-shokunin/tools/round-50/c2-record.py
+  both: kaidoku-shokunin/tools/round-66/coverage-selfcheck.py
+  both: kama-shokunin/tools/round79-selfrecord-round78.py
+  both: kotodama-shokunin/tools/exercise-handoff-e2e.py
+  both: souji-shokunin/tools/souji-receipt-run.py
+N/M tally shape only (first 10):
+  tally: kaidoku-shokunin/tools/round-25/a2/c1-calibration.py
+  tally: kaidoku-shokunin/tools/round-36/c2-counter.py
+  tally: kaidoku-shokunin/tools/round-38/c2-counter.py
+  tally: kotodama-shokunin/tools/harness/claims-freshness.py
+  tally: mori-shokunin/tools/mori-claim-sweep.py
+  tally: souji-shokunin/tools/souji-capability-cells.py
+  tally: tsukuroi-shokunin/tools/check-registry-content-r100.py
+  tally: tsukuroi-shokunin/tools/check-registry-content-r98.py
+  tally: tsukuroi-shokunin/tools/check-registry-content-r99.py
+  tally: tsukuroi-shokunin/tools/check-registry-content.py
+rc=0
+
+--- script source ---
+import glob
+import re
+
+# Any textual N/M shape as it would appear inside a Python regex literal or
+# format string: `[0-9]+/[0-9]+`, `\d+/\d+`, `(\d+)/(\d+)`.
+N_M = re.compile(r"\[0-9\]\+/\[0-9\]\+|\\d\+/\\d\+|\(\\d\+\)/\(\\d\+\)")
+CITE = re.compile(r"\.(out|txt|log|json)\b")
+
+scanned = 0
+both = []
+tally_only = []
+for p in sorted(glob.glob("*/tools/**/*.py", recursive=True)):
+    if p.startswith("tameshi-shokunin"):
+        continue
+    try:
+        s = open(p, encoding="utf-8", errors="replace").read()
+    except OSError:
+        continue
+    scanned += 1
+    has_nm = bool(N_M.search(s))
+    has_cite = bool(CITE.search(s)) and "receipt" in s.lower()
+    if has_nm and has_cite:
+        both.append(p)
+    elif has_nm:
+        tally_only.append(p)
+
+print("scanned sibling tools:", scanned)
+print("parse an N/M tally shape:", len(both) + len(tally_only))
+print("N/M tally shape AND receipt-path handling:", len(both))
+for p in both:
+    print("  both:", p)
+print("N/M tally shape only (first 10):")
+for p in tally_only[:10]:
+    print("  tally:", p)
+
+# --- inspection of the seven siblings that carry BOTH an N/M shape and receipt handling
+#     (cwd here is the fleet root, as the paths are sibling-relative)
+=== kaidoku-shokunin/tools/round-47/record.py
+308:    receipt = {"counter": "round-47-c2", "rev": rev,
+311:        return 2, dict(receipt, reason="fewer than two `## Round N` sections")
+372:    receipt.update({"atoms": len(atoms), "verified": len(verified),
+377:    missing_classes = [c for c in CLASSES if receipt["atoms_by_class"][c] == 0]
+=== kaidoku-shokunin/tools/round-48/record2.py
+14:  quoted number only when a cited receipt backs it.
+20:  v3 (default) — oracle consistency + completeness floor + quoted-receipt binding +
+117:def receipts_at(files, section_text):
+130:def quote_value(receipt, key):
+=== kaidoku-shokunin/tools/round-50/c2-record.py
+7:code and the receipt label are the same predicate.
+18:receipts, the round-49 lesson, closure, SCORECARD sections, `FREEZE`, `LOG.md`, the
+53:      round-49 receipt `.ufo/waves/round-49/l1/scores/c2-final.json`, and states
+64:  B5  the round-48 final receipts: correction line `B5` names `33f65a91` (the receipts'
+=== kaidoku-shokunin/tools/round-66/coverage-selfcheck.py
+16:                    predicate constant and no receipt sentence.
+36:and every receipt):
+=== kama-shokunin/tools/round79-selfrecord-round78.py
+481:    """Three commits: skeleton, sealed record, corrections (+tip receipt)."""
+536:    receipt = repo / ".ufo" / "waves" / "round-79" / "measured" / "v2"
+537:    receipt.mkdir(parents=True)
+538:    (receipt / "pre.out").write_text("SELFRECORD_R77 claims=6 mismatches=1 corrected=0\n")
+=== kotodama-shokunin/tools/exercise-handoff-e2e.py
+27:  `tools/harness/packet_links.py`) is named in the receipt, never hidden: the
+55:      adapter gates, the D4 reader gate, the four round-18 D4 receipts the D4
+778:        "exercise, not a delivery: no lore brief, no baseline bible and no receipt surface exist, and no "
+1100:            "name the baseline bible revision, entity keys and receipt surface this lane should deliver against?",
+=== souji-shokunin/tools/souji-receipt-run.py
+2:"""souji-receipt-run.py — blob-bound receipts (round 23, C2).
+5:re-derives a command at a named, durable revision and writes a receipt that binds the
+7:its output. `verify` re-reads the same bytes from git and refuses a receipt whose recorded
+11:  verify --root <repo> <receipt>

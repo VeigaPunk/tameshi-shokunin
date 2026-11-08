@@ -1,0 +1,28 @@
+# cmd: --rev given an ANNOTATED TAG OBJECT sha (the object exists in the scratch clone, not the lane)
+# tagsha=1f78b77fad8ab8bcef3b1d6d024ceda8a88064c1  type=tag
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+--- C1 --repo clone --rev tagsha ---
+TALLY_SETUP rev-not-commit
+# exit: 2
+--- C2 --repo clone --rev tagsha ---
+CONTROL_ASSERT_SITE line=29 name=alias-literal measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record
+CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1
+# exit: 1
+--- C1 --repo clone --rev 'v9^{commit}' (peeled form, not 40-hex) ---
+TALLY_SETUP rev-not-40-hex
+# exit: 2
+--- C2 --repo clone --rev 'v9^{commit}' ---
+AUDIT_SETUP rev-not-a-commit-id
+# exit: 2
+
+# cmd: does the frozen C1 twelve-record number re-derive at a LATER rev (HEAD 27a5e49e)?
+--- rev 466510515d02759427158a9b16e9daa889d44907 ---
+TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19
+# exit: 1
+--- rev ab598d03da34bbaffc35010b4e0f7c33ed0a18ae ---
+TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19
+# exit: 1
+--- rev 27a5e49e85307a5ffa492ae3770b54562225d458 ---
+TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19
+# exit: 1

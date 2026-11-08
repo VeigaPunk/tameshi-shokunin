@@ -1,0 +1,29 @@
+# cmd: raw 'git cat-file blob <rev>:<traversing path>' plus C2 --driver and C1 --record with traversing paths
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# seat: R99SN1
+# date: 2026-11-08T20:22:49-03:00
+# ---- output ----
+---- raw git: cat-file blob with a traversing path ----
+  git cat-file blob 466510515d02759427158a9b16e9daa889d44907:../README.md -> fatal: '../README.md' is outside repository at '/home/vgpnk/Projects/shokunin/tameshi-shok
+  git cat-file blob 466510515d02759427158a9b16e9daa889d44907:../../etc/passwd -> fatal: '../../etc/passwd' is outside repository at '/home/vgpnk/Projects/shokunin/tameshi-
+  git cat-file blob 466510515d02759427158a9b16e9daa889d44907:/etc/passwd -> fatal: path '/etc/passwd' exists on disk, but not in '466510515d02759427158a9b16e9daa889d4
+  git cat-file blob 466510515d02759427158a9b16e9daa889d44907:..%2Fetc -> fatal: path '..%2Fetc' does not exist in '466510515d02759427158a9b16e9daa889d44907'
+  git cat-file blob 466510515d02759427158a9b16e9daa889d44907:corpus/../../etc/passwd -> fatal: path 'corpus/../../etc/passwd' does not exist in '466510515d02759427158a9b16e9daa88
+---- C2 --driver with a traversing path (the tool builds '<rev>:<driver>') ----
+  --driver '../README.md':
+AUDIT_SETUP driver-absent-at-rev:../README.md
+    exit: 2
+  --driver '../../etc/passwd':
+AUDIT_SETUP driver-absent-at-rev:../../etc/passwd
+    exit: 2
+  --driver '/etc/passwd':
+AUDIT_SETUP driver-absent-at-rev:/etc/passwd
+    exit: 2
+---- C1 --record with a traversing path ----
+  --record '../README.md':
+TALLY_SETUP record-absent:../README.md
+    exit: 2
+  --record '../../etc/passwd':
+TALLY_SETUP record-absent:../../etc/passwd
+    exit: 2
+# exit: 0 (every traversal attempt was REFUSED by the tool; see the per-case exit lines above)

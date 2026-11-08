@@ -1,0 +1,163 @@
+# seat: R99CN1 (connector) — C2 overlap: tools/control-assertion-audit-v2.py vs the round-98 audit and other AST auditors
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# rev: 466510515d02759427158a9b16e9daa889d44907
+
+$ git grep -c CONTROL_ASSERT_RECORDERS ff93fa16a1f65e66385b7c7f564f03b218d91ea2 -- .
+rc=1
+
+$ python3 -I tools/control-assertion-audit.py --repo . --rev $REV --driver .ufo/evidence/round-99/c2/alias-driver.py
+CONTROL_ASSERT_DRIVER rev=466510515d02759427158a9b16e9daa889d44907 driver=.ufo/evidence/round-99/c2/alias-driver.py sha256=e01fce0dc84a24cbc529075edfcd3c5317fdac1316f2ba84a93c93890c1bb82f
+CONTROL_ASSERT_SITE line=24 name=bare-measured measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=26 name=bare-measured-2 measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT sites=2 measured=2 literal=0 unmeasured=0
+rc=0
+
+$ python3 -I tools/control-assertion-audit-v2.py --repo . --rev $REV --driver .ufo/evidence/round-99/c2/alias-driver.py
+CONTROL_ASSERT_DRIVER rev=466510515d02759427158a9b16e9daa889d44907 driver=.ufo/evidence/round-99/c2/alias-driver.py sha256=e01fce0dc84a24cbc529075edfcd3c5317fdac1316f2ba84a93c93890c1bb82f
+CONTROL_ASSERT_SITE line=24 name=bare-measured measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=26 name=bare-measured-2 measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=28 name=alias-measured measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=29 name=alias-literal measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record
+CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1
+rc=1
+
+$ python3 -I tools/control-assertion-audit.py --repo . --rev $REV --driver .ufo/evidence/round-98/controls98.py
+CONTROL_ASSERT_SITE line=98 name=c1-nowork-bind-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=102 name=c1-nowork-summary-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=109 name=c1-positive measured=yes class=measured detail=tuple-run@108
+CONTROL_ASSERT_SITE line=111 name=c1-selftest measured=yes class=measured detail=tuple-run@110
+CONTROL_ASSERT_SITE line=124 name=c1-forge-worktree-only measured=yes class=measured detail=tuple-run@123
+CONTROL_ASSERT_SITE line=136 name=? measured=yes class=measured detail=tuple-run@135
+CONTROL_ASSERT_SITE line=146 name=c1-forge-driver-sha measured=yes class=measured detail=tuple-run@144
+CONTROL_ASSERT_SITE line=152 name=? measured=yes class=measured detail=tuple-run@150
+CONTROL_ASSERT_SITE line=159 name=c2-nowork-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=165 name=c2-positive measured=yes class=measured detail=tuple-run@163
+CONTROL_ASSERT_SITE line=167 name=c2-selftest measured=yes class=measured detail=tuple-run@166
+CONTROL_ASSERT_SITE line=183 name=c2-forge-flipped-expect measured=yes class=measured detail=tuple-run@181
+CONTROL_ASSERT_SITE line=193 name=c2-forge-noop measured=yes class=measured detail=tuple-run@191
+CONTROL_ASSERT_SITE line=203 name=c2-forge-manifest-subst measured=yes class=measured detail=tuple-run@201
+CONTROL_ASSERT_SITE line=211 name=c2-forge-manifest-empty measured=yes class=measured detail=tuple-run@208
+CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0
+rc=0
+
+$ python3 -I tools/control-assertion-audit-v2.py --repo . --rev $REV --driver .ufo/evidence/round-98/controls98.py
+CONTROL_ASSERT_SITE line=98 name=c1-nowork-bind-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=102 name=c1-nowork-summary-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=109 name=c1-positive measured=yes class=measured detail=tuple-run@108
+CONTROL_ASSERT_SITE line=111 name=c1-selftest measured=yes class=measured detail=tuple-run@110
+CONTROL_ASSERT_SITE line=124 name=c1-forge-worktree-only measured=yes class=measured detail=tuple-run@123
+CONTROL_ASSERT_SITE line=136 name=? measured=yes class=measured detail=tuple-run@135
+CONTROL_ASSERT_SITE line=146 name=c1-forge-driver-sha measured=yes class=measured detail=tuple-run@144
+CONTROL_ASSERT_SITE line=152 name=? measured=yes class=measured detail=tuple-run@150
+CONTROL_ASSERT_SITE line=159 name=c2-nowork-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=165 name=c2-positive measured=yes class=measured detail=tuple-run@163
+CONTROL_ASSERT_SITE line=167 name=c2-selftest measured=yes class=measured detail=tuple-run@166
+CONTROL_ASSERT_SITE line=183 name=c2-forge-flipped-expect measured=yes class=measured detail=tuple-run@181
+CONTROL_ASSERT_SITE line=193 name=c2-forge-noop measured=yes class=measured detail=tuple-run@191
+CONTROL_ASSERT_SITE line=203 name=c2-forge-manifest-subst measured=yes class=measured detail=tuple-run@201
+CONTROL_ASSERT_SITE line=211 name=c2-forge-manifest-empty measured=yes class=measured detail=tuple-run@208
+CONTROL_ASSERT sites=15 measured=15 literal=0 unmeasured=0
+rc=0
+
+$ diff <v1 site lines> <v2 site lines> (.ufo/evidence/round-98/controls98.py)
+rc=0
+site_lines=15
+
+$ python3 -I tools/control-assertion-audit.py --repo . --rev $REV --driver .ufo/evidence/round-97/controls97.py
+CONTROL_ASSERT_SITE line=98 name=c1-nowork-bind-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=102 name=c1-nowork-summary-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=109 name=c1-positive measured=yes class=measured detail=tuple-run@108
+CONTROL_ASSERT_SITE line=111 name=c1-selftest measured=yes class=measured detail=tuple-run@110
+CONTROL_ASSERT_SITE line=124 name=c1-forge-worktree-only measured=yes class=measured detail=tuple-run@123
+CONTROL_ASSERT_SITE line=136 name=? measured=yes class=measured detail=tuple-run@135
+CONTROL_ASSERT_SITE line=146 name=c1-forge-driver-sha measured=yes class=measured detail=tuple-run@144
+CONTROL_ASSERT_SITE line=152 name=? measured=yes class=measured detail=tuple-run@150
+CONTROL_ASSERT_SITE line=156 name=c2-nowork-absent measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=162 name=c2-positive measured=yes class=measured detail=tuple-run@160
+CONTROL_ASSERT_SITE line=164 name=c2-selftest measured=yes class=measured detail=tuple-run@163
+CONTROL_ASSERT_SITE line=180 name=c2-forge-flipped-expect measured=yes class=measured detail=tuple-run@178
+CONTROL_ASSERT_SITE line=190 name=c2-forge-noop measured=yes class=measured detail=tuple-run@188
+CONTROL_ASSERT_SITE line=200 name=c2-forge-manifest-subst measured=yes class=measured detail=tuple-run@198
+CONTROL_ASSERT_SITE line=208 name=c2-forge-manifest-empty measured=yes class=measured detail=tuple-run@205
+CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1
+rc=1
+
+$ python3 -I tools/control-assertion-audit-v2.py --repo . --rev $REV --driver .ufo/evidence/round-97/controls97.py
+CONTROL_ASSERT_SITE line=98 name=c1-nowork-bind-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=102 name=c1-nowork-summary-absent measured=yes class=measured detail=returncode-of-runner-name
+CONTROL_ASSERT_SITE line=109 name=c1-positive measured=yes class=measured detail=tuple-run@108
+CONTROL_ASSERT_SITE line=111 name=c1-selftest measured=yes class=measured detail=tuple-run@110
+CONTROL_ASSERT_SITE line=124 name=c1-forge-worktree-only measured=yes class=measured detail=tuple-run@123
+CONTROL_ASSERT_SITE line=136 name=? measured=yes class=measured detail=tuple-run@135
+CONTROL_ASSERT_SITE line=146 name=c1-forge-driver-sha measured=yes class=measured detail=tuple-run@144
+CONTROL_ASSERT_SITE line=152 name=? measured=yes class=measured detail=tuple-run@150
+CONTROL_ASSERT_SITE line=156 name=c2-nowork-absent measured=no class=literal detail=constant
+CONTROL_ASSERT_SITE line=162 name=c2-positive measured=yes class=measured detail=tuple-run@160
+CONTROL_ASSERT_SITE line=164 name=c2-selftest measured=yes class=measured detail=tuple-run@163
+CONTROL_ASSERT_SITE line=180 name=c2-forge-flipped-expect measured=yes class=measured detail=tuple-run@178
+CONTROL_ASSERT_SITE line=190 name=c2-forge-noop measured=yes class=measured detail=tuple-run@188
+CONTROL_ASSERT_SITE line=200 name=c2-forge-manifest-subst measured=yes class=measured detail=tuple-run@198
+CONTROL_ASSERT_SITE line=208 name=c2-forge-manifest-empty measured=yes class=measured detail=tuple-run@205
+CONTROL_ASSERT sites=15 measured=14 literal=1 unmeasured=1
+rc=1
+
+$ diff <v1 site lines> <v2 site lines> (.ufo/evidence/round-97/controls97.py)
+rc=0
+site_lines=15
+
+$ python3 -I tools/control-assertion-audit.py --selftest
+CONTROL_ASSERT_SELFTEST: 18/18 pass
+rc=0
+$ python3 -I tools/control-assertion-audit-v2.py --selftest
+CONTROL_ASSERT_V2_SELFTEST: 27/27 pass
+rc=0
+
+# v1 SELFTEST_CASES index check (the plan's mined mistake: [7] is the loop arm?)
+$ python3 - (import v1, print SELFTEST_CASES[i][0] and whether the fixture contains a loop)
+0 direct-literal | noloop
+1 literal-via-name | noloop
+2 measured-returncode | noloop
+3 measured-tuple-run | noloop
+4 rebound-mixed | noloop
+5 all-measured-multiple | noloop
+6 attr-mutation | noloop
+7 augassign | noloop
+8 duplicate-add | noloop
+9 fake-returncode | noloop
+10 constant-ifexp | noloop
+11 loop-site | loop
+12 no-assignment | noloop
+13 scope-shadow-constant | noloop
+14 scope-shadow-attr | noloop
+rc=0
+
+# v1 vs v2 rule-code identity (ast function source segments, sha256)
+$ python3 - (compare every top-level function/class body of v1 and v2)
+sealed_env IDENTICAL
+call_name IDENTICAL
+is_runner_call IDENTICAL
+Scope IDENTICAL
+collect_scopes IDENTICAL
+resolve IDENTICAL
+classify IDENTICAL
+audit_text DIFFERS
+selftest DIFFERS
+main IDENTICAL
+v2-only: ['_target_names', 'recorder_names']
+rc=0
+
+# other AST auditors in tools/ (grep for ast import)
+$ grep -ln "^import ast\|^from ast" tools/*.py
+tools/control-assertion-audit-v2.py
+tools/control-assertion-audit.py
+tools/write-path-census-v3.py
+tools/write-path-census-v4.py
+rc=0
+
+# --- C2 limit sentence: "no committed lane driver registers through an alias today" (except the fixture)
+$ python3 - (scan every .py blob under .ufo/evidence at 46651051 for `X = add` / `partial(add`)
+py files scanned under .ufo/evidence: 384
+alias binds found: 1
+('.ufo/evidence/round-99/c2/alias-driver.py', 15, 'record = add')
+rc=0

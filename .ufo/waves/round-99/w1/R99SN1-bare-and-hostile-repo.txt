@@ -1,0 +1,21 @@
+# cmd: --repo pointing at a BARE repo and at a non-repo dir (C1 requires a toplevel; C2 does not)
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+--- C1 --repo '/fast/scratch/hyaku/tameshi-r99/R99SN1/tmp.I3kIad7XNF' ---
+TALLY_SETUP repo-not-toplevel
+# exit: 2
+--- C2 --repo '/fast/scratch/hyaku/tameshi-r99/R99SN1/tmp.I3kIad7XNF' ---
+AUDIT_SETUP rev-unresolvable
+# exit: 2
+--- C1 --repo '/fast/scratch/hyaku/tameshi-r99/R99SN1/outside' ---
+TALLY_SETUP repo-not-toplevel
+# exit: 2
+--- C2 --repo '/fast/scratch/hyaku/tameshi-r99/R99SN1/outside' ---
+AUDIT_SETUP rev-unresolvable
+# exit: 2
+
+# cmd: C2 --repo pointing at a HOSTILE repo that has a file of the same name (does it read the lane or the hostile repo?)
+hostile repo rev=51e2191579e5bf7e3a5482034d17b7d7f9978b13 (its driver has 1 literal site, no alias)
+CONTROL_ASSERT_SITE line=1 name=hostile measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=0 ambiguous=0 partial=0 names=add
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+# exit: 1

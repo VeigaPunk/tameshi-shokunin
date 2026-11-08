@@ -1,0 +1,79 @@
+# cmd: --rev variants, C1 then C2
+# cwd: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# branch=atfreeze short=466510515d02 tagsha=1f78b77fad8ab8bcef3b1d6d024ceda8a88064c1
+--- C1 --rev 'atfreeze' ---
+TALLY_SETUP rev-not-40-hex
+# exit: 2
+--- C2 --rev 'atfreeze' ---
+AUDIT_SETUP rev-not-a-commit-id
+# exit: 2
+--- C1 --rev '466510515d02' ---
+TALLY_SETUP rev-not-40-hex
+# exit: 2
+--- C2 --rev '466510515d02' ---
+AUDIT_SETUP rev-not-a-commit-id
+# exit: 2
+--- C1 --rev 'HEAD~1' ---
+TALLY_SETUP rev-not-40-hex
+# exit: 2
+--- C2 --rev 'HEAD~1' ---
+AUDIT_SETUP rev-not-a-commit-id
+# exit: 2
+--- C1 --rev '1f78b77fad8ab8bcef3b1d6d024ceda8a88064c1' ---
+TALLY_SETUP rev-not-commit
+# exit: 2
+--- C2 --rev '1f78b77fad8ab8bcef3b1d6d024ceda8a88064c1' ---
+AUDIT_SETUP rev-unresolvable
+# exit: 2
+--- C1 --rev 'refs/tags/v9' ---
+TALLY_SETUP rev-not-40-hex
+# exit: 2
+--- C2 --rev 'refs/tags/v9' ---
+AUDIT_SETUP rev-not-a-commit-id
+# exit: 2
+--- C1 --rev 'master' ---
+TALLY_SETUP rev-not-40-hex
+# exit: 2
+--- C2 --rev 'master' ---
+AUDIT_SETUP rev-not-a-commit-id
+# exit: 2
+--- C1 --rev 'not-a-rev' ---
+TALLY_SETUP rev-not-40-hex
+# exit: 2
+--- C2 --rev 'not-a-rev' ---
+AUDIT_SETUP rev-not-a-commit-id
+# exit: 2
+--- C1 --rev '466510515d02759427158a9b16e9daa889d44907' ---
+TALLY mismatched corpus/lessons/round-94.md:66 token DISPOSITION_SELFTEST claimed=8/8 receipt=.ufo/evidence/round-94/pre-freeze/c2-selftest.out observed=9/9 detail=differs
+TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=0 mismatched=1 unbound=0 uncited=0
+# exit: 1
+--- C2 --rev '466510515d02759427158a9b16e9daa889d44907' ---
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record
+CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1
+# exit: 1
+
+# cmd: C2 --driver path variants
+--- C2 --driver '../../etc/passwd' ---
+AUDIT_SETUP driver-absent-at-rev:../../etc/passwd
+# exit: 2
+--- C2 --driver '/etc/passwd' ---
+AUDIT_SETUP driver-absent-at-rev:/etc/passwd
+# exit: 2
+--- C2 --driver 'corpus/lessons/round-94.md' ---
+CONTROL_ASSERT_DRIVER rev=466510515d02759427158a9b16e9daa889d44907 driver=corpus/lessons/round-94.md sha256=dc4b9a6d9270c28851481c0fd65c44628d477bc921447ace7681cd85d2c918c7
+AUDIT_SETUP unparsable:invalid decimal literal (<unknown>, line 5)
+# exit: 2
+--- C2 --driver '' ---
+AUDIT_SETUP driver-absent-at-rev:
+# exit: 2
+--- C2 --driver ':foo' ---
+AUDIT_SETUP driver-absent-at-rev::foo
+# exit: 2
+--- C2 --driver './corpus/lessons/round-94.md' ---
+CONTROL_ASSERT_DRIVER rev=466510515d02759427158a9b16e9daa889d44907 driver=./corpus/lessons/round-94.md sha256=dc4b9a6d9270c28851481c0fd65c44628d477bc921447ace7681cd85d2c918c7
+AUDIT_SETUP unparsable:invalid decimal literal (<unknown>, line 5)
+# exit: 2
+--- C2 --driver '.ufo/evidence/round-99/c2/alias-driver.py' ---
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record
+CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1
+# exit: 1

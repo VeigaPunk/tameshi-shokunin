@@ -1,0 +1,23 @@
+# cmd: python3 -I /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v2.py --repo /fast/scratch/hyaku/tameshi-r99/R99E2/tmp.99HvfO8FeA --rev f6f17bf88d8b5ffa730615f6523017068c558cf2 --driver driver.py  (FROZEN tool blob sha256=acd67ab6...; v1 = /fast/scratch/hyaku/tameshi-r99/R99E2/frozen/v1.py)
+# expected (frozen wording at R=ab598d03): call before assignment line; module-wide no order rule -> alias, class=literal
+# driver (/fast/scratch/hyaku/tameshi-r99/R99E2/drs/use-before.py):
+STATES = []
+def add(name, code, body, want):
+    STATES.append((name, code, body, want))
+def sh(argv):
+    import subprocess
+    return subprocess.run(argv, capture_output=True)
+def main():
+    rec("a-lit", 0, b"", 0)
+rec = add
+main()
+# --- v2 frozen ---
+CONTROL_ASSERT_DRIVER rev=f6f17bf88d8b5ffa730615f6523017068c558cf2 driver=driver.py sha256=f82434591f3a6ba6117070c4af551beef8723f1d553370c67b1c02fc8d7b94f7
+CONTROL_ASSERT_SITE line=8 name=a-lit measured=no class=literal detail=constant
+CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,rec
+CONTROL_ASSERT sites=1 measured=0 literal=1 unmeasured=1
+rc=1
+# --- v1 frozen ---
+CONTROL_ASSERT_DRIVER rev=f6f17bf88d8b5ffa730615f6523017068c558cf2 driver=driver.py sha256=f82434591f3a6ba6117070c4af551beef8723f1d553370c67b1c02fc8d7b94f7
+CONTROL_ASSERT sites=0 measured=0 literal=0 unmeasured=0
+rc=0

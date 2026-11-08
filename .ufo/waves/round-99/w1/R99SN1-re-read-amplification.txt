@@ -1,0 +1,20 @@
+# cmd: RE-READ AMPLIFICATION — 8 pairs citing ONE 40MB receipt; C1 re-reads the blob per pair
+# fixture: /fast/scratch/hyaku/tameshi-r99/R99SN1/tmp.k21iqvxexx rev b4dfc3dea0495045104d11c0bd45caa3e3d6e407 ; receipt bytes=42000021 ; 8 pairs
+# ---- FROZEN-BLOB C1 ----
+TALLY_RECONCILE records=1 tallies=8 pairs=8 matched=8 mismatched=0 unbound=0 uncited=0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.07
+	Maximum resident set size (kbytes): 354856
+# exit: 0
+# ---- count the git cat-file subprocesses the tool makes ----
+# (instrumented by wrapping /usr/bin/git is not possible without altering PATH; instead:
+#  measure elapsed for 8 pairs vs 1 pair on the same receipt)
+-- 1 pair --
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.03
+	Maximum resident set size (kbytes): 15716
+-- 8 pairs --
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.09
+	Maximum resident set size (kbytes): 355208
+# ---- does either tool pass a timeout to its git subprocess? ----
+tally-reconcile.py timeout= count: 0
+v2 (worktree) timeout= count: 0
+lane tools using timeout=: 23 of 61
