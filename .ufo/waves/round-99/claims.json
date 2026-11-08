@@ -1,0 +1,86 @@
+{
+ "lane": "tameshi",
+ "round": 99,
+ "base": "ff93fa16a1f65e66385b7c7f564f03b218d91ea2",
+ "instrument": "466510515d02759427158a9b16e9daa889d44907",
+ "claims": {
+  "C1": {
+   "axis": "calibration",
+   "type": "measured",
+   "surface": "tools/tally-reconcile.py at the records revision R, reading the twelve committed records corpus/lessons/round-NN.md and plans/round-NN.plan.md (NN=93..98) and every receipt they cite as blobs at R",
+   "wording": "at the records revision R, python3 -I tools/tally-reconcile.py --repo . --rev R with the twelve --record values (lesson then plan, rounds 93..98) prints TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19 and exits 1, and its one TALLY mismatched line is corpus/lessons/round-94.md:66 token DISPOSITION_SELFTEST claimed=8/8 receipt=.ufo/evidence/round-94/pre-freeze/c2-selftest.out observed=9/9; the same command with only --record corpus/lessons/round-94.md prints records=1 tallies=1 pairs=1 matched=0 mismatched=1 unbound=0 uncited=0 and exits 1; --selftest prints TALLY_RECONCILE_SELFTEST: 17/17 pass and exits 0. The tool reads records and receipts as blobs at --rev through git cat-file (never the worktree), recognises exactly the two tally forms and the same-line citation grammar its docstring declares, resolves a citation as a tree path or under the record's own round dirs, and grades a pair matched only when every line of the receipt carrying the claimed token (or the receipt's single *_SELFTEST token) shows the claimed N/M.",
+   "counter": "python3 -I tools/tally-reconcile.py --repo . --rev RECORDS_REV --record corpus/lessons/round-93.md --record plans/round-93.plan.md --record corpus/lessons/round-94.md --record plans/round-94.plan.md --record corpus/lessons/round-95.md --record plans/round-95.plan.md --record corpus/lessons/round-96.md --record plans/round-96.plan.md --record corpus/lessons/round-97.md --record plans/round-97.plan.md --record corpus/lessons/round-98.md --record plans/round-98.plan.md",
+   "battery": "python3 -I tools/tally-reconcile.py --selftest",
+   "predicate": "TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19",
+   "battery_predicate": "TALLY_RECONCILE_SELFTEST: 17/17 pass",
+   "red": "python3 -I tools/tally-reconcile.py --repo . --rev RECORDS_REV --record corpus/lessons/round-94.md prints TALLY_RECONCILE records=1 tallies=1 pairs=1 matched=0 mismatched=1 unbound=0 uncited=0 and exits 1",
+   "before": "at base ff93fa16 no committed tool prints a TALLY_RECONCILE line (git grep -c TALLY_RECONCILE ff93fa16 -- . prints nothing, exit 1; .ufo/evidence/round-99/pre-freeze/c1-before-token.out); the round-94 and round-98 tally mismatches were found by non-author closures, not by a lane instrument",
+   "after": "the twelve-record line and exit 1, the single round-94 mismatched line, the round-94-only line, and the selftest tally, all at R",
+   "instrument_sha256": "60d59bead569157fb888dbb68301e290522e5837a482e84f36f858d2566bf40c",
+   "kill": [
+    "a: a pair whose receipt shows a different N/M for the claimed token is graded matched",
+    "b: a citation or receipt is read from the worktree instead of the blob at R",
+    "c: the round-94 line 66 pair is not reported mismatched, or another pair is",
+    "d: a tally on a line with no citation is graded (counted as a pair)",
+    "e: a citation that resolves to more than one path is graded",
+    "f: the selftest cannot fail (a seeded wrong verdict still prints n/n)"
+   ],
+   "limits": [
+    "pairing is per line: a line citing several receipts for different figures pairs the tally with each (round-98 lesson lines 124 and 127 grade unbound no-selftest-line)",
+    "a bare basename resolves only at the top of the record's round dirs; a sub-directory receipt cited by basename grades unbound unresolved (four of six unbound pairs)",
+    "tallies in other spellings (6/6 killed, 9 of 9, table cells without pass) are not recognised",
+    "an append-only erratum elsewhere does not clear a record line",
+    "one repository only: the round-98 report sentence (fleet repo) is reproduced only as selftest shape selftest-word-r98-d2-shape",
+    "the counts measure the twelve records as committed; an unbound pair is not asserted to be a record error"
+   ]
+  },
+  "C2": {
+   "axis": "coverage",
+   "type": "measured",
+   "surface": "tools/control-assertion-audit-v2.py at R reading committed driver blobs at R; the round-98 audit tools/control-assertion-audit.py stays byte-identical as the unmoved comparison",
+   "wording": "at the records revision R, python3 -I tools/control-assertion-audit-v2.py --repo . --rev R --driver .ufo/evidence/round-99/c2/alias-driver.py prints CONTROL_ASSERT_RECORDERS aliases=1 ambiguous=0 partial=0 names=add,record and CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1 and exits 1, naming the alias-literal site as class=literal; the round-98 audit on the same blob prints CONTROL_ASSERT sites=2 measured=2 literal=0 unmeasured=0 and exits 0; on .ufo/evidence/round-98/controls98.py and .ufo/evidence/round-97/controls97.py at R, v2's fifteen CONTROL_ASSERT_SITE lines equal v1's byte-for-byte and its CONTROL_ASSERT line equals v1's (sites=15 measured=15 literal=0 unmeasured=0 exit 0; sites=15 measured=14 literal=1 unmeasured=1 exit 1); --selftest prints CONTROL_ASSERT_V2_SELFTEST: 27/27 pass and exits 0. v2 counts as sites the bare-name calls of add and of every name bound anywhere in the module only by a plain or annotated assignment from a recorder name (chains followed to a fixpoint), grading them with v1's rules; a recorder alias with any other binding anywhere in the module is counted and graded unresolved (ambiguous-recorder), and a name bound by partial(<recorder>, ...) or functools.partial(<recorder>, ...) is counted and graded unresolved (partial-recorder).",
+   "counter": "python3 -I tools/control-assertion-audit-v2.py --repo . --rev RECORDS_REV --driver .ufo/evidence/round-99/c2/alias-driver.py",
+   "battery": "python3 -I tools/control-assertion-audit-v2.py --selftest",
+   "predicate": "CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1",
+   "battery_predicate": "CONTROL_ASSERT_V2_SELFTEST: 27/27 pass",
+   "red": "python3 -I tools/control-assertion-audit.py --repo . --rev RECORDS_REV --driver .ufo/evidence/round-99/c2/alias-driver.py prints CONTROL_ASSERT sites=2 measured=2 literal=0 unmeasured=0 and exits 0 (the unmoved round-98 audit)",
+   "before": "at base ff93fa16 no committed tool prints a CONTROL_ASSERT_RECORDERS line (git grep rc 1); the round-98 audit counts two sites on the alias fixture and exits 0 (round-98 declared limit: a differently named recorder is zero-site and passes vacuously)",
+   "after": "the v2 fixture lines and exit 1, the two v1/v2 equalities on controls98.py and controls97.py, and the selftest tally, all at R",
+   "instrument_sha256": "acd67ab67acf011d50952886afe284d331da424360d9a7a79f391284ecfaceb6",
+   "v1_sha256": "82c2e54b24bab55e9f01bb3f15afcb2c3b2654c3486bf6de29a06981cc5c0cd4",
+   "fixture_sha256": "e01fce0dc84a24cbc529075edfcd3c5317fdac1316f2ba84a93c93890c1bb82f",
+   "kill": [
+    "a: an aliased call site whose code is a literal is graded measured, or is not counted",
+    "b: v2's site lines or summary line on either committed driver differ from v1's",
+    "c: a name with any non-alias binding in the module is graded as a clean alias",
+    "d: a call of a name never bound from a recorder is counted as a site",
+    "e: the driver is read from the worktree instead of the blob at R",
+    "f: the selftest cannot fail"
+   ],
+   "limits": [
+    "attribute calls, getattr/globals()/dict dispatch, a wrapper def/lambda forwarding to add, and a recorder passed as an argument are not sites",
+    "alias detection is module-wide and scope-insensitive: an alias in one function bound otherwise elsewhere is ambiguous everywhere (conservative)",
+    "the fixture is lane-authored; no committed lane driver registers through an alias today, so the claim is coverage of an edge class, not a defect found in history",
+    "v1's classification limits (call-name runner matching, provenance not command identity, the want_code tautology) carry over unchanged"
+   ]
+  }
+ },
+ "controls": {
+  "dir": ".ufo/evidence/round-99/pre-freeze",
+  "runner": ".ufo/evidence/round-99/pre-freeze-run.sh",
+  "states": 15,
+  "expected": "c1-population 12/28/9/2/1/6/19 rc1; c1-r94-only mismatched1 rc1; c1-selftest 17/17; c1-before-token rc1; c2-v1-fixture sites2 rc0; c2-v2-fixture sites4 literal1 rc1; c2-v1/v2-controls98 15/15 rc0; c2-v1/v2-controls97 15/14/1/1 rc1; c2-site-diff-controls98/97 empty rc0; c2-v2-selftest 27/27; c2-v1-selftest 18/18; c2-before-token rc1"
+ },
+ "axes": [
+  "calibration (C1, lowest non-retired, pinned 8)",
+  "coverage (C2)"
+ ],
+ "routed_defects": [
+  "D1",
+  "D2",
+  "D3",
+  "D4",
+  "D5"
+ ],
+ "note": "two claims, distinct axes, causally separable (C1 reads records, C2 reads drivers); pre-freeze controls committed before this freeze; wave artifacts amend wording before the records run"
+}
