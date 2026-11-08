@@ -8,7 +8,7 @@
    "axis": "calibration",
    "type": "measured",
    "surface": ".ufo/evidence/round-97/c1/battery-bind.py reading, at --rev, the committed driver .ufo/evidence/round-96/c1/controls-v96.py (states() and EXPECT_EXTRA are the oracle), the frozen counter .ufo/evidence/round-96/c1/measure-v96.py (its sha256 is the counter=self digest) and the 50 receipts under .ufo/evidence/round-96/pre-freeze/controls/",
-   "wording": "at the records revision R, python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev R --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5 prints BATTERY states=50 matched=50 mismatched=0 missing=0 and exits 0; it reads the 50 receipts as blobs at R (a receipt present only in the working tree is absent) and takes its expectations from the committed driver's states() and EXPECT_EXTRA at R; a receipt deleted from the index (but left in the working tree), a counter_sha= edit, an exit= edit and a C1_R96_PASS=true payload edit each print a nonzero mismatched count and exit 1; a --driver-sha value unequal to the driver blob's sha256 is refused BATTERY_SETUP driver-sha-mismatch, exit 2; at base 07e50d6d git grep -c 'BATTERY states=' prints nothing and C1-summary.txt is absent at 8ed9c526 (git cat-file -e exit 1)",
+   "wording": "at the records revision R, python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev R --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5 prints BATTERY states=50 matched=50 mismatched=0 missing=0 and exits 0; it reads the 50 receipts as blobs at R (a receipt present only in the working tree is absent) and takes its expectations from the committed driver's states() and EXPECT_EXTRA at R; a receipt deleted from the index (but left in the working tree) prints a nonzero missing count and exits 1, and a counter_sha= edit, an exit= edit and a C1_R96_PASS=true payload edit each print a nonzero mismatched count and exit 1; a --driver-sha value unequal to the driver blob's sha256 is refused BATTERY_SETUP driver-sha-mismatch, exit 2; at base 07e50d6d git grep -c 'BATTERY states=' prints nothing and C1-summary.txt is absent at 8ed9c526 (git cat-file -e exit 1)",
    "counter": "python3 -I .ufo/evidence/round-97/c1/battery-bind.py --lane . --rev RECORDS_REV --driver-sha 88bcca8651f6a60568c0b74346796b5ce3407a9b2c8ac70ca7f229102d3c0ff5",
    "battery": "python3 -I .ufo/evidence/round-97/c1/battery-bind.py --selftest",
    "predicate": "BATTERY states=50 matched=50 mismatched=0 missing=0",
@@ -25,7 +25,10 @@
     "d: the selftest cannot fail (a cheat case is reintroduced and still passes)",
     "e: the driver blob at R is not the oracle the manifest's states() names (the reader substitutes its own expectations)"
    ],
-   "limits": ["the reader trusts the committed driver as the oracle; it verifies that the receipts satisfy it, not that the driver's expectations are the right ones", "a hand-written receipt carrying the right counter_sha= and payload cannot be distinguished from a real run without re-executing the state (round-96 F1, unchanged)"]
+   "limits": [
+    "the reader trusts the committed driver as the oracle; it verifies that the receipts satisfy it, not that the driver's expectations are the right ones",
+    "a hand-written receipt carrying the right counter_sha= and payload cannot be distinguished from a real run without re-executing the state (round-96 F1, unchanged)"
+   ]
   },
   "C2": {
    "axis": "operability",
@@ -49,7 +52,10 @@
     "e: the checker blob at R is not the one the manifest was measured against (digest pin)",
     "f: the tool prints the summary without running every row"
    ],
-   "limits": ["the fixture store is four files (a counter stub, a manifest, a claims digest and receipts); a guard whose effect needs the real 50-state receipts is out of scope", "the matrix measures one exact edit per guard, not two-edit combinations; a guard killed only by a combination is not counted (git-absolute and verify-quiet are measured limit for that reason)"]
+   "limits": [
+    "the fixture store is four files (a counter stub, a manifest, a claims digest and receipts); a guard whose effect needs the real 50-state receipts is out of scope",
+    "the matrix measures one exact edit per guard, not two-edit combinations; a guard killed only by a combination is not counted (git-absolute and verify-quiet are measured limit for that reason)"
+   ]
   }
  }
 }

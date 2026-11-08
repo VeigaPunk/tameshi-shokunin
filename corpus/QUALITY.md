@@ -2778,3 +2778,26 @@ on the landed bytes (`c2-landed-battery.txt`).
     and so is a symlinked `--outdir` (`outdir-symlink-refused`, `c2-outdir-symlink.out`). The pre-amendment
     round-95 tool wrote through the symlink and into the CWD (`w1/R96R2.md`; `w1/R96SN1.md`
     F4/F9). (`lessons/round-96.md`; `plans/round-96.plan.md` §A7, A9.)
+
+175. A record's verdict is **re-derived from committed bytes by a committed reader**. A summary
+    the report cites but the repository does not carry is not evidence, and a reader that
+    re-grades the committed receipts with the committed oracle is the minimum that turns an
+    attested count into a measurement. Able to fail: the round-96 record cites
+    `.ufo/evidence/round-96/pre-freeze/controls/C1-summary.txt`, absent at `8ed9c526`
+    (`git cat-file -e` exit 1), while round 97's reader prints
+    `BATTERY states=50 matched=50 mismatched=0 missing=0` at the records revision, and the
+    five forgeries each move the line or the exit
+    (`.ufo/evidence/round-97/pre-freeze/c1-forge-*.out`). (`lessons/round-97.md`;
+    `corpus/lessons/round-96-verifier-spotcheck.md` D-a.)
+
+176. A guard edit is **killed only when the mutant's verdict differs** from the pristine's in
+    the declared direction; an edit whose two runs are identical is a measured `limit` with
+    the mechanism named — never `survived`, never presumed observable — and an exact-string
+    anchor that is not unique is refused before the edit. Able to fail:
+    `guard-inertia.json` row `git-absolute` is measured `limit` (both runs exit 0 under the
+    pinned `PATH`), row `verify-quiet` is measured `limit` (both exit 2 with the same token),
+    a flipped expectation prints `survived=1` exit 1
+    (`.ufo/evidence/round-97/pre-freeze/c2-forge-flipped-expect.out`), and a no-op edit prints
+    `GUARD_SETUP edit-no-op` exit 2 (`.ufo/evidence/round-97/pre-freeze/c2-forge-noop.out`);
+    the round-96 record had no guard measurement at all (R96L1 delivered nothing).
+    (`lessons/round-97.md`; S159, S006.)

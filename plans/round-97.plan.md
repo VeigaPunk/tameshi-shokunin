@@ -135,5 +135,8 @@ Receipts: `.ufo/evidence/round-97/pre-freeze/*.out`.
 
 ## Amendments
 
-(none yet — every pre-data amendment appends a row here with the artifact that falsified
-the sentence and the repaired property)
+Pre-data; no claim receipt existed when each row was written.
+
+| id | artifact | falsified sentence | amendment |
+|---|---|---|---|
+| A1 | `.ufo/evidence/round-97/pre-freeze/c1-forge-worktree-only.out` (`BATTERY states=50 matched=49 mismatched=0 missing=1`, rc 1) | C1's "the four edits each print a nonzero `mismatched` count" | a receipt dropped from the index (left in the working tree) is counted `missing`, not `mismatched`; the sentence now names the field per edit ("a nonzero `missing` count" for the de-index case, `mismatched` for the three receipt-body edits). The plan wording already read "mismatched or missing"; the claims file is aligned to it, and the counter is unchanged. |
