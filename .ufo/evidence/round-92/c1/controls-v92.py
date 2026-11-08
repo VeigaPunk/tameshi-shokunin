@@ -155,9 +155,12 @@ def mutant_edits(counter_text):
             continue
 """
     assert unkeyed in base, "D03 unkeyed anchor missing"
+    hdr = "ids_ok = (not bad) and headers == 1 and"
+    assert hdr in base, "D03 header anchor missing"
     d03 = (base.replace(pin_assert, "    selfpin = True  # D03: self-pin assert removed\n", 1)
                .replace(shape, 'ID_SHAPE = re.compile(r"^C[0-9]{2}$")', 1)
-               .replace(unkeyed, "        if not shaped:\n            continue\n", 1))
+               .replace(unkeyed, "        if not shaped:\n            continue\n", 1)
+               .replace(hdr, "ids_ok = (not bad) and headers >= 1 and", 1))
     return {
         "D01": (d01, "replace-honest"),
         "D01D02": (d01d02, "replace-false-committed"),
@@ -258,6 +261,7 @@ def main():
         "D01": (0, {"__pass": True}),
         "D01D02": (0, {"__pass": True}),
         "D03": (0, {"__pass": True}),
+        "selfpin-edit": (2, {"__setup": "self-pin-mismatch"}),
     })
 
     if not a.mutants_only:
@@ -323,6 +327,17 @@ def main():
                     n, state_name, hashlib.sha256(open(mp, "rb").read()).hexdigest(), p.returncode)
                 + p.stdout + p.stderr)
             results[n] = (p.returncode, p.stdout)
+        if "selfpin-edit" in sel or not a.only:
+            pe = os.path.join(work, "counter-selfpin-edit.py")
+            open(pe, "w").write(blob.stdout.decode() + "\n# post-freeze edit (never committed)\n")
+            pw = os.path.join(work, "w-selfpin-edit")
+            os.makedirs(pw, exist_ok=True)
+            p = subprocess.run([sys.executable, "-I", pe, "--repo", lane, "--rev", a.rev,
+                                "--work", pw], capture_output=True, text=True)
+            open(os.path.join(a.outdir, "selfpin-edit.out"), "w").write(
+                "control=selfpin-edit edit=appended-comment exit-bound-to-the-pin\nexit=%d\n"
+                % p.returncode + p.stdout + p.stderr)
+            results["selfpin-edit"] = (p.returncode, p.stdout)
         for nm, repo in (("replace-honest", st1), ("replace-false-sealed", st2)):
             w = os.path.join(work, "w-" + nm)
             os.makedirs(w, exist_ok=True)
