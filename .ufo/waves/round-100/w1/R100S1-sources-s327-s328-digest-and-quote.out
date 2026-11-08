@@ -1,0 +1,18 @@
+# measured_rev: 56f247da25a0252fcdb8e04a61675e0d73aae9ab
+# tool: sha256sum(1) / wc(1) / python3 -I -c (inline); sources read as blobs at the freeze
+# tool_sha256: n/a (coreutils; no lane tool bytes)
+# cmd: git -C /home/vgpnk/Projects/shokunin/tameshi-shokunin show 56f247da25a0252fcdb8e04a61675e0d73aae9ab:.ufo/evidence/round-100/sources/s327.json > $S/s327.json ; same for s328.json ; sha256sum ; wc -c ; grep '^date:' on the headers blobs ; python3 -I quote-location check
+$ sha256sum $S/s327.json $S/s328.json
+bbd5b0fbb8bafe42b6dbc8a43fcf64b49ba6060f5fbd8f834020a66e2c310c5f  /fast/scratch/hyaku/tameshi-r100/R100S1/s327.json
+2d6d1f7a29b07923cdaa59cad9c1967600cdec1025dfb9c03ed352fd82bc9700  /fast/scratch/hyaku/tameshi-r100/R100S1/s328.json
+$ wc -c $S/s327.json $S/s328.json
+ 4722 /fast/scratch/hyaku/tameshi-r100/R100S1/s327.json
+ 5482 /fast/scratch/hyaku/tameshi-r100/R100S1/s328.json
+10204 total
+$ grep -i '^date:' $S/s327.headers $S/s328.headers
+/fast/scratch/hyaku/tameshi-r100/R100S1/s327.headers:date: Sun, 08 Nov 2026 23:50:27 GMT
+/fast/scratch/hyaku/tameshi-r100/R100S1/s328.headers:date: Sun, 08 Nov 2026 23:50:36 GMT
+$ python3 -I quote-location check (len(q.split()) and membership in abstractText and in the raw bytes)
+s327.json words=12 in_abstractText=True in_raw_bytes=True
+s328.json words=24 in_abstractText=True in_raw_bytes=True
+rc=0

@@ -1,0 +1,31 @@
+# seat: R100CN1b (connector, round-100 wave w1)
+# receipt: would a sibling line-pointer instrument detect the round-95 D1 class?
+# cwd: /home/vgpnk/Projects/shokunin (tameshi pins extracted to /fast/scratch/hyaku/tameshi-r100/R100CN1b from git show 56f247da25a0252fcdb8e04a61675e0d73aae9ab:<path>)
+# measured_rev: 56f247da25a0252fcdb8e04a61675e0d73aae9ab
+# tools: mori-shokunin/tools/mori-anchor-check.py sha256 7093dc5584d14ba131436c455271fcace5eecc9d66ce0881ca6879cb80101502;
+#        tsukuroi-shokunin/tools/check-anchor-coordinates.py sha256 fedd45ce350b3d62f6fcc526c44bca4846abe7c533a35c3633318454c5acc3b3
+# pin digests: s320 b968bc09839877f9b0bf892b8a37fce0f72f4fa0ff0f17208824161b8547277b
+#              s321 b153d814fdfc8624bb6da7449162c1cd707a637f7d1c1b636eb44b9cf63fa220
+#              s322 c85f56cc2101f761cc94215c677cd2c7c1ecca9c47be016479fdfe718af60f0d
+# --- run: python3 mori-anchor-check.py --pin <s320 pin> --check D1-cited-84 --check CORRECTED-88  (on this page raw and tag-stripped line numbers coincide up to 88)
+anchor item=D1-cited-84 span=84 verdict=mislocated located_on=- occurrences=0 words_counted=- words_recorded=-
+anchor item=CORRECTED-88 span=88 verdict=ok located_on=88 occurrences=1 words_counted=6 words_recorded=-
+ANCHOR_CHECK: FAIL items=2 ok=1 mislocated=1 wordcount_mismatch=0 pin_sha256=b968bc09839877f9b0bf892b8a37fce0f72f4fa0ff0f17208824161b8547277b pin_bytes=12127
+# rc=1
+# --- run: python3 mori-anchor-check.py --pin <s321 pin> --check cited-4399 --check corrected-4403 --check raw-line-4514  (mori reads raw bytes; tags split the phrase on every raw line, so no span locates)
+anchor item=S321-cited-4399 span=4399 verdict=mislocated located_on=- occurrences=0 words_counted=- words_recorded=-
+anchor item=S321-corrected-4403 span=4403 verdict=mislocated located_on=- occurrences=0 words_counted=- words_recorded=-
+anchor item=S321-raw-4514 span=4514 verdict=mislocated located_on=- occurrences=0 words_counted=- words_recorded=-
+ANCHOR_CHECK: FAIL items=3 ok=0 mislocated=3 wordcount_mismatch=0 pin_sha256=b153d814fdfc8624bb6da7449162c1cd707a637f7d1c1b636eb44b9cf63fa220 pin_bytes=508310
+# rc=1
+# --- run: python3 mori-anchor-check.py --pin <s322 pin> --check cited-2615 --check corrected-2618-2619
+anchor item=S322-cited-2615 span=2615 verdict=mislocated located_on=- occurrences=0 words_counted=- words_recorded=-
+anchor item=S322-corrected-2618 span=2618-2619 verdict=mislocated located_on=- occurrences=0 words_counted=- words_recorded=-
+ANCHOR_CHECK: FAIL items=2 ok=0 mislocated=2 wordcount_mismatch=0 pin_sha256=c85f56cc2101f761cc94215c677cd2c7c1ecca9c47be016479fdfe718af60f0d pin_bytes=514698
+# rc=1
+# --- run: python3 check-anchor-coordinates.py --fixture /fast/scratch/hyaku/tameshi-r100/R100CN1b/tk-fixture --repo .   (its fixed ENTRY/SNAPDIR populated with the s321 pin and five tameshi rows)
+{"claim": "C1", "revision": null, "count": 0, "target": 8, "finding": "unmet", "rows": [{"id": "r95-cited-4399", "cited": [4399, 4399], "located": [4514, 4514], "exact": false, "why": "cited-range-not-the-quote-span"}, {"id": "r95-cited-4393", "cited": [4393, 4393], "located": [4506, 4508], "exact": false, "why": "cited-range-not-the-quote-span"}, {"id": "r95-cited-4493", "cited": [4493, 4493], "located": [4607, 4608], "exact": false, "why": "cited-range-not-the-quote-span"}, {"id": "r96-cited-4403", "cited": [4403, 4403], "located": [4514, 4514], "exact": false, "why": "cited-range-not-the-quote-span"}, {"id": "r96-cited-4496", "cited": [4496, 4497], "located": [4607, 4608], "exact": false, "why": "cited-range-not-the-quote-span"}]}
+# rc=1
+# note: the same quote occupies four different coordinate spaces -- Gate prose 4399/4393/4493;
+#       canonical renderer 4403/4395/4496; intra-line tag strip (tsukuroi) 4514/4506/4607;
+#       raw bytes: the phrase is not contiguous on any raw line.

@@ -132,6 +132,10 @@ below (round-99 spot-check routed item 1).
 
 | id | artifact | change | effect on wording |
 |---|---|---|---|
+| A1 | `.ufo/waves/round-100/w1/R100E3.md` F4/F5; `w1/R100SN1-F7-backtick-in-quote.out` | The C2 declared semantics delegated to the tool docstring are narrowed: `absent` means `locate()` finds no word-sequence match for the extracted quote (a lone punctuation token left by a tag boundary reduces to an empty word and can make a verbatim quote `absent`, out-of-set round-77:70 and round-88:46); a markdown table is one block (one sid, one explicit-snapshot fallback for every row; a quote written before its pointer is not extracted — out-of-set round 89); a backticked snapshot name inside a quote can become the explicit binding. Tool bytes unchanged. | C2's frozen counter, predicate and numbers unchanged; the claim covers only the five in-set records (no table-shared block, `absent=0`); the docstring's "the quote is not located anywhere" is read as "`locate()` finds no match", nothing wider. |
+| A2 | `w1/R100R2-receipt-renderer-default-arg.out`, `w1/R100R2-receipt-renderer-decorator-on-def.out`; `w1/R100SN1-F1-renderer-exec.out` | The plan sentence "only the `strip_tags`, `norm_text`, `_bare`, `locate` definitions … are compiled" and the docstring's "nothing else in it runs" are narrowed: compiling those four definitions also evaluates their decorator and default-argument expressions (a default-argument marker file was created; a decorator naming an uncompiled helper raised `NameError`), and their bodies run when called. Nothing outside the four definitions runs. Tool bytes unchanged. | C2's numbers unchanged; the trust boundary is restated as "code in the four renderer definitions of the lane's own blob at `--rev`, including their decorators and defaults". |
+| A3 | `w1/R100C1b.md` F3 (`R100C1b-F3-decoy-c2-unseen.out`) | A frozen-pin printer that never renders reproduces C2's summary and exit on the frozen arms; it differs on the unseen round-93 lesson (`pointers=2 hit=2` rc 0 vs the tool's `pointers=0` rc 1). C2's instrument is narrowed to its bytes: the claim is that `tools/gate-line-recheck.py` with blob sha256 `dae90e50d8d5d447c7a85d77df8e973114355d8ce96e5b78f522b82e88ad3bb9` at R prints the frozen lines; every records receipt carries that sha. The claim does not assert that the summary predicate alone discriminates a program that replays it; per-pointer agreement is evidenced separately by the independent re-implementation (`w1/R100E2.md` F2, 21/21 verdicts and spans) and out-of-set runs (`w1/R100E3.md`). | Counter, predicate and numbers unchanged; the wording "prints …" is read as "the pinned tool blob prints …". |
+| A4 | `w1/R100R1b.md` F4 (`R100R1b-receipt-argv-aware-stub.out`) | An argv-aware stub that replays the three recorded verdicts holds all three of its tool's rows. C1's title and surface word "governs"/"governing" is narrowed to "registers": the twelve rows register the four audits with the no-harm monitor and prove they still print their recorded verdicts on pinned historical inputs (the plan's own declared limit); they do not prove the tools compute those verdicts. | Counter, predicate and numbers unchanged; C1 reads "the no-harm monitor registers the round-98/99 audits". |
 
 ### Post-records
 
@@ -153,3 +157,16 @@ S327 (Jergas & Baethge 2015, quotation accuracy meta-analysis; admit, grounds C2
 snapshots `.ufo/evidence/round-100/sources/s327.json`, `s328.json`. Mistake mined into
 `corpus/lessons/round-100.md` `## Mistakes`. considerthese: `2026-11-08.md` idea 2 → C2.
 Assimilation: none planned.
+
+## Attempt 2 (L1 `TameshiR100a2`)
+
+Attempt 1 (`TameshiR100`) froze both claims (`56f247da`), dispatched w1 (`6ab72d6f`) and died with
+the orchestrator session (watchdog `lane-dead-no-report tameshi round=100`, 21:09:24). Its w1 seats
+were finalized with `output: null` (`.ufo/waves/round-100/w1-results.json`). Adopted unchanged:
+the frozen plan and claims, the pre-freeze receipts, the inherited `corpus/SOURCES.md` S327/S328
+rows, `.ufo/evidence/round-100/records-run.sh`, `.ufo/evidence/round-100/mistakes/`, and every
+seat file in `w1/` (E2, E3, M1, RV1 reports; R2, SN1, S1 receipts without a report). Re-run as the
+residual `w1r` (4 seats, `make-w1r-dispatch.py`): R100C1→R100C1b, R100CN1→R100CN1b,
+R100R1→R100R1b, R100E1→R100E1b, against the same FREEZE. Not re-run: R100SC1 (scout; S327/S328
+re-opened by the L1 instead, lesson §Gate) and R100S1 (scribe; the L1 drafted the knowledge entry).
+Discarded: nothing.
