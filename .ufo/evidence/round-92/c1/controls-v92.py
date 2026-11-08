@@ -84,16 +84,15 @@ def states(lane):
     C["pos-fixture"] = dict(files={NOTE: note_text()}, expect=(0, {"__pass": True}))
     C["nowork-note-absent"] = dict(files={}, drop_note=True,
                                    expect=(1, {"note": False, "ids": False}))
-    C["out-of-set"] = dict(files={NOTE: note_text(extra=(
-        "\n| id | arm | edit | verdict | witness |\n|---|---|---|---|---|\n" + "".join(
-            "| C%03d | fixture arm | fixture edit | %s | differs |\n" % (
-                i, "SURVIVED" if DERIVED["C%02d" % i] == "KILLED" else "KILLED")
-            for i in range(1, 13)))},
-        expect=(1, {"ids": False}))
-    C["out-of-set-letters"] = dict(files={NOTE: note_text(extra=(
-        "\n| id | arm | edit | verdict | witness |\n|---|---|---|---|---|\n" + "".join(
-            "| X%d | fixture arm | fixture edit | KILLED | differs |\n" % i for i in range(1, 13)))},
-        expect=(1, {"ids": False}))
+    hidden3 = "\n| id | arm | edit | verdict | witness |\n|---|---|---|---|---|\n" + "".join(
+        "| C%03d | fixture arm | fixture edit | %s | differs |\n"
+        % (i, "SURVIVED" if DERIVED["C%02d" % i] == "KILLED" else "KILLED")
+        for i in range(1, 13))
+    hiddenx = "\n| id | arm | edit | verdict | witness |\n|---|---|---|---|---|\n" + "".join(
+        "| X%d | fixture arm | fixture edit | KILLED | differs |\n" % i for i in range(1, 13))
+    C["out-of-set"] = dict(files={NOTE: note_text(extra=hidden3)}, expect=(1, {"ids": False}))
+    C["out-of-set-letters"] = dict(files={NOTE: note_text(extra=hiddenx)},
+                                   expect=(1, {"ids": False}))
     C["unkeyed-row"] = dict(files={NOTE: note_text(extra=(
         "\n| note row | arm | edit | verdict | witness |\n|---|---|---|---|---|\n"
         "| appended | fixture arm | fixture edit | KILLED | differs |\n"))},
