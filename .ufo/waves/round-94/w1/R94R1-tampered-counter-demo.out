@@ -1,0 +1,21 @@
+tamper demo (seat R94R1): second-pin-line rebinding at TOP of file
+construction:
+  1. insert `EVIL = True` before self_pin_ok (simulating an arbitrary code edit)
+  2. insert S second `SELF_SHA256 = "<H>"` line immediately after the original pin line
+     (line 60), where H = sha256(file bytes minus EVERY SELF_PIN_RE-matching line)
+H = ef190c524814e89fe3211786b239b5eb323f7fdac0846f3690e5e9abebe9992a
+digest(file bytes minus pin lines) == H: True
+runs (this demo file, R94R1-tampered-counter-demo.py):
+  python3 -I R94R1-tampered-counter-demo.py --conjuncts   -> rc 0, C1_CONJUNCT_KEYS printed (no C1_SETUP self-pin-mismatch)
+  python3 -I R94R1-tampered-counter-demo.py --repo <lane> --rev 7084358c... --work <w>
+    -> rc 0, full C1_ROW output (joins the true measurement because EVIL is inert)
+control (plain appended comment, no second pin line): self_pin_ok = False (C1_SETUP self-pin-mismatch, rc 2)
+guard-ordering note: a second pin line placed AFTER the `if __name__ == "__main__": main()` guard
+does NOT take effect (main runs before the assignment) and the file dies at setup; the attack needs
+the rebinding line BEFORE the guard, e.g. adjacent to the original pin line.
+Interpretation: self_pin_ok() strips EVERY line matching SELF_PIN_RE (re.M sub). A second such line
+is invisible to the digest, but Python executes it, and the LAST top-level assignment before main()
+wins. An attacker who controls the counter blob can therefore ship modified logic with a passing
+self-pin. The residual safeguard is external: plans/round-94.plan.md kill rule (c) + claims.json pin
+the counter blob sha256 (a22563b0...97023010). The counter does not self-prove its own bytes;
+any consumer trusting C1_R94_PASS=true without checking the blob digest is exposed.

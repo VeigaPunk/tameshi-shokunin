@@ -1,0 +1,68 @@
+# R94M1 mutation study of the C1 verdict-content reader
+# Instrument under test: .ufo/evidence/round-94/c1/measure-v94.py
+#   sha256 (frozen, rev 7084358c732ebe1334c2eb9a352c3ed96b547f7c):
+#   see R94M1.md; SELF_SHA256 = 5bd0f545da072b60bd3f1ea293cc3df6ee7d66b8a403240269f99808428dfd57
+# Detector for every row: the battery's own pre-registered expectation for the
+# named --only state (controls-v94.py states() / EXPECT_EXTRA), i.e. what the
+# frozen pre-freeze receipt records for the honest counter on that state.
+# Every defect is ONE edit of the reader that weakens ONE rule, except D05,
+# which is the battery's own declared named triple (plan round-94, "D05 removes
+# a named pair, said so here" followed by a three-rule row) reproduced verbatim.
+#
+# AMENDMENT (before the matrix run, after only the D01/E05 smoke run): rows
+# E30-E33 were appended to cover the four rules round-93 lesson M8 still listed
+# as state-less -- verdict-column count, fence, spec count, delimiter width.
+# No existing row was changed; the defect list the matrix runs is the one below.
+#
+# SELF_SHA256 handling: prep=pin recomputes the pin for the mutated bytes. The
+# self-pin is a seal against accidental post-freeze drift, not a defence
+# against a deliberate mutation study (pins.json + GATE_SHA256 still pin the
+# gate; the reader's own pin is by construction recomputable by any mutator).
+# prep=nopin is the ONE probe that leaves the pin stale, to exercise the
+# self-pin assert itself.
+#
+# Row semantics (KILLED/SURVIVED): KILLED = the weakened reader no longer
+# satisfies the battery expectation for its state (the battery sees it);
+# SURVIVED = the weakened reader satisfies it (the battery is blind);
+# INCONCLUSIVE = the honest baseline does not itself satisfy the expectation.
+#
+# One JSON object per line below. Written before any mutant was executed.
+
+{"id":"D01","rule":"stray-verdict scan (content-keyed refusal outside the verdict table)","state":"renamed-result","prep":"pin","old":"        toks = [c for c in split_cells(raw) if c in VERDICTS]\n        if toks:\n            bad.append(\"stray-verdict:%d:%s\" % (oi + 1, raw.strip()[:24]))\n","new":"        pass  # D01: stray-verdict scan removed\n","expect":"exit=1 ids=false (battery EXPECT_EXTRA[D01]=(0,PASS) records the flip)"}
+{"id":"D02","rule":"coverage denial tokens","state":"coverage-denial","prep":"pin","old":"DENIAL_TOKENS = (\"not admitted\", \"not-admitted\", \"uncertified\", \"withdrawn\", \"refused\",\n                 \"rejected\")","new":"DENIAL_TOKENS = ()  # D02: denial list emptied","expect":"exit=1 coverage=false"}
+{"id":"D03","rule":"pins.json equality against derived objects","state":"pins-mutated","prep":"pin","old":"            pins_ok = all(pins.get(k) == v for k, v in derived.items())","new":"            pins_ok = True  # D03: pins conjunct removed","expect":"exit=1 pins=false"}
+{"id":"D04","rule":"figure (measured: K/N must equal derived killed/n)","state":"figure","prep":"pin","old":"        figure_ok = len(heads) == 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n","new":"        figure_ok = True  # D04: figure check removed","expect":"exit=1 figure=false"}
+{"id":"D05","rule":"verdict_tables==1 + out-of-set + id-set equality (the battery's declared triple removal)","state":"hidden-c001","prep":"pin","edits":[{"old":"    vtables_ok = info[\"verdict_tables\"] == 1","new":"    vtables_ok = True  # D05a"},{"old":"            if first not in spec_ids:\n                bad.append(\"out-of-set:%d:%s\" % (ln + 1, first[:24]))\n                continue\n","new":"            pass  # D05b\n"},{"old":"    ids_ok = (note is not None and not bad and set(note_rows) == spec_ids)","new":"    ids_ok = (note is not None and not bad)  # D05c"}],"expect":"exit=1 verdict_tables=false (only this conjunct is graded by the state)"}
+{"id":"E01","rule":"self-pin assert (counter runs only on its own pinned bytes)","state":"pos-real","prep":"nopin","old":"    if not selfpin:\n        die(\"self-pin-mismatch\")","new":"    if False:  # E01: self-pin assert removed\n        die(\"self-pin-mismatch\")","expect":"battery selfpin-edit: exit=2 setup token self-pin-mismatch"}
+{"id":"E02","rule":"spec shape: duplicate-id half (len(spec_ids)==N_MIN)","state":"spec-shape","prep":"pin","old":"len(spec_ids) == N_MIN","new":"True  # E02: duplicate-id half of spec shape removed","expect":"exit=1 spec=false"}
+{"id":"E03","rule":"pin (gate blob sha256 equals spec gate sha256)","state":"pin-mismatch","prep":"pin","old":"    pin = gate_sha == g.get(\"sha256\")","new":"    pin = True  # E03: pin conjunct removed","expect":"exit=1 pin=false"}
+{"id":"E04","rule":"green (pristine gate selftest twice returns 0 and prints selftest ok)","state":"timeout","prep":"pin","old":"    green = all(r[0] == 0 and b\"selftest ok\" in r[1] for r in green_runs)","new":"    green = True  # E04: green computation removed","expect":"exit=1 inconclusive0=false (green is NOT graded by this state; receipt shows green=false)"}
+{"id":"E05","rule":"canary (pinned gate + one inserted exit 97 line returns 97)","state":"pos-real","prep":"pin","old":"    canary = selftest(cgp, work, to)[0] == 97","new":"    canary = True  # E05: canary computation removed","expect":"exit=0 PASS (canary is a constant while pin holds; declared unfalsifiable by C2)"}
+{"id":"E06","rule":"valid0 (invalid mutant count must be 0)","state":"noop-mutant","prep":"pin","old":"valid0=invalid == 0","new":"valid0=True","expect":"exit=1 valid0=false"}
+{"id":"E07","rule":"trivial0 (trivial mutant count must be 0)","state":"trivial-mutant","prep":"pin","old":"trivial0=trivial == 0","new":"trivial0=True","expect":"exit=1 trivial0=false"}
+{"id":"E08","rule":"inconclusive0 (no INCONCLUSIVE derived verdict)","state":"timeout","prep":"pin","old":"inconclusive0=inconclusive == 0","new":"inconclusive0=True","expect":"exit=1 inconclusive0=false"}
+{"id":"E09","rule":"unstable0 (no UNSTABLE derived verdict)","state":"timeout","prep":"pin","old":"unstable0=unstable == 0","new":"unstable0=True","expect":"exit=1 inconclusive0=false (unstable0 is NOT graded by any battery state)"}
+{"id":"E10","rule":"run count (spec runs_per_verdict, two runs per mutant)","state":"timeout","prep":"pin","old":"    runs = int(spec.get(\"runs_per_verdict\", 2))","new":"    runs = 1  # E10: run count forced to one","expect":"exit=1 inconclusive0=false (single-run instability is invisible)"}
+{"id":"E11","rule":"note presence","state":"note-absent","prep":"pin","old":"note=note is not None","new":"note=True","expect":"exit=1 note=false"}
+{"id":"E12","rule":"table-count rule (exactly one verdict table)","state":"hidden-x","prep":"pin","old":"    vtables_ok = info[\"verdict_tables\"] == 1","new":"    vtables_ok = True  # E12: table-count rule removed","expect":"exit=1 verdict_tables=false"}
+{"id":"E13","rule":"out-of-set rule (row id must be in the spec id set)","state":"hidden-c001","prep":"pin","old":"            if first not in spec_ids:\n                bad.append(\"out-of-set:%d:%s\" % (ln + 1, first[:24]))\n                continue\n","new":"            pass  # E13: out-of-set rule removed\n","expect":"exit=1 verdict_tables=false (masked: table count still refuses this state)"}
+{"id":"E14","rule":"duplicate rule (one verdict row per id)","state":"dup-row","prep":"pin","old":"            if first in rows:\n                bad.append(\"dup:%d:%s\" % (ln + 1, first))\n                continue\n","new":"            pass  # E14: duplicate rule removed\n","expect":"exit=1 ids=false"}
+{"id":"E15","rule":"position rule (verdict token in the verdict column, exactly one)","state":"position","prep":"pin","old":"            if len(toks) != 1 or vcol >= len(cells) or cells[vcol] not in VERDICTS:\n                bad.append(\"position:%d:%s\" % (ln + 1, first))\n                continue\n","new":"            if False:  # E15: position rule removed\n                bad.append(\"position:%d:%s\" % (ln + 1, first))\n                continue\n","expect":"exit=1 ids=false"}
+{"id":"E16","rule":"width rule (row cell count vs header, remainder-row refusal)","state":"sharp-width-lastrow","prep":"pin","old":"            if len(cells) != len(header):","new":"            if False:  # E16: width rule removed","expect":"exit=1 ids=false"}
+{"id":"E17","rule":"id-set equality (note rows set == spec id set)","state":"drop-c12","prep":"pin","old":"    ids_ok = (note is not None and not bad and set(note_rows) == spec_ids)","new":"    ids_ok = (note is not None and not bad)  # E17: id-set equality removed","expect":"exit=1 ids=false"}
+{"id":"E18","rule":"figure numeric check (K == killed, N == n)","state":"figure","prep":"pin","old":"        figure_ok = len(heads) == 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n","new":"        figure_ok = len(heads) == 1  # E18: figure numbers ungraded","expect":"exit=1 figure=false"}
+{"id":"E19","rule":"figure single-instance rule (exactly one measured: line)","state":"sharp-figure-two","prep":"pin","old":"        figure_ok = len(heads) == 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n","new":"        figure_ok = len(heads) >= 1 and int(heads[0][0]) == killed and int(heads[0][1]) == n  # E19: len==1 -> len>=1","expect":"exit=1 figure=false"}
+{"id":"E20","rule":"figure regex anchoring (^measured: ... killed$ per line)","state":"pos-fixture","prep":"pin","old":"        heads = re.findall(r\"^measured: (\\d+)/(\\d+) killed\\s*$\", block, re.M)","new":"        heads = re.findall(r\"measured: (\\d+)/(\\d+) killed\", block, re.M)  # E20: anchors removed","expect":"exit=0 PASS (no battery state embeds the figure in a longer line)"}
+{"id":"E21","rule":"witness rule (every survivor has a differing witness)","state":"witness-same","prep":"pin","old":"                witnessed=witnessed == survived","new":"                witnessed=True","expect":"exit=1 witnessed=false"}
+{"id":"E22","rule":"source quote (a located quote occurring in the committed snapshot)","state":"source-noquote","prep":"pin","old":"        quote_ok = any(norm_text(q) in text for q in quotes.get(sid, []))","new":"        quote_ok = True  # E22: quote occurrence rule removed","expect":"exit=1 source=false"}
+{"id":"E23","rule":"coverage last-row rule (an appended denial defeats an earlier assertion)","state":"coverage-denial","prep":"pin","old":"                last_row = raw","new":"                last_row = last_row or raw  # E23: first row wins","expect":"exit=1 coverage=false"}
+{"id":"E24","rule":"n_min (at least N_MIN graded mutants)","state":"short-spec","prep":"pin","old":"n_min=n >= N_MIN)","new":"n_min=True)","expect":"exit=1 n_min=false"}
+{"id":"E25","rule":"gate-identity anchor (QUALITY 163; not one of the 19 conjuncts)","state":"gate-foreign","prep":"pin","old":"    if g.get(\"commit\") != GATE_COMMIT or gate_sha != GATE_SHA256:","new":"    if False:  # E25: gate-identity anchor removed","expect":"battery gate-foreign: exit=2 setup token gate-identity-mismatch"}
+{"id":"E26","rule":"coverage own-cell rule (QUALITY 164: path is its own cell, not a substring)","state":"pos-real","prep":"pin","old":"            return first == \"knowledge/mutation-case-fleet-sources-census.md\"","new":"            return \"knowledge/mutation-case-fleet-sources-census.md\" in c  # E26: substring, not own cell","expect":"exit=0 PASS (no battery state names a longer path containing the note path)"}
+{"id":"E27","rule":"mismatched0 (note verdicts equal derived verdicts)","state":"inverted","prep":"pin","old":"mismatched0=(note is not None and mism == 0)","new":"mismatched0=True","expect":"exit=1 mismatched0=false"}
+{"id":"E28","rule":"source status rule (SOURCES.md row carries mined)","state":"source-status","prep":"pin","old":"            if len(c) >= 13 and c[1] == sid and c[8] == \"mined\" and LESSON_PATH in c[11]:","new":"            if len(c) >= 13 and c[1] == sid and LESSON_PATH in c[11]:  # E28: mined status dropped","expect":"exit=1 source=false"}
+{"id":"E29","rule":"trivial detector: the lrc is None / gawk failed / syntax error arms","state":"timeout","prep":"pin","old":"        if lrc == 2 or lrc is None or b\"gawk failed\" in lerr or b\"syntax error\" in lerr:","new":"        if lrc == 2:  # E29: timeout and stderr arms dropped","expect":"exit=1 inconclusive0=false (trivial is NOT graded by this state)"}
+{"id":"E30","rule":"one-verdict-column rule (len(vcols) == 1)","state":"sharp-two-verdict-cols","prep":"pin","old":"        if len(vcols) != 1:","new":"        if False:  # E30: verdict-column count rule removed","expect":"exit=1 ids=false"}
+{"id":"E31","rule":"fence rule (S322: a fenced table is literal, never keyed)","state":"pos-fenced-hidden","prep":"pin","old":"            if m:\n                fence = (m.group(1)[0], len(m.group(1)))\n                continue\n","new":"            if False:  # E31: fence rule removed\n                fence = (m.group(1)[0], len(m.group(1)))\n                continue\n","expect":"exit=0 PASS (positive state: a fenced verdict table must not be keyed)"}
+{"id":"E32","rule":"spec-count half (len(spec mutants) == N_MIN)","state":"short-spec","prep":"pin","old":"    spec_ok = (len(spec.get(\"mutants\", [])) == N_MIN and len(spec_ids) == N_MIN","new":"    spec_ok = (True  # E32: spec-count half removed\n               and len(spec_ids) == N_MIN","expect":"exit=1 n_min=false"}
+{"id":"E33","rule":"delimiter width rule (S321/A2: header cells == delimiter cells)","state":"sharp-delim-5-4","prep":"pin","old":"        if len(delim_cells) != len(header):","new":"        if False:  # E33: delimiter width rule removed","expect":"exit=1 ids=false"}

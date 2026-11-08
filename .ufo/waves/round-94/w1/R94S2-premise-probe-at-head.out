@@ -1,0 +1,1149 @@
+R94S2 premise probe
+lane      = /home/vgpnk/Projects/shokunin/tameshi-shokunin
+rev       = cdf669cf
+counter   = /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-94/c1/measure-v94.py
+note      = corpus/knowledge/mutation-case-fleet-sources-census.md
+spec ids  = 12 (C01,C02,C03,C04,C05,C06,C07,C08,C09,C10,C11,C12)
+VERDICTS  = ('KILLED', 'SURVIVED')
+FENCE_RE  = ^ {0,3}(`{3,}|~{3,})(.*)$
+DELIM_RE  = ^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$
+
+==============================================================================
+(a) GFM tables in corpus/knowledge/mutation-case-fleet-sources-census.md — reader's own tables()
+==============================================================================
+tables found: 3
+  start_line=68  header=["id", "arm targeted", "edit", "verdict", "witness"]  delim_cells=5  data_rows=12  verdict_header=yes (cols=[3])
+      row   70: ["C01", "E10 community-at-A", "`:668` `kind==\"community\"` \u2192 `kind==\"communityX\"`", "KILLED", "validate; one community row at tier A (S001)"]
+      row   71: ["C02", "W02 thin-reject length boundary", "`:671` `length(teaches)<8` \u2192 `<7`", "SURVIVED", "validate; one rejected row, teaches `1234567` (7 chars)"]
+      row   72: ["C03", "E04 supersedes exemption id width", "`:648` `/supersedes S[0-9]{3}/` \u2192 `{4}`", "SURVIVED", "validate; S002 teaches `supersedes S001 with newer text`"]
+      row   73: ["C04", "overdue due-day boundary", "`:684` `due<=today_s` \u2192 `due<today_s`", "KILLED", "overdue; opened 2026-10-07 + 30d = `--today` 2026-11-06"]
+      row   74: ["C05", "E08 opened-today boundary", "`:661` `opened_epoch>today_s` \u2192 `>=`", "KILLED", "validate; one row opened 2026-11-06 = `--today`"]
+      row   75: ["C06", "separator row with alignment colons", "`:596` `^:?-+:?$` \u2192 `^-+$`", "SURVIVED", "census; separator `:---` / `:---:` / `---:` over one row"]
+      row   76: ["C07", "awk row-indent width 0-3", "`:615` bound `{0,3}` \u2192 `{0,2}`", "KILLED", "census; header, separator and row indented three spaces"]
+      row   77: ["C08", "E11 used-by existence test (`-e`)", "`:566` `! -e \"$dir/$path\"` \u2192 `! -f`", "SURVIVED", "validate; used-by `corpus/knowledge` (a directory)"]
+      row   78: ["C09", "URL fragment normalization", "`:602` `sub(/#[^ ]*$/,\"\",u)` \u2192 `\"&\"`", "SURVIVED", "validate; two rows `\u2026/p#a` and `\u2026/p#b`, same scope"]
+      row   79: ["C10", "symbolic cadence with spaces", "`:582` class `[A-Za-z0-9 _-]` \u2192 `[A-Za-z0-9_-]`", "SURVIVED", "validate; recheck `on next release`"]
+      row   80: ["C11", "missing-registry exit 2", "`:804` `[ \"$missing_error\" = 1 ] && exit 2` \u2192 `exit 1`", "KILLED", "validate; no `corpus/SOURCES.md` at all"]
+      row   81: ["C12", "used-by comma-list trimming", "`:564` `path=$(trim_cell \"$path\")` \u2192 `path=$path`", "SURVIVED", "validate; used-by `corpus/a.md, corpus/b.md`, both present"]
+  start_line=118  header=["survivor", "what the selftest misses (at the pin)", "witness registry (one line)", "consequence", "killing arm (report-only, proven in scratch by T90E3)"]  delim_cells=5  data_rows=7  verdict_header=NO
+      row  120: ["C02 \u00b7 W02 thin-reject length", "the only rejected rows with a short reason teach `no` (2 chars; a S015 and z S001); the generated rejected rows teach 17, 25 and 24 chars, so no cell sits at 7 and `<8` and `<7` agree on every observation (`:6-7`); `W02-thin-reject` (`:138`) is green either way", "one rejected row, teaches `1234567`", "a 7-character rejection reason \u2014 the thinnest text W02 exists to refuse \u2014 becomes admissible silently (false negative)", "a lane fixture with that row; `check \"W02-thin-7\" \"W02\" \u2026 validate \u2026` \u2014 pristine prints W02, the mutant prints nothing"]
+      row  121: ["C03 \u00b7 E04 supersedes exemption", "no fixture or generated row carries `supersedes` (`:5`: 0 in fixtures; the gate's two hits are the comment at `:25` and the regex at `:648`); the E04 duplicate-url fixture (a S003/S004, same URL `c.example/x`, same scope, `\u2026/root/a-shokunin/corpus/SOURCES.md:9,11`) is caught identically under both regexes because neither teaches cell contains the word", "two rows, the second teaches `supersedes S001 with newer text`", "a legitimate re-registration that names the superseded three-digit id is reported E04 (false positive, exit 1): the exemption silently stops covering S001-S999", "two-row fixture, second teaches `supersedes S001`; `checkx \u2026 0` \u2014 pristine exempts, the mutant prints E04 and exits 1"]
+      row  122: ["C06 \u00b7 alignment separator", "all 12 separator rows across the fixtures and the gate-generated fixtures are plain dash runs with no colon (`:3`), so `separator_row`'s `^:?-+:?$` is only ever exercised with the plain form (e.g. `\u2026/root/a-shokunin/corpus/SOURCES.md:6`)", "registry whose separator is `:---` / `:---:` / `---:` over one valid row", "a GitHub-style alignment separator is parsed as a data row: the dash cells fire E02 plus the enum/date checks (E05-E09) and are counted as a row with `tier.invalid`/`status.invalid`, so validate exits 1 on a well-formed registry and census inflates", "registry with an alignment separator and one row; `checkline` census `rows 1` plus `checkx` validate 0"]
+      row  123: ["C08 \u00b7 E11 existence test", "every used-by cell at the pin names a regular file (`corpus/knowledge/real.md`) or an absent path (`corpus/knowledge/ghost.md`, `corpus/knowledge/missing-N.md`); 0 cells name a directory (`:10-11`), the only input on which `-e` and `-f` differ; the E11 arms observe only file and absent (`:136`, `:328`)", "one mined row, used-by `corpus/knowledge`, the directory created", "a used-by cell naming a directory is reported \"missing used-by\" and validate exits 1 although the path exists (false positive)", "a fixture lane with `corpus/knowledge/` present and a mined row citing it; `checkx \u2026 0` \u2014 pristine clean, the mutant prints E11 and exits 1"]
+      row  124: ["C09 \u00b7 URL fragment strip", "no URL cell at the pin carries a `#` \u2014 every `#` byte is a heading (`:4`); the only normalization the suite sees is trailing slash plus host case (`shared-across-lanes`, `:152`, a S016 `https://SHARED.example/canon/` vs b S001 `https://shared.example/canon`), so the fragment substitution never runs with a fragment", "two rows, same scope, `https://w9.example/p#a` and `\u2026/p#b`", "a fragment regression suppresses the duplicate-URL finding: two citations of one page at different anchors stay distinct, so a genuine duplicate escapes E04 within scope (and W04 across scopes)", "two rows in one scope, `#a` and `#b`; `check \"E04-fragment-duplicate\" \"E04\" \u2026` \u2014 pristine prints E04, the mutant prints nothing"]
+      row  125: ["C10 \u00b7 symbolic cadence space", "the distinct symbolic cadences at the pin are `annual` and `on-release` (`:8`) \u2014 no internal space; `symbolic-on-release-reported` (`:148`) and `symbolic-annual-reported` (`:149`) are the only symbolic observations and the generated rows use `30d`/`90d`/dates", "one row, recheck `on next release`", "a spaced symbolic cadence is refused at admission (E09, exit 1), and in overdue mode it is neither numeric nor symbolic, so `due=epoch(\u2026)` is INVALID and the row is never reported due \u2014 freshness is lost silently", "one row with `on next release`; `checkx \u2026 0` \u2014 pristine clean, the mutant prints E09 and exits 1"]
+      row  126: ["C12 \u00b7 used-by comma-list trim", "used-by cells are single-path or `\u2014` everywhere at the pin and 0 cells contain a comma (`:9`); `IFS=',' read -a` splits before `trim_cell` runs (`:561-564`), so the second path keeps its leading space when the trim is dropped, and no fixture has two paths", "one mined row, used-by `corpus/a.md, corpus/b.md`, both files present", "a multi-path used-by \u2014 the ordinary shape of an entry cited by several knowledge files \u2014 yields E11 for the space-prefixed second path and exit 1 on a path that exists (false positive)", "both files present, one mined row listing them; `checkx \u2026 0` \u2014 pristine clean, the mutant prints E11 for ` corpus/b.md`"]
+  start_line=140  header=["survivor", "lanes hit", "effect on live registries"]  delim_cells=3  data_rows=5  verdict_header=NO
+      row  142: ["C12 used-by trim", "20", "1695 false E11 findings over 1146 mined rows, validate exit 0 -> 1 on 20 lanes; every trimmed path exists"]
+      row  143: ["C03 supersedes width", "20 shape / 15 effective", "97 rows gain E04, validate exit 0 -> 1 on 15 lanes"]
+      row  144: ["C09 fragment strip", "9", "W04 set changes (+15 / -111); exit unchanged"]
+      row  145: ["C10 spaced cadence", "2", "11 rows gain E09 and lose their cadence line; exit 0 -> 1 on 2 lanes"]
+      row  146: ["C02, C06, C08", "0", "no live registry carries the shape today"]
+
+==============================================================================
+(a) GFM tables in corpus/README.md — reader's own tables()
+==============================================================================
+tables found: 42
+  start_line=5  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=9  verdict_header=NO
+      row    7: ["`knowledge/gates-survey-kumitate.md`", "The six hermetic suites: executed case counts 62/42/60/102/39/43 (all `--selftest` exit 0; literal `check(` sites 62/42/60/71/35/41 \u2014 counts are loop-sensitive, so the executed summary line is the only honest count); uniform two-line close (`n/m` summary + `VERDICT:`, usage exit 64 everywhere); fail-closed arm inventories (proxy 12/12 arms fired, claims 5/5, kimi-census 1 token \u00d73 cases, round-gate 7 declared/6 fired with `INTERNAL_ERROR` uncovered, surface-probe + cite-check carry no token enum at all); verdict-line exactness tiers (full-line literal \u2192 anchored regex \u2192 startsWith \u2192 includes); mutation controls = cite-check's mutation copy (integration-gated, never under `--selftest`) + claims-check's external env-poison probe \u2014 no kill-rate harness or self-code fault injection anywhere in the corpus (I: the \"every declared kind fires\" meta-checks prove each branch is reached, not that a wrong implementation would be caught)", "kumitate-shokunin/scripts/*.mjs read-only; six `node <gate>.mjs --selftest` runs with exit codes + verbatim summary lines (note \u00a70); grep/wc censuses in-note"]
+      row    8: ["`knowledge/gates-survey-kagi.md`", "The six kagi gates: 250 selftest cases green 6/6 from the suites' own counters (static `cases+1` site counts 6/1/0/1/6/2 are wrong \u2014 mutation and breadth loops register cases dynamically); one three-valued exit lattice, same meaning in all six; four distinct exit-2 classes (setup/cannot-measure; malformed committed data \u2014 \"not a verdict\", with two opposite resolutions across gates; POLICY \u2014 refused before the effect; zero-work \u2014 a gate that measures nothing must not exit 0); five evidence-discipline habits (verdict = expected exit AND expected ERE on the last non-empty line; verdicts carry their counts; count-only pins where a name would leak; abstention declared/counted/exit-neutral with a both-paths selftest; secret hygiene as a header prohibition, and the gate never echoes a claim's output); findings F-1 (`--falsify` measures 16/18 live vs README's unqualified 18/18 \u2014 adjudicated host-state dependence by the scratch-case discriminator, neither defect nor clean) and F-2 (3 of 6 `policy_check` refusal paths \u2014 `inline-shell`/`backslash`/`empty-quotes`, precisely round-11's bypass class \u2014 asserted by no selftest case); ER-1 keeps 16 self-caught wrong-line citations as evidence", "kagi-shokunin @ `4e48b771` read-only; six `--selftest` runs + live `scope-gate.sh --falsify` (exit 1, verbatim lines) + `sed -n` line re-checks + stamps recompute `ok=56 stale=0` (note \u00a72, \u00a75\u2013\u00a77)"]
+      row    9: ["`knowledge/verification-patterns-fleet.md`", "The shared verifier shape P1\u2013P10, called general only on \u22652 independent lanes: declared falsifiable claim before the move; named non-author verifier replaying committed/retained state; byte-identity as the top verdict class with an explicit volatile-scrub list; prior-rows regression fence; verdict tallied to the verifier; falsification first-class; post-verification changes carry their own proof; the verifier catches author defects; scope-partitioned writers with retained receipts; a cross-lane adversarial layer audits and reports, never fixes siblings. Lane-specific (explicitly NOT general): kaidoku's audit-block grammar (`verify:`/`verified-at:`/`suggested:`, CONFIRMED/UNVERIFIABLE, ev-id identity domain `f(content,path,params)`, 3-run content-address proof) and the game lanes' AGREE-tally encoding (8-seat set, closeout.json schema, battery-row metrics, git-archive baseline freeze, Sol per-axis adjudication); 3 falsifiable predictions; unknowns U1\u2013U7 named", "kaidoku corpus + `.ufo/waves/kaidoku-r5/01\u201302` + `.ufo/waves/shokunin-train-20261014-w6..w8` (closeout/spec/tasks/xsentinel) + game-lane LOGs and round reports, all read-only; census commands (ls/grep/sort/uniq/wc) in-note \u00a7Verification"]
+      row   10: ["`knowledge/gates-survey-kumitate.md` \u2014 round-2 addendum (K-R2-1\u20264, append-only)", "All six executed counts + artifact pins re-verified held on the current bytes (sha256 first16: cite-check `40573448\u2026`, surface-probe `148cbf85\u2026`, round-gate `f890e277\u2026`, proxy-check `a052ddb9\u2026`, claims-check `e9a21b44\u2026`, kimi-census `83016d45\u2026`; every `--selftest` exit 0 with verbatim summary lines \u2014 K-R2-1); \u00a77 meta-check anchor pair corrected to `claims-check.mjs:851-852` and `kimi-census.mjs:841-842` \u2014 the wave-1 ranges started early / ended short of both `check(...)` lines (K-R2-2); mutation-control census re-checked with the SKILL.md false hits excluded \u2014 still no gate ships a kill-rate harness (K-R2-3); cite-check integration group + round-gate `INTERNAL_ERROR` arm stay recorded-not-absorbed, sibling-owned (K-R2-4)", "kumitate-shokunin read-only; per gate `node scripts/<gate>.mjs --selftest` + `sha256sum scripts/<gate>.mjs`; `grep -n \"every finding kind fired by the suite\"` re-run 2026-10-14 (note \"Errata (round 2)\" block)"]
+      row   11: ["`knowledge/gates-survey-kagi.md` \u2014 round-2 addendum (G-R2-1\u20266, append-only)", "\u00a71 claim-ledger pin corrected: **79301 B / sha256 first16 `93c5827202b9cdec`** \u2014 the surveyed 79294/`357fb245` was an intermediate dirty-tree state never committed; substrate moved 09:58:55, kagi's own round-18 `fecee87` (10:05:10) re-pinned `stamps.tsv` (G-R2-1); \u00a79 item 4's last-non-empty-line citation corrected `:53-56` \u2192 `:26-28` (G-R2-2); denied verbs 22 \u2192 **23** (G-R2-3); re-verified set held: six selftests 16/13/29/34/61/97 = 250, `--falsify` exit 1 `caught=16/18 failed=2` with the same two `SCOPE BREADTH-EXCEEDS` lines, F-1/F-2 standing and `corpus/README.md:43` still unqualified \"18/18\" (G-R2-4); \u00a78.1 [UNK] discharged \u2014 the mid-survey writer was kagi's own in-flight round-18 [INF] (G-R2-5); live verdicts 5/6 + F-2 fix stay sibling-owned recommendations (G-R2-6)", "kagi-shokunin read-only @ `fecee87`; `sha256sum`/`stat -c %s`, DENY_RE pipeline \u2192 23, `sed -n` line checks, spot selftests + `--falsify` re-run 2026-10-14"]
+      row   12: ["`knowledge/verification-patterns-fleet.md` \u2014 round-2 addendum (TAMESHI-R2-4 extension + V-R2-1\u20264, append-only)", "Fourth pattern from game-dev-2d-shokunin's verifier machinery \u2014 D0\u2013D10: replays committed bytes (a commit lacking the change IS the finding, r64); mutants/faults are scratch-only runner fixtures; sensitivity = guard-disable in a disposable copy (binary per guard, no kill-rate tally \u2014 U8); a detected mutant must survive spoof classification and engine errors never count; opt-in probes proven inert unflagged; verifier writes its own instruments and recomputes from spec; 7-field regression fence vs prior receipts; falsification/failed verification kept first-class (r64 DISAGREE \u2192 landed bytes; r69 verifier-seat death recorded); receipts located (lessons-JSON era \u2192 in-tree scratch); declared bounds/non-writes \u2014 plus U8\u2013U13 and 2 predictions; explicitly single-lane, NOT general (PROVINCE.md); kaidoku census re-measured held (72 files; `verify:` 468 vs `verified-at:` 467, same four mismatched files), w6\u2013w8 AGREE tallies held (3\u00d75/5, 3\u00d75/5, 2\u00d76/6+1\u00d75/5), U1/U2 stay open with U1's first reading = grep-shape artifacts (V-R2-1\u20264)", "game-dev-2d-shokunin read-only @ `9fb50aa9` (LOG/SCORECARD/reports/corpus); census commands in-note \"Verification (extension)\"; kaidoku/wave re-greps re-run 2026-10-14"]
+      row   13: ["`knowledge/mutation-case-kimi-census.md`", "Tameshi's first measured kill-rate (round 2, TAMESHI-R2-1): kumitate `kimi-census.mjs`'s 43-case hermetic suite against 10 single-edit mutants \u2014 one exact edit per fresh /tmp copy, driver asserts the old string unique, original byte-identical (sha256 before=after `83016d45\u2026`) \u2192 **8/10 killed (80 %)**, no inconclusive run, control 43/43 and every mutant still enumerating 43, 7.0 s sweep; survivors D2 (`findings.slice(0,6)`\u2192`(0,5)`: truncation boundary never exercised \u2014 max findings in any suite run = 2 vs cap 6, DRIFT asserts prefix-only) and D10 (`FROZEN.K2 25`\u2192`24`: only `frozen.K5` is asserted) \u2014 shared class \"reported-but-unasserted surfaces\"; per-kill failing-case labels (D4 = exactly the 3 root-enum cases, D8 = the 3 fail-closed cases, D1/D3 = 16 each incl. the exact green baseline); protected-arm inventory + measured gaps; errata E1 (author's D7-survivor expectation wrong \u2014 the fixtures' modes share floor bits); scope: measures the suite, not substrate drift [I]; U1\u2013U6", "kumitate-shokunin `scripts/kimi-census.mjs` @ `175de6ba` read-only (sha256 `83016d45\u2026`, 43273 B); mutants + per-defect evidence under `/tmp/tameshi-r2-1-work/` only; reproduce spec (10 edits + commands + D2/D10 sensitivity probes) in-note \u00a74"]
+      row   14: ["`knowledge/mutation-case-kagi-census.md` \u2014 round 3 (TAMESHI-R3-1)", "Tameshi's second measured kill-rate, first bash gate: kagi `surface-census.sh`'s 16-case selftest vs 10 single-edit mutants \u2014 same method as round 2 (fresh `/tmp` copies, one exact edit each, count==1 gate, kagi tree never written; restore proof sha `275d8294\u2026` before=after, mtime 09:47:15, porcelain clean) \u2192 **8/10 killed (80 %)**, no inconclusive run, suite count held `(<n>/16 cases)` on every run, 11.0 s for 11 runs; survivors B5 (deleted exec x-bit arm: **fixture-absent arm** \u2014 no case reaches it, so no implementation moves the suite; non-equivalence probe: mutant reports `SURFACE OK \u2026 (exec 644)` where pristine reports `SURFACE DIVERGED` exit 1) and B10 (CLEAN-summary `ok=` arg swapped: reported-never-read count, same family as round-2 D10); kill is token-only in B4 (deleted symlink arm keeps exit=1, dies on the `SURFACE LINK` token assert); per-kill failing-case labels (B1 = case 05 undeclared-file, B3 = 3 incl. crosscheck-disagree, B8 = the two exit-2 setup cases); gate choice proven hermetic on this host (fixtures under `mktemp -d`; the 2 verbs cases `skip-case \u2026 substrate-absent` \u2014 `the-janitor` off PATH, kagi's own round-18 repair, LOG.md:741-744); E1: failing-case *counts* predicted 6/10 (case 04 is a second exit-0 green fixture, kills every green-firing defect); cross-language \u00a74: same headline as JS, narrower kill width (max 3/16 vs 16/43 \u2014 per-case fresh fixtures + exit+token asserts vs shared fixtures + exact-line asserts), shared survivor class reported-but-unasserted data, bash-only unreached-arm class; U1\u2013U6", "kagi-shokunin `corpus/surface-census.sh` @ `fecee87` read-only (sha256 `275d8294\u202653009f`, 44212 B, 886 newlines, 887th line unterminated); mutants + evidence under `/tmp/tameshi-r3-1-work/` only; reproduce spec (10 edits + commands + B5/B10 probes) in-note \u00a77"]
+      row   15: ["`knowledge/executor-test-sufficiency.md` \u2014 round 3 (TAMESHI-R3-4)", "The no-oral-context executor test (SHONEN box 3 evidence): an executor with no tameshi context beyond `SKILL.md` @ `dd2f4dee\u20263753` reproduced **one killed mutant end-to-end** \u2014 D5, killed exactly as Appendix A records (`42/43 FAIL`, singleton failing case `MEMBER_MISSING \u2026 presence is gated`), control green 43/43 first try, all 10 manifest strings byte-exact and unique at their cited lines (`--check` \u2192 every `count=1`, `CHECK: all unique`), restore pin held; per-step sufficiency verdicts S1\u2013S10: 7\u00d7 SUFFICIENT, 2\u00d7 SUFFICIENT (latitude), 1\u00d7 ADDITIVE-IMPROVISATION (single-mutant `--only` subset is not described \u2014 affordance, not repair), 1\u00d7 NOT EXERCISED (survivor probe \u2014 D5 killed), 1\u00d7 ADAPTED (note format); the SKILL's grammar rule was load-bearing (a red mutant still prints `\u2026 42/43 pass`); contamination statement \u00a71 (read SKILL.md + target only, no corpus/plans/AGENTS); scope honest: ONE mutant of the JS case, not the full sweep [U3\u2013U6]; U6: no independent second lane had re-verified at write time \u2014 since closed by the round-3 audit replays (B2 re-ran D5 via the tool, same kill + same mutant sha)", "`tameshi-shokunin/SKILL.md` @ `dd2f4dee\u20263753` (45644 B, 665 lines) + kumitate `kimi-census.mjs` @ `175de6ba` (sha `83016d45\u2026` before=after); executor evidence under `/tmp/tameshi-r3-4-work/evidence/`; reproduce block in-note \u00a78"]
+  start_line=24  header=["Entry", "Admitted / rejected", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row   26: ["`lessons/round-1.md` \u2014 fleet round-1, distinct from the historical training arc", "Admitted: canonical, durable lane assertions; rejected: same-lane promotion authority and broad current cold-read credit from one historical JS mutant. Outside admit/reject review remains open.", "`../reports/round-1-calibration.md`; `../LOG.md` fleet round-1 entries"]
+  start_line=45  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=15  verdict_header=NO
+      row   47: ["`knowledge/arm-class-matrix.md`", "JS + bash mutation-case arm-completeness matrix (round 4)", "`mutation-case-kimi-census.md`; `mutation-case-kagi-census.md`"]
+      row   48: ["`knowledge/closeout-r11.md`", "the training arc's closeout: service boundary, handoff, carried debts; no new gate measurement", "`plans/round-11.plan.md`; `SCORECARD.md`; `LOG.md`"]
+      row   49: ["`knowledge/fleet-kill-rate-ledger.md`", "standing per-gate view: suite size, kill rate, survivor classes, sweep date, pin; stale successor rows open", "the six mutation-case notes; S031"]
+      row   50: ["`knowledge/fleet-suite-census.md`", "static suite-vs-arm census of fleet gates (meta-checks, mutation controls, integration groups); the service offer", "kumitate `scripts/`; kagi `corpus/*check*.sh`"]
+      row   51: ["`knowledge/mutation-case-kagi-checklist.md`", "case 5: kagi `checklist-run.sh` 7/15 (47 %), copy-only harness", "S036; `service-optin-protocol.md`"]
+      row   52: ["`knowledge/mutation-case-kumitate-claims.md`", "case 6: kumitate `claims-check.mjs` 7/10 (70 %), byte copies only", "S037"]
+      row   53: ["`knowledge/mutation-case-mado-verify.md`", "case 4: mado `mado-verify.sh` 4/10 (40 %), owner opt-in, in-surface vs out-of-surface", "S035"]
+      row   54: ["`knowledge/mutation-case-tsukuroi-census.md`", "case 3: tsukuroi `tsukuroi-census.sh` 6/10 (60 %), cross-author; incident I1", "S034"]
+      row   55: ["`knowledge/operator-runbook.md`", "operator runbook for the runner, ledger, opt-in, limits, cadence, regression (four-leg lines: ER-R3 open)", "S031; ledger; opt-in; limits notes"]
+      row   56: ["`knowledge/self-hardening-r6.md`", "meta-sweep of the runner's own `--regression` comparator; selftest hardened", "S031"]
+      row   57: ["`knowledge/service-limits.md`", "intake refusal table: what the service will not sweep, and why", "`fleet-suite-census.md`; `SKILL.md`"]
+      row   58: ["`knowledge/service-optin-protocol.md`", "engagement protocol: request, non-writes, owner responsibility, report shape", "`fleet-suite-census.md`; case notes"]
+      row   59: ["`knowledge/service-standing-state.md`", "artifact-boundary table, fleet-visible vs lane-owned; no measurement", "`SCORECARD.md`; `LOG.md`; `SKILL.md`"]
+      row   60: ["`knowledge/mutation-score-semantics.md` \u2014 round 1, frontier F1", "verdict vocabulary map tameshi \u2194 Stryker \u2194 cargo-mutants \u2194 mutmut \u2194 shmutant; tameshi k/(k+s) vs Stryker detected/valid, equal iff no timeouts; all six recorded cases recomputed (t = 0 \u2192 identical rates); NoCoverage candidates left U; \"timeout counts as a kill\" rejected", "S001, S002, S004, S005, S006"]
+      row   61: ["`knowledge/witness-scoped-kill-verdict.md` \u2014 round 1, frontier F2", "shmutant's witness grammar vs tameshi's guards; pre-registered witness split of js-kimi-census: 8 killed-on-witness / 0 accidental / 2 survived, declaration hashed before the run (blindness partial, recorded)", "S006; evidence `../.ufo/evidence/kaika-round-1/witness/`"]
+  start_line=76  header=["id", "ground", "candidate sources", "status", "next falsifiable move (before \u2192 after)"]  delim_cells=5  data_rows=11  verdict_header=NO
+      row   78: ["F1", "external mutation-score semantics + report interop", "S001, S002, S004, S005", "held (round 1) \u2014 `knowledge/mutation-score-semantics.md`", "emit one ledger leg as schema JSON and validate it (validator unavailable this round: U)"]
+      row   79: ["F2", "witness-scoped kill verdicts / bash mutation tooling", "S006", "held (round 1) \u2014 `knowledge/witness-scoped-kill-verdict.md`", "the same split on a bash leg (surface-census): undefined \u2192 k_witness + k_accidental = 8"]
+      row   80: ["F3", "determinism precondition, flaky-aware verdicts", "S004, S011, S025, S026, S027, S040", "open", "one control per sweep (`.ufo/evidence/kaika-round-1/capability-demo/README.md` H2) \u2192 N \u2265 3 byte-identical controls, or a named mismatch"]
+      row   81: ["F4", "golden / snapshot fixture discipline", "S013, S014, S015, S016, S017, S045", "open", "update paths that write expected values without an explicit flag: unmeasured \u2192 counted per surveyed gate"]
+      row   82: ["F5", "hermetic environment normalization", "S015, S016, S028", "open", "runner selftest host vs `env -i LANG=C TZ=UTC`: identical (H3, round 1) \u2192 the six gate selftests measured the same way"]
+      row   83: ["F6", "fixture minimization for survivors", "S022, S023, S024", "open", "B5 probe fixture size: unmeasured \u2192 reduced size + kill check"]
+      row   84: ["F7", "incremental re-sweep granularity", "S003, S004, S005, S008, S041", "open", "pin-level cadence only \u2192 per-leg reuse decisions classified"]
+      row   85: ["F8", "oracle anchoring as a survivor class", "S012", "open", "0 test-oracle lines \u2192 one survivor classified against an independently anchored expectation"]
+      row   86: ["F9", "LLM-era mutant generation + equivalence", "S007, S009, S043, S044, S286, S287", "open \u2014 equivalence-cost contract entered (round 58, `knowledge/llm-mutant-equivalence-cost.md`); bounded pilot unmeasured", "no LLM-specific search run yet (U) \u2192 bounded pilot with an independent outcome check"]
+      row   87: ["F10", "PBT generators for gate fixtures", "S018, S019, S020, S021", "open", "no PBT fixture method \u2192 one generator against a named fixture gate"]
+      row   88: ["F11", "trusted-executor binding by committed blob identity (round-58 C2 successor)", "S289", "partly held (round 59, `knowledge/executor-source-binding.md`); frozen counter 24/24 at the tool commit but cheat-passable (fingerprint cheat 24/24)", "per-run nonce fixtures + shuffled order: fingerprint 24/24 \u2192 16/24, sequence 24/24 \u2192 10/24, real tool 24/24 (shown able to fail); first-path-only blind spot still open"]
+  start_line=126  header=["Note / frontier", "Lane-asserted scope; outside admission pending", "Source / evidence"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  128: ["`knowledge/repeated-control-precondition.md` / F3", "A standalone exact-tuple repeated-control gate; a clean result is finite sample agreement, not proof of determinism or a flaky-test cure", "S004, S026; `tools/repeat-control.py`; `.ufo/evidence/round-12/verification-final.json`"]
+      row  129: ["`knowledge/witness-scoped-kill-verdict.md` / F2", "Historical source-semantics corrections E2/E3; the existing bash leg's declared-witness study is retained separately, not a new recorded gate", "S006; `.ufo/evidence/round-12/BashWitness/summary.json`; `lessons/round-12.md`"]
+  start_line=151  header=["Note / frontier", "Scope", "Source / evidence"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  153: ["`knowledge/incremental-pin-disposition.md` / F7", "Structured six-leg pinned/HEAD/worktree content observation and the explicit boundary `result_reuse=not_established`; no target gate runs and no new rate", "S003, S041, correction S047; `.ufo/evidence/round-13/pin-dispositions.json`"]
+      row  154: ["Frozen bash provenance correction / calibration", "New companion metadata normalizes the exposed declaration's kind without rewriting round-12 evidence; original null stays historical", "`lessons/round-13.md`; `.ufo/evidence/round-13/witness-metadata.json`; QUALITY14"]
+  start_line=183  header=["Maintained ground", "Addition / correction", "Evidence"]  delim_cells=3  data_rows=3  verdict_header=NO
+      row  185: ["calibration of retained expectations", "Complete twelve-row effective/superseded ledger; the failed raw setup observation remains visible rather than being granted mechanism credit by exit code", "`lessons/round-14.md`; `../tools/evidence-disposition.py`; `../.ufo/evidence/round-14/dispositions.json`"]
+      row  186: ["`knowledge/incremental-pin-disposition.md`, empirical correction8", "Final round13 receipt backlink and S048 object-neutral guidance supersede only the dated pre-integration status; original section6 remains historical", "existing mined S003/S048, new S049; prior outside `lessons/round-13-verifier-spotcheck.md`"]
+      row  187: ["explicit invocation context", "Prospective GIT_DIR experiment and runner/manifest mapping receipt; no invented historical injection setup", "`../.ufo/evidence/round-14/capture-context.py`; completed runtime evidence is appended to the round14 lesson"]
+  start_line=225  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  227: ["`knowledge/mutation-case-kumitate-round-gate.md`", "case 7: kumitate `round-gate.mjs` 5/10 (50 %), 10/10 pre-registered predictions held; projected floor interval [26,1059] confirmed at its edge (1059 survives, 1060 killed); guarded `env -i` suite; ledger leg `js-round-gate` (`--regression` cases=7)", "S053, S052, S056, S057; `arm-class-matrix.md` \u00a713"]
+  start_line=245  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  247: ["`knowledge/input-keyed-coldread-credit.md`", "a cold-read credit holds only while every input the read ran against keeps its sha256 as a blob at the measured rev; trace receipts bind executed commands to inputs; a failing read with verified inputs vetoes; red-before on the round-14 bucket (credited at `e69b488`, `input-drift:tools/mutate-and-run.sh` at `09ee1d0`); limits of an open trace", "S058, S059, S060, S064; `lessons/round-16-verifier-spotcheck.md` \u00a72, \u00a76"]
+  start_line=264  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  266: ["`knowledge/mutation-case-kumitate-sources-check.md`", "case 8: kumitate `scripts/sources-check.mjs` @ `0acb775`, 5/10 killed, 10/10 pre-registered predictions held, deterministic control; ledger leg `js-sources-check`", "S001, S008; `lessons/round-18.md`"]
+      row  267: ["`knowledge/guard-kill-closure.md`", "a guard is covered only when its removal mutant is killed with a green pristine control; jj `HEAD` vs branch-tip anchoring; non-finite JSON refusal; descendant kill after `setsid`; `GIT_*` prefix scrub and pinned-tool migration", "S065, S066, S068, S069, S070, S072, S073, S074"]
+  start_line=327  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  329: ["`knowledge/hermetic-env-differential.md` / F5", "source-headed method entry, S079 mined and S028 reopened; nine explicit pinned surfaces, seven profiles, raw tuple comparison and a clean repeat", "`tools/env-diff.py`; `.ufo/evidence/round-21/c2-contract.json`, `f5/receipt-initial.json`; selftest9/9"]
+  start_line=351  header=["Entry", "Ground", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  353: ["`knowledge/callback-authoritative-accounting.md`", "same-ground calibration repair, not a new frontier crossing", "minedS082; `tools/wave-accounting.py`; frozen round22 bundle and expected digest"]
+  start_line=362  header=["Entry", "Ground", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  364: ["`knowledge/required-command-binding.md`", "same-ground calibration; explicit finite registry requirements, not full-page closure", "minedS083; `tools/command-binding.py`; `.ufo/evidence/round-23/requirements.json` and frozen ten-case ruler"]
+  start_line=374  header=["Entry", "Ground", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  376: ["`knowledge/replay-projection-hardening.md`", "same-ground calibration; routed round23 hardening gaps as falsifiable predicates", "minedS084, S085; `tools/registry-replay.py`; `.ufo/evidence/round-24/{contract,measure}.py/json`"]
+  start_line=382  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  384: ["`knowledge/mte-report-interop.md` / F1", "source-headed entry citing mined S086 and S087 (new) with S001 and S002; the tameshi-to-report mapping, what the official schema and metrics library check, the INCONCLUSIVE convention, ledger rounding, and an export decision table", "`tools/mte-interop.py`; vendored `tools/vendor/*.tgz`; `.ufo/evidence/round-25/`"]
+  start_line=404  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  406: ["`knowledge/mutation-case-kumitate-cite-check.md` / Core (recorded legs)", "source-headed entry citing mined S088 (the pinned gate) and S089 (Stryker on equivalent mutants), new this round; ninth ledger leg `js-cite-check`, 5/10 killed on the 62-case hermetic group, 10/10 verdict predictions, four survivors with off-suite witnesses and one equivalent mutant", "`.ufo/evidence/round-26/cite-check/`; `.ufo/waves/round-26/w1/Probe*.md`, `CriticEquivalence.md`"]
+  start_line=421  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  423: ["`knowledge/oracle-anchored-survivors.md` / F8", "source-headed entry citing S012 (re-opened and mined this round) and S090, S091 (new); the four round-26 cite-check hole survivors re-judged against expectations fixed outside the mutated code: 4 anchored holes, one of them held by convention only", "`.ufo/evidence/round-27/f8/` (anchors committed before the run, receipt bound to probe and anchor digests); counter `.ufo/evidence/round-27/c2-measure.py`"]
+  start_line=452  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  454: ["`knowledge/regression-tally-completeness.md`", "Core ground (the lane's own runner, `tools/mutate-and-run.sh --regression`), not a frontier move. The tally refuses as SETUP when the counted leg statuses do not add up to the case count; `--selftest` runs the extracted tally block under 23 fixed status vectors and a guard stress case (97 \u2192 106 cases). Claim C1 is exploratory: a static-model control met the frozen counter v4 before data", "S087 (re-opened), S093, S094; `.ufo/evidence/round-30/contract-amendment-4.json`"]
+      row  455: ["S092 supersedes S059", "Anchor re-pin only. The markdown digest changed and the quoted known issue still stands", "`.ufo/evidence/round-30/sources/S059-bazel-remote-caching.md`"]
+  start_line=461  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  463: ["`knowledge/executable-self-assessment.md`", "New lane ground (seat ScoutFrontier: not F1\u2013F10, not held core): a standing SCORECARD capability or score row is a claim checked by running the row's own command at the same revision and comparing the stated values; a stale row is corrected by an appended, revision-named statement, never in place. The executable-example sources motivate this local inference; a matching tally is not full behavioral proof. Calibration claim C1 measures it over the 12 frozen rows.", "S055, S095, S096; `.ufo/evidence/round-31/contract.json`; `.ufo/evidence/round-31/c1-measure.py`; `.ufo/evidence/round-31/before/c1-at-base.stdout`"]
+  start_line=469  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  471: ["`knowledge/runner-tally-audit.md`", "Core ground (the lane's own runner, `tools/mutate-and-run.sh --regression` and its tally selftest harness), not a frontier move (seat ScoutFrontier). A new versioned tool, `tools/tally-audit.py`, audits the runner without editing it: per-leg presence of the tally loop, the tally block against an oracle over every status 0\u2013255 with overcount/undercount stress, and the runner's own harness against a panel of faulty tally blocks. It closes the per-leg item and the eight MutateHead survivors routed since round 30, while the runner stays byte-identical. The measured result is in SCORECARD.md's round-32 block", "S097, S099, S094 (re-opened); `.ufo/evidence/round-32/contract.json`, `.ufo/evidence/round-32/v2/`"]
+  start_line=480  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=3  verdict_header=NO
+      row  482: ["`knowledge/runner-tally-audit-v2.md`", "Core ground, landed round 33: the four held-out classes that defeated `tools/tally-audit.py` and the v2 answers (runtime vector sweep, every status at every leg, dataflow-identified tally loop, extraction tolerance). Its own header trio already named S097 + S099; this row closes the index gap only", "S097, S099; `tools/tally-audit-v2.py`; `.ufo/evidence/round-33/`"]
+      row  483: ["`knowledge/survivor-fixture-minimization.md`", "Frontier F6 attempt (round 29), honest stop: the frozen target was not reached; the note records the survivor-B5 finding and the delta-debugging reading of S024. Index gap only \u2014 no verdict changes", "S024; `.ufo/evidence/round-29/sources/S024-fuzzingbook-Reducer.html`"]
+      row  484: ["`knowledge/witness-equivalence-rule.md`", "Core ground, landed round 34: the set-aware witness rule for sealed held-out copies (kill/accept \u00d7 head/vector branches), the rule the round-34 C1 deciding run verified. Header trio added the same round (C2 m1)", "S097, S101; `.ufo/evidence/round-33/c1/c1-measure.py`"]
+  start_line=516  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  518: ["`knowledge/r41-variable-destination-writes.md`", "The two sources that supply the mechanism \u2014 `ast` (S153) and `Path.write_text`'s receiver-as-destination rule (S154) \u2014 and the measured live finding: `tools/repeat-control.py:811` and `:820` resolve to expected-value destinations that the round-40 line matcher cannot connect, both scratch-exempt. Scope is depth-4 resolution through assignment, `os.path.join`, `+`, `/` and f-strings; aliases, closures and non-folding calls are named as unresolved. Claims no universality and no gate coverage. It also records a known false-positive class: a destination whose base is an unbound attribute or a non-folding call is labelled unflagged, and must be read against its base expression.", "S153, S154"]
+  start_line=529  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  531: ["`knowledge/pit-outcome-vocabulary.md`", "PIT's seven outcomes, the No coverage / Survived split, and the run-to-run timeout instability. PIT's code scores a run error as detected while Stryker (held S001) leaves it out of the score, so a score quoted without its outcome classes cannot be compared across the two tools. Assimilated from the shokuknow package and re-grounded this round.", "S155, S156, S158, S001"]
+      row  532: ["`knowledge/r42-attribute-and-outflag-destinations.md`", "Two write-destination shapes that v3 misreads: a `self.<attr>` bound to `tempfile.mkdtemp` and read through a same-class helper, and a parameter fed by an argparse `--out` value at every in-module call. The measured live finding is that v3's three unflagged sites are scratch (`tools/context-capture.py:1682`, `:1685`) and operator-named (`tools/registry-replay.py:123`).", "S157, S153, S001, S158"]
+  start_line=547  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  549: ["`knowledge/r43-survivor-resolution-rule.md`", "The K/D/E/U rule the lane applies to a mutant that survives its battery: killed (a reachable-code fixture flips a declared class under the exit-plus-FAIL oracle), dead_code_only (every differing case is a fixture whose discriminating construct is unreachable), equivalent (no differing case in the declared corpus), unresolved (everything else, including run errors and apply errors). Resolves the two round-42 survivors: the outflag mutant killed by F11, the method-fold mutant named dead-code-only rather than relabelled. Records PIT's `EQUIVALENT(true)` convention and why the lane does not adopt its scoring.", "S089, S159, S155, S158"]
+  start_line=561  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  563: ["`knowledge/r8-gtest-order-and-seed.md`", "GoogleTest's own statement that test order is undefined, that `--gtest_shuffle` reveals bad inter-test dependencies, and that the printed random seed (`--gtest_random_seed=SEED`) reproduces an order-related failure; the per-test fixture object as the isolation default", "S256"]
+      row  564: ["`knowledge/r8-gtest-primer-independence.md`", "The primer's independence/repeatability requirement, the fixture lifecycle (a fixture is deleted before the next is created; no reuse across tests) and the fatal/nonfatal assertion scope as an upstream instance of the F2 witness-scoped verdict", "S257"]
+  start_line=572  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=3  verdict_header=NO
+      row  574: ["`knowledge/r6-flaky-failures-cluster.md`", "A published abstract states that flaky tests co-occur in clusters with shared root causes (75% of flaky tests belong to a cluster, mean cluster size 13.5); the entry's fixture-craft reading \u2014 controls or survivors drawn from one cluster are one observation \u2014 is labelled inference", "S258"]
+      row  575: ["`knowledge/r5-undetected-flaky-failures.md`", "A same-job rerun is both the detection mechanism and its blind spot: undetected flaky failures are 9.8 %-16.3 % of failed pipeline runs (8.8 billion executions, four industrial projects), with up to 3\u00d7 variation between test environments", "S259"]
+      row  576: ["`knowledge/r9-false-red-rate.md`", "The publisher's own post states that about 84% of observed pass-to-fail transitions involve a flaky test and that legitimate failures in flaky tests are commonly ignored; the lane's price-the-rerun arithmetic stays out unless a held row states it", "S260"]
+  start_line=584  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=3  verdict_header=NO
+      row  586: ["`knowledge/flaky-aware-verdict-evidence.md`", "Two published statements about what a flaky verdict can rest on: a model over already-recorded outcomes, durations and code history predicts flakiness without added reruns (one industrial system, 100 flaky and 100 non-flaky histories, F1 95.5% from 3 features), and a rerun-based label has a measured budget (at most 5 reruns check at least 82% correctly on 26 Java modules) with order diversity priced below repetition; what a one-run gate verdict is worth is labelled inference", "S261, S262"]
+      row  587: ["`knowledge/r8-flakiness-not-static.md`", "A posted (under review) counter-case to code-based flakiness detection: flakiness is not a static property of test code, benchmark shortcuts inflate F1, and the abstract's own caution that the counterfactual dataset is not a benchmark for reuse; the entry states what only an abstract shows", "S263"]
+      row  588: ["`knowledge/r8-flaky-cost-baseline.md`", "The price of the branch a rerun cadence chooses between, from one industrial record's abstract: an automatic rerun costs 0.02 cents against $5.67 for a manual investigation of a failed pipeline; the carrier's venue field is wrong and is reported as a carrier defect", "S264"]
+  start_line=596  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  598: ["`knowledge/pbt-generator-pilot.md`", "One generator, `tools/pbt-staged-id.py`, against `tools/staged-id-guard.py` through its CLI only, with an oracle that re-implements the guard's round-43 rules, twelve printed distribution classes, a seed and a case count; measured by a twelve-mutant panel hidden from its author (differential confirmation) against a fixture-replay control; the limits (one gate, no shrinking, a counter blind to a differential generator)", "S269, S270"]
+  start_line=604  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  606: ["`knowledge/fixture-shrinking-pilot.md`", "One shrinker, `tools/shrink-case.py`, over the round-49 generator's killing cases for mutants of `tools/staged-id-guard.py`: units are registry lines, staged lines and map entries; a kill is the round-49 oracle passing on the pristine guard and failing on the mutant; delta debugging to a single-unit fixpoint with verdict caching; every guard run counted in `runs`; measured by a frozen counter that re-checks sub-case, kill and 1-minimality itself on 12 public and 8 hidden mutants and compares the stated cost with a run log the shrinker can reach (the cost was re-counted from outside by a wave-2 trace, and the counter's forgery routes are disclosed in `corpus/lessons/round-50.md`); the limits (line-level units, tiny cases, one gate, a greedy loop meets the same bar, B5 not discharged)", "S271, S022, S024"]
+      row  607: ["`knowledge/delta-debugging-minimization-contract.md`", "Admitted from the shokuknow package (staged S167, re-grounded as S271): a reduced fixture states its 1-minimality witness (a removal that loses the failure) and its cost in test runs per reduction \u2014 57 runs for the source's 896-line reduction, 139 only as the case study's total (two reductions summed is an inference); what is new against the held S024 restatement", "S271, S024"]
+  start_line=615  header=["id", "ground", "candidate sources", "status", "next falsifiable move (before \u2192 after)"]  delim_cells=5  data_rows=10  verdict_header=NO
+      row  617: ["F1", "external mutation-score semantics + report interop", "S001, S002, S086, S087", "held (round 25) \u2014 README.md:385-390; F1b open", "before: emit one ledger leg as schema JSON and validate it (validator unavailable in round 1) \u2192 after: held for the eight recorded ledger legs (round 25, README.md:386-390); remaining: the emitted report names a target by basename with no lane or revision pin (round 26, README.md:412-413) and the 35 recorded survivors stay unclassified for NoCoverage (README.md:396)"]
+      row  618: ["F2", "witness-scoped kill verdicts / bash mutation tooling", "S006, S257", "partly held (round 1) \u2014 README.md:115", "before: the same split on a bash leg (surface-census): undefined \u2192 k_witness + k_accidental = 8 \u2192 after: still unmeasured; the existing bash leg's declared-witness study is retained separately (README.md:128) and round 45 adds GoogleTest's primer as an upstream instance of the split (README.md:563)"]
+      row  619: ["F3", "determinism precondition, flaky-aware verdicts", "S004, S011, S025, S026, S027, S040, S256, S258-S264", "open \u2014 README.md:589", "before: one control per sweep \u2192 after: N \u2265 3 byte-identical controls, or a named mismatch: still unmeasured; the rounds 45-47 entries add upstream statements and published measurements only (README.md:558-589)"]
+      row  620: ["F4", "golden / snapshot fixture discipline", "S013, S014, S015, S016, S017, S045, S105-S108, S132, S152, S153, S154", "partly held (round 38) \u2014 README.md:492-495", "before: update paths that write expected values without an explicit flag: unmeasured \u2192 after: the write-path census counted 99 live write sites with 0 unflagged (round 39, README.md:503), and rounds 40-41 added two successor tools; remaining: the cmp and git diff --exit-code lattices, and the shutil.* and handle.write classes outside v2's pattern (README.md:511, README.md:521-523)"]
+      row  621: ["F5", "hermetic environment normalization", "S015, S016, S028, S079", "Core (round 21) \u2014 README.md:330-335; for the nine frozen files", "before: runner selftest host vs env -i LANG=C TZ=UTC identical (H3, round 1) \u2192 after: the nine frozen files measured the same way (nine clean controls, round 21); the three kumitate gates cite-check, surface-probe and proxy-check stay unmeasured (README.md:335-336)"]
+      row  622: ["F6", "fixture minimization for survivors", "S022, S023, S024, S271", "held (round 50) \u2014 README.md:608", "before: B5 probe fixture size: unmeasured \u2192 after: held for the method on killing cases \u2014 one shrinker to a 1-minimal sub-case with a stated run cost (round 50); the round-29 B5 survivor is not discharged and stays masked \u2192 next: shrink on a second gate, or discharge B5"]
+      row  623: ["F7", "incremental re-sweep granularity", "S003, S004, S005, S008, S041, S047", "open \u2014 README.md:255-256", "before: pin-level cadence only \u2192 after: per-leg reuse decisions classified: not reached; round 13 acquired only the content-disposition prerequisite and round 17 moved no row (README.md:255-256)"]
+      row  624: ["F8", "oracle anchoring as a survivor class", "S012, S090, S091", "partly held (round 27) \u2014 README.md:424-427", "before: 0 test-oracle lines \u2192 after: one survivor classified against an independently anchored expectation, one gate at one pin (round 27); bounded to 3 of 4 survivors anchored in the gate's header contract and 1 by convention only (round 29, README.md:433-437) \u2192 next: anchor the hole calls on the other eight recorded legs"]
+      row  625: ["F9", "LLM-era mutant generation + equivalence", "S007, S009, S043, S044", "open \u2014 README.md:86", "before: no LLM-specific search run yet (U) \u2192 after: bounded pilot with an independent outcome check: untouched; round 43 states F9 is not touched (README.md:555-556)"]
+      row  626: ["F10", "PBT generators for gate fixtures", "S018, S019, S020, S021, S269, S270", "held (round 49) \u2014 README.md:599", "before: no PBT fixture method \u2192 after: one generator against a named fixture gate, conditioned on the round-49 deciding receipt printing C2_R49_PASS=true; next: a second gate, or shrinking (README.md:599)"]
+  start_line=633  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  635: ["`knowledge/mutation-case-kagi-drift-pins.md` / Core (recorded legs)", "source-headed entry citing mined S272 (the pinned kagi host-drift gate) and S273 (Bash `errexit`/`pipefail` semantics), new this round; tenth ledger leg `bash-drift-pins`, 2/10 killed on the 13-case selftest under the recorded `sandbox-$DEFECT_ID` suite; independent A/B probe shows K_GONE_ARM, K_AMBIG_GT and K_SHAPE_OPTIN are environment-masked and become killed under a neutral sandbox (5/10), so the reported 20% must not be read as gate kill strength; seven of ten predictions held, five other survivors have off-suite witnesses", "`.ufo/evidence/round-51/c2/`; `.ufo/waves/round-51/w1/T51LabSandboxLeak.md`, `T51ScribeEntry/`"]
+  start_line=652  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  654: ["`knowledge/receipt-revision-binding.md` (round 56; errata ER-R57-K1, round 57) and `knowledge/gate-row-exit-map.md` (round 57)", "The receipt-revision gate's binding rule; its exit map (0 PASS, 2 could-not-evaluate, 3 refused, and exit 1 as usage or traceback); a code-by-condition truth table measured on the CLI at base `5e3569969b53`; the three registry gate rows (`tools/registry.json`), which emit 2 of the 11 codes; `recheck:` at 19/19", "S281 (in-toto Statement, subject matched by digest); S283 (GNU grep \u00a72.3 exit status); `tools/receipt-revision-gate.py`"]
+  start_line=658  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  660: ["`knowledge/llm-mutant-equivalence-cost.md`", "F9 equivalence-cost counting contract: distinguish non-compilability, duplication and equivalence before interpreting surviving mutants. The Java study's measured improvements do not transfer numerically to this lane's gates. A bounded LLM-mutant pilot remains unmeasured", "S286 (arXiv \u00a7Abstract), S287 (deck extract lines 230-241)"]
+  start_line=667  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  669: ["`knowledge/executor-source-binding.md` (round 59; amended round 60)", "The declared-blob binding rule and its decision table, now with the round-60 amendment: the plumbing-failure arm is exit 2 (`EXECUTOR_SOURCE_UNAVAILABLE`), the exec-bit boundary is decided (blob equality over regular modes; mode not bound beyond regular-ness) and is a tested cell, and the standing instrument is the installed discriminating counter `tools/executor-source-pin-measure.py` (8 cells \u00d7 5 declared paths, per-run nonces, empty-blob and corrupt cells)", "S289, S290, S291, S103; `.ufo/evidence/round-60/after/cert.out`"]
+  start_line=696  header=["Note", "Scope", "Source / evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  698: ["`knowledge/mutation-case-kake-ledger-guard.md`", "kake `scripts/ledger_append_guard.py` @ `e8d3a924` measured 5/10 under its own `--selftest` with a pre-registered 10-defect spec (10/10 predictions held), wired as ledger leg 11 `py-kake-ledger-guard`; the ledger's language classes move from js + bash to js + bash + Python", "S312 (new, opened 2026-11-06); `.ufo/evidence/round-88/c1/`; frozen counter `.ufo/evidence/round-88/measure.py`"]
+  start_line=711  header=["Entry", "Map position and what it covers", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  713: ["`knowledge/kernel-witnessed-ledger.md`", "Frontier, not Core: the round-89 strace-witnessed audit of `tools/mutate-and-run.sh --regression` (`tools/ledger-witness.py`). R89-C1 was killed by its own rule (the T89E2 alias runners), so the entry records a killed instrument and its declared limits L1-L4; it moves no surface into Core", "S313, S314 (mined, opened 2026-11-06); `.ufo/evidence/round-89/`"]
+  start_line=719  header=["Entry / map position", "What it covers", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  721: ["`knowledge/mutation-case-fleet-sources-census.md` / Core (recorded cases; not a ledger leg)", "case 12: the fleet's `scripts/sources-census.sh` @ `f47ad6ba`, the first fleet-root gate the lane measures (every earlier case is a sibling-lane gate), 5/12 killed under its own `selftest`, 12/12 pre-registered predictions held, every survivor witnessed non-equivalent and killed by a scratch-proven arm (report-only); fleet impact: C12 would turn 20 lanes' census red", "S316, S317 (new, opened 2026-11-06); `.ufo/evidence/round-90/c1/`; frozen counter `.ufo/evidence/round-90/c1/measure.py`"]
+  start_line=731  header=["Entry", "Map position", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  733: ["`knowledge/mutation-case-fleet-sources-census.md`", "Core (recorded cases; **not admitted** as a certified case \u2014 the round-90 counter was killed by its own rule, and round 91's successor was killed too)", "S316, S317 (opened 2026-11-06); `.ufo/evidence/round-90/`; `.ufo/waves/round-91/`"]
+  start_line=742  header=["Entry", "Map position", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  744: ["`knowledge/mutation-case-fleet-sources-census.md`", "Core (recorded cases, not a ledger leg); certificate under round 92's sealed counter; admission pending", "S316, S317 (opened 2026-11-06); S320 (opened 2026-11-08); `.ufo/evidence/round-92/`"]
+  start_line=754  header=["Entry", "Map position", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  756: ["`knowledge/mutation-case-fleet-sources-census.md`", "Core (recorded cases, not a ledger leg); verdict-content certificate under round 93's sealed counter; admission pending", "S316, S317 (opened 2026-11-06); S320, S321, S322 (opened 2026-11-08); `.ufo/evidence/round-93/`"]
+  start_line=767  header=["Entry", "Map position", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  769: ["`knowledge/mutation-case-fleet-sources-census.md`", "Core (recorded cases, not a ledger leg); verdict-content certificate at `855f0c1c`, battery `states=35 matched=35`; revision-bound seal", "S316, S317 (opened 2026-11-06); S320, S321, S322 (opened 2026-11-08); `.ufo/evidence/round-93/`"]
+  start_line=780  header=["Entry", "Map position", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  782: ["`knowledge/mutation-case-fleet-sources-census.md`", "Core (recorded cases; certificate revision-bound to the round-94 instrument revision \u2014 the twelve cells are a measurement, not an admission)", "S320, S321, S322 (re-opened 2026-11-08); `.ufo/evidence/round-94/c1/`; `.ufo/evidence/round-94/pre-freeze/controls/`"]
+
+==============================================================================
+(b) stray verdict tokens outside the verdict table — corpus/knowledge/mutation-case-fleet-sources-census.md
+==============================================================================
+verdict tables (header carries a `verdict` cell): 1 at lines [68]
+stray verdict-token rows (>=2 pipes): 0
+  (empty — the honest note/README state the item demands)
+  (info) block lines mentioning KILLED/SURVIVED in any form: 17
+      L49: all mechanics from the counter): rc 0 = SURVIVED, rc ≠ 0 = KILLED, 180 s timeout
+      L70: | C01 | E10 community-at-A | `:668` `kind=="community"` → `kind=="communityX"` | KILLED | validate; one community row at
+      L71: | C02 | W02 thin-reject length boundary | `:671` `length(teaches)<8` → `<7` | SURVIVED | validate; one rejected row, tea
+      L72: | C03 | E04 supersedes exemption id width | `:648` `/supersedes S[0-9]{3}/` → `{4}` | SURVIVED | validate; S002 teaches 
+      L73: | C04 | overdue due-day boundary | `:684` `due<=today_s` → `due<today_s` | KILLED | overdue; opened 2026-10-07 + 30d = `
+      L74: | C05 | E08 opened-today boundary | `:661` `opened_epoch>today_s` → `>=` | KILLED | validate; one row opened 2026-11-06 
+      L75: | C06 | separator row with alignment colons | `:596` `^:?-+:?$` → `^-+$` | SURVIVED | census; separator `:---` / `:---:`
+      L76: | C07 | awk row-indent width 0-3 | `:615` bound `{0,3}` → `{0,2}` | KILLED | census; header, separator and row indented 
+      L77: | C08 | E11 used-by existence test (`-e`) | `:566` `! -e "$dir/$path"` → `! -f` | SURVIVED | validate; used-by `corpus/k
+      L78: | C09 | URL fragment normalization | `:602` `sub(/#[^ ]*$/,"",u)` → `"&"` | SURVIVED | validate; two rows `…/p#a` and `…
+      L79: | C10 | symbolic cadence with spaces | `:582` class `[A-Za-z0-9 _-]` → `[A-Za-z0-9_-]` | SURVIVED | validate; recheck `o
+      L80: | C11 | missing-registry exit 2 | `:804` `[ "$missing_error" = 1 ] && exit 2` → `exit 1` | KILLED | validate; no `corpus
+
+==============================================================================
+(b) stray verdict tokens outside the verdict table — corpus/README.md
+==============================================================================
+verdict tables (header carries a `verdict` cell): 0 at lines []
+stray verdict-token rows (>=2 pipes): 0
+  (empty — the honest note/README state the item demands)
+  (info) block lines mentioning KILLED/SURVIVED in any form: 0
+
+==============================================================================
+(e) adjunct — coverage (QUALITY 157/164) and figure scans on the real files
+==============================================================================
+README rows (block lines, own cell naming the note, >=2 pipes): 6
+  L721: | `knowledge/mutation-case-fleet-sources-census.md` / Core (recorded cases; not a ledger leg) | case 12: the fleet's `scripts/sources-census.sh` @ `f47ad6ba`, the first fleet-root gate the lane measur
+  L733: | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases; **not admitted** as a certified case — the round-90 counter was killed by its own rule, and round 91's successor was killed 
+  L744: | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); certificate under round 92's sealed counter; admission pending | S316, S317 (opened 2026-11-06); S320 (op
+  L756: | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); verdict-content certificate under round 93's sealed counter; admission pending | S316, S317 (opened 2026-
+  L769: | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); verdict-content certificate at `855f0c1c`, battery `states=35 matched=35`; revision-bound seal | S316, S3
+  L782: | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases; certificate revision-bound to the round-94 instrument revision — the twelve cells are a measurement, not an admission) | S32
+LAST row = L782; denial tokens in it: none -> coverage_ok=True
+note `measured: N/M killed` lines (block-level, fenced excluded): 1 -> [('5', '12')]
+note `measured:` lines INCLUDING fenced content: 1 -> [('5', '12')]
+
+Note: the reader's coverage scan requires the note path to be the FIRST
+whitespace token of a cell, with the cell stripped of backticks. The
+README's own § 'Round 90 — coverage map' row and the round-94 row both
+use a backtick-quoted path cell, so both satisfy the cell rule; the LAST
+one wins (QUALITY 157).
+
+==============================================================================
+(c) presentation forms the reader does NOT key (declared limits)
+==============================================================================
+Declared limits of the plan (plans/round-94.plan.md, R94-C1 'Declared limits'):
+  L1 a fenced block is literal text (S322): a fenced inverted table or a
+     fenced `measured:` line is not keyed and does not refuse the note;
+  L2 a table with no `verdict` cell in its header row is not a verdict table
+     (S321): an id-keyed table that asserts no verdict is never refused;
+  L3 a `verdict` cell outside the header row is a data cell (QUALITY 155);
+  L4 a verdict word in prose with fewer than two pipes on the line is not a
+     table row;
+  L5 a cell containing an escaped `\|` is one cell (S321), so it does not
+     shift the columns;
+  L6 the counter certifies the twelve cells, not how they were obtained;
+  L7 canary/unstable0 are declarations where C2 says so;
+  L8 a fully-correct fence table plus a second fenced table that ALSO passes
+     is not a refusal: the fence limit is a limit.
+
+note: per-table keying decision
+  L68   KEYED  verdict_cols=[3] header=["id", "arm targeted", "edit", "verdict", "witness"]
+  L118  not keyed (no `verdict` cell in header) header=["survivor", "what the selftest misses (at the pin)", "witness registry (one line)", "consequence", "killing arm (report-only, proven in scratch by T90E3)"] rows=7
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L140  not keyed (no `verdict` cell in header) header=["survivor", "lanes hit", "effect on live registries"] rows=5
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+
+corpus/README.md: per-table keying decision
+  L5    not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=9
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L24   not keyed (no `verdict` cell in header) header=["Entry", "Admitted / rejected", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L45   not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=15
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L76   not keyed (no `verdict` cell in header) header=["id", "ground", "candidate sources", "status", "next falsifiable move (before \u2192 after)"] rows=11
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L126  not keyed (no `verdict` cell in header) header=["Note / frontier", "Lane-asserted scope; outside admission pending", "Source / evidence"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L151  not keyed (no `verdict` cell in header) header=["Note / frontier", "Scope", "Source / evidence"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L183  not keyed (no `verdict` cell in header) header=["Maintained ground", "Addition / correction", "Evidence"] rows=3
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L225  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L245  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L264  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L327  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L351  not keyed (no `verdict` cell in header) header=["Entry", "Ground", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L362  not keyed (no `verdict` cell in header) header=["Entry", "Ground", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L374  not keyed (no `verdict` cell in header) header=["Entry", "Ground", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L382  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L404  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L421  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L452  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L461  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L469  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L480  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=3
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L516  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L529  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L547  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L561  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L572  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=3
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L584  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=3
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L596  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L604  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L615  not keyed (no `verdict` cell in header) header=["id", "ground", "candidate sources", "status", "next falsifiable move (before \u2192 after)"] rows=10
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L633  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L652  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L658  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L667  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L696  not keyed (no `verdict` cell in header) header=["Note", "Scope", "Source / evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L711  not keyed (no `verdict` cell in header) header=["Entry", "Map position and what it covers", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L719  not keyed (no `verdict` cell in header) header=["Entry / map position", "What it covers", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L731  not keyed (no `verdict` cell in header) header=["Entry", "Map position", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L742  not keyed (no `verdict` cell in header) header=["Entry", "Map position", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L754  not keyed (no `verdict` cell in header) header=["Entry", "Map position", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L767  not keyed (no `verdict` cell in header) header=["Entry", "Map position", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L780  not keyed (no `verdict` cell in header) header=["Entry", "Map position", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+
+note: 3 fenced block(s) at lines [202, 213, 224] -> limit L1 (S322): fenced content is
+     literal text; block_lines() drops it, so a fenced table (even an
+     inverted one) is never a verdict table and never refuses.
+corpus/README.md: 0 fenced block(s) at lines [] -> limit L1 (S322): fenced content is
+     literal text; block_lines() drops it, so a fenced table (even an
+     inverted one) is never a verdict table and never refuses.
+%s: %d line(s) with an escaped `\|` -> limit L5 (S321): split_cells()
+     treats `\|` as a literal pipe inside one cell, so it does not shift
+note: 0 line(s) with an escaped `\|` -> limit L5 (S321): split_cells() treats
+     `\|` as a literal pipe inside one cell, so it does not shift columns.
+%s: %d line(s) with an escaped `\|` -> limit L5 (S321): split_cells()
+     treats `\|` as a literal pipe inside one cell, so it does not shift
+corpus/README.md: 0 line(s) with an escaped `\|` -> limit L5 (S321): split_cells() treats
+     `\|` as a literal pipe inside one cell, so it does not shift columns.
+note: 5 prose line(s) with a verdict token and <2 pipes -> limit L4:
+       L49: all mechanics from the counter): rc 0 = SURVIVED, rc ≠ 0 = KILLED, 180 s timeout
+       L98: both report `SURVIVED`.
+       L157: (`measure.py:40`; `C1_CONJUNCTS spec=true`). The measured table is 5 KILLED + 7
+       L158: SURVIVED (`CTL1b-nowork-A.out:2-13`) and every prediction in
+       L179: - A SURVIVED witness proves non-equivalence on one registry, not that the
+corpus/README.md: 0 prose line(s) with a verdict token and <2 pipes -> limit L4:
+
+Scope fact (reader premise): the stray-verdict scan and the verdict-table
+keying run over the NOTE only. corpus/README.md is read by the reader only
+for the `coverage` conjunct (last row naming the note), never for verdict
+content. README pipe rows carrying KILLED/SURVIVED are therefore never
+keyed — a scope boundary, not a declared limit of the plan.
+
+==============================================================================
+(d) six hand-built variants — the reader's own parse_note()
+==============================================================================
+base note = committed note at the instrument revision (honest state)
+spec ids  = C01,C02,C03,C04,C05,C06,C07,C08,C09,C10,C11,C12
+
+V1 second verdict table (X1-X12)                     verdict_tables=2 badrows=12
+        bad: out-of-set:333:X1
+        bad: out-of-set:334:X2
+        bad: out-of-set:335:X3
+        bad: out-of-set:336:X4
+        bad: out-of-set:337:X5
+        bad: out-of-set:338:X6
+        ... 6 more
+
+V2 renamed header `result` + two verdict tokens      verdict_tables=1 badrows=2
+        bad: stray-verdict:333:| C02 | arm | edit | KIL
+        bad: stray-verdict:334:| C03 | arm | edit | SUR
+
+V3 bare pipe line with a token (no delimiter row)    verdict_tables=1 badrows=1
+        bad: stray-verdict:331:| C02 | arm | edit | KIL
+
+V4 id-keyed non-verdict table (no verdict asserted)  verdict_tables=1 badrows=0
+
+V5 a data cell whose text is exactly `verdict` (non-verdict header) verdict_tables=1 badrows=0
+
+V5b driver pos-honest-a13: §2b ids become their own cells verdict_tables=1 badrows=0
+
+V7 extra: table inside a 4-space indented code block verdict_tables=2 badrows=12
+        bad: out-of-set:333:X1
+        bad: out-of-set:334:X2
+        bad: out-of-set:335:X3
+        bad: out-of-set:336:X4
+        bad: out-of-set:337:X5
+        bad: out-of-set:338:X6
+        ... 6 more
+
+V8 extra: header cell `**verdict**` (norm_cell strips `*`) verdict_tables=2 badrows=1
+        bad: out-of-set:333:X1
+
+V9 extra: verdict token written as a code span in the data cell verdict_tables=2 badrows=1
+        bad: no-verdict:333:X1
+
+V10 extra: verdict token written in bold in the data cell verdict_tables=2 badrows=1
+        bad: no-verdict:333:X1
+
+V11 extra: verdict token in lower case in the data cell verdict_tables=2 badrows=1
+        bad: no-verdict:333:X1
+
+V12 extra: escaped pipe in a data cell (one cell, S321) verdict_tables=2 badrows=1
+        bad: out-of-set:333:X1
+
+V6 fenced inverted table (12 rows inverted)          verdict_tables=1 badrows=0
+
+BASELINE honest note                                 verdict_tables=1 badrows=0
+
+expectations (plan's declared limits / kill rule (a)):
+  V1 -> verdict_tables=2 (not 1)  -> ids/verdict_tables false
+  V2 -> NOT a verdict table; the two token rows are stray -> badrows=2
+  V3 -> stray row -> badrows=1
+  V4 -> not a verdict table, no token -> badrows=0, verdict_tables=1 (honest)
+  V5 -> data cell, not a header -> badrows=0, verdict_tables=1 (honest)
+  V6 -> fenced -> badrows=0, verdict_tables=1 (honest, limit L1)
+  V7 -> a 4-space INDENTED block is NOT a fence to this reader: keyed ->
+        verdict_tables=2, badrows>0 (an UNDECLARED class: the plan's limit
+        L1 names fenced blocks only; GFM/CommonMark also make a 4-space
+        indented block literal code).
+  V8 -> norm_cell() strips `*` and lowercases, so `**verdict**` IS a header
+  V9/V10/V11 -> the DATA token is matched by EXACT string; a code span, a
+        bold span or a lower-case spelling is NOT a verdict token
+  V12 -> an escaped `\|` stays inside one cell (S321)
+
+==============================================================================
+(i) the DRIVER's own fixture strings through the reader's parse_note()
+==============================================================================
+pos-real (the committed note)                              verdict_tables=1 badrows=0 
+pos-honest-a13 (§2b ids become their own cells)            verdict_tables=1 badrows=0 
+pos-honest-verdict-cell (a data cell exactly `verdict`)    verdict_tables=1 badrows=0 
+hidden-c001 (second verdict table C001-C012)               verdict_tables=2 badrows=12 ['out-of-set:330:C001', 'out-of-set:331:C002']
+hidden-x (second verdict table X1-X12)                     verdict_tables=2 badrows=12 ['out-of-set:330:X1', 'out-of-set:331:X2']
+renamed-result (header `result`, two verdict tokens)       verdict_tables=1 badrows=2 ['stray-verdict:330:| C01 | fixture arm | SU', 'stray-verdict:331:| C02 | fixture arm | KI']
+pseudo-row (bare pipe line, no delimiter row)              verdict_tables=1 badrows=1 ['stray-verdict:327:| C02 | fixture arm | KI']
+pos-fenced-hidden (fenced inverted table)                  verdict_tables=1 badrows=0 
+
+The battery's expectations line up: pos-* -> verdict_tables=1 badrows=0;
+hidden-* -> verdict_tables=2; renamed-result / pseudo-row -> badrows>0
+(the stray-verdict rule, so `ids` is false).
+
+==============================================================================
+(j) the honest note with the same twelve verdicts in other markup
+==============================================================================
+honest note, verdict cells as code span              verdict_tables=1 badrows=12 ['no-verdict:70:C01', 'no-verdict:71:C02']
+honest note, verdict cells as bold                   verdict_tables=1 badrows=12 ['no-verdict:70:C01', 'no-verdict:71:C02']
+honest note, verdict cells lower case                verdict_tables=1 badrows=12 ['no-verdict:70:C01', 'no-verdict:71:C02']
+
+Reading: the token set is matched by EXACT string in the data cell, so a
+verdict written `KILLED` or **KILLED** or `killed` is not a verdict to
+this reader: the row is refused with `no-verdict`. The HEADER cell, by
+contrast, goes through norm_cell() and is matched case-insensitively
+and formatting-insensitively. The asymmetry is undeclared in the plan.
+
+==============================================================================
+(h) hostile-side backstop — the stray-verdict rule where tables() misses
+==============================================================================
+H1 hidden 2nd verdict table, THREE-hyphen delimiter              verdict_tables=2 badrows=12 ['out-of-set:331:C001', 'out-of-set:332:C002']
+H2 hidden 2nd verdict table, ONE-hyphen delimiter (GFM-legal)    verdict_tables=1 badrows=12 ['stray-verdict:331:| C001 | a | b | KILLED ', 'stray-verdict:332:| C002 | a | b | KILLED ']
+H3 hidden 2nd verdict table inside a blockquote                  verdict_tables=1 badrows=12 ['stray-verdict:331:> | C001 | a | b | KILLE', 'stray-verdict:332:> | C002 | a | b | KILLE']
+H4 hidden 2nd verdict table indented 4 spaces (indented code block) verdict_tables=2 badrows=12 ['out-of-set:331:C001', 'out-of-set:332:C002']
+H5 stray pseudo-table row, token as a CODE SPAN                  verdict_tables=1 badrows=0 
+H6 stray pseudo-table row, token in BOLD                         verdict_tables=1 badrows=0 
+H7 stray pseudo-table row, token in lower case                   verdict_tables=1 badrows=0 
+
+Reading: the stray-verdict rule is the backstop for every class where
+tables() declines the table (H2/H3/H4/H5/H6/H7 all yield badrows>0, so
+the `ids` conjunct is false and the state is refused). The exact-string
+token match is the same in the table rule and the stray rule, so a
+backticked/bolded/lower-case token is invisible to BOTH (H5/H6/H7).
+
+==============================================================================
+(g) the reader's TABLE DEFINITION against S321 (GFM) — recognition probes
+==============================================================================
+G1 delimiter of ONE hyphen per cell (GFM-legal)                tables=0 verdict_tables=0 badrows=1  ['stray-verdict:3:| X1 | a | KILLED |']
+G2 delimiter of TWO hyphens per cell (GFM-legal)               tables=0 verdict_tables=0 badrows=1  ['stray-verdict:3:| X1 | a | KILLED |']
+G3 delimiter of THREE hyphens per cell (the note's own shape)  tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G4 header/delimiter cell-count mismatch (GFM: NOT a table)     tables=1 verdict_tables=1 badrows=2  ['delim:1:header=3,delimiter=2', 'out-of-set:3:X1']
+G5 table indented 4 spaces (an indented CODE block in GFM)     tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G6 table indented 2 spaces (GFM-legal, <=3 spaces)             tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G7 table inside a blockquote (GFM-legal)                       tables=0 verdict_tables=0 badrows=1  ['stray-verdict:3:> | X1 | a | KILLED |']
+G8 table without leading/trailing pipes (GFM-legal)            tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G9 table broken by a heading (GFM: broken at a block-level structure) tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G10 remainder row with MORE cells than the header (GFM: excess ignored) tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G11 remainder row with FEWER cells (GFM: empty cells inserted) tables=1 verdict_tables=1 badrows=1  ['width:3:cells=1']
+G12 header cell `VERDICT` (upper case)                         tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G13 header cell `verdicts` (plural — not the token)            tables=1 verdict_tables=0 badrows=1  ['stray-verdict:3:| X1 | a | KILLED |']
+G14 header cell `Verdict` (mixed case)                         tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G15 header cell `verdict` (the token, control)                 tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+
+Reading: G1/G2 -> the reader's DELIM_RE (-{3,}) is STRICTER than S321's
+'cells whose only content are hyphens': a GFM-legal one- or two-hyphen
+delimiter is NOT a table to this reader, so its rows fall through to the
+stray-verdict rule instead of the table rule.
+G4 -> the reader RECOGNISES a table GFM says is not a table, and adds a
+`delim:` finding (the plan's QUALITY 165 declares this rule).
+G5 -> the reader's DELIM_RE accepts any leading whitespace, so a table
+inside a 4-space INDENTED CODE block is keyed. S322 grounds only FENCED
+blocks (4.5); S321 4.4 makes an indented block literal code too. This is
+a class the plan's declared limits do not name.
+G7 -> a blockquoted table is not keyed (the reader sees '>' in the cell).
+G8/G9/G10/G11 -> the reader's remainder and break rules match S321.
+G12/G13/G14/G15 -> norm_cell() lowercases and strips `*`/backticks, so the
+header cell is matched case-insensitively (VERDICT, Verdict, `verdict`
+all key) but only as the exact word `verdict` (`verdicts` does not).
+
+==============================================================================
+END
+==============================================================================
+R94S2 premise probe
+lane      = /home/vgpnk/Projects/shokunin/tameshi-shokunin
+rev       = cdf669cf
+counter   = /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-94/c1/measure-v94.py
+note      = corpus/knowledge/mutation-case-fleet-sources-census.md
+spec ids  = 12 (C01,C02,C03,C04,C05,C06,C07,C08,C09,C10,C11,C12)
+VERDICTS  = ('KILLED', 'SURVIVED')
+FENCE_RE  = ^ {0,3}(`{3,}|~{3,})(.*)$
+DELIM_RE  = ^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$
+
+==============================================================================
+(a) GFM tables in corpus/knowledge/mutation-case-fleet-sources-census.md — reader's own tables()
+==============================================================================
+tables found: 3
+  start_line=68  header=["id", "arm targeted", "edit", "verdict", "witness"]  delim_cells=5  data_rows=12  verdict_header=yes (cols=[3])
+      row   70: ["C01", "E10 community-at-A", "`:668` `kind==\"community\"` \u2192 `kind==\"communityX\"`", "KILLED", "validate; one community row at tier A (S001)"]
+      row   71: ["C02", "W02 thin-reject length boundary", "`:671` `length(teaches)<8` \u2192 `<7`", "SURVIVED", "validate; one rejected row, teaches `1234567` (7 chars)"]
+      row   72: ["C03", "E04 supersedes exemption id width", "`:648` `/supersedes S[0-9]{3}/` \u2192 `{4}`", "SURVIVED", "validate; S002 teaches `supersedes S001 with newer text`"]
+      row   73: ["C04", "overdue due-day boundary", "`:684` `due<=today_s` \u2192 `due<today_s`", "KILLED", "overdue; opened 2026-10-07 + 30d = `--today` 2026-11-06"]
+      row   74: ["C05", "E08 opened-today boundary", "`:661` `opened_epoch>today_s` \u2192 `>=`", "KILLED", "validate; one row opened 2026-11-06 = `--today`"]
+      row   75: ["C06", "separator row with alignment colons", "`:596` `^:?-+:?$` \u2192 `^-+$`", "SURVIVED", "census; separator `:---` / `:---:` / `---:` over one row"]
+      row   76: ["C07", "awk row-indent width 0-3", "`:615` bound `{0,3}` \u2192 `{0,2}`", "KILLED", "census; header, separator and row indented three spaces"]
+      row   77: ["C08", "E11 used-by existence test (`-e`)", "`:566` `! -e \"$dir/$path\"` \u2192 `! -f`", "SURVIVED", "validate; used-by `corpus/knowledge` (a directory)"]
+      row   78: ["C09", "URL fragment normalization", "`:602` `sub(/#[^ ]*$/,\"\",u)` \u2192 `\"&\"`", "SURVIVED", "validate; two rows `\u2026/p#a` and `\u2026/p#b`, same scope"]
+      row   79: ["C10", "symbolic cadence with spaces", "`:582` class `[A-Za-z0-9 _-]` \u2192 `[A-Za-z0-9_-]`", "SURVIVED", "validate; recheck `on next release`"]
+      row   80: ["C11", "missing-registry exit 2", "`:804` `[ \"$missing_error\" = 1 ] && exit 2` \u2192 `exit 1`", "KILLED", "validate; no `corpus/SOURCES.md` at all"]
+      row   81: ["C12", "used-by comma-list trimming", "`:564` `path=$(trim_cell \"$path\")` \u2192 `path=$path`", "SURVIVED", "validate; used-by `corpus/a.md, corpus/b.md`, both present"]
+  start_line=118  header=["survivor", "what the selftest misses (at the pin)", "witness registry (one line)", "consequence", "killing arm (report-only, proven in scratch by T90E3)"]  delim_cells=5  data_rows=7  verdict_header=NO
+      row  120: ["C02 \u00b7 W02 thin-reject length", "the only rejected rows with a short reason teach `no` (2 chars; a S015 and z S001); the generated rejected rows teach 17, 25 and 24 chars, so no cell sits at 7 and `<8` and `<7` agree on every observation (`:6-7`); `W02-thin-reject` (`:138`) is green either way", "one rejected row, teaches `1234567`", "a 7-character rejection reason \u2014 the thinnest text W02 exists to refuse \u2014 becomes admissible silently (false negative)", "a lane fixture with that row; `check \"W02-thin-7\" \"W02\" \u2026 validate \u2026` \u2014 pristine prints W02, the mutant prints nothing"]
+      row  121: ["C03 \u00b7 E04 supersedes exemption", "no fixture or generated row carries `supersedes` (`:5`: 0 in fixtures; the gate's two hits are the comment at `:25` and the regex at `:648`); the E04 duplicate-url fixture (a S003/S004, same URL `c.example/x`, same scope, `\u2026/root/a-shokunin/corpus/SOURCES.md:9,11`) is caught identically under both regexes because neither teaches cell contains the word", "two rows, the second teaches `supersedes S001 with newer text`", "a legitimate re-registration that names the superseded three-digit id is reported E04 (false positive, exit 1): the exemption silently stops covering S001-S999", "two-row fixture, second teaches `supersedes S001`; `checkx \u2026 0` \u2014 pristine exempts, the mutant prints E04 and exits 1"]
+      row  122: ["C06 \u00b7 alignment separator", "all 12 separator rows across the fixtures and the gate-generated fixtures are plain dash runs with no colon (`:3`), so `separator_row`'s `^:?-+:?$` is only ever exercised with the plain form (e.g. `\u2026/root/a-shokunin/corpus/SOURCES.md:6`)", "registry whose separator is `:---` / `:---:` / `---:` over one valid row", "a GitHub-style alignment separator is parsed as a data row: the dash cells fire E02 plus the enum/date checks (E05-E09) and are counted as a row with `tier.invalid`/`status.invalid`, so validate exits 1 on a well-formed registry and census inflates", "registry with an alignment separator and one row; `checkline` census `rows 1` plus `checkx` validate 0"]
+      row  123: ["C08 \u00b7 E11 existence test", "every used-by cell at the pin names a regular file (`corpus/knowledge/real.md`) or an absent path (`corpus/knowledge/ghost.md`, `corpus/knowledge/missing-N.md`); 0 cells name a directory (`:10-11`), the only input on which `-e` and `-f` differ; the E11 arms observe only file and absent (`:136`, `:328`)", "one mined row, used-by `corpus/knowledge`, the directory created", "a used-by cell naming a directory is reported \"missing used-by\" and validate exits 1 although the path exists (false positive)", "a fixture lane with `corpus/knowledge/` present and a mined row citing it; `checkx \u2026 0` \u2014 pristine clean, the mutant prints E11 and exits 1"]
+      row  124: ["C09 \u00b7 URL fragment strip", "no URL cell at the pin carries a `#` \u2014 every `#` byte is a heading (`:4`); the only normalization the suite sees is trailing slash plus host case (`shared-across-lanes`, `:152`, a S016 `https://SHARED.example/canon/` vs b S001 `https://shared.example/canon`), so the fragment substitution never runs with a fragment", "two rows, same scope, `https://w9.example/p#a` and `\u2026/p#b`", "a fragment regression suppresses the duplicate-URL finding: two citations of one page at different anchors stay distinct, so a genuine duplicate escapes E04 within scope (and W04 across scopes)", "two rows in one scope, `#a` and `#b`; `check \"E04-fragment-duplicate\" \"E04\" \u2026` \u2014 pristine prints E04, the mutant prints nothing"]
+      row  125: ["C10 \u00b7 symbolic cadence space", "the distinct symbolic cadences at the pin are `annual` and `on-release` (`:8`) \u2014 no internal space; `symbolic-on-release-reported` (`:148`) and `symbolic-annual-reported` (`:149`) are the only symbolic observations and the generated rows use `30d`/`90d`/dates", "one row, recheck `on next release`", "a spaced symbolic cadence is refused at admission (E09, exit 1), and in overdue mode it is neither numeric nor symbolic, so `due=epoch(\u2026)` is INVALID and the row is never reported due \u2014 freshness is lost silently", "one row with `on next release`; `checkx \u2026 0` \u2014 pristine clean, the mutant prints E09 and exits 1"]
+      row  126: ["C12 \u00b7 used-by comma-list trim", "used-by cells are single-path or `\u2014` everywhere at the pin and 0 cells contain a comma (`:9`); `IFS=',' read -a` splits before `trim_cell` runs (`:561-564`), so the second path keeps its leading space when the trim is dropped, and no fixture has two paths", "one mined row, used-by `corpus/a.md, corpus/b.md`, both files present", "a multi-path used-by \u2014 the ordinary shape of an entry cited by several knowledge files \u2014 yields E11 for the space-prefixed second path and exit 1 on a path that exists (false positive)", "both files present, one mined row listing them; `checkx \u2026 0` \u2014 pristine clean, the mutant prints E11 for ` corpus/b.md`"]
+  start_line=140  header=["survivor", "lanes hit", "effect on live registries"]  delim_cells=3  data_rows=5  verdict_header=NO
+      row  142: ["C12 used-by trim", "20", "1695 false E11 findings over 1146 mined rows, validate exit 0 -> 1 on 20 lanes; every trimmed path exists"]
+      row  143: ["C03 supersedes width", "20 shape / 15 effective", "97 rows gain E04, validate exit 0 -> 1 on 15 lanes"]
+      row  144: ["C09 fragment strip", "9", "W04 set changes (+15 / -111); exit unchanged"]
+      row  145: ["C10 spaced cadence", "2", "11 rows gain E09 and lose their cadence line; exit 0 -> 1 on 2 lanes"]
+      row  146: ["C02, C06, C08", "0", "no live registry carries the shape today"]
+
+==============================================================================
+(a) GFM tables in corpus/README.md — reader's own tables()
+==============================================================================
+tables found: 42
+  start_line=5  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=9  verdict_header=NO
+      row    7: ["`knowledge/gates-survey-kumitate.md`", "The six hermetic suites: executed case counts 62/42/60/102/39/43 (all `--selftest` exit 0; literal `check(` sites 62/42/60/71/35/41 \u2014 counts are loop-sensitive, so the executed summary line is the only honest count); uniform two-line close (`n/m` summary + `VERDICT:`, usage exit 64 everywhere); fail-closed arm inventories (proxy 12/12 arms fired, claims 5/5, kimi-census 1 token \u00d73 cases, round-gate 7 declared/6 fired with `INTERNAL_ERROR` uncovered, surface-probe + cite-check carry no token enum at all); verdict-line exactness tiers (full-line literal \u2192 anchored regex \u2192 startsWith \u2192 includes); mutation controls = cite-check's mutation copy (integration-gated, never under `--selftest`) + claims-check's external env-poison probe \u2014 no kill-rate harness or self-code fault injection anywhere in the corpus (I: the \"every declared kind fires\" meta-checks prove each branch is reached, not that a wrong implementation would be caught)", "kumitate-shokunin/scripts/*.mjs read-only; six `node <gate>.mjs --selftest` runs with exit codes + verbatim summary lines (note \u00a70); grep/wc censuses in-note"]
+      row    8: ["`knowledge/gates-survey-kagi.md`", "The six kagi gates: 250 selftest cases green 6/6 from the suites' own counters (static `cases+1` site counts 6/1/0/1/6/2 are wrong \u2014 mutation and breadth loops register cases dynamically); one three-valued exit lattice, same meaning in all six; four distinct exit-2 classes (setup/cannot-measure; malformed committed data \u2014 \"not a verdict\", with two opposite resolutions across gates; POLICY \u2014 refused before the effect; zero-work \u2014 a gate that measures nothing must not exit 0); five evidence-discipline habits (verdict = expected exit AND expected ERE on the last non-empty line; verdicts carry their counts; count-only pins where a name would leak; abstention declared/counted/exit-neutral with a both-paths selftest; secret hygiene as a header prohibition, and the gate never echoes a claim's output); findings F-1 (`--falsify` measures 16/18 live vs README's unqualified 18/18 \u2014 adjudicated host-state dependence by the scratch-case discriminator, neither defect nor clean) and F-2 (3 of 6 `policy_check` refusal paths \u2014 `inline-shell`/`backslash`/`empty-quotes`, precisely round-11's bypass class \u2014 asserted by no selftest case); ER-1 keeps 16 self-caught wrong-line citations as evidence", "kagi-shokunin @ `4e48b771` read-only; six `--selftest` runs + live `scope-gate.sh --falsify` (exit 1, verbatim lines) + `sed -n` line re-checks + stamps recompute `ok=56 stale=0` (note \u00a72, \u00a75\u2013\u00a77)"]
+      row    9: ["`knowledge/verification-patterns-fleet.md`", "The shared verifier shape P1\u2013P10, called general only on \u22652 independent lanes: declared falsifiable claim before the move; named non-author verifier replaying committed/retained state; byte-identity as the top verdict class with an explicit volatile-scrub list; prior-rows regression fence; verdict tallied to the verifier; falsification first-class; post-verification changes carry their own proof; the verifier catches author defects; scope-partitioned writers with retained receipts; a cross-lane adversarial layer audits and reports, never fixes siblings. Lane-specific (explicitly NOT general): kaidoku's audit-block grammar (`verify:`/`verified-at:`/`suggested:`, CONFIRMED/UNVERIFIABLE, ev-id identity domain `f(content,path,params)`, 3-run content-address proof) and the game lanes' AGREE-tally encoding (8-seat set, closeout.json schema, battery-row metrics, git-archive baseline freeze, Sol per-axis adjudication); 3 falsifiable predictions; unknowns U1\u2013U7 named", "kaidoku corpus + `.ufo/waves/kaidoku-r5/01\u201302` + `.ufo/waves/shokunin-train-20261014-w6..w8` (closeout/spec/tasks/xsentinel) + game-lane LOGs and round reports, all read-only; census commands (ls/grep/sort/uniq/wc) in-note \u00a7Verification"]
+      row   10: ["`knowledge/gates-survey-kumitate.md` \u2014 round-2 addendum (K-R2-1\u20264, append-only)", "All six executed counts + artifact pins re-verified held on the current bytes (sha256 first16: cite-check `40573448\u2026`, surface-probe `148cbf85\u2026`, round-gate `f890e277\u2026`, proxy-check `a052ddb9\u2026`, claims-check `e9a21b44\u2026`, kimi-census `83016d45\u2026`; every `--selftest` exit 0 with verbatim summary lines \u2014 K-R2-1); \u00a77 meta-check anchor pair corrected to `claims-check.mjs:851-852` and `kimi-census.mjs:841-842` \u2014 the wave-1 ranges started early / ended short of both `check(...)` lines (K-R2-2); mutation-control census re-checked with the SKILL.md false hits excluded \u2014 still no gate ships a kill-rate harness (K-R2-3); cite-check integration group + round-gate `INTERNAL_ERROR` arm stay recorded-not-absorbed, sibling-owned (K-R2-4)", "kumitate-shokunin read-only; per gate `node scripts/<gate>.mjs --selftest` + `sha256sum scripts/<gate>.mjs`; `grep -n \"every finding kind fired by the suite\"` re-run 2026-10-14 (note \"Errata (round 2)\" block)"]
+      row   11: ["`knowledge/gates-survey-kagi.md` \u2014 round-2 addendum (G-R2-1\u20266, append-only)", "\u00a71 claim-ledger pin corrected: **79301 B / sha256 first16 `93c5827202b9cdec`** \u2014 the surveyed 79294/`357fb245` was an intermediate dirty-tree state never committed; substrate moved 09:58:55, kagi's own round-18 `fecee87` (10:05:10) re-pinned `stamps.tsv` (G-R2-1); \u00a79 item 4's last-non-empty-line citation corrected `:53-56` \u2192 `:26-28` (G-R2-2); denied verbs 22 \u2192 **23** (G-R2-3); re-verified set held: six selftests 16/13/29/34/61/97 = 250, `--falsify` exit 1 `caught=16/18 failed=2` with the same two `SCOPE BREADTH-EXCEEDS` lines, F-1/F-2 standing and `corpus/README.md:43` still unqualified \"18/18\" (G-R2-4); \u00a78.1 [UNK] discharged \u2014 the mid-survey writer was kagi's own in-flight round-18 [INF] (G-R2-5); live verdicts 5/6 + F-2 fix stay sibling-owned recommendations (G-R2-6)", "kagi-shokunin read-only @ `fecee87`; `sha256sum`/`stat -c %s`, DENY_RE pipeline \u2192 23, `sed -n` line checks, spot selftests + `--falsify` re-run 2026-10-14"]
+      row   12: ["`knowledge/verification-patterns-fleet.md` \u2014 round-2 addendum (TAMESHI-R2-4 extension + V-R2-1\u20264, append-only)", "Fourth pattern from game-dev-2d-shokunin's verifier machinery \u2014 D0\u2013D10: replays committed bytes (a commit lacking the change IS the finding, r64); mutants/faults are scratch-only runner fixtures; sensitivity = guard-disable in a disposable copy (binary per guard, no kill-rate tally \u2014 U8); a detected mutant must survive spoof classification and engine errors never count; opt-in probes proven inert unflagged; verifier writes its own instruments and recomputes from spec; 7-field regression fence vs prior receipts; falsification/failed verification kept first-class (r64 DISAGREE \u2192 landed bytes; r69 verifier-seat death recorded); receipts located (lessons-JSON era \u2192 in-tree scratch); declared bounds/non-writes \u2014 plus U8\u2013U13 and 2 predictions; explicitly single-lane, NOT general (PROVINCE.md); kaidoku census re-measured held (72 files; `verify:` 468 vs `verified-at:` 467, same four mismatched files), w6\u2013w8 AGREE tallies held (3\u00d75/5, 3\u00d75/5, 2\u00d76/6+1\u00d75/5), U1/U2 stay open with U1's first reading = grep-shape artifacts (V-R2-1\u20264)", "game-dev-2d-shokunin read-only @ `9fb50aa9` (LOG/SCORECARD/reports/corpus); census commands in-note \"Verification (extension)\"; kaidoku/wave re-greps re-run 2026-10-14"]
+      row   13: ["`knowledge/mutation-case-kimi-census.md`", "Tameshi's first measured kill-rate (round 2, TAMESHI-R2-1): kumitate `kimi-census.mjs`'s 43-case hermetic suite against 10 single-edit mutants \u2014 one exact edit per fresh /tmp copy, driver asserts the old string unique, original byte-identical (sha256 before=after `83016d45\u2026`) \u2192 **8/10 killed (80 %)**, no inconclusive run, control 43/43 and every mutant still enumerating 43, 7.0 s sweep; survivors D2 (`findings.slice(0,6)`\u2192`(0,5)`: truncation boundary never exercised \u2014 max findings in any suite run = 2 vs cap 6, DRIFT asserts prefix-only) and D10 (`FROZEN.K2 25`\u2192`24`: only `frozen.K5` is asserted) \u2014 shared class \"reported-but-unasserted surfaces\"; per-kill failing-case labels (D4 = exactly the 3 root-enum cases, D8 = the 3 fail-closed cases, D1/D3 = 16 each incl. the exact green baseline); protected-arm inventory + measured gaps; errata E1 (author's D7-survivor expectation wrong \u2014 the fixtures' modes share floor bits); scope: measures the suite, not substrate drift [I]; U1\u2013U6", "kumitate-shokunin `scripts/kimi-census.mjs` @ `175de6ba` read-only (sha256 `83016d45\u2026`, 43273 B); mutants + per-defect evidence under `/tmp/tameshi-r2-1-work/` only; reproduce spec (10 edits + commands + D2/D10 sensitivity probes) in-note \u00a74"]
+      row   14: ["`knowledge/mutation-case-kagi-census.md` \u2014 round 3 (TAMESHI-R3-1)", "Tameshi's second measured kill-rate, first bash gate: kagi `surface-census.sh`'s 16-case selftest vs 10 single-edit mutants \u2014 same method as round 2 (fresh `/tmp` copies, one exact edit each, count==1 gate, kagi tree never written; restore proof sha `275d8294\u2026` before=after, mtime 09:47:15, porcelain clean) \u2192 **8/10 killed (80 %)**, no inconclusive run, suite count held `(<n>/16 cases)` on every run, 11.0 s for 11 runs; survivors B5 (deleted exec x-bit arm: **fixture-absent arm** \u2014 no case reaches it, so no implementation moves the suite; non-equivalence probe: mutant reports `SURFACE OK \u2026 (exec 644)` where pristine reports `SURFACE DIVERGED` exit 1) and B10 (CLEAN-summary `ok=` arg swapped: reported-never-read count, same family as round-2 D10); kill is token-only in B4 (deleted symlink arm keeps exit=1, dies on the `SURFACE LINK` token assert); per-kill failing-case labels (B1 = case 05 undeclared-file, B3 = 3 incl. crosscheck-disagree, B8 = the two exit-2 setup cases); gate choice proven hermetic on this host (fixtures under `mktemp -d`; the 2 verbs cases `skip-case \u2026 substrate-absent` \u2014 `the-janitor` off PATH, kagi's own round-18 repair, LOG.md:741-744); E1: failing-case *counts* predicted 6/10 (case 04 is a second exit-0 green fixture, kills every green-firing defect); cross-language \u00a74: same headline as JS, narrower kill width (max 3/16 vs 16/43 \u2014 per-case fresh fixtures + exit+token asserts vs shared fixtures + exact-line asserts), shared survivor class reported-but-unasserted data, bash-only unreached-arm class; U1\u2013U6", "kagi-shokunin `corpus/surface-census.sh` @ `fecee87` read-only (sha256 `275d8294\u202653009f`, 44212 B, 886 newlines, 887th line unterminated); mutants + evidence under `/tmp/tameshi-r3-1-work/` only; reproduce spec (10 edits + commands + B5/B10 probes) in-note \u00a77"]
+      row   15: ["`knowledge/executor-test-sufficiency.md` \u2014 round 3 (TAMESHI-R3-4)", "The no-oral-context executor test (SHONEN box 3 evidence): an executor with no tameshi context beyond `SKILL.md` @ `dd2f4dee\u20263753` reproduced **one killed mutant end-to-end** \u2014 D5, killed exactly as Appendix A records (`42/43 FAIL`, singleton failing case `MEMBER_MISSING \u2026 presence is gated`), control green 43/43 first try, all 10 manifest strings byte-exact and unique at their cited lines (`--check` \u2192 every `count=1`, `CHECK: all unique`), restore pin held; per-step sufficiency verdicts S1\u2013S10: 7\u00d7 SUFFICIENT, 2\u00d7 SUFFICIENT (latitude), 1\u00d7 ADDITIVE-IMPROVISATION (single-mutant `--only` subset is not described \u2014 affordance, not repair), 1\u00d7 NOT EXERCISED (survivor probe \u2014 D5 killed), 1\u00d7 ADAPTED (note format); the SKILL's grammar rule was load-bearing (a red mutant still prints `\u2026 42/43 pass`); contamination statement \u00a71 (read SKILL.md + target only, no corpus/plans/AGENTS); scope honest: ONE mutant of the JS case, not the full sweep [U3\u2013U6]; U6: no independent second lane had re-verified at write time \u2014 since closed by the round-3 audit replays (B2 re-ran D5 via the tool, same kill + same mutant sha)", "`tameshi-shokunin/SKILL.md` @ `dd2f4dee\u20263753` (45644 B, 665 lines) + kumitate `kimi-census.mjs` @ `175de6ba` (sha `83016d45\u2026` before=after); executor evidence under `/tmp/tameshi-r3-4-work/evidence/`; reproduce block in-note \u00a78"]
+  start_line=24  header=["Entry", "Admitted / rejected", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row   26: ["`lessons/round-1.md` \u2014 fleet round-1, distinct from the historical training arc", "Admitted: canonical, durable lane assertions; rejected: same-lane promotion authority and broad current cold-read credit from one historical JS mutant. Outside admit/reject review remains open.", "`../reports/round-1-calibration.md`; `../LOG.md` fleet round-1 entries"]
+  start_line=45  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=15  verdict_header=NO
+      row   47: ["`knowledge/arm-class-matrix.md`", "JS + bash mutation-case arm-completeness matrix (round 4)", "`mutation-case-kimi-census.md`; `mutation-case-kagi-census.md`"]
+      row   48: ["`knowledge/closeout-r11.md`", "the training arc's closeout: service boundary, handoff, carried debts; no new gate measurement", "`plans/round-11.plan.md`; `SCORECARD.md`; `LOG.md`"]
+      row   49: ["`knowledge/fleet-kill-rate-ledger.md`", "standing per-gate view: suite size, kill rate, survivor classes, sweep date, pin; stale successor rows open", "the six mutation-case notes; S031"]
+      row   50: ["`knowledge/fleet-suite-census.md`", "static suite-vs-arm census of fleet gates (meta-checks, mutation controls, integration groups); the service offer", "kumitate `scripts/`; kagi `corpus/*check*.sh`"]
+      row   51: ["`knowledge/mutation-case-kagi-checklist.md`", "case 5: kagi `checklist-run.sh` 7/15 (47 %), copy-only harness", "S036; `service-optin-protocol.md`"]
+      row   52: ["`knowledge/mutation-case-kumitate-claims.md`", "case 6: kumitate `claims-check.mjs` 7/10 (70 %), byte copies only", "S037"]
+      row   53: ["`knowledge/mutation-case-mado-verify.md`", "case 4: mado `mado-verify.sh` 4/10 (40 %), owner opt-in, in-surface vs out-of-surface", "S035"]
+      row   54: ["`knowledge/mutation-case-tsukuroi-census.md`", "case 3: tsukuroi `tsukuroi-census.sh` 6/10 (60 %), cross-author; incident I1", "S034"]
+      row   55: ["`knowledge/operator-runbook.md`", "operator runbook for the runner, ledger, opt-in, limits, cadence, regression (four-leg lines: ER-R3 open)", "S031; ledger; opt-in; limits notes"]
+      row   56: ["`knowledge/self-hardening-r6.md`", "meta-sweep of the runner's own `--regression` comparator; selftest hardened", "S031"]
+      row   57: ["`knowledge/service-limits.md`", "intake refusal table: what the service will not sweep, and why", "`fleet-suite-census.md`; `SKILL.md`"]
+      row   58: ["`knowledge/service-optin-protocol.md`", "engagement protocol: request, non-writes, owner responsibility, report shape", "`fleet-suite-census.md`; case notes"]
+      row   59: ["`knowledge/service-standing-state.md`", "artifact-boundary table, fleet-visible vs lane-owned; no measurement", "`SCORECARD.md`; `LOG.md`; `SKILL.md`"]
+      row   60: ["`knowledge/mutation-score-semantics.md` \u2014 round 1, frontier F1", "verdict vocabulary map tameshi \u2194 Stryker \u2194 cargo-mutants \u2194 mutmut \u2194 shmutant; tameshi k/(k+s) vs Stryker detected/valid, equal iff no timeouts; all six recorded cases recomputed (t = 0 \u2192 identical rates); NoCoverage candidates left U; \"timeout counts as a kill\" rejected", "S001, S002, S004, S005, S006"]
+      row   61: ["`knowledge/witness-scoped-kill-verdict.md` \u2014 round 1, frontier F2", "shmutant's witness grammar vs tameshi's guards; pre-registered witness split of js-kimi-census: 8 killed-on-witness / 0 accidental / 2 survived, declaration hashed before the run (blindness partial, recorded)", "S006; evidence `../.ufo/evidence/kaika-round-1/witness/`"]
+  start_line=76  header=["id", "ground", "candidate sources", "status", "next falsifiable move (before \u2192 after)"]  delim_cells=5  data_rows=11  verdict_header=NO
+      row   78: ["F1", "external mutation-score semantics + report interop", "S001, S002, S004, S005", "held (round 1) \u2014 `knowledge/mutation-score-semantics.md`", "emit one ledger leg as schema JSON and validate it (validator unavailable this round: U)"]
+      row   79: ["F2", "witness-scoped kill verdicts / bash mutation tooling", "S006", "held (round 1) \u2014 `knowledge/witness-scoped-kill-verdict.md`", "the same split on a bash leg (surface-census): undefined \u2192 k_witness + k_accidental = 8"]
+      row   80: ["F3", "determinism precondition, flaky-aware verdicts", "S004, S011, S025, S026, S027, S040", "open", "one control per sweep (`.ufo/evidence/kaika-round-1/capability-demo/README.md` H2) \u2192 N \u2265 3 byte-identical controls, or a named mismatch"]
+      row   81: ["F4", "golden / snapshot fixture discipline", "S013, S014, S015, S016, S017, S045", "open", "update paths that write expected values without an explicit flag: unmeasured \u2192 counted per surveyed gate"]
+      row   82: ["F5", "hermetic environment normalization", "S015, S016, S028", "open", "runner selftest host vs `env -i LANG=C TZ=UTC`: identical (H3, round 1) \u2192 the six gate selftests measured the same way"]
+      row   83: ["F6", "fixture minimization for survivors", "S022, S023, S024", "open", "B5 probe fixture size: unmeasured \u2192 reduced size + kill check"]
+      row   84: ["F7", "incremental re-sweep granularity", "S003, S004, S005, S008, S041", "open", "pin-level cadence only \u2192 per-leg reuse decisions classified"]
+      row   85: ["F8", "oracle anchoring as a survivor class", "S012", "open", "0 test-oracle lines \u2192 one survivor classified against an independently anchored expectation"]
+      row   86: ["F9", "LLM-era mutant generation + equivalence", "S007, S009, S043, S044, S286, S287", "open \u2014 equivalence-cost contract entered (round 58, `knowledge/llm-mutant-equivalence-cost.md`); bounded pilot unmeasured", "no LLM-specific search run yet (U) \u2192 bounded pilot with an independent outcome check"]
+      row   87: ["F10", "PBT generators for gate fixtures", "S018, S019, S020, S021", "open", "no PBT fixture method \u2192 one generator against a named fixture gate"]
+      row   88: ["F11", "trusted-executor binding by committed blob identity (round-58 C2 successor)", "S289", "partly held (round 59, `knowledge/executor-source-binding.md`); frozen counter 24/24 at the tool commit but cheat-passable (fingerprint cheat 24/24)", "per-run nonce fixtures + shuffled order: fingerprint 24/24 \u2192 16/24, sequence 24/24 \u2192 10/24, real tool 24/24 (shown able to fail); first-path-only blind spot still open"]
+  start_line=126  header=["Note / frontier", "Lane-asserted scope; outside admission pending", "Source / evidence"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  128: ["`knowledge/repeated-control-precondition.md` / F3", "A standalone exact-tuple repeated-control gate; a clean result is finite sample agreement, not proof of determinism or a flaky-test cure", "S004, S026; `tools/repeat-control.py`; `.ufo/evidence/round-12/verification-final.json`"]
+      row  129: ["`knowledge/witness-scoped-kill-verdict.md` / F2", "Historical source-semantics corrections E2/E3; the existing bash leg's declared-witness study is retained separately, not a new recorded gate", "S006; `.ufo/evidence/round-12/BashWitness/summary.json`; `lessons/round-12.md`"]
+  start_line=151  header=["Note / frontier", "Scope", "Source / evidence"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  153: ["`knowledge/incremental-pin-disposition.md` / F7", "Structured six-leg pinned/HEAD/worktree content observation and the explicit boundary `result_reuse=not_established`; no target gate runs and no new rate", "S003, S041, correction S047; `.ufo/evidence/round-13/pin-dispositions.json`"]
+      row  154: ["Frozen bash provenance correction / calibration", "New companion metadata normalizes the exposed declaration's kind without rewriting round-12 evidence; original null stays historical", "`lessons/round-13.md`; `.ufo/evidence/round-13/witness-metadata.json`; QUALITY14"]
+  start_line=183  header=["Maintained ground", "Addition / correction", "Evidence"]  delim_cells=3  data_rows=3  verdict_header=NO
+      row  185: ["calibration of retained expectations", "Complete twelve-row effective/superseded ledger; the failed raw setup observation remains visible rather than being granted mechanism credit by exit code", "`lessons/round-14.md`; `../tools/evidence-disposition.py`; `../.ufo/evidence/round-14/dispositions.json`"]
+      row  186: ["`knowledge/incremental-pin-disposition.md`, empirical correction8", "Final round13 receipt backlink and S048 object-neutral guidance supersede only the dated pre-integration status; original section6 remains historical", "existing mined S003/S048, new S049; prior outside `lessons/round-13-verifier-spotcheck.md`"]
+      row  187: ["explicit invocation context", "Prospective GIT_DIR experiment and runner/manifest mapping receipt; no invented historical injection setup", "`../.ufo/evidence/round-14/capture-context.py`; completed runtime evidence is appended to the round14 lesson"]
+  start_line=225  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  227: ["`knowledge/mutation-case-kumitate-round-gate.md`", "case 7: kumitate `round-gate.mjs` 5/10 (50 %), 10/10 pre-registered predictions held; projected floor interval [26,1059] confirmed at its edge (1059 survives, 1060 killed); guarded `env -i` suite; ledger leg `js-round-gate` (`--regression` cases=7)", "S053, S052, S056, S057; `arm-class-matrix.md` \u00a713"]
+  start_line=245  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  247: ["`knowledge/input-keyed-coldread-credit.md`", "a cold-read credit holds only while every input the read ran against keeps its sha256 as a blob at the measured rev; trace receipts bind executed commands to inputs; a failing read with verified inputs vetoes; red-before on the round-14 bucket (credited at `e69b488`, `input-drift:tools/mutate-and-run.sh` at `09ee1d0`); limits of an open trace", "S058, S059, S060, S064; `lessons/round-16-verifier-spotcheck.md` \u00a72, \u00a76"]
+  start_line=264  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  266: ["`knowledge/mutation-case-kumitate-sources-check.md`", "case 8: kumitate `scripts/sources-check.mjs` @ `0acb775`, 5/10 killed, 10/10 pre-registered predictions held, deterministic control; ledger leg `js-sources-check`", "S001, S008; `lessons/round-18.md`"]
+      row  267: ["`knowledge/guard-kill-closure.md`", "a guard is covered only when its removal mutant is killed with a green pristine control; jj `HEAD` vs branch-tip anchoring; non-finite JSON refusal; descendant kill after `setsid`; `GIT_*` prefix scrub and pinned-tool migration", "S065, S066, S068, S069, S070, S072, S073, S074"]
+  start_line=327  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  329: ["`knowledge/hermetic-env-differential.md` / F5", "source-headed method entry, S079 mined and S028 reopened; nine explicit pinned surfaces, seven profiles, raw tuple comparison and a clean repeat", "`tools/env-diff.py`; `.ufo/evidence/round-21/c2-contract.json`, `f5/receipt-initial.json`; selftest9/9"]
+  start_line=351  header=["Entry", "Ground", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  353: ["`knowledge/callback-authoritative-accounting.md`", "same-ground calibration repair, not a new frontier crossing", "minedS082; `tools/wave-accounting.py`; frozen round22 bundle and expected digest"]
+  start_line=362  header=["Entry", "Ground", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  364: ["`knowledge/required-command-binding.md`", "same-ground calibration; explicit finite registry requirements, not full-page closure", "minedS083; `tools/command-binding.py`; `.ufo/evidence/round-23/requirements.json` and frozen ten-case ruler"]
+  start_line=374  header=["Entry", "Ground", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  376: ["`knowledge/replay-projection-hardening.md`", "same-ground calibration; routed round23 hardening gaps as falsifiable predicates", "minedS084, S085; `tools/registry-replay.py`; `.ufo/evidence/round-24/{contract,measure}.py/json`"]
+  start_line=382  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  384: ["`knowledge/mte-report-interop.md` / F1", "source-headed entry citing mined S086 and S087 (new) with S001 and S002; the tameshi-to-report mapping, what the official schema and metrics library check, the INCONCLUSIVE convention, ledger rounding, and an export decision table", "`tools/mte-interop.py`; vendored `tools/vendor/*.tgz`; `.ufo/evidence/round-25/`"]
+  start_line=404  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  406: ["`knowledge/mutation-case-kumitate-cite-check.md` / Core (recorded legs)", "source-headed entry citing mined S088 (the pinned gate) and S089 (Stryker on equivalent mutants), new this round; ninth ledger leg `js-cite-check`, 5/10 killed on the 62-case hermetic group, 10/10 verdict predictions, four survivors with off-suite witnesses and one equivalent mutant", "`.ufo/evidence/round-26/cite-check/`; `.ufo/waves/round-26/w1/Probe*.md`, `CriticEquivalence.md`"]
+  start_line=421  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  423: ["`knowledge/oracle-anchored-survivors.md` / F8", "source-headed entry citing S012 (re-opened and mined this round) and S090, S091 (new); the four round-26 cite-check hole survivors re-judged against expectations fixed outside the mutated code: 4 anchored holes, one of them held by convention only", "`.ufo/evidence/round-27/f8/` (anchors committed before the run, receipt bound to probe and anchor digests); counter `.ufo/evidence/round-27/c2-measure.py`"]
+  start_line=452  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  454: ["`knowledge/regression-tally-completeness.md`", "Core ground (the lane's own runner, `tools/mutate-and-run.sh --regression`), not a frontier move. The tally refuses as SETUP when the counted leg statuses do not add up to the case count; `--selftest` runs the extracted tally block under 23 fixed status vectors and a guard stress case (97 \u2192 106 cases). Claim C1 is exploratory: a static-model control met the frozen counter v4 before data", "S087 (re-opened), S093, S094; `.ufo/evidence/round-30/contract-amendment-4.json`"]
+      row  455: ["S092 supersedes S059", "Anchor re-pin only. The markdown digest changed and the quoted known issue still stands", "`.ufo/evidence/round-30/sources/S059-bazel-remote-caching.md`"]
+  start_line=461  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  463: ["`knowledge/executable-self-assessment.md`", "New lane ground (seat ScoutFrontier: not F1\u2013F10, not held core): a standing SCORECARD capability or score row is a claim checked by running the row's own command at the same revision and comparing the stated values; a stale row is corrected by an appended, revision-named statement, never in place. The executable-example sources motivate this local inference; a matching tally is not full behavioral proof. Calibration claim C1 measures it over the 12 frozen rows.", "S055, S095, S096; `.ufo/evidence/round-31/contract.json`; `.ufo/evidence/round-31/c1-measure.py`; `.ufo/evidence/round-31/before/c1-at-base.stdout`"]
+  start_line=469  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  471: ["`knowledge/runner-tally-audit.md`", "Core ground (the lane's own runner, `tools/mutate-and-run.sh --regression` and its tally selftest harness), not a frontier move (seat ScoutFrontier). A new versioned tool, `tools/tally-audit.py`, audits the runner without editing it: per-leg presence of the tally loop, the tally block against an oracle over every status 0\u2013255 with overcount/undercount stress, and the runner's own harness against a panel of faulty tally blocks. It closes the per-leg item and the eight MutateHead survivors routed since round 30, while the runner stays byte-identical. The measured result is in SCORECARD.md's round-32 block", "S097, S099, S094 (re-opened); `.ufo/evidence/round-32/contract.json`, `.ufo/evidence/round-32/v2/`"]
+  start_line=480  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=3  verdict_header=NO
+      row  482: ["`knowledge/runner-tally-audit-v2.md`", "Core ground, landed round 33: the four held-out classes that defeated `tools/tally-audit.py` and the v2 answers (runtime vector sweep, every status at every leg, dataflow-identified tally loop, extraction tolerance). Its own header trio already named S097 + S099; this row closes the index gap only", "S097, S099; `tools/tally-audit-v2.py`; `.ufo/evidence/round-33/`"]
+      row  483: ["`knowledge/survivor-fixture-minimization.md`", "Frontier F6 attempt (round 29), honest stop: the frozen target was not reached; the note records the survivor-B5 finding and the delta-debugging reading of S024. Index gap only \u2014 no verdict changes", "S024; `.ufo/evidence/round-29/sources/S024-fuzzingbook-Reducer.html`"]
+      row  484: ["`knowledge/witness-equivalence-rule.md`", "Core ground, landed round 34: the set-aware witness rule for sealed held-out copies (kill/accept \u00d7 head/vector branches), the rule the round-34 C1 deciding run verified. Header trio added the same round (C2 m1)", "S097, S101; `.ufo/evidence/round-33/c1/c1-measure.py`"]
+  start_line=516  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  518: ["`knowledge/r41-variable-destination-writes.md`", "The two sources that supply the mechanism \u2014 `ast` (S153) and `Path.write_text`'s receiver-as-destination rule (S154) \u2014 and the measured live finding: `tools/repeat-control.py:811` and `:820` resolve to expected-value destinations that the round-40 line matcher cannot connect, both scratch-exempt. Scope is depth-4 resolution through assignment, `os.path.join`, `+`, `/` and f-strings; aliases, closures and non-folding calls are named as unresolved. Claims no universality and no gate coverage. It also records a known false-positive class: a destination whose base is an unbound attribute or a non-folding call is labelled unflagged, and must be read against its base expression.", "S153, S154"]
+  start_line=529  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  531: ["`knowledge/pit-outcome-vocabulary.md`", "PIT's seven outcomes, the No coverage / Survived split, and the run-to-run timeout instability. PIT's code scores a run error as detected while Stryker (held S001) leaves it out of the score, so a score quoted without its outcome classes cannot be compared across the two tools. Assimilated from the shokuknow package and re-grounded this round.", "S155, S156, S158, S001"]
+      row  532: ["`knowledge/r42-attribute-and-outflag-destinations.md`", "Two write-destination shapes that v3 misreads: a `self.<attr>` bound to `tempfile.mkdtemp` and read through a same-class helper, and a parameter fed by an argparse `--out` value at every in-module call. The measured live finding is that v3's three unflagged sites are scratch (`tools/context-capture.py:1682`, `:1685`) and operator-named (`tools/registry-replay.py:123`).", "S157, S153, S001, S158"]
+  start_line=547  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  549: ["`knowledge/r43-survivor-resolution-rule.md`", "The K/D/E/U rule the lane applies to a mutant that survives its battery: killed (a reachable-code fixture flips a declared class under the exit-plus-FAIL oracle), dead_code_only (every differing case is a fixture whose discriminating construct is unreachable), equivalent (no differing case in the declared corpus), unresolved (everything else, including run errors and apply errors). Resolves the two round-42 survivors: the outflag mutant killed by F11, the method-fold mutant named dead-code-only rather than relabelled. Records PIT's `EQUIVALENT(true)` convention and why the lane does not adopt its scoring.", "S089, S159, S155, S158"]
+  start_line=561  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  563: ["`knowledge/r8-gtest-order-and-seed.md`", "GoogleTest's own statement that test order is undefined, that `--gtest_shuffle` reveals bad inter-test dependencies, and that the printed random seed (`--gtest_random_seed=SEED`) reproduces an order-related failure; the per-test fixture object as the isolation default", "S256"]
+      row  564: ["`knowledge/r8-gtest-primer-independence.md`", "The primer's independence/repeatability requirement, the fixture lifecycle (a fixture is deleted before the next is created; no reuse across tests) and the fatal/nonfatal assertion scope as an upstream instance of the F2 witness-scoped verdict", "S257"]
+  start_line=572  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=3  verdict_header=NO
+      row  574: ["`knowledge/r6-flaky-failures-cluster.md`", "A published abstract states that flaky tests co-occur in clusters with shared root causes (75% of flaky tests belong to a cluster, mean cluster size 13.5); the entry's fixture-craft reading \u2014 controls or survivors drawn from one cluster are one observation \u2014 is labelled inference", "S258"]
+      row  575: ["`knowledge/r5-undetected-flaky-failures.md`", "A same-job rerun is both the detection mechanism and its blind spot: undetected flaky failures are 9.8 %-16.3 % of failed pipeline runs (8.8 billion executions, four industrial projects), with up to 3\u00d7 variation between test environments", "S259"]
+      row  576: ["`knowledge/r9-false-red-rate.md`", "The publisher's own post states that about 84% of observed pass-to-fail transitions involve a flaky test and that legitimate failures in flaky tests are commonly ignored; the lane's price-the-rerun arithmetic stays out unless a held row states it", "S260"]
+  start_line=584  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=3  verdict_header=NO
+      row  586: ["`knowledge/flaky-aware-verdict-evidence.md`", "Two published statements about what a flaky verdict can rest on: a model over already-recorded outcomes, durations and code history predicts flakiness without added reruns (one industrial system, 100 flaky and 100 non-flaky histories, F1 95.5% from 3 features), and a rerun-based label has a measured budget (at most 5 reruns check at least 82% correctly on 26 Java modules) with order diversity priced below repetition; what a one-run gate verdict is worth is labelled inference", "S261, S262"]
+      row  587: ["`knowledge/r8-flakiness-not-static.md`", "A posted (under review) counter-case to code-based flakiness detection: flakiness is not a static property of test code, benchmark shortcuts inflate F1, and the abstract's own caution that the counterfactual dataset is not a benchmark for reuse; the entry states what only an abstract shows", "S263"]
+      row  588: ["`knowledge/r8-flaky-cost-baseline.md`", "The price of the branch a rerun cadence chooses between, from one industrial record's abstract: an automatic rerun costs 0.02 cents against $5.67 for a manual investigation of a failed pipeline; the carrier's venue field is wrong and is reported as a carrier defect", "S264"]
+  start_line=596  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  598: ["`knowledge/pbt-generator-pilot.md`", "One generator, `tools/pbt-staged-id.py`, against `tools/staged-id-guard.py` through its CLI only, with an oracle that re-implements the guard's round-43 rules, twelve printed distribution classes, a seed and a case count; measured by a twelve-mutant panel hidden from its author (differential confirmation) against a fixture-replay control; the limits (one gate, no shrinking, a counter blind to a differential generator)", "S269, S270"]
+  start_line=604  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=2  verdict_header=NO
+      row  606: ["`knowledge/fixture-shrinking-pilot.md`", "One shrinker, `tools/shrink-case.py`, over the round-49 generator's killing cases for mutants of `tools/staged-id-guard.py`: units are registry lines, staged lines and map entries; a kill is the round-49 oracle passing on the pristine guard and failing on the mutant; delta debugging to a single-unit fixpoint with verdict caching; every guard run counted in `runs`; measured by a frozen counter that re-checks sub-case, kill and 1-minimality itself on 12 public and 8 hidden mutants and compares the stated cost with a run log the shrinker can reach (the cost was re-counted from outside by a wave-2 trace, and the counter's forgery routes are disclosed in `corpus/lessons/round-50.md`); the limits (line-level units, tiny cases, one gate, a greedy loop meets the same bar, B5 not discharged)", "S271, S022, S024"]
+      row  607: ["`knowledge/delta-debugging-minimization-contract.md`", "Admitted from the shokuknow package (staged S167, re-grounded as S271): a reduced fixture states its 1-minimality witness (a removal that loses the failure) and its cost in test runs per reduction \u2014 57 runs for the source's 896-line reduction, 139 only as the case study's total (two reductions summed is an inference); what is new against the held S024 restatement", "S271, S024"]
+  start_line=615  header=["id", "ground", "candidate sources", "status", "next falsifiable move (before \u2192 after)"]  delim_cells=5  data_rows=10  verdict_header=NO
+      row  617: ["F1", "external mutation-score semantics + report interop", "S001, S002, S086, S087", "held (round 25) \u2014 README.md:385-390; F1b open", "before: emit one ledger leg as schema JSON and validate it (validator unavailable in round 1) \u2192 after: held for the eight recorded ledger legs (round 25, README.md:386-390); remaining: the emitted report names a target by basename with no lane or revision pin (round 26, README.md:412-413) and the 35 recorded survivors stay unclassified for NoCoverage (README.md:396)"]
+      row  618: ["F2", "witness-scoped kill verdicts / bash mutation tooling", "S006, S257", "partly held (round 1) \u2014 README.md:115", "before: the same split on a bash leg (surface-census): undefined \u2192 k_witness + k_accidental = 8 \u2192 after: still unmeasured; the existing bash leg's declared-witness study is retained separately (README.md:128) and round 45 adds GoogleTest's primer as an upstream instance of the split (README.md:563)"]
+      row  619: ["F3", "determinism precondition, flaky-aware verdicts", "S004, S011, S025, S026, S027, S040, S256, S258-S264", "open \u2014 README.md:589", "before: one control per sweep \u2192 after: N \u2265 3 byte-identical controls, or a named mismatch: still unmeasured; the rounds 45-47 entries add upstream statements and published measurements only (README.md:558-589)"]
+      row  620: ["F4", "golden / snapshot fixture discipline", "S013, S014, S015, S016, S017, S045, S105-S108, S132, S152, S153, S154", "partly held (round 38) \u2014 README.md:492-495", "before: update paths that write expected values without an explicit flag: unmeasured \u2192 after: the write-path census counted 99 live write sites with 0 unflagged (round 39, README.md:503), and rounds 40-41 added two successor tools; remaining: the cmp and git diff --exit-code lattices, and the shutil.* and handle.write classes outside v2's pattern (README.md:511, README.md:521-523)"]
+      row  621: ["F5", "hermetic environment normalization", "S015, S016, S028, S079", "Core (round 21) \u2014 README.md:330-335; for the nine frozen files", "before: runner selftest host vs env -i LANG=C TZ=UTC identical (H3, round 1) \u2192 after: the nine frozen files measured the same way (nine clean controls, round 21); the three kumitate gates cite-check, surface-probe and proxy-check stay unmeasured (README.md:335-336)"]
+      row  622: ["F6", "fixture minimization for survivors", "S022, S023, S024, S271", "held (round 50) \u2014 README.md:608", "before: B5 probe fixture size: unmeasured \u2192 after: held for the method on killing cases \u2014 one shrinker to a 1-minimal sub-case with a stated run cost (round 50); the round-29 B5 survivor is not discharged and stays masked \u2192 next: shrink on a second gate, or discharge B5"]
+      row  623: ["F7", "incremental re-sweep granularity", "S003, S004, S005, S008, S041, S047", "open \u2014 README.md:255-256", "before: pin-level cadence only \u2192 after: per-leg reuse decisions classified: not reached; round 13 acquired only the content-disposition prerequisite and round 17 moved no row (README.md:255-256)"]
+      row  624: ["F8", "oracle anchoring as a survivor class", "S012, S090, S091", "partly held (round 27) \u2014 README.md:424-427", "before: 0 test-oracle lines \u2192 after: one survivor classified against an independently anchored expectation, one gate at one pin (round 27); bounded to 3 of 4 survivors anchored in the gate's header contract and 1 by convention only (round 29, README.md:433-437) \u2192 next: anchor the hole calls on the other eight recorded legs"]
+      row  625: ["F9", "LLM-era mutant generation + equivalence", "S007, S009, S043, S044", "open \u2014 README.md:86", "before: no LLM-specific search run yet (U) \u2192 after: bounded pilot with an independent outcome check: untouched; round 43 states F9 is not touched (README.md:555-556)"]
+      row  626: ["F10", "PBT generators for gate fixtures", "S018, S019, S020, S021, S269, S270", "held (round 49) \u2014 README.md:599", "before: no PBT fixture method \u2192 after: one generator against a named fixture gate, conditioned on the round-49 deciding receipt printing C2_R49_PASS=true; next: a second gate, or shrinking (README.md:599)"]
+  start_line=633  header=["Entry / ground", "Admission and exact scope", "Evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  635: ["`knowledge/mutation-case-kagi-drift-pins.md` / Core (recorded legs)", "source-headed entry citing mined S272 (the pinned kagi host-drift gate) and S273 (Bash `errexit`/`pipefail` semantics), new this round; tenth ledger leg `bash-drift-pins`, 2/10 killed on the 13-case selftest under the recorded `sandbox-$DEFECT_ID` suite; independent A/B probe shows K_GONE_ARM, K_AMBIG_GT and K_SHAPE_OPTIN are environment-masked and become killed under a neutral sandbox (5/10), so the reported 20% must not be read as gate kill strength; seven of ten predictions held, five other survivors have off-suite witnesses", "`.ufo/evidence/round-51/c2/`; `.ufo/waves/round-51/w1/T51LabSandboxLeak.md`, `T51ScribeEntry/`"]
+  start_line=652  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  654: ["`knowledge/receipt-revision-binding.md` (round 56; errata ER-R57-K1, round 57) and `knowledge/gate-row-exit-map.md` (round 57)", "The receipt-revision gate's binding rule; its exit map (0 PASS, 2 could-not-evaluate, 3 refused, and exit 1 as usage or traceback); a code-by-condition truth table measured on the CLI at base `5e3569969b53`; the three registry gate rows (`tools/registry.json`), which emit 2 of the 11 codes; `recheck:` at 19/19", "S281 (in-toto Statement, subject matched by digest); S283 (GNU grep \u00a72.3 exit status); `tools/receipt-revision-gate.py`"]
+  start_line=658  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  660: ["`knowledge/llm-mutant-equivalence-cost.md`", "F9 equivalence-cost counting contract: distinguish non-compilability, duplication and equivalence before interpreting surviving mutants. The Java study's measured improvements do not transfer numerically to this lane's gates. A bounded LLM-mutant pilot remains unmeasured", "S286 (arXiv \u00a7Abstract), S287 (deck extract lines 230-241)"]
+  start_line=667  header=["Note", "Holds", "Sources"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  669: ["`knowledge/executor-source-binding.md` (round 59; amended round 60)", "The declared-blob binding rule and its decision table, now with the round-60 amendment: the plumbing-failure arm is exit 2 (`EXECUTOR_SOURCE_UNAVAILABLE`), the exec-bit boundary is decided (blob equality over regular modes; mode not bound beyond regular-ness) and is a tested cell, and the standing instrument is the installed discriminating counter `tools/executor-source-pin-measure.py` (8 cells \u00d7 5 declared paths, per-run nonces, empty-blob and corrupt cells)", "S289, S290, S291, S103; `.ufo/evidence/round-60/after/cert.out`"]
+  start_line=696  header=["Note", "Scope", "Source / evidence"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  698: ["`knowledge/mutation-case-kake-ledger-guard.md`", "kake `scripts/ledger_append_guard.py` @ `e8d3a924` measured 5/10 under its own `--selftest` with a pre-registered 10-defect spec (10/10 predictions held), wired as ledger leg 11 `py-kake-ledger-guard`; the ledger's language classes move from js + bash to js + bash + Python", "S312 (new, opened 2026-11-06); `.ufo/evidence/round-88/c1/`; frozen counter `.ufo/evidence/round-88/measure.py`"]
+  start_line=711  header=["Entry", "Map position and what it covers", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  713: ["`knowledge/kernel-witnessed-ledger.md`", "Frontier, not Core: the round-89 strace-witnessed audit of `tools/mutate-and-run.sh --regression` (`tools/ledger-witness.py`). R89-C1 was killed by its own rule (the T89E2 alias runners), so the entry records a killed instrument and its declared limits L1-L4; it moves no surface into Core", "S313, S314 (mined, opened 2026-11-06); `.ufo/evidence/round-89/`"]
+  start_line=719  header=["Entry / map position", "What it covers", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  721: ["`knowledge/mutation-case-fleet-sources-census.md` / Core (recorded cases; not a ledger leg)", "case 12: the fleet's `scripts/sources-census.sh` @ `f47ad6ba`, the first fleet-root gate the lane measures (every earlier case is a sibling-lane gate), 5/12 killed under its own `selftest`, 12/12 pre-registered predictions held, every survivor witnessed non-equivalent and killed by a scratch-proven arm (report-only); fleet impact: C12 would turn 20 lanes' census red", "S316, S317 (new, opened 2026-11-06); `.ufo/evidence/round-90/c1/`; frozen counter `.ufo/evidence/round-90/c1/measure.py`"]
+  start_line=731  header=["Entry", "Map position", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  733: ["`knowledge/mutation-case-fleet-sources-census.md`", "Core (recorded cases; **not admitted** as a certified case \u2014 the round-90 counter was killed by its own rule, and round 91's successor was killed too)", "S316, S317 (opened 2026-11-06); `.ufo/evidence/round-90/`; `.ufo/waves/round-91/`"]
+  start_line=742  header=["Entry", "Map position", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  744: ["`knowledge/mutation-case-fleet-sources-census.md`", "Core (recorded cases, not a ledger leg); certificate under round 92's sealed counter; admission pending", "S316, S317 (opened 2026-11-06); S320 (opened 2026-11-08); `.ufo/evidence/round-92/`"]
+  start_line=754  header=["Entry", "Map position", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  756: ["`knowledge/mutation-case-fleet-sources-census.md`", "Core (recorded cases, not a ledger leg); verdict-content certificate under round 93's sealed counter; admission pending", "S316, S317 (opened 2026-11-06); S320, S321, S322 (opened 2026-11-08); `.ufo/evidence/round-93/`"]
+  start_line=767  header=["Entry", "Map position", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  769: ["`knowledge/mutation-case-fleet-sources-census.md`", "Core (recorded cases, not a ledger leg); verdict-content certificate at `855f0c1c`, battery `states=35 matched=35`; revision-bound seal", "S316, S317 (opened 2026-11-06); S320, S321, S322 (opened 2026-11-08); `.ufo/evidence/round-93/`"]
+  start_line=780  header=["Entry", "Map position", "Grounding"]  delim_cells=3  data_rows=1  verdict_header=NO
+      row  782: ["`knowledge/mutation-case-fleet-sources-census.md`", "Core (recorded cases; certificate revision-bound to the round-94 instrument revision \u2014 the twelve cells are a measurement, not an admission)", "S320, S321, S322 (re-opened 2026-11-08); `.ufo/evidence/round-94/c1/`; `.ufo/evidence/round-94/pre-freeze/controls/`"]
+
+==============================================================================
+(b) stray verdict tokens outside the verdict table — corpus/knowledge/mutation-case-fleet-sources-census.md
+==============================================================================
+verdict tables (header carries a `verdict` cell): 1 at lines [68]
+stray verdict-token rows (>=2 pipes): 0
+  (empty — the honest note/README state the item demands)
+  (info) block lines mentioning KILLED/SURVIVED in any form: 17
+      L49: all mechanics from the counter): rc 0 = SURVIVED, rc ≠ 0 = KILLED, 180 s timeout
+      L70: | C01 | E10 community-at-A | `:668` `kind=="community"` → `kind=="communityX"` | KILLED | validate; one community row at
+      L71: | C02 | W02 thin-reject length boundary | `:671` `length(teaches)<8` → `<7` | SURVIVED | validate; one rejected row, tea
+      L72: | C03 | E04 supersedes exemption id width | `:648` `/supersedes S[0-9]{3}/` → `{4}` | SURVIVED | validate; S002 teaches 
+      L73: | C04 | overdue due-day boundary | `:684` `due<=today_s` → `due<today_s` | KILLED | overdue; opened 2026-10-07 + 30d = `
+      L74: | C05 | E08 opened-today boundary | `:661` `opened_epoch>today_s` → `>=` | KILLED | validate; one row opened 2026-11-06 
+      L75: | C06 | separator row with alignment colons | `:596` `^:?-+:?$` → `^-+$` | SURVIVED | census; separator `:---` / `:---:`
+      L76: | C07 | awk row-indent width 0-3 | `:615` bound `{0,3}` → `{0,2}` | KILLED | census; header, separator and row indented 
+      L77: | C08 | E11 used-by existence test (`-e`) | `:566` `! -e "$dir/$path"` → `! -f` | SURVIVED | validate; used-by `corpus/k
+      L78: | C09 | URL fragment normalization | `:602` `sub(/#[^ ]*$/,"",u)` → `"&"` | SURVIVED | validate; two rows `…/p#a` and `…
+      L79: | C10 | symbolic cadence with spaces | `:582` class `[A-Za-z0-9 _-]` → `[A-Za-z0-9_-]` | SURVIVED | validate; recheck `o
+      L80: | C11 | missing-registry exit 2 | `:804` `[ "$missing_error" = 1 ] && exit 2` → `exit 1` | KILLED | validate; no `corpus
+
+==============================================================================
+(b) stray verdict tokens outside the verdict table — corpus/README.md
+==============================================================================
+verdict tables (header carries a `verdict` cell): 0 at lines []
+stray verdict-token rows (>=2 pipes): 0
+  (empty — the honest note/README state the item demands)
+  (info) block lines mentioning KILLED/SURVIVED in any form: 0
+
+==============================================================================
+(e) adjunct — coverage (QUALITY 157/164) and figure scans on the real files
+==============================================================================
+README rows (block lines, own cell naming the note, >=2 pipes): 6
+  L721: | `knowledge/mutation-case-fleet-sources-census.md` / Core (recorded cases; not a ledger leg) | case 12: the fleet's `scripts/sources-census.sh` @ `f47ad6ba`, the first fleet-root gate the lane measur
+  L733: | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases; **not admitted** as a certified case — the round-90 counter was killed by its own rule, and round 91's successor was killed 
+  L744: | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); certificate under round 92's sealed counter; admission pending | S316, S317 (opened 2026-11-06); S320 (op
+  L756: | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); verdict-content certificate under round 93's sealed counter; admission pending | S316, S317 (opened 2026-
+  L769: | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases, not a ledger leg); verdict-content certificate at `855f0c1c`, battery `states=35 matched=35`; revision-bound seal | S316, S3
+  L782: | `knowledge/mutation-case-fleet-sources-census.md` | Core (recorded cases; certificate revision-bound to the round-94 instrument revision — the twelve cells are a measurement, not an admission) | S32
+LAST row = L782; denial tokens in it: none -> coverage_ok=True
+note `measured: N/M killed` lines (block-level, fenced excluded): 1 -> [('5', '12')]
+note `measured:` lines INCLUDING fenced content: 1 -> [('5', '12')]
+
+Note: the reader's coverage scan requires the note path to be the FIRST
+whitespace token of a cell, with the cell stripped of backticks. The
+README's own § 'Round 90 — coverage map' row and the round-94 row both
+use a backtick-quoted path cell, so both satisfy the cell rule; the LAST
+one wins (QUALITY 157).
+
+==============================================================================
+(c) presentation forms the reader does NOT key (declared limits)
+==============================================================================
+Declared limits of the plan (plans/round-94.plan.md, R94-C1 'Declared limits'):
+  L1 a fenced block is literal text (S322): a fenced inverted table or a
+     fenced `measured:` line is not keyed and does not refuse the note;
+  L2 a table with no `verdict` cell in its header row is not a verdict table
+     (S321): an id-keyed table that asserts no verdict is never refused;
+  L3 a `verdict` cell outside the header row is a data cell (QUALITY 155);
+  L4 a verdict word in prose with fewer than two pipes on the line is not a
+     table row;
+  L5 a cell containing an escaped `\|` is one cell (S321), so it does not
+     shift the columns;
+  L6 the counter certifies the twelve cells, not how they were obtained;
+  L7 canary/unstable0 are declarations where C2 says so;
+  L8 a fully-correct fence table plus a second fenced table that ALSO passes
+     is not a refusal: the fence limit is a limit.
+
+note: per-table keying decision
+  L68   KEYED  verdict_cols=[3] header=["id", "arm targeted", "edit", "verdict", "witness"]
+  L118  not keyed (no `verdict` cell in header) header=["survivor", "what the selftest misses (at the pin)", "witness registry (one line)", "consequence", "killing arm (report-only, proven in scratch by T90E3)"] rows=7
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L140  not keyed (no `verdict` cell in header) header=["survivor", "lanes hit", "effect on live registries"] rows=5
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+
+corpus/README.md: per-table keying decision
+  L5    not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=9
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L24   not keyed (no `verdict` cell in header) header=["Entry", "Admitted / rejected", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L45   not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=15
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L76   not keyed (no `verdict` cell in header) header=["id", "ground", "candidate sources", "status", "next falsifiable move (before \u2192 after)"] rows=11
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L126  not keyed (no `verdict` cell in header) header=["Note / frontier", "Lane-asserted scope; outside admission pending", "Source / evidence"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L151  not keyed (no `verdict` cell in header) header=["Note / frontier", "Scope", "Source / evidence"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L183  not keyed (no `verdict` cell in header) header=["Maintained ground", "Addition / correction", "Evidence"] rows=3
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L225  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L245  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L264  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L327  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L351  not keyed (no `verdict` cell in header) header=["Entry", "Ground", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L362  not keyed (no `verdict` cell in header) header=["Entry", "Ground", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L374  not keyed (no `verdict` cell in header) header=["Entry", "Ground", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L382  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L404  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L421  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L452  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L461  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L469  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L480  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=3
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L516  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L529  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L547  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L561  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L572  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=3
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L584  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=3
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L596  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L604  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=2
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L615  not keyed (no `verdict` cell in header) header=["id", "ground", "candidate sources", "status", "next falsifiable move (before \u2192 after)"] rows=10
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L633  not keyed (no `verdict` cell in header) header=["Entry / ground", "Admission and exact scope", "Evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L652  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L658  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L667  not keyed (no `verdict` cell in header) header=["Note", "Holds", "Sources"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L696  not keyed (no `verdict` cell in header) header=["Note", "Scope", "Source / evidence"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L711  not keyed (no `verdict` cell in header) header=["Entry", "Map position and what it covers", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L719  not keyed (no `verdict` cell in header) header=["Entry / map position", "What it covers", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L731  not keyed (no `verdict` cell in header) header=["Entry", "Map position", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L742  not keyed (no `verdict` cell in header) header=["Entry", "Map position", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L754  not keyed (no `verdict` cell in header) header=["Entry", "Map position", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L767  not keyed (no `verdict` cell in header) header=["Entry", "Map position", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+  L780  not keyed (no `verdict` cell in header) header=["Entry", "Map position", "Grounding"] rows=1
+        -> limit L2 (S321): a table whose header row carries no `verdict`
+           cell is not a verdict table; its rows are not keyed.
+
+note: 3 fenced block(s) at lines [202, 213, 224] -> limit L1 (S322): fenced content is
+     literal text; block_lines() drops it, so a fenced table (even an
+     inverted one) is never a verdict table and never refuses.
+corpus/README.md: 0 fenced block(s) at lines [] -> limit L1 (S322): fenced content is
+     literal text; block_lines() drops it, so a fenced table (even an
+     inverted one) is never a verdict table and never refuses.
+%s: %d line(s) with an escaped `\|` -> limit L5 (S321): split_cells()
+     treats `\|` as a literal pipe inside one cell, so it does not shift
+note: 0 line(s) with an escaped `\|` -> limit L5 (S321): split_cells() treats
+     `\|` as a literal pipe inside one cell, so it does not shift columns.
+%s: %d line(s) with an escaped `\|` -> limit L5 (S321): split_cells()
+     treats `\|` as a literal pipe inside one cell, so it does not shift
+corpus/README.md: 0 line(s) with an escaped `\|` -> limit L5 (S321): split_cells() treats
+     `\|` as a literal pipe inside one cell, so it does not shift columns.
+note: 5 prose line(s) with a verdict token and <2 pipes -> limit L4:
+       L49: all mechanics from the counter): rc 0 = SURVIVED, rc ≠ 0 = KILLED, 180 s timeout
+       L98: both report `SURVIVED`.
+       L157: (`measure.py:40`; `C1_CONJUNCTS spec=true`). The measured table is 5 KILLED + 7
+       L158: SURVIVED (`CTL1b-nowork-A.out:2-13`) and every prediction in
+       L179: - A SURVIVED witness proves non-equivalence on one registry, not that the
+corpus/README.md: 0 prose line(s) with a verdict token and <2 pipes -> limit L4:
+
+Scope fact (reader premise): the stray-verdict scan and the verdict-table
+keying run over the NOTE only. corpus/README.md is read by the reader only
+for the `coverage` conjunct (last row naming the note), never for verdict
+content. README pipe rows carrying KILLED/SURVIVED are therefore never
+keyed — a scope boundary, not a declared limit of the plan.
+
+==============================================================================
+(d) six hand-built variants — the reader's own parse_note()
+==============================================================================
+base note = committed note at the instrument revision (honest state)
+spec ids  = C01,C02,C03,C04,C05,C06,C07,C08,C09,C10,C11,C12
+
+V1 second verdict table (X1-X12)                     verdict_tables=2 badrows=12
+        bad: out-of-set:333:X1
+        bad: out-of-set:334:X2
+        bad: out-of-set:335:X3
+        bad: out-of-set:336:X4
+        bad: out-of-set:337:X5
+        bad: out-of-set:338:X6
+        ... 6 more
+
+V2 renamed header `result` + two verdict tokens      verdict_tables=1 badrows=2
+        bad: stray-verdict:333:| C02 | arm | edit | KIL
+        bad: stray-verdict:334:| C03 | arm | edit | SUR
+
+V3 bare pipe line with a token (no delimiter row)    verdict_tables=1 badrows=1
+        bad: stray-verdict:331:| C02 | arm | edit | KIL
+
+V4 id-keyed non-verdict table (no verdict asserted)  verdict_tables=1 badrows=0
+
+V5 a data cell whose text is exactly `verdict` (non-verdict header) verdict_tables=1 badrows=0
+
+V5b driver pos-honest-a13: §2b ids become their own cells verdict_tables=1 badrows=0
+
+V7 extra: table inside a 4-space indented code block verdict_tables=2 badrows=12
+        bad: out-of-set:333:X1
+        bad: out-of-set:334:X2
+        bad: out-of-set:335:X3
+        bad: out-of-set:336:X4
+        bad: out-of-set:337:X5
+        bad: out-of-set:338:X6
+        ... 6 more
+
+V8 extra: header cell `**verdict**` (norm_cell strips `*`) verdict_tables=2 badrows=1
+        bad: out-of-set:333:X1
+
+V9 extra: verdict token written as a code span in the data cell verdict_tables=2 badrows=1
+        bad: no-verdict:333:X1
+
+V10 extra: verdict token written in bold in the data cell verdict_tables=2 badrows=1
+        bad: no-verdict:333:X1
+
+V11 extra: verdict token in lower case in the data cell verdict_tables=2 badrows=1
+        bad: no-verdict:333:X1
+
+V12 extra: escaped pipe in a data cell (one cell, S321) verdict_tables=2 badrows=1
+        bad: out-of-set:333:X1
+
+V6 fenced inverted table (12 rows inverted)          verdict_tables=1 badrows=0
+
+BASELINE honest note                                 verdict_tables=1 badrows=0
+
+expectations (plan's declared limits / kill rule (a)):
+  V1 -> verdict_tables=2 (not 1)  -> ids/verdict_tables false
+  V2 -> NOT a verdict table; the two token rows are stray -> badrows=2
+  V3 -> stray row -> badrows=1
+  V4 -> not a verdict table, no token -> badrows=0, verdict_tables=1 (honest)
+  V5 -> data cell, not a header -> badrows=0, verdict_tables=1 (honest)
+  V6 -> fenced -> badrows=0, verdict_tables=1 (honest, limit L1)
+  V7 -> a 4-space INDENTED block is NOT a fence to this reader: keyed ->
+        verdict_tables=2, badrows>0 (an UNDECLARED class: the plan's limit
+        L1 names fenced blocks only; GFM/CommonMark also make a 4-space
+        indented block literal code).
+  V8 -> norm_cell() strips `*` and lowercases, so `**verdict**` IS a header
+  V9/V10/V11 -> the DATA token is matched by EXACT string; a code span, a
+        bold span or a lower-case spelling is NOT a verdict token
+  V12 -> an escaped `\|` stays inside one cell (S321)
+
+==============================================================================
+(i) the DRIVER's own fixture strings through the reader's parse_note()
+==============================================================================
+pos-real (the committed note)                              verdict_tables=1 badrows=0 
+pos-honest-a13 (§2b ids become their own cells)            verdict_tables=1 badrows=0 
+pos-honest-verdict-cell (a data cell exactly `verdict`)    verdict_tables=1 badrows=0 
+hidden-c001 (second verdict table C001-C012)               verdict_tables=2 badrows=12 ['out-of-set:330:C001', 'out-of-set:331:C002']
+hidden-x (second verdict table X1-X12)                     verdict_tables=2 badrows=12 ['out-of-set:330:X1', 'out-of-set:331:X2']
+renamed-result (header `result`, two verdict tokens)       verdict_tables=1 badrows=2 ['stray-verdict:330:| C01 | fixture arm | SU', 'stray-verdict:331:| C02 | fixture arm | KI']
+pseudo-row (bare pipe line, no delimiter row)              verdict_tables=1 badrows=1 ['stray-verdict:327:| C02 | fixture arm | KI']
+pos-fenced-hidden (fenced inverted table)                  verdict_tables=1 badrows=0 
+
+The battery's expectations line up: pos-* -> verdict_tables=1 badrows=0;
+hidden-* -> verdict_tables=2; renamed-result / pseudo-row -> badrows>0
+(the stray-verdict rule, so `ids` is false).
+
+==============================================================================
+(j) the honest note with the same twelve verdicts in other markup
+==============================================================================
+honest note, verdict cells as code span              verdict_tables=1 badrows=12 ['no-verdict:70:C01', 'no-verdict:71:C02']
+honest note, verdict cells as bold                   verdict_tables=1 badrows=12 ['no-verdict:70:C01', 'no-verdict:71:C02']
+honest note, verdict cells lower case                verdict_tables=1 badrows=12 ['no-verdict:70:C01', 'no-verdict:71:C02']
+
+Reading: the token set is matched by EXACT string in the data cell, so a
+verdict written `KILLED` or **KILLED** or `killed` is not a verdict to
+this reader: the row is refused with `no-verdict`. The HEADER cell, by
+contrast, goes through norm_cell() and is matched case-insensitively
+and formatting-insensitively. The asymmetry is undeclared in the plan.
+
+==============================================================================
+(h) hostile-side backstop — the stray-verdict rule where tables() misses
+==============================================================================
+H1 hidden 2nd verdict table, THREE-hyphen delimiter              verdict_tables=2 badrows=12 ['out-of-set:331:C001', 'out-of-set:332:C002']
+H2 hidden 2nd verdict table, ONE-hyphen delimiter (GFM-legal)    verdict_tables=1 badrows=12 ['stray-verdict:331:| C001 | a | b | KILLED ', 'stray-verdict:332:| C002 | a | b | KILLED ']
+H3 hidden 2nd verdict table inside a blockquote                  verdict_tables=1 badrows=12 ['stray-verdict:331:> | C001 | a | b | KILLE', 'stray-verdict:332:> | C002 | a | b | KILLE']
+H4 hidden 2nd verdict table indented 4 spaces (indented code block) verdict_tables=2 badrows=12 ['out-of-set:331:C001', 'out-of-set:332:C002']
+H5 stray pseudo-table row, token as a CODE SPAN                  verdict_tables=1 badrows=0 
+H6 stray pseudo-table row, token in BOLD                         verdict_tables=1 badrows=0 
+H7 stray pseudo-table row, token in lower case                   verdict_tables=1 badrows=0 
+
+Reading: the stray-verdict rule is the backstop for every class where
+tables() declines the table (H2/H3/H4/H5/H6/H7 all yield badrows>0, so
+the `ids` conjunct is false and the state is refused). The exact-string
+token match is the same in the table rule and the stray rule, so a
+backticked/bolded/lower-case token is invisible to BOTH (H5/H6/H7).
+
+==============================================================================
+(g) the reader's TABLE DEFINITION against S321 (GFM) — recognition probes
+==============================================================================
+G1 delimiter of ONE hyphen per cell (GFM-legal)                tables=0 verdict_tables=0 badrows=1  ['stray-verdict:3:| X1 | a | KILLED |']
+G2 delimiter of TWO hyphens per cell (GFM-legal)               tables=0 verdict_tables=0 badrows=1  ['stray-verdict:3:| X1 | a | KILLED |']
+G3 delimiter of THREE hyphens per cell (the note's own shape)  tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G4 header/delimiter cell-count mismatch (GFM: NOT a table)     tables=1 verdict_tables=1 badrows=2  ['delim:1:header=3,delimiter=2', 'out-of-set:3:X1']
+G5 table indented 4 spaces (an indented CODE block in GFM)     tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G6 table indented 2 spaces (GFM-legal, <=3 spaces)             tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G7 table inside a blockquote (GFM-legal)                       tables=0 verdict_tables=0 badrows=1  ['stray-verdict:3:> | X1 | a | KILLED |']
+G8 table without leading/trailing pipes (GFM-legal)            tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G9 table broken by a heading (GFM: broken at a block-level structure) tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G10 remainder row with MORE cells than the header (GFM: excess ignored) tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G11 remainder row with FEWER cells (GFM: empty cells inserted) tables=1 verdict_tables=1 badrows=1  ['width:3:cells=1']
+G12 header cell `VERDICT` (upper case)                         tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G13 header cell `verdicts` (plural — not the token)            tables=1 verdict_tables=0 badrows=1  ['stray-verdict:3:| X1 | a | KILLED |']
+G14 header cell `Verdict` (mixed case)                         tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+G15 header cell `verdict` (the token, control)                 tables=1 verdict_tables=1 badrows=1  ['out-of-set:3:X1']
+
+Reading: G1/G2 -> the reader's DELIM_RE (-{3,}) is STRICTER than S321's
+'cells whose only content are hyphens': a GFM-legal one- or two-hyphen
+delimiter is NOT a table to this reader, so its rows fall through to the
+stray-verdict rule instead of the table rule.
+G4 -> the reader RECOGNISES a table GFM says is not a table, and adds a
+`delim:` finding (the plan's QUALITY 165 declares this rule).
+G5 -> the reader's DELIM_RE accepts any leading whitespace, so a table
+inside a 4-space INDENTED CODE block is keyed. S322 grounds only FENCED
+blocks (4.5); S321 4.4 makes an indented block literal code too. This is
+a class the plan's declared limits do not name.
+G7 -> a blockquoted table is not keyed (the reader sees '>' in the cell).
+G8/G9/G10/G11 -> the reader's remainder and break rules match S321.
+G12/G13/G14/G15 -> norm_cell() lowercases and strips `*`/backticks, so the
+header cell is matched case-insensitively (VERDICT, Verdict, `verdict`
+all key) but only as the exact word `verdict` (`verdicts` does not).
+
+==============================================================================
+END
+==============================================================================
+

@@ -1,0 +1,28 @@
+driver: /home/vgpnk/Projects/shokunin/tameshi-shokunin/.ufo/evidence/round-94/c1/controls-v94.py
+driver sha256 check: self-pin present = True
+
+== F4: writer picks the LOWEST unused index; grader picks the HIGHEST ==
+  writer run1 -> ctlX.out
+  writer run2 -> ctlX.rerun-1.out
+  GRADER reads-> ctlX.rerun-9.out
+  GRADER content: STALE-PLANTED
+  -> CLAIM FALSIFIED
+
+== F5a: symlink at name.out -> grader dereferences it ==
+  writer chooses: ctlZ.rerun-1.out
+  grader picks  : ctlZ.out
+  content graded: EXTERNAL-PLANTED
+  -> content came from OUTSIDE the outdir: /fast/scratch/hyaku/tameshi-r94/R94SN1/probe-receipt-run.outside
+
+== F5b: symlink at the highest-index candidate ==
+  grader picks  : ctlA.rerun-9.out
+  content graded: exit=0 | C1_R94_PASS=true
+  -> content came from OUTSIDE the outdir: /fast/scratch/hyaku/tameshi-r94/R94SN1/probe-receipt-run.outside2
+
+== F5c: write_receipt refuses to overwrite a symlink (O_EXCL) ==
+  writer chooses: ctlW.rerun-1.out (lexists skips the symlinked .out)
+  write_receipt -> OK
+  external file unchanged: ORIGINAL
+
+== F5d: unwritable outdir is refused by O_CREAT ==
+  write_receipt -> refused: PermissionError 13 Permission denied

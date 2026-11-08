@@ -1,0 +1,48 @@
+LANE: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+C1 sha256: a22563b0c2b4a2b43922cec3d1ab3fa511110e035b9edfdfdc6eaebb97023010
+C2 sha256: 6d4d270644b036cdd7106a5ab24be05b5d05ed01919f7f9ce24090977bdf9b7e
+
+== F1a: replace-ref substitutes the manifest the C2 checker grades ==
+  --- checker, ambient env (no seal) ---
+    DISPOSITION rows=19 falsifiable=19 unfalsifiable=0 findings=0
+  --- checker, GIT_NO_REPLACE_OBJECTS=1 (the C1 seal) ---
+    DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0
+
+== F1b: ambient GIT_DIR redirects the C2 checker's git reads ==
+  --- checker with GIT_DIR=<attacker repo> ---
+    DISPOSITION rows=19 falsifiable=19 unfalsifiable=0 findings=0
+
+== F2: receipts are read from the WORKING TREE, not from --rev ==
+  --- baseline ---
+    DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0
+  --- after an UNCOMMITTED one-byte-class edit of one receipt ---
+    DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=1
+    ['DISPOSITION_FINDING no-flip pins: receipt shows pins=True on state pins-mutated']
+  receipts committed at rev3: 17
+  -> the frozen rev has no receipts; the green verdict needs the live tree
+
+== F3: a fully hand-written receipt set satisfies the C2 checker ==
+  receipts written by hand: 17 (no clone, no counter run, no counter bytes)
+   DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0
+
+== F6a: make-pins94.py follows a symlink at pins.json ==
+  outside file now contains: {
+  -> the symlink was FOLLOWED and OVERWRITTEN
+
+== F6b: make-pins94.py --lane '' resolves to the CWD ==
+  os.path.realpath('') with cwd = fleet root: /home/vgpnk/Projects/shokunin
+  -> write target would be: /home/vgpnk/Projects/shokunin/.ufo/evidence/round-94/c1/pins.json
+  fleet root is a git repo: true
+  (the write would land in the fleet root -- the 2026-11-06 incident shape)
+
+== F2b: the REAL lane -- receipts are absent at the frozen rev ==
+  receipts at frozen rev 7084358c: 0 files
+  receipts at HEAD          : 55 files
+  -> the frozen predicate is not reproducible from the frozen rev;
+     the green verdict is reachable only against the live working tree
+
+== F7: measure-v94.py --rev '' reads the git INDEX ==
+  index blob: 7d2f4fdfcd28bbf4988cb6b535d5e77fb564d461
+  HEAD  blob: 96ac98375d451631e12a3d4bbd322817ef5b79ab
+  --rev ''    -> C1_SUMMARY rev= n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=7 badrows=0 verdict_tables=1 | C1_R94_PASS=false
+  --rev 'HEAD' -> C1_SUMMARY rev=HEAD n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1 | C1_R94_PASS=true
