@@ -359,3 +359,65 @@ round-93 A1-A6 form: the claim, predicate and state expectations never change;
 only statements about the record are corrected, each citing the artifact that
 falsified it.
 
+
+### A2 — the reader keys 4-space-indented literal blocks (R94C1 A8, A8b)
+
+The plan's §Declared limits say "a fenced block is literal text (S322)"; it does not name
+CommonMark *indented* code blocks (4+ spaces), which are literal for the same reason. The
+reader therefore keys them: R94C1 appended a 4-space-indented 12-row wrong-verdict table
+(`R94C1-A8-indented-code.out`: `verdict_tables=false ids=false`, exit 1) and a single
+4-space literal `| C01 | KILLED |` line (`R94C1-A8b-indent-token.out`: `stray-verdict:297`,
+exit 1); both are honestly additive examples that leave the twelve measured cells intact.
+Narrowed wording: **the reader's unkeyed presentation class is exactly fenced blocks; a
+4-space-indented literal block is keyed, so a note that embeds a wrong-verdict line in
+indented code is refused. That refusal is a declared limit, not a false red on the twelve
+cells.** Routed to round 95: exempt `^ {4,}` lines in `block_lines()` (when not a list
+continuation) and add the control `pos-indented-literal` to the battery.
+
+### A3 — the self-pin strips every pin line (R94R1 F1)
+
+`SELF_PIN_RE` is applied with `re.M` and `re.sub`, so *every* `SELF_SHA256 = "<hex>"` line
+is removed before hashing. A counter carrying a second, different pin line before the
+`__main__` guard is therefore invisible to the digest: `R94R1-tampered-counter-demo.py`
+(an `EVIL = True` insertion plus a second pin) runs the modified reader with
+`C1_R94_PASS=true`. This does not falsify C1's wording — kill rule (c) binds the blob
+sha256 (`a22563b0…`) and that check is external — but it does narrow QUALITY 150's reading:
+**the self-pin certifies that the executed bytes are self-consistent under a strip-all
+normalisation; it does not certify that they are the pinned bytes. Identity is bound by
+the plan's kill rule (c) and `claims.json`, not by the conjunct alone.** Routed to round
+95: require exactly one pin line (`len(SELF_PIN_RE.findall(bytes)) == 1`) before the digest,
+and add the R94R1 demo as a battery state.
+
+### A4 — cell splitting diverges from GFM on a double backslash (R94R1 F2)
+
+`split_cells` treats `\\|` as an escaped pipe inside one cell; GFM's backslash processing
+turns `\\` into a literal backslash and then the `|` separates. A note whose verdict column
+is preceded by `\\|` therefore shows one thing to a human re-read and keys another
+(`R94R1-probe.out`). The committed note contains no backslash in its verdict rows, so no
+state in the battery moves and the twelve cells are unaffected; this is a **declared
+limit**: the reader's cell boundaries are its own and are certified only for notes without
+backslash escapes adjacent to a pipe. Routed to round 95: normalise `\\` before `\|` and
+add a control with the witness row.
+
+### A5 — the delimiter rule needs three hyphens where GFM allows one (R94R1 F3)
+
+`DELIM_RE` requires `-{3,}` per cell. A GFM-legal table written with `|--|--|` is not
+recognised as a table at all, so its rows fall to the stray-verdict scan and the note is
+refused with 12 `stray-verdict` findings (`R94R1-probe.out`, probes P5/P36). Narrowed
+wording: **the reader recognises a delimiter cell only with three or more hyphens; a
+one- or two-hyphen delimiter is a non-table, and a verdict-bearing row under it is refused
+as a stray verdict.** The committed note uses `|---|`, so its twelve cells are unaffected.
+Routed to round 95: accept `-{1,}` per S321 and add a two-hyphen control.
+
+### A6 — receipt provenance is ancestry, not a per-receipt digest (R94R2 F1, F2)
+
+R94R2 found that no per-receipt `CONTROL_INSTRUMENT` line existed in the committed set and
+that 43 of 45 receipts were uncommitted at its read. Both are now addressed in the tree:
+the 45 receipts, the driver's summary and the driver's own stdout
+(`.ufo/evidence/round-94/pre-freeze/controls-run.log`, carrying
+`CONTROL_INSTRUMENT sha256=a22563b0…` and `C1_CONTROLS states=45 matched=45`) are committed
+at `4dc919ac` and `b98b0864`, and `.ufo/evidence/round-94/pre-freeze/controls/C1-summary.txt`
+is committed with them. Residual limit, stated: **per-receipt byte provenance is carried by
+the `parent=` line and by re-runnability, not by a per-receipt instrument digest**; the
+fixture clone revisions are ephemeral and not in the lane's object store. Routed to round
+95: have the driver write a `counter_sha=` line into every `run_ctl` receipt.
