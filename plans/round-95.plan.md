@@ -242,3 +242,36 @@ same predicate is false there by construction (17 × `receipt-absent-at-rev`, me
 C1-1b). The claim is therefore read as: **at the pre-freeze records revision** — the
 commit that carries the instrument, the manifest and the 50 battery receipts — the checker
 prints the frozen line. The forged-set runs use that same revision. No target change.
+
+### A6 — the `selfpin` setup-refusal receipt's subject (R95SN1 F9 limit, stated)
+
+The manifest has one `setup-refusal` row (`selfpin` -> `selfpin-edit`) and sixteen
+`conjunct-false` rows. The `selfpin-edit` control runs an edited counter copy by design, so
+its receipt's `counter_sha=` names the **frozen counter whose pin is under test** (the
+subject), not the edited bytes it executed; the edited bytes are not committed. The C2
+wording's "every receipt named by the manifest's seventeen state rows carries counter_sha
+equal to the counter blob" therefore holds for all seventeen, and the claim's scope is the
+counter blob, not the producer — the same declared limit the sentinel records as F9 (a
+hand-written receipt carrying the honest digest is accepted). No target or predicate change.
+
+### A7 — declared trust limits for the round-95 instruments (R95SN1 F1-F8, F11-F12)
+
+The claim certifies the two instruments' behaviour under the lane's own environment; it
+does not claim resistance to an attacker who controls the invoking environment. Named
+limits, all routed to round 96 rather than silenced: the checker resolves `git` from the
+inherited `PATH` and its scrubbed env keeps non-`GIT_*` variables (F1, F8); the counter
+accepts a revspec, including `--rev ''`, which resolves to the index (F2); the driver grades
+the highest-index `.rerun-N.out` and follows a symlinked receipt (F3, F4); `make-pins95.py`
+writes through a symlink and resolves `--lane ''` to the CWD (F5, F6); the checker accepts a
+movable revspec (F7); both tools allocate temp trees on the default `TMPDIR` in their
+selftests (F11, F12); and a recomputed `SELF_SHA256` on a malicious counter passes the pin
+(F10, already declared by A3 of round 94). These falsify no sentence this round states;
+they are round-96 routed defects.
+
+### A8 — the §Wave line undercounted the wave by one seat (R95SC1 M5; routed item 4)
+
+The §Wave paragraph says "12 seats"; the dispatch committed in the same freeze commit has
+`counts.total=13` (executor 4, scribe 1, scout 1, reviewer 2, critic 1, mutation-tester 1,
+sentinel 1, connector 1, **revenger 1** — the revenger is R95L1). The executed roster is
+the dispatch; attack share by role is 7/13. The sentence is corrected here; no seat was
+added or dropped after the freeze.
