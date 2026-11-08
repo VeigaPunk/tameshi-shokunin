@@ -1,0 +1,46 @@
+=== F5 CONFIRMED BY THE FULL BATTERY — honest v96 driver run, all 50 states ===
+--- cmd: controls-v96.py --lane <clone at be6c22b6> --rev be6c22b6 --base c8de77f3 --work <fresh> --outdir <fresh> --jobs 6 ---
+--- output ---
+
+--- the full grading summary (from the run) ---
+D01 MISMATCH exit=2
+D02 MISMATCH exit=2
+D03 MISMATCH exit=2
+D04 MISMATCH exit=2
+D05 MISMATCH exit=2
+replace-honest MISMATCH exit=2
+... 44 other states: MATCH
+C1_CONTROLS states=50 matched=44 mismatches=6 missing=0 [D01,D02,D03,D04,D05,replace-honest]
+EXIT=1
+
+--- the six failing receipts all carry the WRONG refusal token ---
+[D01.out]
+exit=2
+C1_SETUP rev-not-a-commit-id
+C1_R96_PASS=false
+[D05.out]
+exit=2
+C1_SETUP rev-not-a-commit-id
+C1_R96_PASS=false
+[replace-honest.out]
+exit=2
+C1_SETUP rev-not-a-commit-id
+C1_R96_PASS=false
+
+--- every failing state is one the driver invokes with --rev 'HEAD' ---
+576:        p = subprocess.run([sys.executable, "-I", counter, "--repo", st, "--rev", "HEAD",
+608:            p = subprocess.run([sys.executable, "-I", mp, "--repo", repo, "--rev", "HEAD",
+
+--- CONCLUSION: the frozen C2 predicate
+    'C1_CONTROLS states=50 matched=50 mismatches=0 missing=0'
+    is NOT produced by an honest v96 driver run. The round's C2 positive is
+    unreachable for the SAME reason as C1's (F11): a v96-only regression in the
+    counter's rev guard collides with the unchanged driver's --rev HEAD calls.
+
+--- for reference, the round-95 driver at the round-95 rev (same 6 states) ---
+grep: /fast/scratch/hyaku/tameshi-r96/R96SN1/full/C1-summary.txt: No such file or directory (os error 2)
+--- the round-95 committed receipts for D01 record exit=0 (it worked at v95) ---
+mutant=D01 state=renamed-result
+counter_sha=108d1250573d339020a236b21d5e30764cb928a7f371d7b31fe7ee2606e0fdc2
+exit=0
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs

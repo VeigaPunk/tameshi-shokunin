@@ -1,0 +1,23 @@
+receipt-symlink (F4 O_NOFOLLOW read fix) - v96 driver controls-v96.py at freeze be6c22b6
+state: coverage-absent, expected (exit=1, {coverage: False})
+fixture: outdir/coverage-absent.out is a symlink to outside/forged.out (content would MATCH if followed)
+
+outside/forged.out content:
+control=coverage-absent
+counter_sha=deadbeef
+exit=1
+C1_CONJUNCTS coverage=false
+
+symlink: coverage-absent.out -> /fast/scratch/hyaku/tameshi-r96/R96E2/outside/forged.out
+
+v96 grading loop (O_RDONLY | O_NOFOLLOW read):
+coverage-absent SYMLINK-REFUSED
+C1_CONTROLS states=1 matched=0 mismatches=0 missing=1
+exit=1
+
+v95 grading loop (plain open(), follows the symlink):
+coverage-absent MATCH exit=1  (read coverage-absent.out)
+C1_CONTROLS states=1 matched=1 mismatches=0 missing=0
+exit=0
+
+Result: v96 refuses the symlinked receipt (SYMLINK-REFUSED counts as missing, exit 1, never a MATCH); v95 follows the symlink and grades the outside forged content as MATCH (exit 0).

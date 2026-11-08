@@ -1,0 +1,47 @@
+=== F5 — the v96 driver passes --rev HEAD to a v96 counter that rejects it ===
+--- v96 counter's rev guard (measure-v96.py:416-426) ---
+    repo = os.path.realpath(a.repo)
+    rev = a.rev
+    if not re.fullmatch(r"[0-9a-f]{40}", rev):
+        die("rev-not-a-commit-id")
+    _resolved = git(repo, "rev-parse", rev, check=False)
+    if _resolved.returncode != 0:
+        die("rev-unresolvable")
+    rev = _resolved.stdout.decode().strip()
+    if not re.fullmatch(r"[0-9a-f]{40}", rev):
+        die("rev-unresolvable")
+    work = os.path.realpath(a.work)
+--- v95 counter had NO such guard (measure-v95.py:415-420) ---
+    a = ap.parse_args()
+    repo = os.path.realpath(a.repo)
+    rev = a.rev
+    work = os.path.realpath(a.work)
+    if os.path.isdir(work) and os.listdir(work):
+        die("work-not-empty-dir")
+--- the v96 driver's two --rev HEAD counter call sites (576, 608) ---
+576:        p = subprocess.run([sys.executable, "-I", counter, "--repo", st, "--rev", "HEAD",
+608:            p = subprocess.run([sys.executable, "-I", mp, "--repo", repo, "--rev", "HEAD",
+--- round-95's committed D01 receipt: it WORKED there (exit=0, C1_R95_PASS=true) ---
+mutant=D01 state=renamed-result
+counter_sha=108d1250573d339020a236b21d5e30764cb928a7f371d7b31fe7ee2606e0fdc2
+exit=0
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_R95_PASS=true
+--- honest v96 driver run over the six affected states (fresh work dir) ---
+CONTROL_INSTRUMENT sha256=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1
+D01 MISMATCH exit=2
+D02 MISMATCH exit=2
+D03 MISMATCH exit=2
+D04 MISMATCH exit=2
+D05 MISMATCH exit=2
+replace-honest MISMATCH exit=2
+C1_CONTROLS states=6 matched=0 mismatches=6 missing=0 [D01,D02,D03,D04,D05,replace-honest]
+EXIT=1
+--- every receipt records the WRONG refusal token ---
+C1_SETUP rev-not-a-commit-id
+C1_SETUP rev-not-a-commit-id
+C1_SETUP rev-not-a-commit-id
+--- but EXPECT_EXTRA demands replace-refs-present / __pass ---
+403:    "replace-honest": (2, {"__setup": "replace-refs-present"}),
+404:    "D01": (0, {"__pass": True}),
+408:    "D05": (0, {"__pass": True}),

@@ -1,0 +1,29 @@
+=== §2.13 — a malicious counter edit with a RECOMPUTED SELF_SHA256 is ACCEPTED (by design) ===
+--- the edit + re-pin ---
+a7dd1558 malicious counter + forged receipts
+--- the repinned counter self-pins OK ---
+C1_CONJUNCT_KEYS selfpin pins spec pin green canary valid0 trivial0 inconclusive0 unstable0 note verdict_tables ids mismatched0 figure witnessed source coverage n_min
+C1_R96_PASS=keys-only
+EXIT=0
+--- and the checker at that rev grades green (the receipts carry the MALICIOUS counter's digest) ---
+DISPOSITION_INSTRUMENT sha256=7c57dc0b460d952d3af50eff671cc3e3a8483dfd142c3ecc05842f3901cdf377 conjuncts=19
+DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0
+EXIT=0
+--- the counter's self-pin is SELF-REFERENTIAL (a re-derivable digest) ---
+    The check runs on the file's own bytes. A second pin line is refused
+    (`self-pin-line-count`) before any digest is compared, so the normalisation
+    must remove exactly the one pinned line.
+    """
+    try:
+        with open(os.path.abspath(__file__), "rb") as f:
+            b = f.read()
+    except OSError:
+        return "self-pin-mismatch"
+    if len(re.findall(SELF_PIN_RE, b, flags=re.M)) != 1:
+        return "self-pin-line-count"
+    norm = re.sub(SELF_PIN_RE, b"", b, flags=re.M)
+    if hashlib.sha256(norm).hexdigest() != SELF_SHA256:
+        return "self-pin-mismatch"
+    return "ok"
+
+

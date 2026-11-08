@@ -55,8 +55,14 @@ def sealed_env():
             "GIT_NO_REPLACE_OBJECTS": "1", "GIT_CONFIG_NOSYSTEM": "1",
             "GIT_CONFIG_GLOBAL": "/dev/null"}
 
+GIT = "/usr/bin/git"
+
+
 def sh(*a, cwd=None, check=True):
-    p = subprocess.run(list(a), cwd=cwd, capture_output=True, text=True, env=sealed_env())
+    argv = list(a)
+    if argv and argv[0] == "git":
+        argv[0] = GIT
+    p = subprocess.run(argv, cwd=cwd, capture_output=True, text=True, env=sealed_env())
     if check and p.returncode != 0:
         raise SystemExit("cmd failed: %s\n%s" % (" ".join(a), p.stderr))
     return p.stdout
@@ -492,6 +498,12 @@ def main():
     if not a.lane or not a.rev or not a.base or not a.work or not a.outdir:
         ap.print_usage(); sys.exit(2)
     a = ap.parse_args()
+    # A7 (R96SN1 F9): a symlinked --outdir would place receipts outside the dir
+    # the caller named; refuse it.
+    if a.outdir and os.path.islink(a.outdir):
+        raise SystemExit("outdir-symlink-refused")
+    if a.work and os.path.islink(a.work):
+        raise SystemExit("work-symlink-refused")
     lane = os.path.realpath(a.lane)
     if not a.lane or not a.lane.strip():
         raise SystemExit("lane-empty")
@@ -573,7 +585,8 @@ def main():
         subprocess.run(["git", "-C", st, "replace", true_oid, false_oid], check=True, env=sealed_env())
         w = os.path.join(work, "w-replace-honest")
         os.makedirs(w, exist_ok=True)
-        p = subprocess.run([sys.executable, "-I", counter, "--repo", st, "--rev", "HEAD",
+        srev = sh("git", "-C", st, "rev-parse", "HEAD").strip()
+        p = subprocess.run([sys.executable, "-I", counter, "--repo", st, "--rev", srev,
                             "--work", w], capture_output=True, text=True)
         write_receipt(receipt_path(a.outdir, "replace-honest"),
                       "control=replace-honest\ncounter_sha=%s\nexit=%d\n"
@@ -605,7 +618,8 @@ def main():
                    "-m", "r94 mutant state " + state_name)
             mw = os.path.join(work, "mwork-" + n)
             os.makedirs(mw, exist_ok=True)
-            p = subprocess.run([sys.executable, "-I", mp, "--repo", repo, "--rev", "HEAD",
+            mrev = sh("git", "-C", repo, "rev-parse", "HEAD").strip()
+            p = subprocess.run([sys.executable, "-I", mp, "--repo", repo, "--rev", mrev,
                                 "--work", mw], capture_output=True, text=True)
             write_receipt(receipt_path(a.outdir, n),
                           "mutant=%s state=%s\ncounter_sha=%s\nexit=%d\n" % (

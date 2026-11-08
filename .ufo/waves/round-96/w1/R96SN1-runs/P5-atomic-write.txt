@@ -1,0 +1,17 @@
+=== §2.16 — the pins write is ATOMIC (kill rule c): a failed write leaves the original intact ===
+--- make the destination dir read-only so the temp write fails ---
+688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4  .ufo/evidence/round-96/c1/pins.json
+  File "/fast/scratch/hyaku/tameshi-r96/R96SN1/atom/repo/.ufo/evidence/round-96/c1/make-pins96.py", line 93, in main
+    _fd = _o3.open(_tmp, _o3.O_WRONLY|_o3.O_CREAT|_o3.O_EXCL|getattr(_o3,"O_NOFOLLOW",0), 0o644)
+PermissionError: [Errno 13] Permission denied: '/fast/scratch/hyaku/tameshi-r96/R96SN1/atom/repo/.ufo/evidence/round-96/c1/pins.json.tmp-pins'
+EXIT=1
+--- pins.json after the failed write (UNCHANGED) ---
+688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4  .ufo/evidence/round-96/c1/pins.json
+--- any leftover tmp file (a partial-write observable)? ---
+(none)
+--- the write path uses a temp + os.replace ---
+87:    _tmp = out + ".tmp-pins"
+93:    _fd = _o3.open(_tmp, _o3.O_WRONLY|_o3.O_CREAT|_o3.O_EXCL|getattr(_o3,"O_NOFOLLOW",0), 0o644)
+101:    _o5.replace(_tmp, out)
+--- and pins.json as a DIRECTORY (P4) leaves no stray tmp either ---
+(none)

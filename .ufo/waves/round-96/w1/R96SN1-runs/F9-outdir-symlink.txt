@@ -1,0 +1,25 @@
+=== F9 — the driver writes receipts through a SYMLINKED --outdir ===
+--- outdir is a symlink to a directory outside the nominal outdir ---
+lrwxrwxrwx 1 vgpnk vgpnk 50 Nov  8 09:40 /fast/scratch/hyaku/tameshi-r96/R96SN1/drv4/out -> /fast/scratch/hyaku/tameshi-r96/R96SN1/outside-out
+--- driver run ---
+CONTROL_INSTRUMENT sha256=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1
+D01 MISMATCH exit=2
+C1_CONTROLS states=1 matched=0 mismatches=1 missing=0 [D01]
+EXIT=1
+--- the receipts landed OUTSIDE the nominal outdir ---
+total 8
+-rw-r--r-- 1 vgpnk vgpnk  20 Nov  8 09:40 C1-summary.txt
+-rw-r--r-- 1 vgpnk vgpnk 163 Nov  8 09:40 D01.out
+--- the driver never canonicalizes outdir ---
+492:    if not a.lane or not a.rev or not a.base or not a.work or not a.outdir:
+504:    os.makedirs(a.outdir, exist_ok=True)
+523:        futs = [ex.submit(run_ctl, n, C[n], lane, a.rev, counter, counter_sha, work, a.outdir)
+532:        write_receipt(receipt_path(a.outdir, "nowork-base"),
+543:        write_receipt(receipt_path(a.outdir, "selfpin-edit"),
+562:        write_receipt(receipt_path(a.outdir, "double-pin"),
+--- the read side IS hardened (O_NOFOLLOW) ---
+356:    dangling symlink) and the write below uses O_NOFOLLOW, so a pre-existing
+371:    # O_NOFOLLOW: refuse a symlink rather than write through it (M9).
+372:    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0), 0o644)
+619:    # highest planted rerun. F4 fix: read with O_NOFOLLOW, refuse symlinks and
+636:            _fd = os.open(found, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))

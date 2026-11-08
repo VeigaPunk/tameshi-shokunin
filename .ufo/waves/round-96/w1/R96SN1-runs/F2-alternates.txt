@@ -1,0 +1,36 @@
+=== F2 — alternates are not scrubbed: a lane with ZERO commits of its own grades green ===
+--- the lane has no commits at all ---
+fatal: your current branch 'main' does not have any commits yet
+--- its alternates file ---
+/fast/scratch/hyaku/tameshi-r96/R96SN1/alt/attacker/.git/objects
+--- the checker ---
+DISPOSITION_INSTRUMENT sha256=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1 conjuncts=19
+DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0
+EXIT=0
+--- GIT_ALTERNATE_OBJECT_DIRECTORIES='' does NOT disable an alternates FILE ---
+commit
+commit
+--- the sealed_env of the checker ---
+65:def sealed_env():
+66-    """Explicit environment: path pinned, HOME/TMPDIR under scratch, no GIT_*.
+67-    Fixes round-95 F1/F8: a hostile git earlier in the inherited PATH cannot
+68-    run, and the ambient environment cannot reach the git calls."""
+69-    import tempfile as _tf
+70-    _scratch = os.environ.get("HYAKU_SCRATCH", "/fast/scratch/hyaku")
+71-    _home = os.path.join(_scratch, "tameshi-r96-checker-home")
+72-    _tmp = os.path.join(_home, "tmp")
+73-    os.makedirs(_tmp, exist_ok=True)
+74-    return {"PATH": "/usr/local/bin:/usr/bin:/bin", "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8",
+75-            "HOME": _home, "TMPDIR": _tmp,
+
+=== F2 continued — alternates are ROUTINE in this ecosystem, not contrived ===
+--- the driver's clone_at() uses 'git clone --shared' ---
+345:    sh("git", "clone", "-q", "--shared", "--no-checkout", lane, dest)
+--- every fixture clone it makes carries an alternates file ---
+4
+/fast/scratch/hyaku/tameshi-r96/R96SN1/drv5/work/mstate-renamed-result-gi6vbu3m/repo/.git/objects/info/alternates
+/fast/scratch/hyaku/tameshi-r96/R96SN1/drv5/work/mstate-coverage-denial-_66ubatj/repo/.git/objects/info/alternates
+/fast/scratch/hyaku/tameshi-r96/R96SN1/drv5/work/mstate-pins-mutated-6he8dw2z/repo/.git/objects/info/alternates
+--- content (points back at the lane's object store) ---
+/fast/scratch/hyaku/tameshi-r96/R96SN1/lane/.git/objects
+--- so a repo under audit normally HAS an alternates file; the checker must test it ---

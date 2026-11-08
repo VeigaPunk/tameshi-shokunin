@@ -1,0 +1,68 @@
+R96S1 census — per-surface reconnaissance, round 96 wave w1
+lane root: /home/vgpnk/Projects/shokunin/tameshi-shokunin
+registry:  corpus/SOURCES.md
+date (UTC): 2026-11-08
+
+### 1. maintained CLI: validate
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin tameshi
+tameshi	W04	S047 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+tameshi	W04	S048 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+tameshi	W04	S075 duplicate url man7.org/linux/man-pages/man1/strace.1.html across scopes
+tameshi	W04	S076 duplicate url docs.jj-vcs.dev/latest/git-compatibility across scopes
+tameshi	W04	S077 duplicate url man7.org/linux/man-pages/man2/PR_SET_CHILD_SUBREAPER.2const.html across scopes
+tameshi	W04	S078 duplicate url man7.org/linux/man-pages/man2/open.2.html across scopes
+tameshi	W04	S081 duplicate url bazel.build/reference/test-encyclopedia across scopes
+tameshi	W04	S092 duplicate url bazel.build/remote/caching across scopes
+tameshi	W01	S101 tierC mined used-by=corpus/knowledge/witness-equivalence-rule.md
+tameshi	W04	S104 duplicate url cgit.git.savannah.gnu.org/cgit/bash.git/plain/doc/bashref.texi?id=b8c60bc9ca365f8261fa97900b6fa939f6ebc303 across scopes
+tameshi	W04	S160 duplicate url stryker-mutator.io/docs/mutation-testing-elements/equivalent-mutants across scopes
+tameshi	W04	S265 duplicate url testing.googleblog.com/2016/05/flaky-tests-at-google-and-how-we.html across scopes
+tameshi	W04	S266 duplicate url pitest.org/quickstart/incremental_analysis across scopes
+tameshi	W04	S267 duplicate url github.com/containers/bubblewrap/blob/v0.13.1/bwrap.xml across scopes
+tameshi	W04	S268 duplicate url www.tensorflow.org/federated/golden_tests?hl=zh-cn across scopes
+tameshi	W04	S274 duplicate url bazel.build/basics/hermeticity across scopes
+tameshi	W04	S288 duplicate url www.atlassian.com/incident-management/handbook/postmortems across scopes
+tameshi	W04	S293 duplicate url git-scm.com/docs/git-cat-file across scopes
+tameshi	W04	S303 duplicate url www.gnu.org/software/sed/manual/sed.html across scopes
+tameshi	W04	S314 duplicate url man7.org/linux/man-pages/man1/strace.1.html across scopes
+tameshi	W04	S318 duplicate url git-scm.com/docs/git across scopes
+tameshi	W04	S323 duplicate url spec.commonmark.org/0.31.2 across scopes
+tameshi	ok	/home/vgpnk/Projects/shokunin/tameshi-shokunin/corpus/SOURCES.md
+exit=0
+
+### 2. maintained CLI: census (rows, tier and status histograms)
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin tameshi
+tameshi	rows	183
+tameshi	tier.A	165
+tameshi	tier.B	14
+tameshi	tier.C	4
+tameshi	status.mined	149
+tameshi	status.queued	23
+tameshi	status.rejected	11
+FLEET	rows	183
+FLEET	tier.A	165
+FLEET	tier.B	14
+FLEET	tier.C	4
+FLEET	tier.invalid	0
+FLEET	status.queued	23
+FLEET	status.mined	149
+FLEET	status.rejected	11
+FLEET	status.invalid	0
+FLEET	missing	0
+exit=0
+
+### 3. SOURCES-CONTRACT-v1.md frozen manual census commands (cwd = lane root)
+$ grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+183
+$ awk -F'|' '... NF!=13 ...' corpus/SOURCES.md
+0
+$ awk -F'|' '... tier histogram ...'
+A=165 B=14 C=4 
+$ awk -F'|' '... status histogram ...'
+mined=149 queued=23 rejected=11 
+$ awk -F'|' '... duplicate ids ...' | sort | uniq -d   # must print nothing
+(no output above = no duplicate ids)
+$ awk -F'|' '... enum violations and tier inflation ...'   # must print nothing
+(no output above = no enum violations)
+$ awk -F'|' '... mined rows whose used-by paths do not exist ...' | while read -r p; do [ -e "$p" ] || echo "missing: $p"; done   # must print nothing
+(no output above = every mined used-by path exists on disk)

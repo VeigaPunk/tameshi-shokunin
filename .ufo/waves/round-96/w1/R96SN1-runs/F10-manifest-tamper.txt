@@ -1,0 +1,35 @@
+=== F10 — the manifest blob is not pinned to claims.json's manifest_sha256 ===
+--- claims.json names these digests ---
+instrument_sha256 = 6c38dacd3cd76d3da5ff1c796d63aa985c6b1b5365f00972e77591ebe9fa55f7
+manifest_sha256  = 31e4667b41c82b3eb0495932cf6b0d8fba0c8bb8b90ae8f114198ff05dc46785
+--- but the checker compares neither ---
+0
+--- the only digest the checker prints is the COUNTER's ---
+407:    print("DISPOSITION_INSTRUMENT sha256=" + counter_sha + " conjuncts=%d" % len(keys))
+--- attack: tamper every manifest row into an unfalsifiable row, commit ZERO receipts ---
+559b72d8 tampered manifest
+ls: cannot access '.ufo/evidence/round-96/pre-freeze/controls/': No such file or directory
+--- run WITHOUT --min-falsifiable (the checker's default is 0) ---
+DISPOSITION_INSTRUMENT sha256=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1 conjuncts=19
+DISPOSITION rows=19 falsifiable=0 unfalsifiable=19 findings=0
+EXIT=0
+--- run WITH --min-falsifiable 17 (the claim's counter command) ---
+DISPOSITION_FINDING falsifiable-below-minimum -: falsifiable=0 < --min-falsifiable=17
+DISPOSITION rows=19 falsifiable=0 unfalsifiable=19 findings=1
+EXIT=1
+
+=== F10 SHARP — remap EVERY state row to ONE attacker state; manifest sha != pinned sha ===
+--- manifest sha256 after the tamper ---
+84894f439cfc5f3342b531706f40ec9c8b92931e1fffa3c6366b4d9c3c6906a4  .ufo/evidence/round-96/conjunct-disposition.json
+--- claims.json manifest_sha256 (the frozen one) ---
+31e4667b41c82b3eb0495932cf6b0d8fba0c8bb8b90ae8f114198ff05dc46785
+--- the single forged receipt that satisfies all 17 state rows ---
+counter_sha=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1
+exit=1
+C1_CONJUNCTS selfpin=false pins=false spec=false pin=false green=false valid0=false trivial0=false inconclusive0=false note=false verdict_tables=false ids=false mismatched0=false figure=false witnessed=false source=false coverage=false n_min=false
+C1_SETUP self-pin-mismatch
+--- the claim's own counter command ---
+DISPOSITION_INSTRUMENT sha256=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1 conjuncts=19
+DISPOSITION rows=19 falsifiable=17 unfalsifiable=2 findings=0
+EXIT=0
+--- NOTE: falsifiable stays 17, so --min-falsifiable 17 does NOT catch the remap ---

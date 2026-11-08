@@ -1,0 +1,60 @@
+R96E3 pins-empty-lane (F6): --lane '' from a CWD that is a git repo -> PINS_SETUP lane-empty, exit 2, nothing written
+tool: .ufo/evidence/round-96/c1/make-pins96.py sha256=876a75feafeab885973e5b66d4c35c97de67f9f019e2203a43754135b45b1702
+freeze rev: be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+CWD fixture: /fast/scratch/hyaku/tameshi-r96/R96E3/cwd96 (git clone, checked out at the freeze rev)
+
+--- CWD is a real git repo (the hazard: os.path.realpath('') resolves to the CWD) ---
+$ git -C cwd96 rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r96/R96E3/cwd96
+$ git -C cwd96 rev-parse HEAD
+be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+
+--- sentinel planted at the path a lane-empty write would land on ---
+$ printf 'CWD-SENTINEL-96-DO-NOT-TOUCH\n' > cwd96/.ufo/evidence/round-96/c1/pins.json
+$ sha256sum cwd96/.ufo/evidence/round-96/c1/pins.json
+4031fd5073cec5bb3411a0a58c3b83afdea596783a88026b06c07ef2aca33013  cwd96/.ufo/evidence/round-96/c1/pins.json
+$ stat -c 'before mtime=%Y size=%s' cwd96/.ufo/evidence/round-96/c1/pins.json
+before mtime=1794140862 size=29
+
+--- attack ---
+$ cd cwd96 && python3 -I /fast/scratch/hyaku/tameshi-r96/R96E3/lane96/.ufo/evidence/round-96/c1/make-pins96.py --lane '' --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+PINS_SETUP lane-empty
+exit=2
+
+--- CWD repo pins.json unchanged ---
+$ sha256sum cwd96/.ufo/evidence/round-96/c1/pins.json
+4031fd5073cec5bb3411a0a58c3b83afdea596783a88026b06c07ef2aca33013  cwd96/.ufo/evidence/round-96/c1/pins.json
+$ cat cwd96/.ufo/evidence/round-96/c1/pins.json
+CWD-SENTINEL-96-DO-NOT-TOUCH
+$ stat -c 'after mtime=%Y size=%s' cwd96/.ufo/evidence/round-96/c1/pins.json
+after mtime=1794140862 size=29
+$ ls cwd96/.ufo/evidence/round-96/c1/
+census-mutants.json
+controls-v96.py
+make-pins96.py
+measure-v96.py
+pins.json
+
+sha256 identical, size identical, mtime identical, no pins.json.tmp-pins created: the refusal happens at line 58 before any lane resolution, so no file is opened for writing anywhere.
+
+--- adjacent lane refusals (same guard region) ---
+$ python3 -I make-pins96.py --lane '   ' --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+PINS_SETUP lane-empty
+exit=2
+$ python3 -I make-pins96.py --lane . --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+PINS_SETUP lane-not-absolute
+exit=2
+
+--- source lines (make-pins96.py 58-67) ---
+    if not a.lane or not a.lane.strip():
+        print("PINS_SETUP lane-empty"); return 2
+    if not a.rev or not __import__('re').fullmatch(r"[0-9a-f]{40}", a.rev):
+        print("PINS_SETUP rev-not-a-commit-id"); return 2
+    lane = os.path.realpath(a.lane)
+    if not os.path.isabs(a.lane):
+        print("PINS_SETUP lane-not-absolute"); return 2
+    _top = __import__('subprocess').run(["git","-C",lane,"rev-parse","--show-toplevel"],capture_output=True,env={"PATH":"/usr/local/bin:/usr/bin:/bin","LC_ALL":"C.UTF-8","GIT_NO_REPLACE_OBJECTS":"1","GIT_CONFIG_NOSYSTEM":"1","GIT_CONFIG_GLOBAL":"/dev/null"})
+    if _top.returncode != 0 or os.path.realpath(_top.stdout.decode().strip()) != lane:
+        print("PINS_SETUP lane-toplevel-mismatch"); return 2
+
+Contrast: the round-95 tool has no such guard (see R96E3-before-witness.out) and on the same CWD wrote PINS_WRITTEN into the CWD repo, exit 0.

@@ -1,0 +1,109 @@
+=== F3 — hostile /usr/local/bin/git forges pins.json (make-pins96 resolves git BY NAME) ===
+--- how each instrument resolves git ---
+/fast/scratch/hyaku/tameshi-r96/R96SN1/lane/.ufo/evidence/round-96/conjunct-disposition-v96.py:80:GIT = "/usr/bin/git"
+/fast/scratch/hyaku/tameshi-r96/R96SN1/lane/.ufo/evidence/round-96/conjunct-disposition-v96.py:84:    return subprocess.run([GIT, "-C", lane] + args, capture_output=True,
+/fast/scratch/hyaku/tameshi-r96/R96SN1/lane/.ufo/evidence/round-96/conjunct-disposition-v96.py:242:    r = subprocess.run([GIT, "-C", repo] + args, capture_output=True,
+/fast/scratch/hyaku/tameshi-r96/R96SN1/lane/.ufo/evidence/round-96/c1/make-pins96.py:27:    p = subprocess.run(["git", "-C", repo, *a], capture_output=True,
+/fast/scratch/hyaku/tameshi-r96/R96SN1/lane/.ufo/evidence/round-96/c1/measure-v96.py:130:    p = subprocess.run(["git", "-C", repo, *a], capture_output=True, env=sealed_env())
+58:def sh(*a, cwd=None, check=True):
+59-    p = subprocess.run(list(a), cwd=cwd, capture_output=True, text=True, env=sealed_env())
+60-    if check and p.returncode != 0:
+--- the shim (R96SN1-runs/hostile-git.sh) ---
+#!/bin/sh
+# Hostile git: forges `cat-file blob` output and `rev-parse --show-toplevel`.
+LOG=/fast/scratch/hyaku/tameshi-r96/R96SN1/hostile-git.log
+echo "HOSTILE $*" >> "$LOG"
+
+# find the -C repo argument and the subcommand
+repo=""
+sub=""
+prev=""
+for a in "$@"; do
+  if [ "$prev" = "-C" ]; then repo="$a"; fi
+  prev="$a"
+done
+# strip -C <repo>
+newargs=""
+skip=0
+for a in "$@"; do
+  if [ $skip -eq 1 ]; then skip=0; continue; fi
+  if [ "$a" = "-C" ]; then skip=1; continue; fi
+  newargs="$newargs $a"
+done
+set -- $newargs
+sub="$1"
+
+case "$sub" in
+  rev-parse)
+    if [ "$2" = "--show-toplevel" ]; then
+      # forge a toplevel that matches whatever lane we are in
+      echo "$repo"
+      exit 0
+    fi
+    exec /usr/bin/git "$@"
+    ;;
+  cat-file)
+    # cat-file blob <rev>:<path>  -> forge a chosen blob
+    spec="$3"
+    case "$spec" in
+      *census-mutants.json)
+        printf '{"gate":{"repo":"/home/vgpnk/Projects/shokunin","commit":"f47ad6ba8d306f8125597401cb2ce45c1297a593","path":"scripts/sources-census.sh","sha256":"FORGED_BY_HOSTILE_GIT_0000000000000000000000000000000000000","fixtures":"scripts/fixtures/sources-census"}}'
+        exit 0
+        ;;
+      *sources-census.sh)
+        echo "FORGED-GATE-BYTES"
+        exit 0
+        ;;
+    esac
+    exec /usr/bin/git "$@"
+    ;;
+  *)
+    exec /usr/bin/git "$@"
+    ;;
+esac
+--- WRITE path under the hostile shim ---
+PINS_WRITTEN /fast/scratch/hyaku/tameshi-r96/R96SN1/lane/.ufo/evidence/round-96/c1/pins.json
+PINS_DERIVED fixtures=scripts/fixtures/sources-census gate_commit=f47ad6ba8d306f8125597401cb2ce45c1297a593 gate_path=scripts/sources-census.sh gate_sha256=95a586dd33686a8c7d29e770e588f484450b8d673d95eed9d33ae20a2e8ffa66 spec_sha256=9dcd46606b6f6088655bfa02291364237c5672acdaee948bdcec5261afc831b6
+WRITE_EXIT=0
+--- pins.json content after the hostile write ---
+{
+ "fixtures": "scripts/fixtures/sources-census",
+ "gate_commit": "f47ad6ba8d306f8125597401cb2ce45c1297a593",
+ "gate_path": "scripts/sources-census.sh",
+ "gate_sha256": "95a586dd33686a8c7d29e770e588f484450b8d673d95eed9d33ae20a2e8ffa66",
+ "spec_sha256": "9dcd46606b6f6088655bfa02291364237c5672acdaee948bdcec5261afc831b6"
+}
+--- hostile git log ---
+HOSTILE -C /fast/scratch/hyaku/tameshi-r96/R96SN1/lane rev-parse --show-toplevel
+HOSTILE -C /fast/scratch/hyaku/tameshi-r96/R96SN1/lane cat-file blob be6c22b6d8a94f07eee6b0fa79edab7df228c0b0:.ufo/evidence/round-96/c1/census-mutants.json
+HOSTILE -C /home/vgpnk/Projects/shokunin cat-file blob f47ad6ba8d306f8125597401cb2ce45c1297a593:scripts/sources-census.sh
+--- CHECK path under the same shim ---
+PINS_DERIVED fixtures=scripts/fixtures/sources-census gate_commit=f47ad6ba8d306f8125597401cb2ce45c1297a593 gate_path=scripts/sources-census.sh gate_sha256=95a586dd33686a8c7d29e770e588f484450b8d673d95eed9d33ae20a2e8ffa66 spec_sha256=9dcd46606b6f6088655bfa02291364237c5672acdaee948bdcec5261afc831b6
+PINS_CHECK DRIFT spec_sha256,gate_sha256
+
+=== F3 continued — the DRIVER (controls-v96.py) also resolves git BY NAME ===
+--- the same hostile shim, driving controls-v96.py ---
+cmd failed: git -C /fast/scratch/hyaku/tameshi-r96/R96SN1/drv6/work/st-hidden -c user.name=r94-fixture -c user.email=r94-fixture@invalid commit -q --allow-empty -m r94 D05 state
+error: pathspec 'D05' did not match any file(s) known to git
+error: pathspec 'state' did not match any file(s) known to git
+
+--- hostile git log: the driver's OWN git calls, all intercepted ---
+HOSTILE -C /fast/scratch/hyaku/tameshi-r96/R96SN1/lane cat-file blob be6c22b6d8a94f07eee6b0fa79edab7df228c0b0:.ufo/evidence/round-96/c1/measure-v96.py
+HOSTILE clone -q --shared --no-checkout /fast/scratch/hyaku/tameshi-r96/R96SN1/lane /fast/scratch/hyaku/tameshi-r96/R96SN1/drv6/work/st-hidden
+HOSTILE -C /fast/scratch/hyaku/tameshi-r96/R96SN1/drv6/work/st-hidden rev-parse --show-toplevel
+HOSTILE -C /fast/scratch/hyaku/tameshi-r96/R96SN1/drv6/work/st-hidden checkout -q --detach be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+HOSTILE -C /fast/scratch/hyaku/tameshi-r96/R96SN1/drv6/work/st-hidden add -A
+HOSTILE -C /fast/scratch/hyaku/tameshi-r96/R96SN1/drv6/work/st-hidden -c user.name=r94-fixture -c user.email=r94-fixture@invalid commit -q --allow-empty -m r94 D05 state
+--- the run FAILED because the shim mangled the commit args:
+    'error: pathspec D05 did not match any file(s) known to git'
+    -> the driver handed its git invocations to the attacker's binary, which then
+       broke the driver's own fixture commit. The driver's git surface is fully
+       attacker-controlled; a shim that FORGES rather than breaks would forge the
+       whole battery.
+--- permission posture of the PATH dirs the seal names ---
+drwxr-xr-x root:root /usr/local/bin
+drwxr-xr-x root:root /usr/bin
+lrwxrwxrwx root:root /bin
+(a non-root attacker cannot write /usr/local/bin — the F3 precondition is root or a package install)
+--- driver evidence for F3 (6 of the driver's own git calls intercepted) ---
+6

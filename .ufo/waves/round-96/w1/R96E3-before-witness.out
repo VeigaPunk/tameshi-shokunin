@@ -1,0 +1,75 @@
+R96E3 before-witness: round-95 make-pins95.py on the same empty-lane and symlink fixtures succeeds (exit 0) and masks the target
+before tool: .ufo/evidence/round-95/c1/make-pins95.py sha256=38a8fdd28d59aa4d493f77057a2d5c3be7a9aa8c5a6e9f82c2d96f4c3ea811bd
+after tool:  .ufo/evidence/round-96/c1/make-pins96.py sha256=876a75feafeab885973e5b66d4c35c97de67f9f019e2203a43754135b45b1702
+both at rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0 (both blobs present at that rev: cat-file -e confirmed)
+
+--- v95 F6: empty lane writes into the CWD repo ---
+$ git -C cwd95 rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r96/R96E3/cwd95
+$ printf 'CWD-SENTINEL-95-DO-NOT-TOUCH\n' > cwd95/.ufo/evidence/round-95/c1/pins.json
+$ sha256sum cwd95/.ufo/evidence/round-95/c1/pins.json
+c16e4b4a0d3d11bb3a5cb493d37dd0e81fe2d651abdf2294103df921fd028288  cwd95/.ufo/evidence/round-95/c1/pins.json
+$ stat -c 'before mtime=%Y size=%s' cwd95/.ufo/evidence/round-95/c1/pins.json
+before mtime=1794140867 size=29
+
+$ cd cwd95 && python3 -I .ufo/evidence/round-95/c1/make-pins95.py --lane '' --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+PINS_WRITTEN /fast/scratch/hyaku/tameshi-r96/R96E3/cwd95/.ufo/evidence/round-95/c1/pins.json
+PINS_DERIVED fixtures=scripts/fixtures/sources-census gate_commit=f47ad6ba8d306f8125597401cb2ce45c1297a593 gate_path=scripts/sources-census.sh gate_sha256=3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30 spec_sha256=ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290
+exit=0
+
+$ sha256sum cwd95/.ufo/evidence/round-95/c1/pins.json
+688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4  cwd95/.ufo/evidence/round-95/c1/pins.json
+$ cat cwd95/.ufo/evidence/round-95/c1/pins.json
+{
+ "fixtures": "scripts/fixtures/sources-census",
+ "gate_commit": "f47ad6ba8d306f8125597401cb2ce45c1297a593",
+ "gate_path": "scripts/sources-census.sh",
+ "gate_sha256": "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30",
+ "spec_sha256": "ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290"
+}
+$ stat -c 'after mtime=%Y size=%s' cwd95/.ufo/evidence/round-95/c1/pins.json
+after mtime=1794140867 size=322
+$ git -C cwd95 status --porcelain=v1
+ M .ufo/evidence/round-95/c1/pins.json
+
+Verdict: exit 0, and the sentinel in the CWD repo was overwritten (sha c16e4b4a -> 688fe42a, size 29 -> 322). os.path.realpath('') resolved '' to the CWD, and v95 had no lane guard at all. F6 reproduces.
+
+--- v95 F5: symlinked pins.json overwrites the outside target ---
+$ printf 'OUTSIDE-VICTIM-95-DO-NOT-TOUCH\n' > outside95/target.json
+$ sha256sum outside95/target.json
+343f3bba21bf3681f3e97fea94226271d908fe50329738d61203601908641f41  outside95/target.json
+$ cat outside95/target.json
+OUTSIDE-VICTIM-95-DO-NOT-TOUCH
+$ stat -c 'before mtime=%Y size=%s' outside95/target.json
+before mtime=1794140872 size=31
+$ ls -l lane95sym/.ufo/evidence/round-95/c1/pins.json
+lrwxrwxrwx 1 vgpnk vgpnk 59 Nov  8 09:26 lane95sym/.ufo/evidence/round-95/c1/pins.json -> /fast/scratch/hyaku/tameshi-r96/R96E3/outside95/target.json
+
+$ cd lane95sym && python3 -I .ufo/evidence/round-95/c1/make-pins95.py --lane /fast/scratch/hyaku/tameshi-r96/R96E3/lane95sym --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+PINS_WRITTEN /fast/scratch/hyaku/tameshi-r96/R96E3/lane95sym/.ufo/evidence/round-95/c1/pins.json
+PINS_DERIVED fixtures=scripts/fixtures/sources-census gate_commit=f47ad6ba8d306f8125597401cb2ce45c1297a593 gate_path=scripts/sources-census.sh gate_sha256=3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30 spec_sha256=ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290
+exit=0
+
+$ sha256sum outside95/target.json
+688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4  outside95/target.json
+$ cat outside95/target.json
+{
+ "fixtures": "scripts/fixtures/sources-census",
+ "gate_commit": "f47ad6ba8d306f8125597401cb2ce45c1297a593",
+ "gate_path": "scripts/sources-census.sh",
+ "gate_sha256": "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30",
+ "spec_sha256": "ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290"
+}
+$ stat -c 'after mtime=%Y size=%s' outside95/target.json
+after mtime=1794140874 size=322
+$ ls -l lane95sym/.ufo/evidence/round-95/c1/pins.json
+lrwxrwxrwx 1 vgpnk vgpnk 59 Nov  8 09:26 lane95sym/.ufo/evidence/round-95/c1/pins.json -> /fast/scratch/hyaku/tameshi-r96/R96E3/outside95/target.json
+
+Verdict: exit 0, and the file OUTSIDE the lane was overwritten through the link (sha 343f3bba -> 688fe42a, size 31 -> 322). v95 writes with plain open(out, "w") at line 76 — no symlink check, no temp, no rename. F5 reproduces.
+
+--- contrast table ---
+state           | v95 (at be6c22b6)                                  | v96 (at be6c22b6)
+pins-empty-lane | exit 0, PINS_WRITTEN into CWD repo, sentinel lost | exit 2, PINS_SETUP lane-empty, CWD pins.json byte+size+mtime identical
+pins-symlink    | exit 0, outside target masked (31 B -> 322 B)      | exit 2, PINS_SETUP pins-symlink-refused, outside target sha256 identical, 31 B
+tmp-symlink     | n/a (no temp file in v95)                          | exit 2, PINS_SETUP tmp-symlink-refused, victim sha256 identical
+atomicity       | no temp, destination truncated in place            | temp + fsync + os.replace; 0444 destination replaced by new inode (ino 220542402 -> 220558188)

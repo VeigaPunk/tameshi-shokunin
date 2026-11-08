@@ -1,0 +1,65 @@
+# R96E1 receipt — item 2: the rev guard refuses before any grading
+#
+# instrument: same frozen measure-v96.py (sha256 e0da9935...) as R96E1-honest.out.
+# Every work directory below is either pre-created empty or absent; the counter's
+# rev guard runs before the work-dir check, so a refusal cannot touch it.
+#
+# Part A: the three required refusals, --repo the real lane (read-only).
+# Part B: the F2 attack (a clone with a staged, uncommitted inverted note):
+#   --rev '' must not grade the index.
+# Part C: why the 40-hex-unresolvable token differs: git rev-parse semantics at 2.56.0.
+
+### command: python3 -I measure-v96-frozen.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev "" --work rev1
+C1_SETUP rev-not-a-commit-id
+C1_R96_PASS=false
+EXIT=2
+work dir rev1 entries after the refusal: 0
+
+### command: python3 -I measure-v96-frozen.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev master --work rev2
+C1_SETUP rev-not-a-commit-id
+C1_R96_PASS=false
+EXIT=2
+work dir rev2 entries after the refusal: 0
+
+### command: python3 -I measure-v96-frozen.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin --rev deadbeefdeadbeefdeadbeefdeadbeefdeadbeef --work rev3
+C1_SETUP spec-absent-at-rev
+C1_R96_PASS=false
+EXIT=2
+work dir rev3 entries after the refusal: 0
+
+$ git -C clone-staged status --porcelain
+M  corpus/knowledge/mutation-case-fleet-sources-census.md
+$ git -C clone-staged diff --cached --stat
+ .../mutation-case-fleet-sources-census.md          | 24 +++++++++++-----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+$ python3 -I measure-v96-frozen.py --repo clone-staged --rev "" --work work-staged-empty
+C1_SETUP rev-not-a-commit-id
+C1_R96_PASS=false
+EXIT=2
+work dir entries: 0
+$ python3 -I measure-v96-frozen.py --repo clone-staged --rev master --work work-staged-empty
+C1_SETUP rev-not-a-commit-id
+C1_R96_PASS=false
+EXIT=2
+work dir entries: 0
+
+# Part C — git rev-parse semantics that make `rev-unresolvable` unreachable for a
+# syntactically valid 40-hex name (git 2.56.0, /usr/bin/git):
+$ git -C clone-honest rev-parse deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+EXIT=0
+$ git -C clone-honest rev-parse --verify deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+EXIT=0
+$ git -C clone-honest cat-file -e deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+EXIT=1
+$ git -C clone-honest rev-parse --verify 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef^{object}'
+fatal: Needed a single revision
+EXIT=128
+
+# A 40-hex name that is not an object is echoed by `rev-parse` with exit 0, so the
+# counter's `_resolved = git(repo, "rev-parse", rev); if rc != 0: die("rev-unresolvable")`
+# does not fire: the run continues to the first blob read and dies later with
+# `spec-absent-at-rev` (still exit 2, still C1_R96_PASS=false, nothing graded,
+# work dir untouched). `rev-unresolvable` remains reachable only when git itself
+# fails (e.g. --repo is not a repository).

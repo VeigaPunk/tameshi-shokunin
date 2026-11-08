@@ -66,10 +66,11 @@ Exit: 0 PASS; 1 not PASS; 2 setup refusal.
 """
 import argparse, hashlib, html as htmlmod, io, json, os, re, shutil, subprocess, sys, tarfile
 
-SELF_SHA256 = "c0ac997290dd7fcad605b3f19fba127f24b85df2459b9e9ccc4060d404ff3f56"
+SELF_SHA256 = "8ace61cccd2228eaacd252c36fd124f9b12a2676b99152a37645d67554c802b4"
 GATE_COMMIT = "f47ad6ba8d306f8125597401cb2ce45c1297a593"
 GATE_SHA256 = "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30"
 SELF_PIN_RE = rb'^SELF_SHA256 = "[0-9a-f]{64}"\n'
+GIT = "/usr/bin/git"
 
 SPEC_PATH = ".ufo/evidence/round-96/c1/census-mutants.json"
 PINS_PATH = ".ufo/evidence/round-96/c1/pins.json"
@@ -127,7 +128,7 @@ def sealed_env():
 
 
 def git(repo, *a, check=True):
-    p = subprocess.run(["git", "-C", repo, *a], capture_output=True, env=sealed_env())
+    p = subprocess.run([GIT, "-C", repo, *a], capture_output=True, env=sealed_env())
     if check and p.returncode != 0:
         die("git-failed:" + " ".join(a) + ":" + p.stderr.decode(errors="replace").strip()[:200])
     return p

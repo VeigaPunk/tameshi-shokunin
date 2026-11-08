@@ -1,0 +1,57 @@
+R96E3 pins-symlink (F5): symlink at pins.json -> outside target -> PINS_SETUP pins-symlink-refused, exit 2, outside target bytes unchanged
+tool: .ufo/evidence/round-96/c1/make-pins96.py sha256=876a75feafeab885973e5b66d4c35c97de67f9f019e2203a43754135b45b1702
+freeze rev: be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+fixture: /fast/scratch/hyaku/tameshi-r96/R96E3/lane-sym (clone at freeze rev), outside target /fast/scratch/hyaku/tameshi-r96/R96E3/outside/target.json
+
+--- plant: replace the lane's pins.json with a symlink to the outside target ---
+$ printf 'OUTSIDE-VICTIM-96-DO-NOT-TOUCH\n' > outside/target.json
+$ sha256sum outside/target.json
+ff6b4ec00b37d17bbbeb9269889f07c3c54656a91482c196ba0e4bb52e9593cf  outside/target.json
+$ cat outside/target.json
+OUTSIDE-VICTIM-96-DO-NOT-TOUCH
+$ stat -c 'before mtime=%Y size=%s' outside/target.json
+before mtime=1794140881 size=31
+$ ls -l lane-sym/.ufo/evidence/round-96/c1/pins.json
+lrwxrwxrwx 1 vgpnk vgpnk 57 Nov  8 09:25 lane-sym/.ufo/evidence/round-96/c1/pins.json -> /fast/scratch/hyaku/tameshi-r96/R96E3/outside/target.json
+$ readlink lane-sym/.ufo/evidence/round-96/c1/pins.json
+/fast/scratch/hyaku/tameshi-r96/R96E3/outside/target.json
+
+--- attack ---
+$ cd lane-sym && python3 -I .ufo/evidence/round-96/c1/make-pins96.py --lane /fast/scratch/hyaku/tameshi-r96/R96E3/lane-sym --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+PINS_SETUP pins-symlink-refused
+exit=2
+
+--- outside target unchanged (sha256 before == after, same size, same mtime) ---
+$ sha256sum outside/target.json
+ff6b4ec00b37d17bbbeb9269889f07c3c54656a91482c196ba0e4bb52e9593cf  outside/target.json
+$ cat outside/target.json
+OUTSIDE-VICTIM-96-DO-NOT-TOUCH
+$ stat -c 'after mtime=%Y size=%s' outside/target.json
+after mtime=1794140881 size=31
+$ ls -l lane-sym/.ufo/evidence/round-96/c1/pins.json
+lrwxrwxrwx 1 vgpnk vgpnk 57 Nov  8 09:25 lane-sym/.ufo/evidence/round-96/c1/pins.json -> /fast/scratch/hyaku/tameshi-r96/R96E3/outside/target.json
+$ ls lane-sym/.ufo/evidence/round-96/c1/pins.json.tmp-pins
+ls: cannot access 'lane-sym/.ufo/evidence/round-96/c1/pins.json.tmp-pins': No such file or directory
+
+The symlink itself is left in place (not silently replaced), the link target is not opened for writing, and no temp file is created: the refusal precedes the tmp path entirely.
+
+--- dangling symlink variant (target does not exist) ---
+$ rm lane-dangling/.ufo/evidence/round-96/c1/pins.json
+$ ln -s /fast/scratch/hyaku/tameshi-r96/R96E3/does-not-exist.json lane-dangling/.ufo/evidence/round-96/c1/pins.json
+$ ls -l lane-dangling/.ufo/evidence/round-96/c1/pins.json
+lrwxrwxrwx 1 vgpnk vgpnk 57 Nov  8 09:29 lane-dangling/.ufo/evidence/round-96/c1/pins.json -> /fast/scratch/hyaku/tameshi-r96/R96E3/does-not-exist.json
+$ cd lane-dangling && python3 -I .ufo/evidence/round-96/c1/make-pins96.py --lane /fast/scratch/hyaku/tameshi-r96/R96E3/lane-dangling --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+PINS_SETUP pins-symlink-refused
+exit=2
+$ ls -l /fast/scratch/hyaku/tameshi-r96/R96E3/does-not-exist.json
+ls: cannot access '/fast/scratch/hyaku/tameshi-r96/R96E3/does-not-exist.json': No such file or directory
+
+The guard is os.path.lexists(out) and os.path.islink(out) (lines 85-86), so a dangling link is refused too — an attacker cannot get the write path to create the target through a broken link.
+
+--- source lines (make-pins96.py 83-86) ---
+    out = os.path.join(lane, PINS_PATH)
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    if os.path.lexists(out) and os.path.islink(out):
+        print("PINS_SETUP pins-symlink-refused"); return 2
+
+Contrast: round-95 make-pins95.py on the same attack opened the destination with plain open(out, "w") and overwrote the outside file (R96E3-before-witness.out).

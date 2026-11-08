@@ -1,0 +1,93 @@
+R96E3 atomicity: temp + os.replace write path, tmp-symlink refusal, no observable partial destination
+tool: .ufo/evidence/round-96/c1/make-pins96.py sha256=876a75feafeab885973e5b66d4c35c97de67f9f019e2203a43754135b45b1702
+freeze rev: be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+fixtures: lane96, lane-tmp (clones at the freeze rev)
+
+=== 1. the write path, verbatim (make-pins96.py lines 87-101) ===
+    _tmp = out + ".tmp-pins"
+    if os.path.lexists(_tmp):
+        import os as _o2
+        if _o2.path.islink(_tmp): print("PINS_SETUP tmp-symlink-refused"); return 2
+        _o2.unlink(_tmp)
+    import os as _o3, json as _j3
+    _fd = _o3.open(_tmp, _o3.O_WRONLY|_o3.O_CREAT|_o3.O_EXCL|getattr(_o3,"O_NOFOLLOW",0), 0o644)
+    with _o3.fdopen(_fd, "w", encoding="utf-8") as f:
+        json.dump(derived, f, indent=1, sort_keys=True)
+        f.write("\n")
+        f.flush()
+        import os as _o4
+        _o4.fsync(f.fileno())
+    import os as _o5
+    _o5.replace(_tmp, out)
+
+The destination path `out` is never opened for writing. The bytes go to `<out>.tmp-pins` opened O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW, are flushed and fsync'd, and only then is the name replaced by os.replace (rename(2)). A reader either sees the old inode or the new complete one.
+
+=== 2. rename-not-open proof: destination chmod 0444 still replaced ===
+An in-place open(out, "w") fails on a 0444 file as this user (measured: `open(w) REFUSED on 0444 file: PermissionError 13 Permission denied`, uid 1000). The tool succeeded anyway, and the destination inode changed:
+$ chmod 444 lane96/.ufo/evidence/round-96/c1/pins.json
+$ stat -c 'before: mode=%a ino=%i mtime=%Y size=%s' lane96/.ufo/evidence/round-96/c1/pins.json
+before: mode=444 ino=220542402 mtime=1794140906 size=322
+$ cd lane96 && python3 -I .ufo/evidence/round-96/c1/make-pins96.py --lane /fast/scratch/hyaku/tameshi-r96/R96E3/lane96 --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+PINS_WRITTEN /fast/scratch/hyaku/tameshi-r96/R96E3/lane96/.ufo/evidence/round-96/c1/pins.json
+exit=0
+$ stat -c 'after:  mode=%a ino=%i mtime=%Y size=%s' lane96/.ufo/evidence/round-96/c1/pins.json
+after:  mode=644 ino=220558188 mtime=1794140913 size=322
+$ sha256sum lane96/.ufo/evidence/round-96/c1/pins.json
+688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4  lane96/.ufo/evidence/round-96/c1/pins.json
+
+mode 444 -> 644 and ino 220542402 -> 220558188: the destination is a newly renamed file, not the old inode truncated in place.
+
+=== 3. crash mid-write leaves the destination untouched (only a stale tmp) ===
+Harness imports the tool as a module, patches json.dump to write the partial payload into the tmp file and then raise, and calls main():
+$ python3 -I crash_probe.py /fast/scratch/hyaku/tameshi-r96/R96E3/lane96
+before sha256 = 688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4 size = 322
+INJECTED_FAILURE: injected failure after partial tmp write
+after  sha256 = 688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4 size = 322
+destination UNCHANGED = True
+stale tmp left behind = True (mode 0o644)
+cleaned stale tmp (regular file, next run would unlink it at line 91)
+exit=0
+
+The partial payload reached only pins.json.tmp-pins; os.replace was never reached, so the destination bytes are the previous complete file. No partially written pins.json is observable.
+
+=== 4. pre-existing pins.json.tmp-pins symlink is refused ===
+$ printf 'TMP-VICTIM-96-DO-NOT-TOUCH\n' > tmp-out/victim.json
+$ sha256sum tmp-out/victim.json
+480095cbac2142a0386af42f98199afb7ab257a1f99e74db37e18af2d582b48c  tmp-out/victim.json
+$ stat -c 'before mtime=%Y size=%s' tmp-out/victim.json
+before mtime=1794140886 size=27
+$ sha256sum lane-tmp/.ufo/evidence/round-96/c1/pins.json
+688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4  lane-tmp/.ufo/evidence/round-96/c1/pins.json
+$ ls -l lane-tmp/.ufo/evidence/round-96/c1/pins.json.tmp-pins
+lrwxrwxrwx 1 vgpnk vgpnk 57 Nov  8 09:25 lane-tmp/.ufo/evidence/round-96/c1/pins.json.tmp-pins -> /fast/scratch/hyaku/tameshi-r96/R96E3/tmp-out/victim.json
+
+$ cd lane-tmp && python3 -I .ufo/evidence/round-96/c1/make-pins96.py --lane /fast/scratch/hyaku/tameshi-r96/R96E3/lane-tmp --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+PINS_SETUP tmp-symlink-refused
+exit=2
+
+$ sha256sum tmp-out/victim.json
+480095cbac2142a0386af42f98199afb7ab257a1f99e74db37e18af2d582b48c  tmp-out/victim.json
+$ cat tmp-out/victim.json
+TMP-VICTIM-96-DO-NOT-TOUCH
+$ stat -c 'after mtime=%Y size=%s' tmp-out/victim.json
+after mtime=1794140886 size=27
+$ sha256sum lane-tmp/.ufo/evidence/round-96/c1/pins.json
+688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4  lane-tmp/.ufo/evidence/round-96/c1/pins.json
+$ ls -l lane-tmp/.ufo/evidence/round-96/c1/pins.json.tmp-pins
+lrwxrwxrwx 1 vgpnk vgpnk 57 Nov  8 09:25 lane-tmp/.ufo/evidence/round-96/c1/pins.json.tmp-pins -> /fast/scratch/hyaku/tameshi-r96/R96E3/tmp-out/victim.json
+
+exit 2, victim sha256 identical before and after, destination untouched, symlink not followed and not deleted. The tmp guard is the same lexists/islink pair, so the O_EXCL open cannot be redirected through a planted link, and O_NOFOLLOW is set on the tmp open as a second line.
+
+=== 5. stale regular tmp is unlinked, then the atomic write proceeds ===
+$ printf 'STALE-PARTIAL-GARBAGE-{"trunc\n' > lane96/.ufo/evidence/round-96/c1/pins.json.tmp-pins
+$ sha256sum lane96/.ufo/evidence/round-96/c1/pins.json.tmp-pins
+49d81299c0d586237c9859d495a1e58a2cd2bce7b191988946607a953a86012e  lane96/.ufo/evidence/round-96/c1/pins.json.tmp-pins
+$ cd lane96 && python3 -I .ufo/evidence/round-96/c1/make-pins96.py --lane /fast/scratch/hyaku/tameshi-r96/R96E3/lane96 --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+PINS_WRITTEN /fast/scratch/hyaku/tameshi-r96/R96E3/lane96/.ufo/evidence/round-96/c1/pins.json
+exit=0
+$ ls lane96/.ufo/evidence/round-96/c1/pins.json.tmp-pins
+ls: cannot access 'lane96/.ufo/evidence/round-96/c1/pins.json.tmp-pins': No such file or directory
+$ sha256sum lane96/.ufo/evidence/round-96/c1/pins.json
+688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4  lane96/.ufo/evidence/round-96/c1/pins.json
+
+A leftover regular tmp (the crash case) is removed at line 91 and the run succeeds; the tmp never survives a successful write.

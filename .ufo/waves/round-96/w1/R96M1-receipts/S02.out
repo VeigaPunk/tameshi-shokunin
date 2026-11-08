@@ -1,0 +1,31 @@
+mutant=S02
+rule=rev-unresolvable guard (resolver failure + resolved-id format)
+state=rev-unresolvable rev_arg='deadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
+prep=pin
+expect=(2, {'__setup': 'spec-absent-at-rev'})
+plan_expect=(2, {'__setup': 'rev-unresolvable'})
+detector_note=plan-token rev-unresolvable is unreachable in the counter: plain `git rev-parse <40-hex>` echoes the argument with rc 0 even when the object is absent (probed --verify too), so a nonexistent id is refused by spec-absent-at-rev, not the resolver arm; the mutant output is byte-identical to pristine
+pristine_sha256=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1 pristine_sha256_before=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1 pristine_sha256_after=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1
+pin_value=810857caada79fd66d44e26c26f5fafa63357c8b3687673d6801925c018e1638
+baseline_kind=pristine baseline_sha256=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1
+edit_sha_before_pin=fdc79da6acd6bfa954ea59489d7df388cff48d7c4840a3530c8d99c0ccbd8aca
+pin_recomputed=True
+executed_sha256=8367d18699186b01eda5204a13fb448121756604cb83e66eea86998a27b0c4d1
+baseline_exit=2 baseline_ok=True
+mutant_exit=2 mutant_ok=True
+restored_sha256=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1 restored_byte_identical=True restored_same_output=True
+moved={}
+verdict=SURVIVED
+reason=mutant still satisfies the battery expectation
+
+--- baseline output ---
+C1_SETUP spec-absent-at-rev
+C1_R96_PASS=false
+
+--- mutant output ---
+C1_SETUP spec-absent-at-rev
+C1_R96_PASS=false
+
+--- restored output ---
+C1_SETUP spec-absent-at-rev
+C1_R96_PASS=false

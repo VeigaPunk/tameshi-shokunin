@@ -143,3 +143,36 @@ lane is round 95 at `4bd1e88f`; the new revision is the round-96 instruments at
 - Any `falsifies-wording` artifact of the round's own wave that contradicts the
   frozen wording above is handled by amending the wording down to the enforceable
   property in `plans/round-96.plan.md` §Amendments, not by filing the wider sentence.
+
+---
+
+## Amendments A1–A8 — pre-data, from the round's own wave (no positive receipt existed)
+
+Every row below cites the wave artifact that falsified the pre-amendment sentence. No frozen
+target moved; the instrument was repaired to the property the sentence claims, and the
+sentences that described the instrument wrongly were narrowed to what it prints. Scored
+receipts: none existed before these amendments (no `pre-freeze/controls/*.out` was committed,
+so no claim had been scored).
+
+| id | artifact | falsified sentence | amendment |
+|---|---|---|---|
+| A1 | `w1/R96R1.md` FALSIFIES-WORDING #1, `w1/R96C1.md` C1.1 | C1's positive ("prints rows=19 … findings=0 at the instrument revision") | the checker's default `COUNTER` named `…/c1/measure-v95.py` (absent in round 96, so every run died `counter-absent-at-rev`). Repaired to `measure-v96.py`; the positive is only claimed at a revision that actually carries the 50 receipts (the records rev), never at the freeze rev. |
+| A2 | `w1/R96R1.md` FALSIFIES-WORDING #2, `w1/R96C1.md` C1.3 | "refuses … `rev-unresolvable` when the id does not resolve" | `git rev-parse <40-hex>` echoes an unresolvable id with rc 0, so `rev-unresolvable` was dead code. Repaired to `rev-parse --verify --quiet --end-of-options <rev>^{commit}`. |
+| A3 | `w1/R96C1.md` C1.5 | "prints the resolved id in the `DISPOSITION_INSTRUMENT` line" | the line printed only `sha256=`; the instrument now prints `rev=<resolved id> sha256=<counter digest> conjuncts=19`. |
+| A4 | `w1/R96SN1.md` F10 | C1's evidence binding (a tampered manifest turned every row `unfalsifiable`) | the checker reads `.ufo/waves/round-96/claims.json` at `--rev` and refuses `DISPOSITION_SETUP manifest-sha-mismatch` when the manifest blob's sha256 differs from `C1.manifest_sha256`. |
+| A5 | `w1/R96C1.md` C1.8 | "`DISPOSITION_SELFTEST: 13/13 pass` (2 new cases)" with kill rule (c) | the two new cases passed on a clean fixture without exercising anything. Repaired: `hostile-path-cheat` runs the real main path under a poisoned `PATH` and requires a verdict identical to the honest run; `branch-revspec-cheat` runs the real main path with `--rev master` and requires exit 2 `rev-not-a-commit-id`. Both now fail if the seal or the guard is removed. |
+| A6 | `w1/R96E4.md` mismatches, `w1/R96SN1.md` F5 | C2's "driver grades … `C1_CONTROLS states=50 matched=50`" | the driver passed the literal `--rev HEAD` to the counter (D01–D05, `replace-honest`), which the round-96 rev guard refuses, so the battery was `44/50`. Repaired: the driver resolves each clone's `HEAD` to a 40-hex id before every counter run. |
+| A7 | `w1/R96SN1.md` F9 | C2's "graded content must live inside `--outdir`" | the write side accepted a symlinked `--outdir`. Repaired: the driver refuses a symlinked `--outdir` or `--work` (`outdir-symlink-refused` / `work-symlink-refused`). |
+| A8 | `w1/R96SN1.md` F3 | C2's "the positively-written bytes equal the derived values" (a hostile `git` could forge them) | `make-pins96.py`, the driver and the counter resolved `git` by name under a pinned `PATH`; `/usr/local/bin/git` in that set is writable in principle. Repaired: all three resolve `/usr/bin/git` by absolute path. |
+
+Frozen wording changes (all narrowing, each to an observable line):
+
+- C1 positive: "at the records revision (the instrument, manifest and 50 receipts committed
+  together)" — not "at the instrument revision".
+- C1 `--rev ''`: exit 2 `DISPOSITION_SETUP rev-not-a-commit-id` (previously exit 64 usage;
+  the empty string is now the guard's, not argparse's).
+- C1 `rev-unresolvable`: reachable, as A2 repaired it.
+- C2 driver predicate: `C1_CONTROLS states=50 matched=50 mismatches=0 missing=0` at the
+  records revision (post-A6).
+- C2 write refusal tokens: `lane-empty`, `lane-not-absolute`, `rev-not-a-commit-id`,
+  `pins-symlink-refused`, `tmp-symlink-refused` (the last is named in the wording now).

@@ -1,0 +1,59 @@
+R96E3 positive: make-pins96.py --lane <scratch clone at freeze> --rev <40-hex> -> PINS_WRITTEN, exit 0; --check -> PINS_CHECK OK, exit 0
+tool: .ufo/evidence/round-96/c1/make-pins96.py sha256=876a75feafeab885973e5b66d4c35c97de67f9f019e2203a43754135b45b1702
+freeze rev: be6c22b6d8a94f07eee6b0fa79edab7df228c0b0 (rev-parse be6c22b6^{commit} == be6c22b6, the commit itself)
+lane: /fast/scratch/hyaku/tameshi-r96/R96E3/lane96 (git clone of the lane, checked out at the freeze rev)
+runner: python3 -I, Python 3.14.8, git 2.56.0
+
+--- clone identity (host guard: toplevel asserted to be the fixture) ---
+$ git -C lane96 rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r96/R96E3/lane96
+$ git -C lane96 rev-parse HEAD
+be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+
+--- starting state: destination removed, so PINS_WRITTEN is a real creation ---
+$ ls lane96/.ufo/evidence/round-96/c1/
+census-mutants.json
+controls-v96.py
+make-pins96.py
+measure-v96.py
+
+--- positive write ---
+$ cd lane96 && python3 -I .ufo/evidence/round-96/c1/make-pins96.py --lane /fast/scratch/hyaku/tameshi-r96/R96E3/lane96 --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+PINS_WRITTEN /fast/scratch/hyaku/tameshi-r96/R96E3/lane96/.ufo/evidence/round-96/c1/pins.json
+PINS_DERIVED fixtures=scripts/fixtures/sources-census gate_commit=f47ad6ba8d306f8125597401cb2ce45c1297a593 gate_path=scripts/sources-census.sh gate_sha256=3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30 spec_sha256=ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290
+exit=0
+
+--- written bytes ---
+$ sha256sum .ufo/evidence/round-96/c1/pins.json
+688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4  .ufo/evidence/round-96/c1/pins.json
+$ cat .ufo/evidence/round-96/c1/pins.json
+{
+ "fixtures": "scripts/fixtures/sources-census",
+ "gate_commit": "f47ad6ba8d306f8125597401cb2ce45c1297a593",
+ "gate_path": "scripts/sources-census.sh",
+ "gate_sha256": "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30",
+ "spec_sha256": "ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290"
+}
+
+--- --check ---
+$ python3 -I .ufo/evidence/round-96/c1/make-pins96.py --lane /fast/scratch/hyaku/tameshi-r96/R96E3/lane96 --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0 --check
+PINS_DERIVED fixtures=scripts/fixtures/sources-census gate_commit=f47ad6ba8d306f8125597401cb2ce45c1297a593 gate_path=scripts/sources-census.sh gate_sha256=3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30 spec_sha256=ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290
+PINS_CHECK OK
+exit=0
+
+--- write is EXACT: independent derivation (own implementation, not the tool), compared three ways ---
+$ python3 -I verify_positive.py lane96 be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+independent spec_sha256 = ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290 (blob ce8983d577b1...)
+independent gate_sha256 = 3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30 (blob 3fb7261569f4...)
+independent gate_commit = f47ad6ba8d306f8125597401cb2ce45c1297a593 gate_path = scripts/sources-census.sh fixtures = scripts/fixtures/sources-census
+written file sha256 = 688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4
+canonical sha256   = 688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4
+dict equality      = True
+byte equality      = True
+committed-at-rev sha= 688fe42aab453748c0567b114b6e23f8aeb0af04711509fe50255e2fcc4af9a4 equal-to-written = True
+POSITIVE_EXACT
+exit=0
+
+Three equalities hold: (1) the written JSON parses to exactly the five independently derived values; (2) the written bytes equal the canonical serialization of those five values (json.dumps(indent=1, sort_keys=True) + "\n"); (3) the written bytes equal the committed blob at the freeze rev, so the tool reproduces the instrument constant and does not merely agree with a working-tree copy.
+
+Note (read side): --check grades the blob at --rev, not the working tree. With a sentinel in the worktree and the correct committed blob at the rev, --check still printed PINS_CHECK OK (observed on the cwd96 fixture). That is the intended binding: the pins being checked are the committed ones.

@@ -1,0 +1,280 @@
+# R96E1 receipt — item 3: a hostile `git` earlier in PATH cannot forge a PASS
+#
+# Instrument under test: .ufo/evidence/round-96/c1/measure-v96.py (sha256 e0da9935...).
+# Method: a fake `git` (source embedded at the end) placed FIRST in the ambient PATH.
+# It logs every invocation to $SHIM_LOG, answers `cat-file blob <rev>:<path>` and
+# `ls-tree -r --name-only <rev>:<dir>` from a forged directory ($SHIM_FORGE_DIR),
+# and delegates every other call to /usr/bin/git. The counter never inherits this
+# PATH: its git() passes sealed_env() with PATH=/usr/local/bin:/usr/bin:/bin, so
+# the shim is unreachable from the counter by construction. The receipts below test
+# that claim dynamically: in every counter run the shim log is ABSENT (zero calls),
+# and the verdict is byte-identical with and without the hostile PATH.
+#
+# Fixtures (all under /fast/scratch/hyaku/tameshi-r96/R96E1, deleted after the wave;
+# commands are exactly the ones used):
+#
+#   $ git clone -q --shared <lane> clone-honest
+#   $ git clone -q --shared <lane> clone-forged
+#   $ git -C clone-forged checkout -q be6c22b6...
+#   # forged note: every verdict cell in the ONE verdict table (rows whose first cell
+#   # is exactly C01..C12, one KILLED/SURVIVED cell each) is swapped KILLED<->SURVIVED;
+#   # nothing else changes (diffstat: 12 insertions, 12 deletions; measured: 5/12 killed kept)
+#   $ cp note-forged.md clone-forged/corpus/knowledge/mutation-case-fleet-sources-census.md
+#   $ git -C clone-forged -c user.name=R96E1 -c user.email=r96e1@local \
+#         commit -q -am "R96E1 fixture: committed note with every verdict inverted"
+#   -> FORGED_REV 92bbf2b665c6b7187e3bd6706498b2e62a34a504
+#
+#   note-honest.md sha256 69fc1527bdcbc9dc6b3e83fe8b2c8f22ebaa6a8061f2274337c6f470036a3e62
+#   note-forged.md sha256 993be0c09107f9019611851d5e01d729b28f3598aec81ec85c56e0d71a7e2606
+#   shim sha256            fc38dc2c8616f285c51defe49bc4815327a2f29a72bf6279f643bebe6a366e7b
+#
+#   forge-note-honest/corpus/knowledge/mutation-case-fleet-sources-census.md = note-honest.md
+#   forge-note-forged/corpus/knowledge/mutation-case-fleet-sources-census.md = note-forged.md
+#
+# Control first: the shim IS reachable and DOES forge for a caller that resolves
+# `git` through PATH; the same query through /usr/bin/git returns the committed bytes.
+
+######## Control: shim reachability and forging ########
+=== control: the SAME shim is reachable and does forge when the caller resolves git through PATH ===
+$ sha256sum note-honest.md note-forged.md
+69fc1527bdcbc9dc6b3e83fe8b2c8f22ebaa6a8061f2274337c6f470036a3e62  note-honest.md
+993be0c09107f9019611851d5e01d729b28f3598aec81ec85c56e0d71a7e2606  note-forged.md
+
+--- /usr/bin/git on the forged lane returns the COMMITTED (inverted) note ---
+$ /usr/bin/git -C clone-forged cat-file blob 92bbf2b6...:corpus/knowledge/mutation-case-fleet-sources-census.md | sha256sum
+993be0c09107f9019611851d5e01d729b28f3598aec81ec85c56e0d71a7e2606  -
+
+--- the hostile git earlier in PATH returns the HONEST note for the same query ---
+$ PATH=fakebin:$PATH SHIM_MODE=path SHIM_FORGE_DIR=forge-note-honest SHIM_LOG=shim-control.log git -C clone-forged cat-file blob 92bbf2b6...:corpus/knowledge/mutation-case-fleet-sources-census.md | sha256sum
+69fc1527bdcbc9dc6b3e83fe8b2c8f22ebaa6a8061f2274337c6f470036a3e62  -
+EXIT=0
+--- shim log (one call) ---
+SHIM_CALL cwd=/fast/scratch/hyaku/tameshi-r96/R96E1 argv=-C clone-forged cat-file blob 92bbf2b665c6b7187e3bd6706498b2e62a34a504:corpus/knowledge/mutation-case-fleet-sources-census.md
+
+--- delegate mode: the shim logs and then execs the real git ---
+$ PATH=fakebin:$PATH SHIM_MODE=delegate SHIM_LOG=shim-delegate.log git -C clone-honest rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r96/R96E1/clone-honest
+EXIT=0
+SHIM_CALL cwd=/fast/scratch/hyaku/tameshi-r96/R96E1 argv=-C clone-honest rev-parse --show-toplevel
+
+######## H1: HONEST lane at the freeze rev + hostile PATH; the shim serves the INVERTED note ########
+# (work dir verified empty before the run)
+$ PATH=/fast/scratch/hyaku/tameshi-r96/R96E1/fakebin:$PATH \
+  SHIM_LOG=/fast/scratch/hyaku/tameshi-r96/R96E1/shim-honest-hostile.log \
+  SHIM_MODE=path SHIM_FORGE_DIR=/fast/scratch/hyaku/tameshi-r96/R96E1/forge-note-forged \
+  python3 -I ./measure-v96-frozen.py \
+    --repo /fast/scratch/hyaku/tameshi-r96/R96E1/clone-honest \
+    --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0 \
+    --work /fast/scratch/hyaku/tameshi-r96/R96E1/work-honest-hostile
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=be6c22b6d8a94f07eee6b0fa79edab7df228c0b0 n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=true ids=true mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R96_PASS=true
+EXIT=0
+
+######## H2a: FORGED lane (committed inverted note) + honest PATH — control ########
+$ python3 -I ./measure-v96-frozen.py \
+    --repo /fast/scratch/hyaku/tameshi-r96/R96E1/clone-forged \
+    --rev 92bbf2b665c6b7187e3bd6706498b2e62a34a504 \
+    --work /fast/scratch/hyaku/tameshi-r96/R96E1/work-forged-honest
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=92bbf2b665c6b7187e3bd6706498b2e62a34a504 n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=12 badrows=0 verdict_tables=1
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=true ids=true mismatched0=false figure=true witnessed=true source=true coverage=true n_min=true
+C1_R96_PASS=false
+EXIT=1
+
+######## H2b: FORGED lane + hostile PATH; the shim serves the HONEST note ########
+$ PATH=/fast/scratch/hyaku/tameshi-r96/R96E1/fakebin:$PATH \
+  SHIM_LOG=/fast/scratch/hyaku/tameshi-r96/R96E1/shim-forged-hostile.log \
+  SHIM_MODE=path SHIM_FORGE_DIR=/fast/scratch/hyaku/tameshi-r96/R96E1/forge-note-honest \
+  python3 -I ./measure-v96-frozen.py \
+    --repo /fast/scratch/hyaku/tameshi-r96/R96E1/clone-forged \
+    --rev 92bbf2b665c6b7187e3bd6706498b2e62a34a504 \
+    --work /fast/scratch/hyaku/tameshi-r96/R96E1/work-forged-hostile
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=KILLED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=92bbf2b665c6b7187e3bd6706498b2e62a34a504 n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=12 badrows=0 verdict_tables=1
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=true ids=true mismatched0=false figure=true witnessed=true source=true coverage=true n_min=true
+C1_R96_PASS=false
+EXIT=1
+
+######## H2 diff and shim-log absence ########
+$ diff <(grep -v "^EXIT=" forged-honest-raw.out) <(grep -v "^EXIT=" forged-hostile-raw.out)
+diff EXIT=0
+
+$ ls -l shim-honest-hostile.log shim-forged-hostile.log shim-nospec.log shim-nospec94.log shim-v94counter-a.log shim-v94counter-b.log
+ls: cannot access 'shim-honest-hostile.log': No such file or directory
+ls: cannot access 'shim-forged-hostile.log': No such file or directory
+ls: cannot access 'shim-nospec.log': No such file or directory
+ls: cannot access 'shim-nospec94.log': No such file or directory
+ls: cannot access 'shim-v94counter-a.log': No such file or directory
+ls: cannot access 'shim-v94counter-b.log': No such file or directory
+# => the hostile PATH neither flips nor perturbs the verdict: the forged lane is
+#    PASS=false for the note it actually committed (mismatched=12), with or without
+#    the shim. A shim that answers the same cat-file query with the honest note
+#    (control above) is never consulted by the counter.
+
+
+######## H3: non-consultation, decisive and fast (see R96E1-rev-refusals.out §Part C for the rev side) ########
+######## H: v96 counter, lane whose round-96 spec is DELETED, honest PATH ########
+$ python3 -I measure-v96-frozen.py --repo clone-nospec --rev 9dd24c11... --work work-nospec-h
+C1_SETUP spec-absent-at-rev
+C1_R96_PASS=false
+EXIT=2
+
+######## I: same lane/rev, HOSTILE PATH; the forged directory CONTAINS the deleted spec ########
+$ PATH=fakebin:$PATH SHIM_MODE=all SHIM_FORGE_DIR=forge-all SHIM_LOG=shim-nospec.log python3 -I measure-v96-frozen.py --repo clone-nospec --rev 9dd24c11... --work work-nospec-x
+C1_SETUP spec-absent-at-rev
+C1_R96_PASS=false
+EXIT=2
+shim log exists: NO
+$ ls -l forge-all/.ufo/evidence/round-96/c1/census-mutants.json
+-rw-r--r-- 1 vgpnk vgpnk 7151 Nov  8 09:33 forge-all/.ufo/evidence/round-96/c1/census-mutants.json
+$ sha256sum forge-all/.ufo/evidence/round-96/c1/census-mutants.json
+ce8983d577b1fa71afd1760b80304cba87c56ca339384df06eb2705a5bfde290  forge-all/.ufo/evidence/round-96/c1/census-mutants.json
+
+######## J: round-94 counter (blob at 6a2a1fdd) on a lane whose round-94 spec is DELETED ########
+$ python3 -I measure-v94-r95.py --repo clone-nospec94 --rev 6850cd5a... --work work-nospec94-h
+C1_SETUP spec-absent-at-rev
+C1_R94_PASS=false
+EXIT=2
+$ PATH=fakebin:$PATH SHIM_MODE=all SHIM_FORGE_DIR=forge-all SHIM_LOG=shim-nospec94.log python3 -I measure-v94-r95.py --repo clone-nospec94 --rev 6850cd5a... --work work-nospec94-x
+C1_SETUP spec-absent-at-rev
+C1_R94_PASS=false
+EXIT=2
+shim log exists: NO
+
+######## Shim invocation logs: the counter never ran the shim ########
+H1 (honest lane, hostile PATH):      shim-honest-hostile.log  ABSENT (0 lines)
+H2b (forged lane, hostile PATH):     shim-forged-hostile.log  ABSENT (0 lines)
+H3 (spec-deleted lane, hostile):     shim-nospec.log          ABSENT (0 lines)
+V94 counter probes (Part D):         shim-v94counter-a.log / -b.log  ABSENT (0 lines)
+Control (PATH-resolving caller):     shim-control.log         1 line (the shim runs)
+Delegate control:                    shim-delegate.log        1 line (then execs /usr/bin/git)
+
+######## Shim source (verbatim; sha256 fc38dc2c8616f285c51defe49bc4815327a2f29a72bf6279f643bebe6a366e7b) ########
+#!/usr/bin/python3
+"""Hostile `git` shim (R96E1). Logs every invocation, then either answers a
+`cat-file blob <rev>:<path>` / `ls-tree -r --name-only <rev>:<dir>` from the
+forged directory ($SHIM_FORGE_DIR) or delegates to the real git.
+
+SHIM_MODE:
+  delegate  - log and exec the real git (used to prove the shim is reachable)
+  path      - forge only paths that exist under SHIM_FORGE_DIR; delegate the rest
+  all       - every cat-file blob and ls-tree is answered from the forged
+              directory; a missing entry is reported as absent (exit 1)
+"""
+import os
+import sys
+
+REAL = os.environ.get("SHIM_REAL_GIT", "/usr/bin/git")
+LOG = os.environ.get("SHIM_LOG")
+FORGE = os.environ.get("SHIM_FORGE_DIR")
+MODE = os.environ.get("SHIM_MODE", "delegate")
+
+argv = sys.argv[1:]
+if LOG:
+    with open(LOG, "a", encoding="utf-8") as f:
+        f.write("SHIM_CALL cwd=%s argv=%s\n" % (os.getcwd(), " ".join(argv)))
+
+
+def delegate():
+    os.execv(REAL, ["git"] + argv)
+
+
+if not FORGE or MODE == "delegate":
+    delegate()
+
+# strip the global options the instruments pass before the subcommand
+rest, i = [], 0
+while i < len(argv):
+    a = argv[i]
+    if a in ("-C", "-c") and i + 1 < len(argv):
+        i += 2
+        continue
+    if a.startswith("--git-dir=") or a.startswith("--work-tree=") or a.startswith("--namespace="):
+        i += 1
+        continue
+    rest.append(a)
+    i += 1
+
+if not rest:
+    delegate()
+
+cmd = rest[0]
+
+if cmd == "cat-file" and len(rest) >= 3 and rest[1] == "blob":
+    spec = rest[2]
+    if ":" in spec:
+        path = spec.split(":", 1)[1]
+        forced = os.path.join(FORGE, path)
+        if os.path.isfile(forced):
+            with open(forced, "rb") as f:
+                sys.stdout.buffer.write(f.read())
+            sys.exit(0)
+        if MODE == "all":
+            sys.exit(1)
+    delegate()
+
+if cmd == "ls-tree" and rest:
+    spec = rest[-1]
+    if ":" in spec:
+        path = spec.split(":", 1)[1]
+        listing = os.path.join(FORGE, "_listings", path.replace("/", "_") + ".ls")
+        if os.path.isfile(listing):
+            with open(listing, encoding="utf-8") as f:
+                sys.stdout.write(f.read())
+            sys.exit(0)
+        if MODE == "all":
+            sys.exit(1)
+    delegate()
+
+delegate()
+
+
+######## Fixture toplevel assertions (host guard): each mutation ran only after this check ########
+$ git -C clone-honest rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r96/R96E1/clone-honest
+$ git -C clone-forged rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r96/R96E1/clone-forged
+$ git -C clone-staged rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r96/R96E1/clone-staged
+$ git -C clone-nospec rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r96/R96E1/clone-nospec
+$ git -C clone-nospec94 rev-parse --show-toplevel
+/fast/scratch/hyaku/tameshi-r96/R96E1/clone-nospec94

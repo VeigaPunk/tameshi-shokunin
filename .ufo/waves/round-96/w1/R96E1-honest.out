@@ -1,0 +1,80 @@
+# R96E1 receipt — item 1: honest positive at the freeze rev
+#
+# lane (read-only): /home/vgpnk/Projects/shokunin/tameshi-shokunin
+# instrument: .ufo/evidence/round-96/c1/measure-v96.py extracted with
+#   git cat-file blob be6c22b6...:.ufo/evidence/round-96/c1/measure-v96.py
+#   sha256(file) = e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1
+#   self-pin line: SELF_SHA256 = "c0ac997290dd7fcad605b3f19fba127f24b85df2459b9e9ccc4060d404ff3f56"
+#   (the file as stored is the committed blob; the pin hashes the bytes minus that line)
+# interpreter: Python 3.14.8 (/usr/bin/python3); git 2.56.0 (/usr/bin/git)
+# work: /fast/scratch/hyaku/tameshi-r96/R96E1/work-honest (verified empty before the run;
+#   the counter creates its own subdirectories)
+# environment: the counter runs every git call under its own sealed env
+#   (PATH=/usr/local/bin:/usr/bin:/bin, GIT_NO_REPLACE_OBJECTS=1, GIT_CONFIG_NOSYSTEM=1,
+#   GIT_CONFIG_GLOBAL=/dev/null) and every gate run under env_for(work)
+#   (same fixed PATH, HOME/TMPDIR inside work).
+#
+# $ python3 -I measure-v96-frozen.py --repo /home/vgpnk/Projects/shokunin/tameshi-shokunin \
+#       --rev be6c22b6d8a94f07eee6b0fa79edab7df228c0b0 \
+#       --work /fast/scratch/hyaku/tameshi-r96/R96E1/work-honest
+
+# wall time: 174.93 s
+
+C1_ROW C01 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C02 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C03 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C04 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C05 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C06 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C07 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C08 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C09 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C10 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_ROW C11 derived=KILLED runs=KILLED,KILLED note=KILLED invalid=- trivial=0 witness=differs
+C1_ROW C12 derived=SURVIVED runs=SURVIVED,SURVIVED note=SURVIVED invalid=- trivial=0 witness=differs
+C1_SUMMARY rev=be6c22b6d8a94f07eee6b0fa79edab7df228c0b0 n=12 killed=5 survived=7 inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present mismatched=0 badrows=0 verdict_tables=1
+C1_SOURCE S320=row:1,quote:1 S321=row:1,quote:1 S322=row:1,quote:1 S323=row:1,quote:1
+C1_CONJUNCTS selfpin=true pins=true spec=true pin=true green=true canary=true valid0=true trivial0=true inconclusive0=true unstable0=true note=true verdict_tables=true ids=true mismatched0=true figure=true witnessed=true source=true coverage=true n_min=true
+C1_R96_PASS=true
+EXIT=0
+
+# Instrument identity and line anchors in the committed bytes:
+=== instrument identity / self-pin (before any grading) ===
+$ sha256sum measure-v96-frozen.py
+e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1  measure-v96-frozen.py
+$ git -C <lane> rev-parse be6c22b6d8a94f07eee6b0fa79edab7df228c0b0:.ufo/evidence/round-96/c1/measure-v96.py
+df8125083fe514d6ad2fe81345d7ac5d9906b2eb
+$ git -C <lane> cat-file blob df8125083fe514d6ad2fe81345d7ac5d9906b2eb | sha256sum
+e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1  -
+$ git -C <lane> hash-object -t blob --stdin < measure-v96-frozen.py
+df8125083fe514d6ad2fe81345d7ac5d9906b2eb
+$ git -C <lane> rev-parse be6c22b6^{commit}
+be6c22b6d8a94f07eee6b0fa79edab7df228c0b0
+$ python3 -I measure-v96-frozen.py --conjuncts
+C1_CONJUNCT_KEYS selfpin pins spec pin green canary valid0 trivial0 inconclusive0 unstable0 note verdict_tables ids mismatched0 figure witnessed source coverage n_min
+C1_R96_PASS=keys-only
+EXIT=0
+
+=== line anchors in the committed bytes ===
+69:SELF_SHA256 = "c0ac997290dd7fcad605b3f19fba127f24b85df2459b9e9ccc4060d404ff3f56"
+70:GATE_COMMIT = "f47ad6ba8d306f8125597401cb2ce45c1297a593"
+71:GATE_SHA256 = "3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30"
+97:def self_pin_state():
+123:def sealed_env():
+129:def git(repo, *a, check=True):
+419:        die("rev-not-a-commit-id")
+422:        die("rev-unresolvable")
+425:        die("rev-unresolvable")
+538:    note = blob(repo, rev, NOTE_PATH)
+612:    print("C1_R96_PASS=" + ("true" if ok else "false"))
+
+# Cross-check on a scratch clone at the same freeze rev (shared clone, work dir
+# work-honest-hostile, ambient PATH hosting the hostile shim that serves the
+# INVERTED note): the same 19 conjuncts print true and the same line prints
+# (see R96E1-hostile-path.out, run H1):
+#   C1_SUMMARY rev=be6c22b6d8a94f07eee6b0fa79edab7df228c0b0 n=12 killed=5 survived=7 \
+#     inconclusive=0 unstable=0 invalid=0 trivial=0 witnessed=7/7 note=present \
+#     mismatched=0 badrows=0 verdict_tables=1
+#   C1_CONJUNCTS ... all 19 true ...
+#   C1_R96_PASS=true
+#   EXIT=0

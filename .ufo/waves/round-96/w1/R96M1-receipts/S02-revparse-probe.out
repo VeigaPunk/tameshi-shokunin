@@ -1,0 +1,14 @@
+probe=S02 reachability: git rev-parse on a nonexistent 40-hex id
+repo=states/rev-unresolvable/repo (clone of the freeze)
+id=deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+
+$ git -C <repo> rev-parse <id>; echo rc=$?
+deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+rc=0
+
+$ git -C <repo> rev-parse --verify <id>; echo rc=$?
+deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+rc=0
+
+$ git -C <repo> cat-file blob <id>:<spec>; echo rc=$?
+rc=128

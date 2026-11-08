@@ -1,0 +1,22 @@
+=== §2.14 — a SECOND SELF_SHA256 pin line is refused ===
+C1_SETUP self-pin-line-count
+C1_R96_PASS=false
+EXIT=2
+--- the line-count check runs BEFORE any digest comparison ---
+97:def self_pin_state():
+98-    """QUALITY 150 + round-96 A3: exactly one pin line, before any other action.
+99-
+100-    The check runs on the file's own bytes. A second pin line is refused
+101-    (`self-pin-line-count`) before any digest is compared, so the normalisation
+102-    must remove exactly the one pinned line.
+103-    """
+104-    try:
+105-        with open(os.path.abspath(__file__), "rb") as f:
+106-            b = f.read()
+107-    except OSError:
+108-        return "self-pin-mismatch"
+109-    if len(re.findall(SELF_PIN_RE, b, flags=re.M)) != 1:
+110-        return "self-pin-line-count"
+111-    norm = re.sub(SELF_PIN_RE, b"", b, flags=re.M)
+112-    if hashlib.sha256(norm).hexdigest() != SELF_SHA256:
+113-        return "self-pin-mismatch"

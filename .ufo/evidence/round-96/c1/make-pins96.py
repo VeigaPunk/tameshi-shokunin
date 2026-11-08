@@ -19,12 +19,14 @@ Exit: 0 written/agreed; 1 drift or unreadable object; 2 usage.
 """
 import argparse, hashlib, json, os, subprocess, sys
 
+GIT = "/usr/bin/git"
+
 SPEC_PATH = ".ufo/evidence/round-96/c1/census-mutants.json"
 PINS_PATH = ".ufo/evidence/round-96/c1/pins.json"
 
 
 def git(repo, *a):
-    p = subprocess.run(["git", "-C", repo, *a], capture_output=True,
+    p = subprocess.run([GIT, "-C", repo, *a], capture_output=True,
                        env={"PATH": "/usr/local/bin:/usr/bin:/bin", "LC_ALL": "C.UTF-8",
                             "GIT_NO_REPLACE_OBJECTS": "1", "GIT_CONFIG_NOSYSTEM": "1",
                             "GIT_CONFIG_GLOBAL": "/dev/null"})
@@ -62,7 +64,7 @@ def main():
     lane = os.path.realpath(a.lane)
     if not os.path.isabs(a.lane):
         print("PINS_SETUP lane-not-absolute"); return 2
-    _top = __import__('subprocess').run(["git","-C",lane,"rev-parse","--show-toplevel"],capture_output=True,env={"PATH":"/usr/local/bin:/usr/bin:/bin","LC_ALL":"C.UTF-8","GIT_NO_REPLACE_OBJECTS":"1","GIT_CONFIG_NOSYSTEM":"1","GIT_CONFIG_GLOBAL":"/dev/null"})
+    _top = __import__('subprocess').run([GIT,"-C",lane,"rev-parse","--show-toplevel"],capture_output=True,env={"PATH":"/usr/local/bin:/usr/bin:/bin","LC_ALL":"C.UTF-8","GIT_NO_REPLACE_OBJECTS":"1","GIT_CONFIG_NOSYSTEM":"1","GIT_CONFIG_GLOBAL":"/dev/null"})
     if _top.returncode != 0 or os.path.realpath(_top.stdout.decode().strip()) != lane:
         print("PINS_SETUP lane-toplevel-mismatch"); return 2
     derived = derive(lane, a.rev)

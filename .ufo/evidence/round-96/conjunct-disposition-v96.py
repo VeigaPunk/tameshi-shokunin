@@ -50,9 +50,10 @@ import subprocess
 import sys
 import tempfile
 
-COUNTER = ".ufo/evidence/round-96/c1/measure-v95.py"
+COUNTER = ".ufo/evidence/round-96/c1/measure-v96.py"
 MANIFEST = ".ufo/evidence/round-96/conjunct-disposition.json"
 RECEIPTS = ".ufo/evidence/round-96/pre-freeze/controls"
+ROUND = 96
 MIN_REASON = 40
 MECHANISM = ("pin", "sealed", "seal", "gate bytes", "GIT_", "pinned", "replace")
 # The reason is sound only when it names a concrete battery state or a pin
@@ -331,9 +332,6 @@ def selftest():
         # run under a poisoned PATH still produces an honest verdict (it must not
         # print the forged rows). We exercise it by re-running `check` against
         # the poisoned store copy: the poisoned store has no committed receipts.
-        cases.append(("hostile-path-cheat", clean, 0, None))
-        cases.append(("branch-revspec-cheat", clean, 0, None))
-
         passed = 0
         for name, rows, want, want_id in cases:
             got = check(keys, rows, store, counter_sha, present)
@@ -346,8 +344,35 @@ def selftest():
                 name, "PASS" if ok else "FAIL", len(got),
                 "clean" if want == 0 else (want_id or "finding"), ",".join(ids)))
             passed += 1 if ok else 0
-    print("DISPOSITION_SELFTEST: %d/%d pass" % (passed, len(cases)))
-    return 0 if passed == len(cases) else 1
+
+        # A5 (R96C1 C1.8): two cases with teeth, run through the real main path.
+        script_self = os.path.abspath(__file__)
+        env_honest = sealed_env()
+        hostile_dir = os.path.join(base, "hostile-bin")
+        os.makedirs(hostile_dir, exist_ok=True)
+        hp = os.path.join(hostile_dir, "git")
+        with open(hp, "w", encoding="utf-8") as f:
+            f.write("#!/bin/sh\nexit 99\n")
+        os.chmod(hp, 0o755)
+        env_hostile = dict(env_honest)
+        env_hostile["PATH"] = hostile_dir + ":" + env_honest["PATH"]
+        args = [sys.executable, "-I", script_self, "--lane", repo, "--rev", rev]
+        rh = subprocess.run(args, capture_output=True, text=True, env=env_hostile)
+        rb = subprocess.run([sys.executable, "-I", script_self, "--lane", repo,
+                             "--rev", "master"], capture_output=True, text=True,
+                            env=env_honest)
+        ok_h = rh.returncode != 99 and rh.stdout == subprocess.run(
+            args, capture_output=True, text=True, env=env_honest).stdout
+        print("SELFTEST hostile-path-cheat %s exit=%d (identical to honest PATH)" % (
+            "PASS" if ok_h else "FAIL", rh.returncode))
+        passed += 1 if ok_h else 0
+        ok_b = rb.returncode == 2 and "DISPOSITION_SETUP rev-not-a-commit-id" in rb.stdout
+        print("SELFTEST branch-revspec-cheat %s exit=%d (rev-not-a-commit-id)" % (
+            "PASS" if ok_b else "FAIL", rb.returncode))
+        passed += 1 if ok_b else 0
+        total = len(cases) + 2
+    print("DISPOSITION_SELFTEST: %d/%d pass" % (passed, total))
+    return 0 if passed == total else 1
 
 
 def main():
@@ -362,12 +387,14 @@ def main():
     a = ap.parse_args()
     if a.selftest:
         sys.exit(selftest())
-    if not a.lane or not a.rev:
+    if not a.lane:
         print(__doc__)
         sys.exit(64)
-    if not re.fullmatch(r"[0-9a-f]{40}", a.rev):
+    if not a.rev or not re.fullmatch(r"[0-9a-f]{40}", a.rev):
         sys.exit(die("rev-not-a-commit-id"))
-    _res = git(a.lane, ["rev-parse", a.rev], sealed_env())
+    _env = sealed_env()
+    _res = git(a.lane, ["rev-parse", "--verify", "--quiet",
+                        "--end-of-options", a.rev + "^{commit}"], _env)
     if _res.returncode != 0:
         sys.exit(die("rev-unresolvable"))
     a.rev = _res.stdout.decode().strip()
@@ -399,12 +426,28 @@ def main():
     manifest_blob = store.read_blob(a.manifest)
     if manifest_blob is None:
         sys.exit(die("manifest-absent-at-rev"))
+    # A4 (R96SN1 F10): the manifest is bound to the sha256 the round's claims file
+    # names, so a tampered manifest cannot turn every row unfalsifiable.
+    _claims = None
+    for _cp in (".ufo/waves/round-%02d/claims.json" % ROUND,):
+        _b = store.read_blob(_cp)
+        if _b is not None:
+            try:
+                _claims = json.loads(_b)
+            except Exception:
+                _claims = None
+            break
+    if _claims:
+        _want = (_claims.get("claims", {}).get("C1", {}) or {}).get("manifest_sha256")
+        if _want and hashlib.sha256(manifest_blob).hexdigest() != _want:
+            sys.exit(die("manifest-sha-mismatch"))
     try:
         rows = json.loads(manifest_blob)["rows"]
     except Exception:
         sys.exit(die("manifest-unparsable"))
     present_states = store.states()
-    print("DISPOSITION_INSTRUMENT sha256=" + counter_sha + " conjuncts=%d" % len(keys))
+    print("DISPOSITION_INSTRUMENT rev=%s sha256=%s conjuncts=%d"
+          % (a.rev, counter_sha, len(keys)))
     sys.exit(report(check(keys, rows, store, counter_sha, present_states),
                     len(keys), rows, a.min_falsifiable))
 

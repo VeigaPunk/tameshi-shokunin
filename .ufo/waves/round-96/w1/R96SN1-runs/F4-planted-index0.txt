@@ -1,0 +1,32 @@
+=== F4 — the driver grades a PLANTED index-0 receipt over its own receipt ===
+--- plant D01.out (index 0) BEFORE the driver runs ---
+total 4
+-rw-r--r-- 1 vgpnk vgpnk 98 Nov  8 09:39 D01.out
+--- the driver runs ---
+CONTROL_INSTRUMENT sha256=e0da99351018793767c9b5035f8668b3feb6cbb0eba796ca59a71a5ed86113a1
+D01 MATCH exit=0
+C1_CONTROLS states=1 matched=1 mismatches=0 missing=0
+EXIT=0
+--- outdir after: the planted D01.out was GRADED, the driver's own D01.rerun-1.out was ignored ---
+total 12
+-rw-r--r-- 1 vgpnk vgpnk  17 Nov  8 09:39 C1-summary.txt
+-rw-r--r-- 1 vgpnk vgpnk  98 Nov  8 09:39 D01.out
+-rw-r--r-- 1 vgpnk vgpnk 163 Nov  8 09:39 D01.rerun-1.out
+--- the driver's own receipt (ignored by the grader) ---
+mutant=D01 state=renamed-result
+counter_sha=5519931c963c330b03ff6f30112267a5784678bff15fffdd0ab28663a48c9e6b
+exit=2
+C1_SETUP rev-not-a-commit-id
+C1_R96_PASS=false
+--- the planted receipt (graded) ---
+control=D01
+counter_sha=deadbeef
+exit=0
+C1_CONJUNCTS valid0=false trivial0=false
+C1_R96_PASS=true
+--- the grader's search order (lowest index wins) ---
+626:        for cand in [n + ".out"] + ["%s.rerun-%d.out" % (n, i) for i in range(1, 50)]:
+627-            p = os.path.join(a.outdir, cand)
+628-            if os.path.lexists(p):
+629-                found = p
+630-                break

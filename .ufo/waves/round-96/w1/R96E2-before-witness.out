@@ -1,0 +1,25 @@
+before-witness: round-95 driver controls-v95.py at 0685c358 (instrument commit; the 6a2a1fdd label in the frozen plan names the same v95 bytes)
+
+--- rerun-plant (F3): grades the planted rerun ---
+v95 grading loop (no break on first candidate, last lexists wins):
+coverage-absent MISMATCH exit=1  (read coverage-absent.rerun-9.out)
+C1_CONTROLS states=1 matched=0 mismatches=1 missing=0
+exit=1
+
+v96 grading loop (break on first existing candidate, ascending):
+coverage-absent MATCH exit=1
+C1_CONTROLS states=1 matched=1 mismatches=0 missing=0
+exit=0
+
+--- receipt-symlink (F4): follows the symlink ---
+v95 grading loop (plain open()):
+coverage-absent MATCH exit=1  (read coverage-absent.out)
+C1_CONTROLS states=1 matched=1 mismatches=0 missing=0
+exit=0
+
+v96 grading loop (O_RDONLY | O_NOFOLLOW):
+coverage-absent SYMLINK-REFUSED
+C1_CONTROLS states=1 matched=0 mismatches=0 missing=1
+exit=1
+
+Contrast: v95 grades the highest planted .rerun-N.out and follows a symlinked receipt; v96 reads lowest-index-first with O_NOFOLLOW. Both defects reproduce at v95 and are closed at v96.

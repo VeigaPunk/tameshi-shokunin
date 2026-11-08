@@ -1,0 +1,40 @@
+Conjunct-disposition checker, round-96 C2 (sealed object-store audit).
+
+A counter's conjunct list is a claim about what the instrument measures. This
+checker makes that claim auditable: every conjunct key the frozen counter
+prints must have a manifest row that is either
+
+  * a committed battery state whose receipt shows that conjunct FALSE
+    (`{"state": "<name>", "mode": "conjunct-false"}`), or
+  * a committed setup refusal whose receipt shows the named `C1_SETUP` token
+    (`{"state": "<name>", "mode": "setup-refusal", "token": "<token>"}`), or
+  * `{"unfalsifiable": "<reason>"}` with a reason of at least 40 characters
+    that names the mechanism that forbids the falsifier and a declared battery
+    state or a hex digest.
+
+Round-96 changes (plan §C2 / A7), nothing else:
+
+  * receipts are read from the object store at `--rev`
+    (`git cat-file blob <rev>:<receipts>/<state>.out`), never from the
+    filesystem, so a receipt that exists only in the working tree is absent;
+  * every receipt named by a state row must carry `counter_sha=<64 hex>` equal
+    to the sha256 of the counter blob at `--rev`; the first `counter_sha=` line
+    is authoritative;
+  * every git call runs under a scrubbed environment (`GIT_NO_REPLACE_OBJECTS=1`,
+    `GIT_CONFIG_NOSYSTEM=1`, `GIT_CONFIG_GLOBAL=/dev/null`, no inherited
+    `GIT_*`), and `git -C <lane> replace -l` must be empty before any read;
+  * the reason test consults the states present in the object store.
+
+A manifest key the counter does not print is a finding (a stale row is a
+self-assessment that no longer describes the instrument). A missing row, a
+receipt absent at the revision, a receipt whose `counter_sha=` is absent or
+different, a row whose receipt does not move the conjunct, and a contentless
+`unfalsifiable` reason are each findings.
+
+Usage:
+  python3 -I .ufo/evidence/round-96/conjunct-disposition-v96.py --lane LANE       --rev REV [--counter PATH] [--manifest PATH] [--receipts DIR]       [--min-falsifiable N]
+  python3 -I .ufo/evidence/round-96/conjunct-disposition-v96.py --selftest
+
+Exit: 0 no findings; 1 findings (each printed as `DISPOSITION_FINDING <id> <detail>`);
+      2 setup refusal (replace refs present, unreadable counter or manifest); 64 usage.
+

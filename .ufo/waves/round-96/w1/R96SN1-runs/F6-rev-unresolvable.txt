@@ -1,0 +1,23 @@
+=== F6 — DISPOSITION_SETUP rev-unresolvable is unreachable ===
+git version: git version 2.56.0
+--- git rev-parse <unknown 40-hex> ---
+deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+rc=0
+--- git rev-parse --verify <unknown 40-hex> ---
+deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+rc=0
+--- git cat-file -t <unknown 40-hex> ---
+fatal: git cat-file: could not get object info
+rc=128
+--- checker --rev deadbeefdeadbeefdeadbeefdeadbeefdeadbeef ---
+DISPOSITION_SETUP counter-absent-at-rev
+EXIT=2
+--- checker --rev 0000000000000000000000000000000000000000 ---
+DISPOSITION_SETUP counter-absent-at-rev
+EXIT=2
+--- checker --rev ffffffffffffffffffffffffffffffffffffffff ---
+DISPOSITION_SETUP counter-absent-at-rev
+EXIT=2
+--- grep for any print of the resolved rev ---
+407:    print("DISPOSITION_INSTRUMENT sha256=" + counter_sha + " conjuncts=%d" % len(keys))
+2
