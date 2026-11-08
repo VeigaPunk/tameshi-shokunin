@@ -329,6 +329,31 @@ as a Gate rejection candidate (see the lesson).
 
 ## Amendments (post-wave, pre-file)
 
+### A1 — the C2 checker's reason test was weaker than the frozen sentence (pre-data instrument repair)
+
+The frozen C2 sentence requires an `unfalsifiable` reason to name "a battery state ... or a
+pin digest". Rev 1 (`8ec7924e…`) tested a regex over the prose, and the *word* `state`
+satisfied it: a 96-character mechanism-only manifest ("… so no such state exists and none
+can be built") printed `findings=1` — only the `--min-falsifiable` floor rejected it
+(`.ufo/evidence/round-94/pre-freeze/c2-cheat-mechanism-word.out`, rev-1 run retained in
+`c2-cheat-mechanism-word.rev1.out` if kept). Rev 2 required `state <name>` where `<name>`
+is a receipt that exists in the receipt directory, plus a 12+-hex digest alternative; rev 3
+also fixes the default manifest path (rev 1/2 read `tools/conjunct-disposition.json`, the
+round-93 manifest, so the reason test ran on the wrong bytes — found when the real manifest
+reported two findings while the same reasons passed when read from the correct file).
+
+No claim wording, predicate, state expectation or target changes. `claims.json` names rev 1
+as `instrument_sha256`; the operative instrument is **rev 3, sha256
+`6d4d270644b036cdd7106a5ab24be05b5d05ed01919f7f9ce24090977bdf9b7e`**, and rev 1 is
+retained as the defect witness. All C2 receipts in
+`.ufo/evidence/round-94/pre-freeze/c2-*.out` are produced by rev 3 at
+`6a2a1fdd35d15d3958f9860beb2569b443760b46`. Kill rule (d) is read with that substitution:
+the checker blob at the named revision is rev 3's.
+
+This is a pre-data repair: it landed (`67ce02ba`, `6a2a1fdd`) before any seat scored a C2
+verdict, and the sentence it enforces is the sentence frozen above. A seat that audits the
+rev-1 bytes and reports the hole is corroborating this amendment, not falsifying the claim.
+
 Appended here if a wave artifact falsifies this record's own mechanics, in the
 round-93 A1-A6 form: the claim, predicate and state expectations never change;
 only statements about the record are corrected, each citing the artifact that
