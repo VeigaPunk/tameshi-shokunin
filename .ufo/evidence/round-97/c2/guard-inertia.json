@@ -1,0 +1,148 @@
+{
+ "rows": [
+  {
+   "id": "rev-hex",
+   "guard": "the --rev argument must be a 40-hex object id",
+   "edit": {
+    "old": "if not a.rev or not re.fullmatch(r\"[0-9a-f]{40}\", a.rev):",
+    "new": "if not a.rev:"
+   },
+   "state": "clean",
+   "pristine": {
+    "exit": 2,
+    "token": "rev-not-a-commit-id"
+   },
+   "expect": "killed",
+   "rev": "master"
+  },
+  {
+   "id": "rev-unresolvable",
+   "guard": "the 40-hex id must resolve to a commit",
+   "edit": {
+    "old": "[\"rev-parse\", \"--verify\", \"--quiet\",\n                        \"--end-of-options\", a.rev + \"^{commit}\"]",
+    "new": "[\"rev-parse\", a.rev]"
+   },
+   "state": "clean",
+   "pristine": {
+    "exit": 2,
+    "token": "rev-unresolvable"
+   },
+   "expect": "killed",
+   "rev": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+  },
+  {
+   "id": "verify-quiet",
+   "guard": "the --verify/--quiet tokens of the resolve call",
+   "edit": {
+    "old": "\"--verify\", \"--quiet\",\n                        ",
+    "new": ""
+   },
+   "state": "clean",
+   "pristine": {
+    "exit": 2,
+    "token": "rev-unresolvable"
+   },
+   "expect": "limit",
+   "rev": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+   "limit_mechanism": "the remaining ^{commit} suffix keeps git failing (rc 128) and the checker only tests nonzero, so the token and exit are identical"
+  },
+  {
+   "id": "replace-refs",
+   "guard": "a replace ref must be refused before any read",
+   "edit": {
+    "old": "if replaces.stdout.strip():",
+    "new": "if False:"
+   },
+   "state": "replace-refs",
+   "pristine": {
+    "exit": 2,
+    "token": "replace-refs-present"
+   },
+   "expect": "killed"
+  },
+  {
+   "id": "counter-sha",
+   "guard": "a receipt's counter_sha must equal the counter blob digest",
+   "edit": {
+    "old": " or got_sha != counter_sha:",
+    "new": ":"
+   },
+   "state": "counter-sha",
+   "pristine": {
+    "exit": 1,
+    "token": "receipt-counter-sha-mismatch"
+   },
+   "expect": "killed"
+  },
+  {
+   "id": "receipt-absent",
+   "guard": "a receipt absent from the object store is a finding",
+   "edit": {
+    "old": "        if body is None:\n            findings.append((\"receipt-absent-at-rev\", k,\n                             \"receipt absent from the object store at %s (looked for %s)\"\n                             % (store.rev, store.receipt_path(state))))\n            continue",
+    "new": "        if body is None:\n            continue"
+   },
+   "state": "receipt-absent",
+   "pristine": {
+    "exit": 1,
+    "token": "receipt-absent-at-rev"
+   },
+   "expect": "killed"
+  },
+  {
+   "id": "no-flip",
+   "guard": "a conjunct-false row must show the conjunct false",
+   "edit": {
+    "old": "elif conj[k] is not False:",
+    "new": "elif False:"
+   },
+   "state": "no-flip",
+   "pristine": {
+    "exit": 1,
+    "token": "no-flip"
+   },
+   "expect": "killed"
+  },
+  {
+   "id": "unknown-key",
+   "guard": "a manifest key the counter does not print is a finding",
+   "edit": {
+    "old": "if k not in keys:",
+    "new": "if False:"
+   },
+   "state": "unknown-key",
+   "pristine": {
+    "exit": 1,
+    "token": "unknown-key"
+   },
+   "expect": "killed"
+  },
+  {
+   "id": "min-falsifiable",
+   "guard": "the --min-falsifiable floor",
+   "edit": {
+    "old": "if min_falsifiable and fals < min_falsifiable:",
+    "new": "if False:"
+   },
+   "state": "min-falsifiable",
+   "pristine": {
+    "exit": 1,
+    "token": "falsifiable-below-minimum"
+   },
+   "expect": "killed"
+  },
+  {
+   "id": "git-absolute",
+   "guard": "git is resolved by absolute path",
+   "edit": {
+    "old": "GIT = \"/usr/bin/git\"",
+    "new": "GIT = \"git\""
+   },
+   "state": "hostile-path",
+   "pristine": {
+    "exit": 0
+   },
+   "expect": "limit",
+   "limit_mechanism": "sealed_env() pins PATH to /usr/local/bin:/usr/bin:/bin, so the bare name resolves the same /usr/bin/git; the edit is equivalent unless the PATH pin is removed too"
+  }
+ ]
+}
