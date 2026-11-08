@@ -16,6 +16,14 @@ battery state or declared unfalsifiable with its reason.
 | Candidate: relax round 92's `ID_SHAPE` to accept three-digit ids | reject | `.ufo/evidence/round-92/c1/measure-v92.py` `parse_note`; round-92 `T92C1` receipts | Widening the id shape keeps the defect that killed R92-C1: the reader still keys id-shaped rows, so the A13 reformat (an honest impact table with its ids in their own cells) refuses an honest note again, and the hidden `C001`-`C012` table still needs a second defence. The fix is a different keying rule, not a wider pattern. Flip: re-admit only if a reader keyed on id shape can be shown to accept every honest note the lane's corpus can construct. |
 | Candidate: key a `measured:` line inside a fenced block | reject | `.ufo/waves/round-92/w1/T92C1-A7-measured-in-fence.out`; S322 §4.5 | The fence opens a literal block, so a `measured:` line inside it is example text, not the note's figure. Keying it would refuse an honest note that quotes a figure in a code block — the exact class that killed R92-C1. The declared limit names the fenced figure instead. Flip: re-admit only with a source that gives fenced block content block-structure semantics. |
 
+## Registry changes logged this round
+
+| Row | Field | Old | New | Why |
+|---|---|---|---|---|
+| S320 | `used-by` | `corpus/lessons/round-92.md, corpus/knowledge/mutation-case-fleet-sources-census.md` | `corpus/lessons/round-92.md, corpus/lessons/round-93.md, corpus/knowledge/mutation-case-fleet-sources-census.md` | This round re-opened S320 and its `source:` conjunct (QUALITY 157) requires the row's used-by to name the lesson that carries the located quote. No status, tier or recheck change. |
+| S321 | added (new row) | — | tier A, `mined`, `used-by` = `corpus/lessons/round-93.md, corpus/knowledge/mutation-case-fleet-sources-census.md` | Opened this round; grounds the table-shape rule the reader keys on. |
+| S322 | added (new row) | — | tier A, `mined`, `used-by` = `corpus/lessons/round-93.md, corpus/knowledge/mutation-case-fleet-sources-census.md` | Opened this round; grounds the fence rule and the fenced-figure limit. |
+
 ## Claim and kill
 
 See `plans/round-93.plan.md` for the frozen predicate, the enumerated hostile-state set
