@@ -811,3 +811,9 @@ in the same round.
 The recorder-alias site audit (`tools/control-assertion-audit-v2.py`) widens the round-98
 audit's site set to aliases and partials; it is coverage of an edge class on the lane's own
 audit, not a new frontier ground: F1–F11 are unchanged.
+
+## Round 100 — registry rows for the round-98/99 audits (operability) and Gate line-pointer recheck (calibration)
+
+| entry | what it holds | sources |
+|---|---|---|
+| `knowledge/gate-line-pointer-recheck.md` | a Gate `line N` pointer is a claim separate from its quote: the binding grammar, the four verdicts, the round-95..99 measurement (the six D1 pointers named, quote presence blind to them), and the narrowed limits (`absent` is `locate()`'s verdict, a table is one block, the renderer runs its defaults) | S327 (opened 2026-11-08); S328 rejected; `tools/gate-line-recheck.py`; `.ufo/evidence/round-100/records/` |

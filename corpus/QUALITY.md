@@ -2854,3 +2854,18 @@ on the landed bytes (`c2-landed-battery.txt`).
     site and summary lines agree on both committed drivers
     (`records-aux/c2-site-diff-controls{98,97}.out`, empty diff). (`lessons/round-99.md` M3;
     `w1/R99R2.md`.)
+
+180. A Gate `line N` / `lines N-M` pointer is **written from a receipt that printed the rendered
+    line**, and the round re-runs `tools/gate-line-recheck.py` over its own lesson before
+    filing: quote presence is not pointer correctness. A pointer the recheck grades `miss` is
+    corrected append-only (criterion 169's erratum, never an edit of a landed Gate line); an
+    `unbound` pointer is a stated limit, never a pass. Able to fail: at the round-100 records
+    revision, `--record corpus/lessons/round-95.md` prints `pointers=6 hit=0 miss=6 absent=0
+    unbound=0` exit 1 (`.ufo/evidence/round-100/records/c2-red-r95-only.out`) while the
+    round-97 and round-99 lessons alone each print `hit=2 miss=0` exit 0
+    (`records/c2-green-r9{7,9}-only.out`); the quote-presence do-nothing control over the same
+    21 pointers flags none of the six (`records/c2-control-quote-presence.out`,
+    `flagged_d1=0`). `absent` is `locate()`'s verdict (a tag-isolated punctuation token can
+    hide a verbatim quote), a markdown table is one block, and the renderer's four definitions
+    run with their decorators and defaults (round-100 A1/A2). (`lessons/round-100.md`;
+    round-95 spot-check D1; `considerthese/2026-11-08.md` idea 2; S327.)

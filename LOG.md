@@ -5289,3 +5289,27 @@ records revision `808a4377` (`.ufo/waves/round-99/records-rev.txt`); one v1 wave
   non-author seat R99E3; D5 carried limits restated.
 - **Mistakes** M1-M6 in `corpus/lessons/round-99.md` (M1 mined from round 98: the v1
   `loop-site-count` arm's index drift at `3b7ae127`).
+
+## Round 100 (2026-11-08) — registry rows for the round-98/99 audits (C1) and Gate line-pointer recheck (C2)
+
+Base `34d8d7cef87ec78ed84bf5247e2609814cce74c8`; instruments `f8f912df`; freeze `56f247da`;
+records revision `2e792c8f` (`.ufo/waves/round-100/records-rev.txt`); attempt 2 adopted attempt 1's
+freeze and wave; w1 12 seats + residual w1r 4 seats.
+
+- **R100-C1 (operability).** Motivating evidence: the round-99 spot-check routed item 3 — neither
+  round-98/99 audit had a `tools/registry.json` row, so the no-harm monitor could not see one
+  break. Twelve `r100-c1` rows (selftest, red, green per tool) now hold `12/12` at R; an
+  always-green stub of any one tool drops it to `11/12`; the full registry's differing set is
+  unchanged. The wave showed an argv-aware replay stub still holds its rows (R100R1b F4) → A4
+  narrows "governs" to "registers".
+- **R100-C2 (calibration).** Motivating evidence: the round-95 closure D1 found six Gate line
+  pointers off by 2-4 lines while every quote was verbatim, and no lane check could see it;
+  `considerthese/2026-11-08.md` idea 2 proposed the checker. `tools/gate-line-recheck.py` grades
+  every Gate pointer against the rendered snapshot it cites: over rounds 95-99 at R it names
+  exactly the six D1 pointers (`miss=6`), the quote-presence control flags none, a forged pointer
+  flips. The wave narrowed `absent` and table binding (A1), renderer def-time code (A2) and the
+  instrument identity (A3); the revenger traced the round-95 numbers to an un-receipted rewrite
+  (M2). S327 grounds the knowledge entry `corpus/knowledge/gate-line-pointer-recheck.md`; S328 is
+  the round's reject.
+- **Mistakes** M1-M5 in `corpus/lessons/round-100.md` (M2 mined from round 95; M5 the attempt-1
+  death and its residual re-run).

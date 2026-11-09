@@ -278,6 +278,7 @@ written and are superseded here:
 | registry cell audit | compare two revisions of `corpus/SOURCES.md` and flag any immutable-cell change or row removal, parsing 0-3-space rows and reading blobs, refusing a malformed or zero-row registry | `python3 -I tools/registry-cell-immutability.py --repo . --from 0b19af5f… --to 29734beb…` → two `anchor` findings (`changed=2`), exit 1; the green pair → `changed=0 removed=0 added=0`, exit 0; `--selftest` → 10/10 | round 98 |
 | tally-receipt reconciler | find every recorded selftest tally in a set of committed records, pair it with the receipt its line cites (tree path or the record's round dirs), and grade matched / mismatched / unbound / uncited from blobs at one revision, refusing non-UTF-8 blobs and non-isolated runs | `python3 -I tools/tally-reconcile.py --repo . --rev 808a4377… --record <12 round-93..98 lessons/plans>` → `TALLY_RECONCILE records=12 tallies=28 pairs=9 matched=2 mismatched=1 unbound=6 uncited=19`, exit 1, the round-94 lesson line 66 named; `--selftest` → 25/25 (`.ufo/evidence/round-99/records/c1-*.out`) | round 99 |
 | recorder-alias site audit | count control-driver sites registered through recorder aliases (plain/annotated/walrus/tuple/conditional bindings, chains, partials) and grade them with the round-98 rules, marking ambiguous and partial recorders unresolved | `python3 -I tools/control-assertion-audit-v2.py --repo . --rev 808a4377… --driver .ufo/evidence/round-99/c2/alias-driver.py` → `CONTROL_ASSERT sites=4 measured=3 literal=1 unmeasured=1`, exit 1 (round-98 audit: `sites=2 …`, exit 0); `--selftest` → 38/38 (`.ufo/evidence/round-99/records/c2-*.out`) | round 99 |
+| Gate line-pointer recheck | read every `line N` / `lines N-M` pointer in a lesson's `## Gate` blocks, bind it to the snapshot it cites (explicit / sha / inherited / convention), render the snapshot with the lane renderer from blobs at one revision and grade hit / miss / absent / unbound by where the quote starts, refusing non-isolated runs | `python3 -I tools/gate-line-recheck.py --repo . --rev 2e792c8f… --record <round-95..99 lessons>` → `GATE_LINE_RECHECK records=5 pointers=21 hit=12 miss=6 absent=0 unbound=3`, exit 1, the six round-95 D1 pointers named; `--selftest` → 24/24 (`.ufo/evidence/round-100/records/c2-*.out`) | round 100 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout. The three round-81 capabilities above now live here rather than only in `## Round 81 — capabilities entered` (the round-81 closure's routed defect 6); each is a live self-state row from round 82 (`tools/selfstate-freshness.json` rows `closure-defect-bind`, `standing-pin-audit`, `selftest-text-pin`).
 
@@ -5932,3 +5933,31 @@ per-line pairing and two-spelling grammar (19 of 28 tallies uncited), the two ci
 grammars and two binding walkers the lane now holds (A8), `add` rebinding invisible to both
 audits, and no `tools/registry.json` row for the round-98/99 audits. No claim is pre-approved
 here.
+
+## Round 100 — two claims: registry rows for the round-98/99 audits (operability) and Gate line-pointer recheck (calibration)
+
+Base `34d8d7cef87ec78ed84bf5247e2609814cce74c8`; instruments `f8f912df`; freeze `56f247da`; wave
+spec `6ab72d6f`; records revision R `2e792c8fd30b504c98d0abaafed720ecdb0723b9`. Attempt 2 (L1
+`TameshiR100a2`) adopted attempt 1's frozen claims and wave files. One v1 wave `w1`, 12 seats
+(finalized `output: null` after the orchestrator kill) plus residual `w1r`, 4 seats re-running the
+evidence-less critic, connector, reviewer and executor; round total 16. Amendments A1-A4 from wave
+artifacts before the records run (`plans/round-100.plan.md` §Amendments); none post-records.
+
+| Claim | Axis | Before | After (predicate) | Verdict | Counting command | Measured commits |
+|---|---|---|---|---|---|---|
+| R100-C1 | operability | at base `34d8d7ce` `--tag r100-c1` selects no row, exit 2 (`.ufo/evidence/round-100/records/c1-before-tag-miss.out`); 0 of the four round-98/99 audits has a `tools/registry.json` row (`c1-rows-base-vs-instr.out`); full registry `held=75/79 superseded=7` | `REGISTRY_CHECK: held=12/12 superseded=0`, exit 0 (`records/c1-at-instruments.out`, measured at R); four always-green stubs each `held=11/12` exit 1 (`records/c1-forgery-stub-*.out`); full registry `held=87/91 superseded=7` with the same four rows differing (`records/c1-full-registry.out`) | **verified under the amended wording (A4: "registers", not "governs")** | `python3 -I tools/registry-check.py --rev <R> --tag r100-c1` | freeze `56f247da`; R `2e792c8f` |
+| R100-C2 | calibration (lowest non-retired, pinned 8) | at base no committed tool prints `GATE_LINE_RECHECK` (`git grep` exit 1, `records/c2-before-token.out`); the lane's quote-presence check flags none of the six round-95 D1 pointers (`records/c2-control-quote-presence.out`, `flagged_d1=0`) | `GATE_LINE_RECHECK records=5 pointers=21 hit=12 miss=6 absent=0 unbound=3`, exit 1, misses exactly round-95.md:17..22 (`records/c2-population.out`); round-95 only `miss=6` exit 1; round-97 only and round-99 only `hit=2` exit 0; selftest 24/24; forgery `miss=1` vs `0`; stated renderer `hit_under_stated=0` | **verified under the amended wording (A1-A3)** | `python3 -I tools/gate-line-recheck.py --repo . --rev <R> --record corpus/lessons/round-95.md … --record corpus/lessons/round-99.md` | freeze `56f247da`; R `2e792c8f` |
+
+Sourced claim: R100-C2 rests on S327 (opened this round; `corpus/knowledge/gate-line-pointer-recheck.md`).
+QUALITY 180 entered. Scores unchanged: depth 10, calibration 8, freshness 9 (delta 0; the
+calibration cap stays until independent SHONEN promotion review). Capability row entered:
+`Gate line-pointer recheck` (`## Capabilities`). No axis harmed: the full registry's differing set
+at R equals base's four.
+
+**Retired:** none. **Saturation:** unchanged.
+
+**Planned (round 101):** the limits this round leaves live — the C1 rows replay pinned verdicts
+(an argv-aware stub holds them; a row whose verdict depends on computation over a fixture would
+force it, `w1/R100C1b.md` F2); C2's `absent` false-absent and table-block binding (A1), the
+renderer's def-time code (A2), the selftest coverage gaps M3/M6/M10/M12/M15 (`w1/R100M1.md` F1);
+the full-registry run's 12-minute cost. No claim is pre-approved here.
